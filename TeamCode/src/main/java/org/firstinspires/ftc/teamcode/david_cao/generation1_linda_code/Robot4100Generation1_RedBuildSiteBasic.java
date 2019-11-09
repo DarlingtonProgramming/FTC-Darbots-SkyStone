@@ -37,6 +37,12 @@ public class Robot4100Generation1_RedBuildSiteBasic extends DarbotsBasicOpMode<R
         if(!waitForDrive()){
             return;
         }
+        this.m_RobotCore.getChassis().replaceTask(this.m_RobotCore.getChassis().getFixedXDistanceTask(
+                -30,
+                0.5
+        ));
+        if(!waitForDrive())
+            return;
 
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedZDistanceTask(

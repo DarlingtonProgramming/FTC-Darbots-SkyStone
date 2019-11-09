@@ -47,6 +47,13 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
             return;
         }
 
+        this.m_RobotCore.getChassis().replaceTask(this.m_RobotCore.getChassis().getFixedXDistanceTask(
+                -30,
+                0.5
+        ));
+        if(!waitForDrive())
+            return;
+
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedZDistanceTask(
                         -40,
@@ -111,7 +118,7 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
 
         this.m_RobotCore.getChassis().addTask(
                 this.m_RobotCore.getChassis().getFixedZDistanceTask(
-                        5,
+                        -5,
                         0.25
                 )
         );
@@ -133,7 +140,7 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
 
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedZDistanceTask(
-                        110,
+                        115,
                         0.5
                 )
         );
@@ -220,7 +227,7 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
         sleep(400);
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                -30,
+                -35,
                 0.5
         ));
         if(!waitForDrive()){
@@ -237,7 +244,7 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
         }
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                130 + firstScanExtraDistance,
+                120 + firstScanExtraDistance,
                 1.0
         ));
         if(!waitForDrive()){
@@ -248,7 +255,7 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
         sleep(400);
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                -55,
+                -60,
                 0.5
         ));
         if(!waitForDrive()){
