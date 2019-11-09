@@ -3,13 +3,9 @@ package org.firstinspires.ftc.teamcode.david_cao.generation1_linda_code;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.sensors.gyros.BNO055Gyro;
-import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.GyroGuidedTurn;
-import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 
-@Autonomous(name = "4100Gen1Auto-BlueBuildSiteBasic",group="4100")
-public class Robot4100Generation1_BlueBuildSiteBasic extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
+@Autonomous(name = "4100Gen1Auto-RedBuildSiteBasic",group="4100")
+public class Robot4100Generation1_RedBuildSiteBasic extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
     private Robot4100Generation1_LindaCore m_RobotCore;
     private float m_OldAng;
     @Override
@@ -69,7 +65,7 @@ public class Robot4100Generation1_BlueBuildSiteBasic extends DarbotsBasicOpMode<
 
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedXDistanceTask(
-                        -90,
+                        90,
                         0.5
                 )
         );
@@ -89,14 +85,14 @@ public class Robot4100Generation1_BlueBuildSiteBasic extends DarbotsBasicOpMode<
 
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedXDistanceTask(
-                        40,
+                        -40,
                         0.4
                 )
         );
 
         this.m_RobotCore.getChassis().addTask(
                 this.m_RobotCore.getChassis().getFixedXDistanceTask(
-                        -20,
+                        20,
                         0.3
                 )
         );
@@ -108,7 +104,7 @@ public class Robot4100Generation1_BlueBuildSiteBasic extends DarbotsBasicOpMode<
 
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedXDistanceTask(
-                        -60,
+                        60,
                         0.3
                 )
         );

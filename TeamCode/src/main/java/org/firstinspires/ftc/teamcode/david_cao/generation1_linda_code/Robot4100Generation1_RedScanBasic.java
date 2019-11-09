@@ -5,13 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot3DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
-import org.darbots.darbotsftclib.libcore.templates.RobotCore;
-import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotCamera;
 import org.darbots.darbotsftclib.season_specific.skystone.navigation.SkyStoneNavigation;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
-@Autonomous(group = "4100", name="4100Gen1Auto-BlueScanBasic")
-public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
+@Autonomous(group = "4100", name="4100Gen1Auto-RedScanBasic")
+public class Robot4100Generation1_RedScanBasic extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
     private Robot4100Generation1_LindaCore m_RobotCore;
     private SkyStoneNavigation m_Navigation;
     private int ScanResult = 0;
@@ -79,7 +77,7 @@ public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot
             }
             firstScanExtraDistance += Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE;
             this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
-                    -Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE,
+                    Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE,
                     0.25
             ));
             if(!waitForDrive()){
@@ -127,7 +125,7 @@ public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot
         }
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedTurnTask(
-                90,
+                -90,
                 0.5
         ));
 
@@ -136,7 +134,7 @@ public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot
         }
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                135 + firstScanExtraDistance,
+                115 + firstScanExtraDistance,
                 1.0
         ));
         if(!waitForDrive()){

@@ -15,6 +15,7 @@ public class Robot4100Generation1_TeleOp extends DarbotsBasicOpMode<Robot4100Gen
     private Robot4100Generation1_LindaCore m_RobotCore;
     private LoopableTimer m_TimerStoneOrient = null;
     private LoopableTimer m_TimerCapStoneDelivery = null;
+    private double m_SpeedFactor = 1.0;
 
     @Override
     public Robot4100Generation1_LindaCore getRobotCore() {
@@ -39,6 +40,11 @@ public class Robot4100Generation1_TeleOp extends DarbotsBasicOpMode<Robot4100Gen
         while(this.opModeIsActive()){
 
             //Chassis Control
+            if(gamepad1.x){
+                this.m_SpeedFactor = 0.5;
+            }else if(gamepad1.y){
+                this.m_SpeedFactor = 1.0;
+            }
             RobotMotionSystemTeleOpControlTask teleOpTask = (RobotMotionSystemTeleOpControlTask) this.m_RobotCore.getChassis().getCurrentTask();
             double ZAxis = -gamepad1.left_stick_y, XAxis = gamepad1.left_stick_x, Turn = (-gamepad1.right_stick_x);//gamepad1.left_trigger - gamepad1.right_trigger;
             if(Math.abs(ZAxis) < 0.1){
@@ -53,7 +59,7 @@ public class Robot4100Generation1_TeleOp extends DarbotsBasicOpMode<Robot4100Gen
             ZAxis *= Robot4100Generation1_Settings.TELEOP_MAXSPEED;
             XAxis *= Robot4100Generation1_Settings.TELEOP_MAXSPEED;
             Turn *= Robot4100Generation1_Settings.TELEOP_MAXSPEED;
-            double SlowDownFactor = gamepad1.left_bumper ? 0.5 : 1.0;
+            double SlowDownFactor = this.m_SpeedFactor;
             ZAxis *= SlowDownFactor;
             XAxis *= SlowDownFactor;
             Turn *= SlowDownFactor;

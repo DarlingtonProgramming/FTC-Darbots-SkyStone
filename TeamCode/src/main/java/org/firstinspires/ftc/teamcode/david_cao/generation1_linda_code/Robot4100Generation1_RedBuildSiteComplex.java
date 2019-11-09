@@ -5,18 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot3DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
-import org.darbots.darbotsftclib.libcore.templates.RobotCore;
-import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotCamera;
 import org.darbots.darbotsftclib.season_specific.skystone.navigation.SkyStoneNavigation;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
-@Autonomous(group = "4100", name="4100Gen1Auto-BlueScanBasic")
-public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
+@Autonomous(name = "4100Gen1Auto-RedBuildSiteComplex",group="4100")
+public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
     private Robot4100Generation1_LindaCore m_RobotCore;
     private SkyStoneNavigation m_Navigation;
     private int ScanResult = 0;
     private RobotOnPhoneCamera Camera;
-
     @Override
     public Robot4100Generation1_LindaCore getRobotCore() {
         return m_RobotCore;
@@ -40,16 +37,120 @@ public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot
         this.getRobotCore().getChassis().setGyroGuidedDriveEnabled(true);
         this.getRobotCore().getChassis().updateGyroGuidedPublicStartingAngle();
 
-        this.m_Navigation.setActivated(true);
-        Camera.setFlashlightEnabled(true);
-        this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                50,
-                0.6
+        this.m_RobotCore.getChassis().replaceTask(
+                this.m_RobotCore.getChassis().getFixedZDistanceTask(
+                        -40,
+                        0.4
+                )
+        );
+        if(!waitForDrive()){
+            return;
+        }
+
+        this.m_RobotCore.getChassis().replaceTask(
+                this.m_RobotCore.getChassis().getFixedZDistanceTask(
+                        -40,
+                        0.3
+                )
+        );
+        if(!waitForDrive()){
+            return;
+        }
+
+        this.m_RobotCore.setDragServoToDrag(true);
+        sleep(500);
+        this.m_RobotCore.getChassis().replaceTask(
+                this.m_RobotCore.getChassis().getFixedZDistanceTask(
+                        90,
+                        0.5
+                )
+        );
+        if(!waitForDrive()){
+            return;
+        }
+
+        this.m_RobotCore.setDragServoToDrag(false);
+        sleep(300);
+
+        this.m_RobotCore.getChassis().replaceTask(
+                this.m_RobotCore.getChassis().getFixedXDistanceTask(
+                        90,
+                        0.5
+                )
+        );
+        if(!waitForDrive()){
+            return;
+        }
+
+        this.m_RobotCore.getChassis().replaceTask(
+                this.m_RobotCore.getChassis().getFixedZDistanceTask(
+                        -45,
+                        0.5
+                )
+        );
+        if(!waitForDrive()){
+            return;
+        }
+
+        this.m_RobotCore.getChassis().replaceTask(
+                this.m_RobotCore.getChassis().getFixedXDistanceTask(
+                        -40,
+                        0.4
+                )
+        );
+
+        this.m_RobotCore.getChassis().addTask(
+                this.m_RobotCore.getChassis().getFixedXDistanceTask(
+                        20,
+                        0.3
+                )
+        );
+        if(!waitForDrive()){
+            return;
+        }
+
+        this.m_RobotCore.getChassis().addTask(
+                this.m_RobotCore.getChassis().getFixedZDistanceTask(
+                        5,
+                        0.25
+                )
+        );
+        if(!waitForDrive()){
+            return;
+        }
+
+
+
+        this.m_RobotCore.getChassis().addTask(this.m_RobotCore.getChassis().getFixedTurnTask(
+                -90,
+                0.5
         ));
         if(!waitForDrive()){
             return;
         }
 
+
+
+        this.m_RobotCore.getChassis().replaceTask(
+                this.m_RobotCore.getChassis().getFixedZDistanceTask(
+                        110,
+                        0.5
+                )
+        );
+        if(!waitForDrive()){
+            return;
+        }
+        this.m_RobotCore.getChassis().replaceTask(
+                this.m_RobotCore.getChassis().getFixedXDistanceTask(
+                        -20,
+                        0.4
+                )
+        );
+        if(!waitForDrive()){
+            return;
+        }
+        this.m_Navigation.setActivated(true);
+        Camera.setFlashlightEnabled(true);
         double firstScanExtraDistance = 0;
         int[] stepResult = {1,2,3};
         for(int i=0; i<3; i++){
@@ -79,7 +180,7 @@ public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot
             }
             firstScanExtraDistance += Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE;
             this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
-                    -Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE,
+                    Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE,
                     0.25
             ));
             if(!waitForDrive()){
@@ -108,7 +209,7 @@ public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot
             return;
         }
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                75-50+15,//firstScanXOffset + 10,
+                50,//firstScanXOffset + 10,
                 0.2
         ));
         if(!waitForDrive()){
@@ -119,7 +220,7 @@ public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot
         sleep(400);
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                -20,
+                -30,
                 0.5
         ));
         if(!waitForDrive()){
@@ -127,7 +228,7 @@ public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot
         }
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedTurnTask(
-                90,
+                -90,
                 0.5
         ));
 
@@ -136,7 +237,7 @@ public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot
         }
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                135 + firstScanExtraDistance,
+                130 + firstScanExtraDistance,
                 1.0
         ));
         if(!waitForDrive()){
@@ -147,7 +248,7 @@ public class Robot4100Generation1_BlueScanBasic extends DarbotsBasicOpMode<Robot
         sleep(400);
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                -60,
+                -55,
                 0.5
         ));
         if(!waitForDrive()){

@@ -10,6 +10,7 @@ import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.GyroGuidedTurn;
 import org.darbots.darbotsftclib.testcases.OmniDriveTest.OmniCore;
 
 @Autonomous(group = "4100", name = "4100Gen1-MovementSquare")
+@Disabled
 public class Robot4100Generation1_AutoMovementSquare extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
     private Robot4100Generation1_LindaCore m_RobotCore;
     private String m_ChassisStatus;
