@@ -2,7 +2,6 @@ package org.darbots.darbotsftclib.libcore.chassiscontrollers;
 
 import com.qualcomm.robotcore.util.Range;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.tasks.motor_tasks.RobotFixedSpeedTask;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
@@ -11,7 +10,7 @@ import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSy
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystemFixedZDistanceTask;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystemTeleOpControlTask;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
-import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionSoftwareTracker;
+import org.darbots.darbotsftclib.libcore.odometry.Robot2DPositionSoftwareTracker;
 import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionTracker;
 
 public class OmniDrive extends RobotMotionSystem {

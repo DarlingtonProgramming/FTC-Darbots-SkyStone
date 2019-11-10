@@ -1,9 +1,8 @@
-package org.darbots.darbotsftclib.libcore.templates.odometry;
+package org.darbots.darbotsftclib.libcore.odometry;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogger;
-import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
+import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionTracker;
 
 public class Robot2DPositionSoftwareTracker extends Robot2DPositionTracker {
 

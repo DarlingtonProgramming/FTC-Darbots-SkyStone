@@ -29,13 +29,17 @@ public abstract class Robot2DPositionTracker {
         return this.m_InitialPos;
     }
     public void setInitialPos(Robot2DPositionIndicator initialPos){
-        this.m_InitialPos = initialPos;
+        this.m_InitialPos.setX(initialPos.getX());
+        this.m_InitialPos.setZ(initialPos.getZ());
+        this.m_InitialPos.setRotationY(initialPos.getRotationY());
     }
     public Robot2DPositionIndicator getCurrentPosition(){
         return this.m_CurrentPos;
     }
     public void setCurrentPosition(Robot2DPositionIndicator currentPosition){
-        this.m_CurrentPos = currentPosition;
+        this.m_CurrentPos.setX(currentPosition.getX());
+        this.m_CurrentPos.setZ(currentPosition.getZ());
+        this.m_CurrentPos.setRotationY(currentPosition.getRotationY());
     }
     public double getRobotWidth(){
         return this.m_RobotWidth;
@@ -68,7 +72,7 @@ public abstract class Robot2DPositionTracker {
         return XYPlaneCalculations.getRelativePosition(this.getCurrentPosition(),FieldAxisPoint);
     }
     public void offsetPosition(Robot2DPositionIndicator offsetPosition) {
-        Robot2DPositionIndicator currentPosition = this.getCurrentPosition();
+        Robot2DPositionIndicator currentPosition = this.m_CurrentPos;
         if(offsetPosition.getX() != 0)
             currentPosition.setX(currentPosition.getX() + offsetPosition.getX());
         if(offsetPosition.getZ() != 0)
