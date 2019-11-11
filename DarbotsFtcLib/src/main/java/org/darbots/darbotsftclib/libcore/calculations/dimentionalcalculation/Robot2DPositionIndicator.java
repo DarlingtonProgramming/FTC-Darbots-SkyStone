@@ -27,17 +27,17 @@ package org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation;
 
 public class Robot2DPositionIndicator {
     protected double m_X;
-    protected double m_Z;
-    protected double m_RotationY;
-    public Robot2DPositionIndicator(double X, double Z, double YRotation){
+    protected double m_Y;
+    protected double m_RotationZ;
+    public Robot2DPositionIndicator(double X, double Y, double YRotation){
         this.m_X = X;
-        this.m_Z = Z;
-        this.m_RotationY = XYPlaneCalculations.normalizeDeg(YRotation);
+        this.m_Y = Y;
+        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(YRotation);
     }
     public Robot2DPositionIndicator(Robot2DPositionIndicator Pos2D){
         this.m_X = Pos2D.m_X;
-        this.m_Z = Pos2D.m_Z;
-        this.m_RotationY = Pos2D.m_RotationY;
+        this.m_Y = Pos2D.m_Y;
+        this.m_RotationZ = Pos2D.m_RotationZ;
     }
     public double getX(){
         return this.m_X;
@@ -45,25 +45,19 @@ public class Robot2DPositionIndicator {
     public void setX(double X){
         this.m_X = X;
     }
-    public double getZ(){
-        return this.m_Z;
+    public double getY(){
+        return this.m_Y;
     }
-    public void setZ(double Z){
-        this.m_Z = Z;
+    public void setY(double Y){
+        this.m_Y = Y;
     }
     public double getDistanceToOrigin(){
-        return (Math.sqrt(Math.pow(this.getX(),2) + Math.pow(this.getZ(),2)));
+        return (Math.sqrt(Math.pow(this.getX(),2) + Math.pow(this.getY(),2)));
     }
-    public double getRotationY(){
-        return this.m_RotationY;
+    public double getRotationZ(){
+        return this.m_RotationZ;
     }
-    public void setRotationY(double RotationY){
-        this.m_RotationY = XYPlaneCalculations.normalizeDeg(RotationY);
-    }
-    public Robot2DPositionIndicator fromFTCRobotAxisToDarbotsRobotAxis(){
-        return XYPlaneCalculations.getDarbotsRobotPosition(this);
-    }
-    public Robot2DPositionIndicator fromDarbotsRobotAxisToFTCRobotAxis(){
-        return XYPlaneCalculations.getFTCRobotPosition(this);
+    public void setRotationZ(double RotationZ){
+        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
     }
 }

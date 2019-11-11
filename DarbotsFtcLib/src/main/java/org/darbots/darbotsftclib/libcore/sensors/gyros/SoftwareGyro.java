@@ -4,7 +4,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYP
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
 public class SoftwareGyro extends RobotGyro {
-    private float m_LastAng = 0;
+    protected float m_LastAng = 0;
 
     public SoftwareGyro(){
         this.m_LastAng = 0f;

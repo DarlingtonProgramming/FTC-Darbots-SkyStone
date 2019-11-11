@@ -1,14 +1,14 @@
 package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 
-public abstract class RobotMotionSystemFixedZDistanceTask extends RobotMotionSystemTask {
+public abstract class RobotMotionSystemFixedYDistanceTask extends RobotMotionSystemTask {
     private double m_ZDistance;
     private double m_Speed;
 
-    public RobotMotionSystemFixedZDistanceTask(double ZDistance, double Speed){
+    public RobotMotionSystemFixedYDistanceTask(double ZDistance, double Speed){
         this.m_ZDistance = ZDistance;
         this.m_Speed = Speed;
     }
-    public RobotMotionSystemFixedZDistanceTask(RobotMotionSystemFixedZDistanceTask Task){
+    public RobotMotionSystemFixedYDistanceTask(RobotMotionSystemFixedYDistanceTask Task){
         super(Task);
         this.m_ZDistance = Task.m_ZDistance;
         this.m_Speed = Task.m_Speed;

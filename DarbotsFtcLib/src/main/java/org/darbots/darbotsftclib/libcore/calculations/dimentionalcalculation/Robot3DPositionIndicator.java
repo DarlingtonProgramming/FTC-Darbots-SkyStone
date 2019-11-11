@@ -41,13 +41,13 @@ public class Robot3DPositionIndicator {
         this.m_RotationY = XYPlaneCalculations.normalizeDeg(RotationY);
         this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
     }
-    public Robot3DPositionIndicator(Robot2DPositionIndicator Pos2D, double Y, double RotationX, double RotationZ){
+    public Robot3DPositionIndicator(Robot2DPositionIndicator Pos2D, double Z, double RotationX, double RotationY){
         this.m_X = Pos2D.m_X;
-        this.m_Y = Y;
-        this.m_Z = Pos2D.m_Z;
+        this.m_Y = Pos2D.m_Y;
+        this.m_Z = Z;
         this.m_RotationX = XYPlaneCalculations.normalizeDeg(RotationX);
-        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
-        this.m_RotationY = XYPlaneCalculations.normalizeDeg(Pos2D.m_RotationY);
+        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(Pos2D.m_RotationZ);
+        this.m_RotationY = XYPlaneCalculations.normalizeDeg(RotationY);
     }
     public Robot3DPositionIndicator(Robot3DPositionIndicator Pos3D){
         this.m_X = Pos3D.m_X;
@@ -79,7 +79,7 @@ public class Robot3DPositionIndicator {
         return (Math.sqrt(Math.pow(this.getX(),2) + Math.pow(this.getZ(),2) + Math.pow(this.getY(),2)));
     }
     public Robot2DPositionIndicator get2DPosition(){
-        return new Robot2DPositionIndicator(this.getX(),this.getZ(),this.getRotationY());
+        return new Robot2DPositionIndicator(this.getX(),this.getY(),this.getRotationZ());
     }
     public double getRotationX(){
         return this.m_RotationX;
@@ -98,11 +98,5 @@ public class Robot3DPositionIndicator {
     }
     public void setRotationZ(double RotationZ){
         this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
-    }
-    public Robot3DPositionIndicator fromFTCRobotAxisToDarbotsRobotAxis(){
-        return XYPlaneCalculations.getDarbotsRobotPosition(this);
-    }
-    public Robot3DPositionIndicator fromDarbotsRobotAxisToFTCRobotAxis(){
-        return XYPlaneCalculations.getFTCRobotPosition(this);
     }
 }

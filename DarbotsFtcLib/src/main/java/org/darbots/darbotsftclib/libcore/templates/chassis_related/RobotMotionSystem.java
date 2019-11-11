@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private ArrayList<RobotMotionSystemTask> m_TaskLists;
     private Robot2DPositionTracker m_PosTracker;
-    private double m_LinearZMotionDistanceFactor;
+    private double m_LinearYMotionDistanceFactor;
     private double m_LinearXMotionDistanceFactor;
     private double m_RotationalMotionDistanceFactor;
     private boolean m_FixedDistanceGyroGuidedDrive = false;
@@ -55,7 +55,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     public RobotMotionSystem(RobotMotionSystem MotionSystem){
         this.m_TaskLists = new ArrayList();
         this.m_PosTracker = MotionSystem.m_PosTracker;
-        this.m_LinearZMotionDistanceFactor = MotionSystem.m_LinearZMotionDistanceFactor;
+        this.m_LinearYMotionDistanceFactor = MotionSystem.m_LinearYMotionDistanceFactor;
         this.m_LinearXMotionDistanceFactor = MotionSystem.m_LinearXMotionDistanceFactor;
         this.m_RotationalMotionDistanceFactor = MotionSystem.m_RotationalMotionDistanceFactor;
         this.m_FixedDistanceGyroGuidedDrive = MotionSystem.m_FixedDistanceGyroGuidedDrive;
@@ -65,11 +65,11 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_SteadySpeedUpZoneRatio = MotionSystem.m_SteadySpeedUpZoneRatio;
     }
 
-    public double getLinearZMotionDistanceFactor(){
-        return this.m_LinearZMotionDistanceFactor;
+    public double getLinearYMotionDistanceFactor(){
+        return this.m_LinearYMotionDistanceFactor;
     }
-    public void setLinearZMotionDistanceFactor(double Factor){
-        this.m_LinearZMotionDistanceFactor = Factor;
+    public void setLinearYMotionDistanceFactor(double Factor){
+        this.m_LinearYMotionDistanceFactor = Factor;
     }
 
     public double getLinearXMotionDistanceFactor(){
@@ -79,7 +79,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_LinearXMotionDistanceFactor = Factor;
     }
     public void setLinearMotionDistanceFactor(double Factor){
-        this.setLinearZMotionDistanceFactor(Factor);
+        this.setLinearYMotionDistanceFactor(Factor);
         this.setLinearXMotionDistanceFactor(Factor);
     }
 
@@ -243,7 +243,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     }
 
     public abstract RobotMotionSystemFixedXDistanceTask getFixedXDistanceTask(double XDistance, double Speed);
-    public abstract RobotMotionSystemFixedZDistanceTask getFixedZDistanceTask(double ZDistance, double Speed);
+    public abstract RobotMotionSystemFixedYDistanceTask getFixedYDistanceTask(double YDistance, double Speed);
     public abstract RobotMotionSystemFixedTurnTask getFixedTurnTask(double Deg, double Speed);
     public abstract RobotMotionSystemTeleOpControlTask getTeleOpTask();
 }

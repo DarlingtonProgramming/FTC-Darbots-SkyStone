@@ -4,15 +4,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.sensors.gyros.SoftwareGyro;
-import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionTracker;
-import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.sensors.gyros.SynchronizedSoftwareGyro;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotPassive2DPositionTracker;
 
-public class Robot2DPassive3WheelTracker extends RobotSynchronized2DPositionTracker {
+public class Robot2DPassive3WheelTracker extends RobotPassive2DPositionTracker {
     private class Robot2DPassive3WheelTracker_Runnable implements Runnable{
         private volatile int m_SleepTimeInMillis = 75;
         private volatile boolean m_IsRunning = false;
 
-        private SoftwareGyro m_Gyro = null;
+        private SynchronizedSoftwareGyro m_Gyro = null;
 
         private DcMotor m_LeftEncoder;
         private DcMotor m_RightEncoder;
@@ -75,13 +75,13 @@ public class Robot2DPassive3WheelTracker extends RobotSynchronized2DPositionTrac
                 double deltaLeftCM = deltaLeftCount / this.m_LeftEncoderCountsPerCM;
                 double deltaRightCM = deltaRightCount / this.m_RightEncoderCountsPerCM;
 
-                double deltaXMoved = -deltaMidCM;
-                double deltaZMoved = (-deltaLeftCM + deltaRightCM) / 2;
+                double deltaXMoved = (-deltaLeftCM + deltaRightCM) / 2;
+                double deltaYMoved = deltaMidCM;
                 double deltaAngMoved = (deltaLeftCM / this.m_LeftEncoderRotationCircumferenceInCM + deltaRightCM / this.m_LeftEncoderRotationCircumferenceInCM) / 2.0 * 360.0;
 
                 Robot2DPassive3WheelTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
                         deltaXMoved,
-                        deltaZMoved,
+                        deltaYMoved,
                         deltaAngMoved
                 ));
 
@@ -162,7 +162,7 @@ public class Robot2DPassive3WheelTracker extends RobotSynchronized2DPositionTrac
         this.setDistanceOfRightEncoderFromCenterOfRobot(RightEncoderDistanceFromCenterOfRobot);
 
         if(initSoftwareGyro){
-            this.m_RunnableTracking.m_Gyro = new SoftwareGyro(0.0f);
+            this.m_RunnableTracking.m_Gyro = new SynchronizedSoftwareGyro(0.0f);
         }
     }
 
@@ -188,7 +188,7 @@ public class Robot2DPassive3WheelTracker extends RobotSynchronized2DPositionTrac
         }
     }
 
-    public SoftwareGyro getGyro(){
+    public SynchronizedSoftwareGyro getGyro(){
         return this.m_RunnableTracking.m_Gyro;
     }
 
@@ -333,8 +333,9 @@ public class Robot2DPassive3WheelTracker extends RobotSynchronized2DPositionTrac
         this.m_RunnableTracking.m_MidEncoderCountsPerCM = this.m_MidEncoderCountsPerRev * (1.0 / this.m_MidEncoderWheelCircumference);
     }
 
-    public void drive_MoveThroughRobotAxisOffset(Robot2DPositionIndicator robotAxisValues) {
+    protected void drive_MoveThroughRobotAxisOffset(Robot2DPositionIndicator robotAxisValues) {
         Robot2DPositionIndicator tempField = this.fieldAxisFromRobotAxis(robotAxisValues);
         this.setCurrentPosition(tempField);
+        this.offsetRelative(robotAxisValues);
     }
 }

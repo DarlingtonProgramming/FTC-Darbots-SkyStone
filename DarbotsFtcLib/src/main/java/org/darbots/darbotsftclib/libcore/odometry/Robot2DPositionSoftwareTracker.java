@@ -3,8 +3,9 @@ package org.darbots.darbotsftclib.libcore.odometry;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotBasic2DPositionTracker;
 
-public class Robot2DPositionSoftwareTracker extends Robot2DPositionTracker {
+public class Robot2DPositionSoftwareTracker extends RobotBasic2DPositionTracker {
 
     public Robot2DPositionSoftwareTracker(Robot2DPositionIndicator initialPosition) {
         super(initialPosition);
@@ -19,46 +20,55 @@ public class Robot2DPositionSoftwareTracker extends Robot2DPositionTracker {
     }
 
 
-    public void drive_MoveThroughFieldAngle(double angleInDeg, double distance) {
-        double angleInRad = Math.toRadians(angleInDeg);
-        double xMoved = Math.cos(angleInRad) * distance, yMoved = Math.sin(angleInRad) * distance;
-        this.offsetPosition(new Robot2DPositionIndicator(xMoved, yMoved, 0));
-    }
     public void drive_MoveThroughRobotAngle(double angleInDeg, double distance) {
-        double fieldAng = angleInDeg + 90 + this.getCurrentPosition().getRotationY();
-        this.drive_MoveThroughFieldAngle(fieldAng, distance);
+        double fieldAng = angleInDeg + this.getCurrentPosition().getRotationZ();
+        double angleInRad = Math.toRadians(angleInDeg);
+        double fieldAngleInRad = Math.toRadians(fieldAng);
+        double xMoved = Math.cos(fieldAngleInRad) * distance, yMoved = Math.sin(fieldAngleInRad) * distance;
+        this.offsetPosition(new Robot2DPositionIndicator(xMoved, yMoved, 0));
+        double robotXMoved = Math.cos(angleInRad) * distance, robotYMoved = Math.sin(angleInRad) * distance;
+        this.offsetRelative(new Robot2DPositionIndicator(robotXMoved, robotYMoved, 0));
     }
     public void drive_MoveThroughRobotAxisOffset(Robot2DPositionIndicator robotAxisValues) {
         Robot2DPositionIndicator tempField = this.fieldAxisFromRobotAxis(robotAxisValues);
         this.setCurrentPosition(tempField);
+        this.offsetRelative(robotAxisValues);
     }
     public void drive_RotateAroundFieldPoint(Robot2DPositionIndicator fieldPointAndRotation) {
         Robot2DPositionIndicator currentPos = this.getCurrentPosition();
-        if (fieldPointAndRotation.getX() == currentPos.getX() && fieldPointAndRotation.getZ() == currentPos.getZ()) {
-            this.offsetPosition(new Robot2DPositionIndicator(0, 0, fieldPointAndRotation.getRotationY()));
+        if (fieldPointAndRotation.getX() == currentPos.getX() && fieldPointAndRotation.getY() == currentPos.getY()) {
+            Robot2DPositionIndicator deltaVal = new Robot2DPositionIndicator(0,0,fieldPointAndRotation.getRotationZ());
+            this.offsetPosition(deltaVal);
+            this.offsetRelative(deltaVal);
         } else {
-            double[] point = {fieldPointAndRotation.getX(), fieldPointAndRotation.getZ()};
-            double[] currentPosArr = {currentPos.getX(), currentPos.getZ()};
-            double[] newRobotPosition = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(point, currentPosArr, fieldPointAndRotation.getRotationY());
-            this.setCurrentPosition(new Robot2DPositionIndicator(newRobotPosition[0], newRobotPosition[1], currentPos.getRotationY() + fieldPointAndRotation.getRotationY()));
+            double[] point = {fieldPointAndRotation.getX(), fieldPointAndRotation.getY()};
+            double[] currentPosArr = {currentPos.getX(), currentPos.getY()};
+            double[] newRobotPosition = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(point, currentPosArr, fieldPointAndRotation.getRotationZ());
+            Robot2DPositionIndicator newPosition = new Robot2DPositionIndicator(newRobotPosition[0], newRobotPosition[1], currentPos.getRotationZ() + fieldPointAndRotation.getRotationZ());
+            this.setCurrentPosition(newPosition);
+            this.offsetRelative(XYPlaneCalculations.getRelativePosition(currentPos,newPosition));
         }
     }
     public void drive_RotateAroundRobotAxisPoint(Robot2DPositionIndicator robotPointAndRotation) {
-        if(robotPointAndRotation.getX() == 0 && robotPointAndRotation.getZ() == 0){
-            if(robotPointAndRotation.getRotationY() != 0) {
-                this.getCurrentPosition().setRotationY(this.getCurrentPosition().getRotationY() + robotPointAndRotation.getRotationY());
+        if(robotPointAndRotation.getX() == 0 && robotPointAndRotation.getY() == 0){
+            if(robotPointAndRotation.getRotationZ() != 0) {
+                Robot2DPositionIndicator deltaVal = new Robot2DPositionIndicator(0,0,robotPointAndRotation.getRotationZ());
+                this.offsetPosition(deltaVal);
+                this.offsetRelative(deltaVal);
             }
             return;
         }
         Robot2DPositionIndicator tempFieldPointAndRotation = this.fieldAxisFromRobotAxis(robotPointAndRotation);
-        tempFieldPointAndRotation.setRotationY(robotPointAndRotation.getRotationY());
+        tempFieldPointAndRotation.setRotationZ(robotPointAndRotation.getRotationZ());
         this.drive_RotateAroundFieldPoint(tempFieldPointAndRotation);
     }
     public void drive_RotateAroundRobotOriginWithRadius(double Radius, double DistanceCounterClockwise){
         if(DistanceCounterClockwise != 0) {
             double moveAngleRad = DistanceCounterClockwise / Radius;
             double moveAngleDeg = Math.toDegrees(moveAngleRad);
-            this.getCurrentPosition().setRotationY(this.getCurrentPosition().getRotationY() + moveAngleDeg);
+            Robot2DPositionIndicator deltaVal = new Robot2DPositionIndicator(0,0,moveAngleDeg);
+            this.offsetPosition(deltaVal);
+            this.offsetRelative(deltaVal);
         }
     }
 }

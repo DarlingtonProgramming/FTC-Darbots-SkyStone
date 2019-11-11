@@ -52,10 +52,10 @@ public class RobotWheel {
         return this.m_Radius * 2 * Math.PI;
     }
     public double getXPerCounterClockwiseDistance(){
-        return -Math.cos(Math.toRadians(this.m_OnRobotPosition.getRotationY()));
+        return Math.cos(Math.toRadians(this.m_OnRobotPosition.getRotationZ()));
     }
-    public double getZPerCounterClockwiseDistance(){
-        return -Math.sin(Math.toRadians(this.m_OnRobotPosition.getRotationY()));
+    public double getYPerCounterClockwiseDistance(){
+        return Math.sin(Math.toRadians(this.m_OnRobotPosition.getRotationZ()));
     }
     public double getDistanceFromCenterOfRobot(){
         return this.m_OnRobotPosition.getDistanceToOrigin();

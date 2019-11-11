@@ -3,7 +3,7 @@ package org.darbots.darbotsftclib.libcore.templates.odometry;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
 
-public class RobotSynchronized2DPositionTracker extends Robot2DPositionTracker {
+public class RobotSynchronized2DPositionTracker extends RobotBasic2DPositionTracker {
     public RobotSynchronized2DPositionTracker(Robot2DPositionIndicator initialPosition) {
         super(initialPosition);
     }
@@ -25,8 +25,8 @@ public class RobotSynchronized2DPositionTracker extends Robot2DPositionTracker {
         synchronized (super.getInitialPos()) {
             Robot2DPositionIndicator readInitialPos = super.getInitialPos();
             readInitialPos.setX(initialPos.getX());
-            readInitialPos.setZ(initialPos.getZ());
-            readInitialPos.setRotationY(initialPos.getRotationY());
+            readInitialPos.setY(initialPos.getY());
+            readInitialPos.setRotationZ(initialPos.getRotationZ());
         }
     }
     public Robot2DPositionIndicator getCurrentPosition(){
@@ -38,8 +38,8 @@ public class RobotSynchronized2DPositionTracker extends Robot2DPositionTracker {
         synchronized (super.getCurrentPosition()) {
             Robot2DPositionIndicator read2DPosition = super.getCurrentPosition();
             read2DPosition.setX(currentPosition.getX());
-            read2DPosition.setZ(currentPosition.getZ());
-            read2DPosition.setRotationY(currentPosition.getRotationY());
+            read2DPosition.setY(currentPosition.getY());
+            read2DPosition.setRotationZ(currentPosition.getRotationZ());
         }
     }
     public double getRobotWidth(){
@@ -77,6 +77,21 @@ public class RobotSynchronized2DPositionTracker extends Robot2DPositionTracker {
     public void offsetPosition(Robot2DPositionIndicator offsetPosition) {
         synchronized (super.getCurrentPosition()) {
             super.offsetPosition(offsetPosition);
+        }
+    }
+    @Override
+    public void resetRelativeOffset() {
+        Robot2DPositionIndicator offset = super.getRelativeOffset();
+        synchronized (offset){
+            super.resetRelativeOffset();
+        }
+    }
+
+    @Override
+    public Robot2DPositionIndicator getRelativeOffset() {
+        Robot2DPositionIndicator offset = super.getRelativeOffset();
+        synchronized (offset){
+            return new Robot2DPositionIndicator(offset);
         }
     }
 }
