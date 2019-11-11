@@ -3,11 +3,11 @@ package org.darbots.darbotsftclib.libcore.odometry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
-import org.darbots.darbotsftclib.libcore.sensors.gyros.SoftwareGyro;
 import org.darbots.darbotsftclib.libcore.sensors.gyros.SynchronizedSoftwareGyro;
-import org.darbots.darbotsftclib.libcore.templates.odometry.RobotPassive2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotVolatile2DPositionTracker;
 
-public class Robot2DPassive3WheelTracker extends RobotPassive2DPositionTracker {
+public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
     private class Robot2DPassive3WheelTracker_Runnable implements Runnable{
         private volatile int m_SleepTimeInMillis = 75;
         private volatile boolean m_IsRunning = false;
@@ -79,16 +79,14 @@ public class Robot2DPassive3WheelTracker extends RobotPassive2DPositionTracker {
                 double deltaYMoved = deltaMidCM;
                 double deltaAngMoved = (deltaLeftCM / this.m_LeftEncoderRotationCircumferenceInCM + deltaRightCM / this.m_LeftEncoderRotationCircumferenceInCM) / 2.0 * 360.0;
 
-                Robot2DPassive3WheelTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
+                Robot3Wheel2DTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
                         deltaXMoved,
                         deltaYMoved,
                         deltaAngMoved
                 ));
 
                 if(this.m_Gyro != null){
-                    synchronized (this.m_Gyro){
-                        this.m_Gyro.offsetHeading((float) deltaAngMoved);
-                    }
+                    this.m_Gyro.offsetHeading((float) deltaAngMoved);
                 }
 
                 m_LastMidEncoderCount = newMidCount;
@@ -117,19 +115,19 @@ public class Robot2DPassive3WheelTracker extends RobotPassive2DPositionTracker {
     private boolean m_TrackingThreadRunned = false;
 
 
-    public Robot2DPassive3WheelTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, DcMotor leftEncoder, DcMotor rightEncoder, DcMotor centerEncoder, double LeftEncoderCountsPerRev, double LeftEncoderWheelRadius, double LeftEncoderDistanceFromCenterOfRobot, double RightEncoderCountsPerRev, double RightEncoderWheelRadius, double RightEncoderDistanceFromCenterOfRobot, double MidEncoderCountsPerRev, double MidEncoderWheelRadius) {
+    public Robot3Wheel2DTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, DcMotor leftEncoder, DcMotor rightEncoder, DcMotor centerEncoder, double LeftEncoderCountsPerRev, double LeftEncoderWheelRadius, double LeftEncoderDistanceFromCenterOfRobot, double RightEncoderCountsPerRev, double RightEncoderWheelRadius, double RightEncoderDistanceFromCenterOfRobot, double MidEncoderCountsPerRev, double MidEncoderWheelRadius) {
         super(initialPosition);
         __setupRunnable();
         __setupParams(initSoftwareGyro,leftEncoder,rightEncoder,centerEncoder,LeftEncoderCountsPerRev,LeftEncoderWheelRadius,LeftEncoderDistanceFromCenterOfRobot,RightEncoderCountsPerRev,RightEncoderWheelRadius,RightEncoderDistanceFromCenterOfRobot,MidEncoderCountsPerRev,MidEncoderWheelRadius);
     }
 
-    public Robot2DPassive3WheelTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, double RobotWidth, double RobotHeight, DcMotor leftEncoder, DcMotor rightEncoder, DcMotor centerEncoder, double LeftEncoderCountsPerRev, double LeftEncoderWheelRadius, double LeftEncoderDistanceFromCenterOfRobot, double RightEncoderCountsPerRev, double RightEncoderWheelRadius, double RightEncoderDistanceFromCenterOfRobot, double MidEncoderCountsPerRev, double MidEncoderWheelRadius) {
+    public Robot3Wheel2DTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, double RobotWidth, double RobotHeight, DcMotor leftEncoder, DcMotor rightEncoder, DcMotor centerEncoder, double LeftEncoderCountsPerRev, double LeftEncoderWheelRadius, double LeftEncoderDistanceFromCenterOfRobot, double RightEncoderCountsPerRev, double RightEncoderWheelRadius, double RightEncoderDistanceFromCenterOfRobot, double MidEncoderCountsPerRev, double MidEncoderWheelRadius) {
         super(initialPosition, RobotWidth, RobotHeight);
         __setupRunnable();
         __setupParams(initSoftwareGyro,leftEncoder,rightEncoder,centerEncoder,LeftEncoderCountsPerRev,LeftEncoderWheelRadius,LeftEncoderDistanceFromCenterOfRobot,RightEncoderCountsPerRev,RightEncoderWheelRadius,RightEncoderDistanceFromCenterOfRobot,MidEncoderCountsPerRev,MidEncoderWheelRadius);
     }
 
-    public Robot2DPassive3WheelTracker(Robot2DPassive3WheelTracker oldTracker) {
+    public Robot3Wheel2DTracker(Robot3Wheel2DTracker oldTracker) {
         super(oldTracker);
         __setupRunnable();
         __setupParams(oldTracker.getGyro() != null,oldTracker.getLeftEncoder(),oldTracker.getRightEncoder(),oldTracker.getMidEncoder(),oldTracker.getLeftEncoderCountsPerRev(),oldTracker.getLeftEncoderWheelRadius(),oldTracker.getDistanceOfLeftEncoderFromCenterOfRobot(),oldTracker.getRightEncoderCountsPerRev(),oldTracker.getRightEncoderWheelRadius(),oldTracker.getDistanceOfRightEncoderFromCenterOfRobot(),oldTracker.getMidEncoderCountsPerRev(),oldTracker.getMidEncoderWheelRadius());

@@ -3,11 +3,10 @@ package org.darbots.darbotsftclib.libcore.odometry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
-import org.darbots.darbotsftclib.libcore.sensors.gyros.SynchronizedSoftwareGyro;
-import org.darbots.darbotsftclib.libcore.templates.odometry.RobotPassive2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
-public class Robot2DPassive2WheelTracker extends RobotPassive2DPositionTracker {
+public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
     private class Robot2DPassive2WheelTracker_Runnable implements Runnable{
         private volatile int m_SleepTimeInMillis = 75;
         private volatile boolean m_IsRunning = false;
@@ -75,7 +74,7 @@ public class Robot2DPassive2WheelTracker extends RobotPassive2DPositionTracker {
                     deltaAngMoved = -deltaAngMoved;
                 }
 
-                Robot2DPassive2WheelTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
+                Robot2Wheel2DTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
                         deltaXMoved,
                         deltaYMoved,
                         deltaAngMoved
@@ -105,19 +104,19 @@ public class Robot2DPassive2WheelTracker extends RobotPassive2DPositionTracker {
     private boolean m_TrackingThreadRunned = false;
 
 
-    public Robot2DPassive2WheelTracker(Robot2DPositionIndicator initialPosition, RobotGyro Gyro, DcMotor DriveEncoder, DcMotor StrafeEncoder, double DriveEncoderCountsPerRev, double DriveEncoderWheelRadius, double StrafeEncoderCountsPerRev, double StrafeEncoderWheelRadius) {
+    public Robot2Wheel2DTracker(Robot2DPositionIndicator initialPosition, RobotGyro Gyro, DcMotor DriveEncoder, DcMotor StrafeEncoder, double DriveEncoderCountsPerRev, double DriveEncoderWheelRadius, double StrafeEncoderCountsPerRev, double StrafeEncoderWheelRadius) {
         super(initialPosition);
         __setupRunnable();
         __setupParams(Gyro,DriveEncoder,StrafeEncoder,DriveEncoderCountsPerRev,DriveEncoderWheelRadius,StrafeEncoderCountsPerRev,StrafeEncoderWheelRadius);
     }
 
-    public Robot2DPassive2WheelTracker(Robot2DPositionIndicator initialPosition, double RobotWidth, double RobotHeight,RobotGyro Gyro, DcMotor DriveEncoder, DcMotor StrafeEncoder, double DriveEncoderCountsPerRev, double DriveEncoderWheelRadius, double StrafeEncoderCountsPerRev, double StrafeEncoderWheelRadius){
+    public Robot2Wheel2DTracker(Robot2DPositionIndicator initialPosition, double RobotWidth, double RobotHeight, RobotGyro Gyro, DcMotor DriveEncoder, DcMotor StrafeEncoder, double DriveEncoderCountsPerRev, double DriveEncoderWheelRadius, double StrafeEncoderCountsPerRev, double StrafeEncoderWheelRadius){
         super(initialPosition, RobotWidth, RobotHeight);
         __setupRunnable();
         __setupParams(Gyro,DriveEncoder,StrafeEncoder,DriveEncoderCountsPerRev,DriveEncoderWheelRadius,StrafeEncoderCountsPerRev,StrafeEncoderWheelRadius);
     }
 
-    public Robot2DPassive2WheelTracker(Robot2DPassive2WheelTracker oldTracker) {
+    public Robot2Wheel2DTracker(Robot2Wheel2DTracker oldTracker) {
         super(oldTracker);
         __setupRunnable();
         __setupParams(oldTracker.getGyro(),oldTracker.getDriveEncoder(),oldTracker.getStrafeEncoder(),oldTracker.getDriveEncoderCountsPerRev(),oldTracker.getDriveEncoderWheelRadius(),oldTracker.getStrafeEncoderCountsPerRev(),oldTracker.getStrafeEncoderWheelRadius());

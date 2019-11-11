@@ -81,17 +81,37 @@ public class RobotSynchronized2DPositionTracker extends RobotBasic2DPositionTrac
     }
     @Override
     public void resetRelativeOffset() {
-        Robot2DPositionIndicator offset = super.getRelativeOffset();
-        synchronized (offset){
+        synchronized (this.m_RelativeOffset){
             super.resetRelativeOffset();
         }
     }
 
     @Override
     public Robot2DPositionIndicator getRelativeOffset() {
-        Robot2DPositionIndicator offset = super.getRelativeOffset();
-        synchronized (offset){
-            return new Robot2DPositionIndicator(offset);
+        synchronized (this.m_RelativeOffset){
+            return new Robot2DPositionIndicator(this.m_RelativeOffset);
+        }
+    }
+
+    @Override
+    protected void offsetRelative(Robot2DPositionIndicator offsetRobot) {
+        synchronized (this.m_RelativeOffset) {
+            double originalX = this.m_RelativeOffset.getX(), originalY = this.m_RelativeOffset.getY(), originalRotZ = this.m_RelativeOffset.getRotationZ();
+            double newX = originalX, newY = originalY, newRotZ = originalRotZ;
+
+            if (offsetRobot.getRotationZ() != 0) {
+                double[] originalXY = {originalX, originalY};
+                double[] origin = {0, 0};
+                double[] newXY = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(originalXY, origin, -offsetRobot.getRotationZ());
+                newX = newXY[0];
+                newY = newXY[1];
+                newRotZ += offsetRobot.getRotationZ();
+            }
+            newX += offsetRobot.getX();
+            newY += offsetRobot.getY();
+            this.m_RelativeOffset.setX(newX);
+            this.m_RelativeOffset.setY(newY);
+            this.m_RelativeOffset.setRotationZ(newRotZ);
         }
     }
 }
