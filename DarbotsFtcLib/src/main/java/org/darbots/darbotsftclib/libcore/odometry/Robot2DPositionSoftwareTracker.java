@@ -11,10 +11,6 @@ public class Robot2DPositionSoftwareTracker extends RobotBasic2DPositionTracker 
         super(initialPosition);
     }
 
-    public Robot2DPositionSoftwareTracker(Robot2DPositionIndicator initialPosition, double RobotWidth, double RobotHeight) {
-        super(initialPosition, RobotWidth, RobotHeight);
-    }
-
     public Robot2DPositionSoftwareTracker(Robot2DPositionSoftwareTracker oldTracker) {
         super(oldTracker);
     }

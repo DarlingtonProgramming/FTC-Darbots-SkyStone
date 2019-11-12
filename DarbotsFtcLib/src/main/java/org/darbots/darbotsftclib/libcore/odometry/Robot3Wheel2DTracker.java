@@ -121,12 +121,6 @@ public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
         __setupParams(initSoftwareGyro,leftEncoder,rightEncoder,centerEncoder,LeftEncoderCountsPerRev,LeftEncoderWheelRadius,LeftEncoderDistanceFromCenterOfRobot,RightEncoderCountsPerRev,RightEncoderWheelRadius,RightEncoderDistanceFromCenterOfRobot,MidEncoderCountsPerRev,MidEncoderWheelRadius);
     }
 
-    public Robot3Wheel2DTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, double RobotWidth, double RobotHeight, DcMotor leftEncoder, DcMotor rightEncoder, DcMotor centerEncoder, double LeftEncoderCountsPerRev, double LeftEncoderWheelRadius, double LeftEncoderDistanceFromCenterOfRobot, double RightEncoderCountsPerRev, double RightEncoderWheelRadius, double RightEncoderDistanceFromCenterOfRobot, double MidEncoderCountsPerRev, double MidEncoderWheelRadius) {
-        super(initialPosition, RobotWidth, RobotHeight);
-        __setupRunnable();
-        __setupParams(initSoftwareGyro,leftEncoder,rightEncoder,centerEncoder,LeftEncoderCountsPerRev,LeftEncoderWheelRadius,LeftEncoderDistanceFromCenterOfRobot,RightEncoderCountsPerRev,RightEncoderWheelRadius,RightEncoderDistanceFromCenterOfRobot,MidEncoderCountsPerRev,MidEncoderWheelRadius);
-    }
-
     public Robot3Wheel2DTracker(Robot3Wheel2DTracker oldTracker) {
         super(oldTracker);
         __setupRunnable();

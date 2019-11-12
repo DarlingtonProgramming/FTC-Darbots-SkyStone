@@ -6,8 +6,6 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYP
 public abstract class RobotVolatile2DPositionTracker implements Robot2DPositionTracker {
     private double m_InitialPos_X, m_InitialPos_Y, m_InitialPos_RotZ;
     private volatile double m_CurrentPos_X, m_CurrentPos_Y, m_CurrentPos_RotZ;
-    private volatile double m_RobotWidth;
-    private volatile double m_RobotHeight;
     protected Robot2DPositionIndicator m_RelativeOffset;
 
     public RobotVolatile2DPositionTracker(Robot2DPositionIndicator initialPosition){
@@ -18,16 +16,6 @@ public abstract class RobotVolatile2DPositionTracker implements Robot2DPositionT
         this.m_CurrentPos_Y = m_InitialPos_Y;
         this.m_CurrentPos_RotZ = m_InitialPos_RotZ;
     }
-    public RobotVolatile2DPositionTracker(Robot2DPositionIndicator initialPosition, double RobotWidth, double RobotHeight){
-        this.m_InitialPos_X = initialPosition.getX();
-        this.m_InitialPos_Y = initialPosition.getY();
-        this.m_InitialPos_RotZ = initialPosition.getRotationZ();
-        this.m_CurrentPos_X = m_InitialPos_X;
-        this.m_CurrentPos_Y = m_InitialPos_Y;
-        this.m_CurrentPos_RotZ = m_InitialPos_RotZ;
-        this.m_RobotWidth = RobotWidth;
-        this.m_RobotHeight = RobotHeight;
-    }
     public RobotVolatile2DPositionTracker(Robot2DPositionTracker oldTracker){
         this.m_InitialPos_X = oldTracker.getInitialPos().getX();
         this.m_InitialPos_Y = oldTracker.getInitialPos().getY();
@@ -35,8 +23,6 @@ public abstract class RobotVolatile2DPositionTracker implements Robot2DPositionT
         this.m_CurrentPos_X = oldTracker.getCurrentPosition().getX();
         this.m_CurrentPos_Y = oldTracker.getCurrentPosition().getY();;
         this.m_CurrentPos_RotZ = oldTracker.getCurrentPosition().getRotationZ();
-        this.m_RobotWidth = oldTracker.getRobotWidth();
-        this.m_RobotHeight = oldTracker.getRobotHeight();
     }
 
     public Robot2DPositionIndicator getInitialPos(){
@@ -55,30 +41,7 @@ public abstract class RobotVolatile2DPositionTracker implements Robot2DPositionT
         this.m_CurrentPos_Y = currentPosition.getY();
         this.m_CurrentPos_RotZ = currentPosition.getRotationZ();
     }
-    public double getRobotWidth(){
-        return this.m_RobotWidth;
-    }
-    public void setRobotWidth(double RobotWidth){
-        this.m_RobotWidth = RobotWidth;
-    }
-    public double getRobotHeight(){
-        return this.m_RobotHeight;
-    }
-    public void setRobotHeight(double Height){
-        this.m_RobotHeight = Height;
-    }
-    public Robot2DPositionIndicator getRobotAxisLeftTopExtremePoint(){
-        return new Robot2DPositionIndicator(-m_RobotWidth / 2,m_RobotHeight/2,0);
-    }
-    public Robot2DPositionIndicator getRobotAxisRightTopExtremePoint(){
-        return new Robot2DPositionIndicator(m_RobotWidth/2,m_RobotHeight/2,0);
-    }
-    public Robot2DPositionIndicator getRobotAxisLeftBottomExtremePoint(){
-        return new Robot2DPositionIndicator(-m_RobotWidth/2,-m_RobotHeight/2,0);
-    }
-    public Robot2DPositionIndicator getRobotAxisRightBottomExtremePoint(){
-        return new Robot2DPositionIndicator(m_RobotWidth/2,-m_RobotHeight/2,0);
-    }
+
     public Robot2DPositionIndicator fieldAxisFromRobotAxis(Robot2DPositionIndicator RobotAxisPoint){
         return XYPlaneCalculations.getAbsolutePosition(this.getCurrentPosition(),RobotAxisPoint);
     }

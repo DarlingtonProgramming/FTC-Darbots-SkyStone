@@ -110,12 +110,6 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
         __setupParams(Gyro,DriveEncoder,StrafeEncoder,DriveEncoderCountsPerRev,DriveEncoderWheelRadius,StrafeEncoderCountsPerRev,StrafeEncoderWheelRadius);
     }
 
-    public Robot2Wheel2DTracker(Robot2DPositionIndicator initialPosition, double RobotWidth, double RobotHeight, RobotGyro Gyro, DcMotor DriveEncoder, DcMotor StrafeEncoder, double DriveEncoderCountsPerRev, double DriveEncoderWheelRadius, double StrafeEncoderCountsPerRev, double StrafeEncoderWheelRadius){
-        super(initialPosition, RobotWidth, RobotHeight);
-        __setupRunnable();
-        __setupParams(Gyro,DriveEncoder,StrafeEncoder,DriveEncoderCountsPerRev,DriveEncoderWheelRadius,StrafeEncoderCountsPerRev,StrafeEncoderWheelRadius);
-    }
-
     public Robot2Wheel2DTracker(Robot2Wheel2DTracker oldTracker) {
         super(oldTracker);
         __setupRunnable();
