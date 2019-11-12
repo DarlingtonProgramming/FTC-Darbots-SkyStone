@@ -6,16 +6,21 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYP
 public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTracker {
     private Robot2DPositionIndicator m_InitialPos;
     private Robot2DPositionIndicator m_CurrentPos;
-    protected Robot2DPositionIndicator m_RelativeOffset;
+    private Robot2DPositionIndicator m_RelativeOffset;
+    private Robot2DPositionIndicator m_VelocityVector;
 
     public RobotBasic2DPositionTracker(Robot2DPositionIndicator initialPosition){
         this.m_InitialPos = new Robot2DPositionIndicator(initialPosition);
         this.m_CurrentPos = new Robot2DPositionIndicator(initialPosition);
+        this.m_RelativeOffset = new Robot2DPositionIndicator(0,0,0);
+        this.m_VelocityVector = new Robot2DPositionIndicator(0,0,0);
     }
 
     public RobotBasic2DPositionTracker(Robot2DPositionTracker oldTracker){
         this.m_InitialPos = new Robot2DPositionIndicator(oldTracker.getInitialPos());
         this.m_CurrentPos = new Robot2DPositionIndicator(oldTracker.getCurrentPosition());
+        this.m_RelativeOffset = new Robot2DPositionIndicator(oldTracker.getRelativeOffset());
+        this.m_VelocityVector = new Robot2DPositionIndicator(oldTracker.getCurrentVelocityVector());
     }
 
     @Override
@@ -88,5 +93,16 @@ public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTrac
         this.m_RelativeOffset.setX(newX);
         this.m_RelativeOffset.setY(newY);
         this.m_RelativeOffset.setRotationZ(newRotZ);
+    }
+
+    @Override
+    public Robot2DPositionIndicator getCurrentVelocityVector(){
+        return this.m_VelocityVector;
+    }
+
+    public void setCurrentVelocityVector(Robot2DPositionIndicator velocityVector){
+        this.m_VelocityVector.setX(velocityVector.getX());
+        this.m_VelocityVector.setY(velocityVector.getY());
+        this.m_VelocityVector.setRotationZ(velocityVector.getRotationZ());
     }
 }

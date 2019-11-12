@@ -3,6 +3,8 @@ package org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation;
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 
 public class XYPlaneCalculations {
+    public static final double CONST_180_OVER_PI = 180.0 / Math.PI;
+    public static final double CONST_PI_OVER_180 = Math.PI / 180;
     public static double[] rotatePointAroundFixedPoint_Deg(double[] point, double[] fixedPoint, double counterClockwiseAng) {
         double relativeY = point[1] - fixedPoint[1], relativeX = point[0] - fixedPoint[0];
         double deltaAng = Math.toRadians(counterClockwiseAng);

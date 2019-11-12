@@ -67,4 +67,9 @@ public class Robot2DPositionSoftwareTracker extends RobotBasic2DPositionTracker 
             this.offsetRelative(deltaVal);
         }
     }
+
+    @Override
+    public void stop(){
+        return;
+    }
 }

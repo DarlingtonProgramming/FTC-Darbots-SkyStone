@@ -5,33 +5,27 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.sensors.gyros.SynchronizedSoftwareGyro;
+import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
+import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
 
-public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
-    private class Robot2DPassive3WheelTracker_Runnable implements Runnable{
+public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPositionTracker {
+    private class MecanumChassis2DPositionTracker_Runnable implements Runnable{
         private volatile int m_SleepTimeInMillis = 75;
         private volatile boolean m_IsRunning = false;
 
         private SynchronizedSoftwareGyro m_Gyro = null;
 
-        private DcMotor m_LeftEncoder;
-        private DcMotor m_RightEncoder;
-        private DcMotor m_MidEncoder;
+        private RobotMotion LTMotion, RTMotion, LBMotion, RBMotion;
 
-        private volatile double m_LeftEncoderRotationCircumferenceInCM = 0;
-        private volatile double m_RightEncoderRotationCircumferenceInCM = 0;
+        private int m_LastLTEncoderCount = 0;
+        private int m_LastRTEncoderCount = 0;
+        private int m_LastLBEncoderCount = 0;
+        private int m_LastRBEncoderCount = 0;
 
-        private volatile boolean m_LeftEncoderReversed = false;
-        private volatile boolean m_RightEncoderReversed = false;
-        private volatile boolean m_MidEncoderReversed = false;
-
-        private volatile double m_LeftEncoderCountsPerCM = 0;
-        private volatile double m_RightEncoderCountsPerCM = 0;
-        private volatile double m_MidEncoderCountsPerCM = 0;
-
-        private int m_LastLeftEncoderCount = 0;
-        private int m_LastRightEncoderCount = 0;
-        private int m_LastMidEncoderCount = 0;
+        private double m_CONST_180_OVER_PIR = 0;
+        private double m_CONST_PIR_OVER_4T180 = 0;
+        private double m_CONST_R_OVER_4TKl = 0;
 
         private ElapsedTime m_Time = null;
 
@@ -45,42 +39,40 @@ public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
 
             m_Time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
-            m_LeftEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            m_RightEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            m_MidEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            RobotMotor LTMotor = LTMotion.getMotorController().getMotor(),
+                    RTMotor = RTMotion.getMotorController().getMotor(),
+                    LBMotor = LBMotion.getMotorController().getMotor(),
+                    RBMotor = RBMotion.getMotorController().getMotor();
 
-            m_LastLeftEncoderCount = m_LeftEncoder.getCurrentPosition();
-            m_LastRightEncoderCount = m_RightEncoder.getCurrentPosition();
-            m_LastMidEncoderCount = m_MidEncoder.getCurrentPosition();
+
+            m_LastLTEncoderCount = LTMotor.getCurrentCount();
+            m_LastRTEncoderCount = RTMotor.getCurrentCount();
+            m_LastLBEncoderCount = LBMotor.getCurrentCount();
+            m_LastRBEncoderCount = RBMotor.getCurrentCount();
 
             m_Time.reset();
 
             while(m_IsRunning){
                 try{
-                   Thread.sleep(m_SleepTimeInMillis);
+                    Thread.sleep(m_SleepTimeInMillis);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
 
-                int newMidCount = m_MidEncoder.getCurrentPosition();
-                int newLeftCount = m_LeftEncoder.getCurrentPosition();
-                int newRightCount = m_RightEncoder.getCurrentPosition();
+                int newLTCount = LTMotor.getCurrentCount();
+                int newRTCount = RTMotor.getCurrentCount();
+                int newLBCount = LBMotor.getCurrentCount();
+                int newRBCount = RBMotor.getCurrentCount();
 
                 double secondsDriven = m_Time.seconds();
 
-                int deltaMidCount = newMidCount - m_LastMidEncoderCount;
-                int deltaLeftCount = newLeftCount - m_LastLeftEncoderCount;
-                int deltaRightCount = newRightCount - m_LastRightEncoderCount;
+                int deltaLTCount = newLTCount - m_LastLTEncoderCount;
+                int deltaRTCount = newRTCount - m_LastRTEncoderCount;
+                int deltaLBCount = newLBCount - m_LastLBEncoderCount;
+                int deltaRBCount = newRBCount - m_LastRBEncoderCount;
 
-                if(m_MidEncoderReversed)
-                    deltaMidCount = -deltaMidCount;
-                if(m_LeftEncoderReversed)
-                    deltaLeftCount = -deltaLeftCount;
-                if(m_RightEncoderReversed)
-                    deltaRightCount = -deltaRightCount;
-
-                double deltaMidCM = deltaMidCount / this.m_MidEncoderCountsPerCM;
-                double deltaLeftCM = deltaLeftCount / this.m_LeftEncoderCountsPerCM;
+                double deltaLTCM = deltaLTCount / this.;
+                double deltaRTCM = deltaLeftCount / this.m_LeftEncoderCountsPerCM;
                 double deltaRightCM = deltaRightCount / this.m_RightEncoderCountsPerCM;
 
                 double deltaXMoved = (-deltaLeftCM + deltaRightCM) / 2;
@@ -126,7 +118,7 @@ public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
     private double m_RightEncoderWheelCircumference = 0;
     private double m_MidEncoderWheelCircumference = 0;
 
-    private Robot2DPassive3WheelTracker_Runnable m_RunnableTracking = null;
+    private Robot3Wheel2DTracker.Robot2DPassive3WheelTracker_Runnable m_RunnableTracking = null;
     private Thread m_TrackingThread = null;
     private boolean m_TrackingThreadRunned = false;
 
@@ -144,7 +136,7 @@ public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
     }
 
     private void __setupRunnable(){
-        this.m_RunnableTracking = new Robot2DPassive3WheelTracker_Runnable();
+        this.m_RunnableTracking = new Robot3Wheel2DTracker.Robot2DPassive3WheelTracker_Runnable();
         this.m_TrackingThread = new Thread(this.m_RunnableTracking);
         this.m_TrackingThreadRunned = false;
     }
@@ -174,7 +166,7 @@ public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
         }
     }
 
-        public float getSleepTimeInSec(){
+    public float getSleepTimeInSec(){
         return this.m_RunnableTracking.m_SleepTimeInMillis / 1000.0f;
     }
 
@@ -182,15 +174,12 @@ public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
         this.m_RunnableTracking.m_SleepTimeInMillis = Math.round(Math.abs(second) / 1000.0f);
     }
 
-    @Override
     public void stop(){
         this.m_RunnableTracking.stop();
     }
 
     public void start(){
-        if(this.m_RunnableTracking.isRunning()) {
-            return;
-        }
+
         if(!m_TrackingThreadRunned) {
             this.m_TrackingThread.start();
             this.m_TrackingThreadRunned = true;

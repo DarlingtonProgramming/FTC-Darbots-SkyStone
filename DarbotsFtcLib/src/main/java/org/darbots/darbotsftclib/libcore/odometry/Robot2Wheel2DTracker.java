@@ -1,6 +1,7 @@
 package org.darbots.darbotsftclib.libcore.odometry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
@@ -26,6 +27,8 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
         private int m_LastStrafeEncoderCount = 0;
         private float m_LastGyroReading = 0.0f;
 
+        private ElapsedTime m_Time = null;
+
         public boolean isRunning(){
             return this.m_IsRunning;
         }
@@ -34,13 +37,18 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
         public void run() {
             m_IsRunning = true;
 
+            m_Time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+
             m_DriveEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             m_StrafeEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             m_LastDriveEncoderCount = m_DriveEncoder.getCurrentPosition();
             m_LastStrafeEncoderCount = m_StrafeEncoder.getCurrentPosition();
+
             this.m_Gyro.updateStatus();
             m_LastGyroReading = this.m_Gyro.getHeading();
+
+            m_Time.reset();
 
             while(m_IsRunning){
                 try{
@@ -55,6 +63,8 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
                 int newLeftCount = m_DriveEncoder.getCurrentPosition();
                 float newGyroReading = m_Gyro.getHeading();
 
+                double secondsDriven = m_Time.seconds();
+
                 int deltaMidCount = newMidCount - m_LastStrafeEncoderCount;
                 int deltaLeftCount = newLeftCount - m_LastDriveEncoderCount;
 
@@ -68,7 +78,13 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
 
                 double deltaXMoved = deltaDriveCM;
                 double deltaYMoved = deltaStrafeCM;
-                double deltaAngMoved = m_Gyro.getHeading() - m_LastGyroReading;
+                double deltaAngMoved = newGyroReading - m_LastGyroReading;
+
+                Robot2DPositionIndicator currentVelocityVector = new Robot2DPositionIndicator(
+                        deltaXMoved / secondsDriven,
+                        deltaYMoved / secondsDriven,
+                        deltaAngMoved / secondsDriven
+                );
 
                 if(m_Gyro.getHeadingRotationPositiveOrientation() == RobotGyro.HeadingRotationPositiveOrientation.Clockwise){
                     deltaAngMoved = -deltaAngMoved;
@@ -80,10 +96,13 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
                         deltaAngMoved
                 ));
 
+                Robot2Wheel2DTracker.this.setCurrentVelocityVector(currentVelocityVector);
+
 
                 m_LastStrafeEncoderCount = newMidCount;
                 m_LastDriveEncoderCount = newLeftCount;
 
+                this.m_Time.reset();
             }
             m_IsRunning = false;
         }
@@ -138,7 +157,7 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
 
     }
 
-        public float getSleepTimeInSec(){
+    public float getSleepTimeInSec(){
         return this.m_RunnableTracking.m_SleepTimeInMillis / 1000.0f;
     }
 
@@ -146,11 +165,15 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
         this.m_RunnableTracking.m_SleepTimeInMillis = Math.round(Math.abs(second) / 1000.0f);
     }
 
+    @Override
     public void stop(){
         this.m_RunnableTracking.stop();
     }
 
     public void start(){
+        if(this.m_RunnableTracking.isRunning()) {
+            return;
+        }
         if(!m_TrackingThreadRunned) {
             this.m_TrackingThread.start();
             this.m_TrackingThreadRunned = true;

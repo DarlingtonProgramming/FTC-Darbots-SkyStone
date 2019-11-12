@@ -6,7 +6,11 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYP
 public interface Robot2DPositionTracker {
 
     Robot2DPositionIndicator getInitialPos();
-    public Robot2DPositionIndicator getCurrentPosition();
+    Robot2DPositionIndicator getCurrentPosition();
+
+    Robot2DPositionIndicator getCurrentVelocityVector();
+
+    void stop();
 
     Robot2DPositionIndicator fieldAxisFromRobotAxis(Robot2DPositionIndicator RobotAxisPoint);
     Robot2DPositionIndicator robotAxisFromFieldAxis(Robot2DPositionIndicator FieldAxisPoint);
