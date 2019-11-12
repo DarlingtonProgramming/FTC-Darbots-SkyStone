@@ -41,11 +41,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private double m_LinearYMotionDistanceFactor;
     private double m_LinearXMotionDistanceFactor;
     private double m_RotationalMotionDistanceFactor;
-    private boolean m_FixedDistanceGyroGuidedDrive = false;
     private float m_GyroGuidedDrivePublicStartingAngle = -360;
-    private boolean m_SteadySpeedUp = true;
-    private double m_SteadySpeedUpThreshold = 0.25;
-    private double m_SteadySpeedUpZoneRatio = 0.35;
     public RobotMotionSystem(Robot2DPositionTracker PositionTracker){
         this.m_TaskLists = new ArrayList();
         this.m_PosTracker = PositionTracker;
@@ -58,11 +54,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_LinearYMotionDistanceFactor = MotionSystem.m_LinearYMotionDistanceFactor;
         this.m_LinearXMotionDistanceFactor = MotionSystem.m_LinearXMotionDistanceFactor;
         this.m_RotationalMotionDistanceFactor = MotionSystem.m_RotationalMotionDistanceFactor;
-        this.m_FixedDistanceGyroGuidedDrive = MotionSystem.m_FixedDistanceGyroGuidedDrive;
         this.m_GyroGuidedDrivePublicStartingAngle = MotionSystem.m_GyroGuidedDrivePublicStartingAngle;
-        this.m_SteadySpeedUp = MotionSystem.m_SteadySpeedUp;
-        this.m_SteadySpeedUpThreshold = MotionSystem.m_SteadySpeedUpThreshold;
-        this.m_SteadySpeedUpZoneRatio = MotionSystem.m_SteadySpeedUpZoneRatio;
     }
 
     public double getLinearYMotionDistanceFactor(){
@@ -188,18 +180,6 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         }
     }
 
-
-    public boolean isGyroGuidedDriveEnabled(){
-        return this.m_FixedDistanceGyroGuidedDrive;
-    }
-
-    public void setGyroGuidedDriveEnabled(boolean Enabled){
-        this.m_FixedDistanceGyroGuidedDrive = Enabled;
-        if(Enabled && GlobalUtil.getGyro() != null && this.m_GyroGuidedDrivePublicStartingAngle == -360){
-            updateGyroGuidedPublicStartingAngle();
-        }
-    }
-
     public void updateGyroGuidedPublicStartingAngle(){
         if(GlobalUtil.getGyro() != null){
             GlobalUtil.getGyro().updateStatus();
@@ -216,30 +196,6 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
 
     public void setGyroGuidedDrivePublicStartingAngle(float Ang){
         this.m_GyroGuidedDrivePublicStartingAngle = XYPlaneCalculations.normalizeDeg(Ang);
-    }
-
-    public boolean isSteadySpeedUp(){
-        return this.m_SteadySpeedUp;
-    }
-
-    public void setSteadySpeedUp(boolean Enabled){
-        this.m_SteadySpeedUp = Enabled;
-    }
-
-    public double getSteadySpeedUpThreshold(){
-        return this.m_SteadySpeedUpThreshold;
-    }
-
-    public void setSteadySpeedUpThreshold(double Threshold){
-        this.m_SteadySpeedUpThreshold = Math.abs(Threshold);
-    }
-
-    public double getSteadySpeedUpZoneRatio(){
-        return this.m_SteadySpeedUpZoneRatio;
-    }
-
-    public void setSteadySpeedUpZoneRatio(double Ratio){
-        this.m_SteadySpeedUpZoneRatio = Math.abs(Ratio);
     }
 
     public abstract RobotMotionSystemFixedXDistanceTask getFixedXDistanceTask(double XDistance, double Speed);
