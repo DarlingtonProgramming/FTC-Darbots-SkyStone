@@ -4,21 +4,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.chassiscontrollers.OmniDrive;
-import org.darbots.darbotsftclib.libcore.common_robotcores.OmniChassisRobotCore;
-import org.darbots.darbotsftclib.libcore.sensors.gyros.BNO055Gyro;
-import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
-import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorController;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
 import org.darbots.darbotsftclib.libcore.sensors.servos.TimeControlledServo;
 import org.darbots.darbotsftclib.libcore.sensors.servos.motor_powered_servos.RobotServoUsingMotor;
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
-import org.darbots.darbotsftclib.libcore.templates.RobotCore;
-import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
-import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
 public class Robot4100Generation1_LindaCore extends OmniChassisRobotCore {
     public enum IntakeSystemStatus{

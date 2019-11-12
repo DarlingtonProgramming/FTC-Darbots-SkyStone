@@ -6,25 +6,16 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYP
 public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTracker {
     private Robot2DPositionIndicator m_InitialPos;
     private Robot2DPositionIndicator m_CurrentPos;
-    private double m_RobotWidth;
-    private double m_RobotHeight;
     protected Robot2DPositionIndicator m_RelativeOffset;
 
     public RobotBasic2DPositionTracker(Robot2DPositionIndicator initialPosition){
         this.m_InitialPos = new Robot2DPositionIndicator(initialPosition);
         this.m_CurrentPos = new Robot2DPositionIndicator(initialPosition);
     }
-    public RobotBasic2DPositionTracker(Robot2DPositionIndicator initialPosition, double RobotWidth, double RobotHeight){
-        this.m_InitialPos = new Robot2DPositionIndicator(initialPosition);
-        this.m_CurrentPos = new Robot2DPositionIndicator(initialPosition);
-        this.m_RobotWidth = RobotWidth;
-        this.m_RobotHeight = RobotHeight;
-    }
+
     public RobotBasic2DPositionTracker(Robot2DPositionTracker oldTracker){
         this.m_InitialPos = new Robot2DPositionIndicator(oldTracker.getInitialPos());
         this.m_CurrentPos = new Robot2DPositionIndicator(oldTracker.getCurrentPosition());
-        this.m_RobotWidth = oldTracker.getRobotWidth();
-        this.m_RobotHeight = oldTracker.getRobotHeight();
     }
 
     @Override
@@ -48,38 +39,7 @@ public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTrac
         this.m_CurrentPos.setY(currentPosition.getY());
         this.m_CurrentPos.setRotationZ(currentPosition.getRotationZ());
     }
-    @Override
-    public double getRobotWidth(){
-        return this.m_RobotWidth;
-    }
-    @Override
-    public void setRobotWidth(double RobotWidth){
-        this.m_RobotWidth = RobotWidth;
-    }
-    @Override
-    public double getRobotHeight(){
-        return this.m_RobotHeight;
-    }
-    @Override
-    public void setRobotHeight(double Height){
-        this.m_RobotHeight = Height;
-    }
-    @Override
-    public Robot2DPositionIndicator getRobotAxisLeftTopExtremePoint(){
-        return new Robot2DPositionIndicator(-m_RobotWidth / 2,m_RobotHeight/2,0);
-    }
-    @Override
-    public Robot2DPositionIndicator getRobotAxisRightTopExtremePoint(){
-        return new Robot2DPositionIndicator(m_RobotWidth/2,m_RobotHeight/2,0);
-    }
-    @Override
-    public Robot2DPositionIndicator getRobotAxisLeftBottomExtremePoint(){
-        return new Robot2DPositionIndicator(-m_RobotWidth/2,-m_RobotHeight/2,0);
-    }
-    @Override
-    public Robot2DPositionIndicator getRobotAxisRightBottomExtremePoint(){
-        return new Robot2DPositionIndicator(m_RobotWidth/2,-m_RobotHeight/2,0);
-    }
+
     @Override
     public Robot2DPositionIndicator fieldAxisFromRobotAxis(Robot2DPositionIndicator RobotAxisPoint){
         return XYPlaneCalculations.getAbsolutePosition(this.getCurrentPosition(),RobotAxisPoint);

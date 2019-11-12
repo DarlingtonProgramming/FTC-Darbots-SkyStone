@@ -8,10 +8,6 @@ public class RobotSynchronized2DPositionTracker extends RobotBasic2DPositionTrac
         super(initialPosition);
     }
 
-    public RobotSynchronized2DPositionTracker(Robot2DPositionIndicator initialPosition, double RobotWidth, double RobotHeight) {
-        super(initialPosition, RobotWidth, RobotHeight);
-    }
-
     public RobotSynchronized2DPositionTracker(Robot2DPositionTracker oldTracker) {
         super(oldTracker);
     }
@@ -30,52 +26,23 @@ public class RobotSynchronized2DPositionTracker extends RobotBasic2DPositionTrac
         }
     }
     public Robot2DPositionIndicator getCurrentPosition(){
-        synchronized (super.getCurrentPosition()) {
-            return new Robot2DPositionIndicator(super.getCurrentPosition());
+        Robot2DPositionIndicator read2DPosition = super.getCurrentPosition();
+        synchronized (read2DPosition) {
+            return new Robot2DPositionIndicator(read2DPosition);
         }
     }
     public void setCurrentPosition(Robot2DPositionIndicator currentPosition){
-        synchronized (super.getCurrentPosition()) {
-            Robot2DPositionIndicator read2DPosition = super.getCurrentPosition();
+        Robot2DPositionIndicator read2DPosition = super.getCurrentPosition();
+        synchronized (read2DPosition) {
             read2DPosition.setX(currentPosition.getX());
             read2DPosition.setY(currentPosition.getY());
             read2DPosition.setRotationZ(currentPosition.getRotationZ());
         }
     }
-    public double getRobotWidth(){
-        synchronized (this) {
-            return super.getRobotWidth();
-        }
-    }
-    public void setRobotWidth(double RobotWidth){
-        synchronized (this) {
-            super.setRobotWidth(RobotWidth);
-        }
-    }
-    public double getRobotHeight(){
-        synchronized (this) {
-            return super.getRobotHeight();
-        }
-    }
-    public void setRobotHeight(double Height){
-        synchronized (this) {
-            super.setRobotHeight(Height);
-        }
-    }
-    public Robot2DPositionIndicator getRobotAxisLeftTopExtremePoint(){
-        return new Robot2DPositionIndicator(-this.getRobotWidth() / 2,this.getRobotHeight()/2,0);
-    }
-    public Robot2DPositionIndicator getRobotAxisRightTopExtremePoint(){
-        return new Robot2DPositionIndicator(this.getRobotWidth()/2,this.getRobotHeight()/2,0);
-    }
-    public Robot2DPositionIndicator getRobotAxisLeftBottomExtremePoint(){
-        return new Robot2DPositionIndicator(-this.getRobotWidth()/2,-this.getRobotHeight()/2,0);
-    }
-    public Robot2DPositionIndicator getRobotAxisRightBottomExtremePoint(){
-        return new Robot2DPositionIndicator(this.getRobotWidth()/2,-this.getRobotHeight()/2,0);
-    }
+
     public void offsetPosition(Robot2DPositionIndicator offsetPosition) {
-        synchronized (super.getCurrentPosition()) {
+        Robot2DPositionIndicator read2DPosition = super.getCurrentPosition();
+        synchronized (read2DPosition) {
             super.offsetPosition(offsetPosition);
         }
     }
