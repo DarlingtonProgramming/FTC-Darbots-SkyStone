@@ -24,7 +24,7 @@ public class Robot4100Generation1_Settings {
     //------------End of Autonomous Settings------------
 
     //------------TeleOp Settings------------
-    public static final double TELEOP_MAXSPEED = 0.6;
+    public static final double TELEOP_MAXSPEED = 1.0;
     public static final double TELEOP_LINEARSLIDESPEED = 0.8;
     public static final double TELEOP_GRABBERROT_IN_SPEED = 1.0;
     public static final double TELEOP_GRABBERROT_OUT_SPEED = 0.5;
