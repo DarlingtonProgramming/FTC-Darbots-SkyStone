@@ -10,6 +10,13 @@ import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
 import android.os.Process;
 
+/**
+ * This abstract class is used by the programmers to define components on iterations of robots
+ * The RobotCore class includes a Logger, a Gyro (can be an actual IMU on extension hub or PositionTracker-Powered Gyros), and a MotionSystem at least.
+ * Every Component of the Robot's updateStatus() method and isBusy() method should be nested inside RobotCore's UpdateStatus() and isBusy() class.
+ * @author David Cao
+ * @see org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice
+ */
 public abstract class RobotCore implements RobotNonBlockingDevice {
     private RobotLogger m_Logger;
     private RobotGyro m_Gyro;

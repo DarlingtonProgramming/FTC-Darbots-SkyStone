@@ -10,12 +10,12 @@ public class HS755HB extends ServoType {
     }
 
     @Override
-    public int getMaxDeg() {
+    public double getMaxDeg() {
         return 202;
     }
 
     @Override
-    public int getMinDeg() {
+    public double getMinDeg() {
         return 0;
     }
 

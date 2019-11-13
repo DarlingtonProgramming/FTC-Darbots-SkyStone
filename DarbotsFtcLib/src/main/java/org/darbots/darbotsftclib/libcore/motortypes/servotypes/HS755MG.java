@@ -10,13 +10,13 @@ public class HS755MG extends ServoType {
     }
 
     @Override
-    public int getMaxDeg() {
-        return 200;
+    public double getMaxDeg() {
+        return 200.5;
         //Actually 200.5
     }
 
     @Override
-    public int getMinDeg() {
+    public double getMinDeg() {
         return 0;
     }
 

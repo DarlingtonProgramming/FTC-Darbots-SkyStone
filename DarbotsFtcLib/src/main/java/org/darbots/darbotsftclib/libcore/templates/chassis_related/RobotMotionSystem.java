@@ -198,6 +198,12 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_GyroGuidedDrivePublicStartingAngle = XYPlaneCalculations.normalizeDeg(Ang);
     }
 
+    public void stop(){
+        if(this.getPositionTracker() != null){
+            this.getPositionTracker().stop();
+        }
+    }
+
     public abstract RobotMotionSystemFixedXDistanceTask getFixedXDistanceTask(double XDistance, double Speed);
     public abstract RobotMotionSystemFixedYDistanceTask getFixedYDistanceTask(double YDistance, double Speed);
     public abstract RobotMotionSystemFixedTurnTask getFixedTurnTask(double Deg, double Speed);

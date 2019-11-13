@@ -10,13 +10,12 @@ public class HS765HB extends ServoType {
     }
 
     @Override
-    public int getMaxDeg() {
-        return 200;
-        //Actually 200.5
+    public double getMaxDeg() {
+        return 200.5;
     }
 
     @Override
-    public int getMinDeg() {
+    public double getMinDeg() {
         return 0;
     }
 

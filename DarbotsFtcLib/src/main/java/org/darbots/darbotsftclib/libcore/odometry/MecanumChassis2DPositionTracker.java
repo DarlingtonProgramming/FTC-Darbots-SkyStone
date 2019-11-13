@@ -4,8 +4,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.sensors.gyros.SynchronizedSoftwareGyro;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
+import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
 
@@ -22,6 +24,11 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         private int m_LastRTEncoderCount = 0;
         private int m_LastLBEncoderCount = 0;
         private int m_LastRBEncoderCount = 0;
+
+        private double m_CONST_LTCountsPerDeg = 0;
+        private double m_CONST_RTCountsPerDeg = 0;
+        private double m_CONST_LBCountsPerDeg = 0;
+        private double m_CONST_RBCountsPerDeg = 0;
 
         private double m_CONST_180_OVER_PIR = 0;
         private double m_CONST_PIR_OVER_4T180 = 0;
@@ -71,13 +78,27 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
                 int deltaLBCount = newLBCount - m_LastLBEncoderCount;
                 int deltaRBCount = newRBCount - m_LastRBEncoderCount;
 
-                double deltaLTCM = deltaLTCount / this.;
-                double deltaRTCM = deltaLeftCount / this.m_LeftEncoderCountsPerCM;
-                double deltaRightCM = deltaRightCount / this.m_RightEncoderCountsPerCM;
+                double deltaLTDeg = deltaLTCount / this.m_CONST_LTCountsPerDeg;
+                double deltaRTDeg = deltaRTCount / this.m_CONST_RTCountsPerDeg;
+                double deltaLBDeg = deltaLBCount / this.m_CONST_LBCountsPerDeg;
+                double deltaRBDeg = deltaRBCount / this.m_CONST_RBCountsPerDeg;
 
-                double deltaXMoved = (-deltaLeftCM + deltaRightCM) / 2;
-                double deltaYMoved = deltaMidCM;
-                double deltaAngMoved = (deltaLeftCM / this.m_LeftEncoderRotationCircumferenceInCM + deltaRightCM / this.m_LeftEncoderRotationCircumferenceInCM) / 2.0 * 360.0;
+                double deltaLTSpeedInDegPerSec = deltaLTDeg / secondsDriven;
+                double deltaRTSpeedInDegPerSec = deltaRTDeg / secondsDriven;
+                double deltaLBSpeedInDegPerSec = deltaLBDeg / secondsDriven;
+                double deltaRBSpeedInDegPerSec = deltaRBDeg / secondsDriven;
+
+                /*
+                Here we are not calculating the Speed of the Robot by using our static method
+                This is because the calculation of some constants takes up a lot of time, and we don't want to waste our time on repeatedly calculating those constants.
+                Those constants are calculated when we are initializing the MecanumChassis2DPositionTrackerClass, and they help us to reduce double multiplications in speed calculation.
+                 */
+
+
+
+                double deltaXMoved = 0;
+                double deltaYMoved = 0;
+                double deltaAngMoved = 0;
 
                 Robot2DPositionIndicator currentVelocityVector = new Robot2DPositionIndicator(
                         deltaXMoved / secondsDriven,
@@ -85,21 +106,22 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
                         deltaAngMoved / secondsDriven
                 );
 
-                Robot3Wheel2DTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
+                MecanumChassis2DPositionTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
                         deltaXMoved,
                         deltaYMoved,
                         deltaAngMoved
                 ));
 
-                Robot3Wheel2DTracker.this.setCurrentVelocityVector(currentVelocityVector);
+                MecanumChassis2DPositionTracker.this.setCurrentVelocityVector(currentVelocityVector);
 
                 if(this.m_Gyro != null){
                     this.m_Gyro.offsetHeading((float) deltaAngMoved);
                 }
 
-                m_LastMidEncoderCount = newMidCount;
-                m_LastRightEncoderCount = newRightCount;
-                m_LastLeftEncoderCount = newLeftCount;
+                m_LastLTEncoderCount = newLTCount;
+                m_LastRTEncoderCount = newRTCount;
+                m_LastLBEncoderCount = newLBCount;
+                m_LastRBEncoderCount = newRBCount;
 
             }
             m_IsRunning = false;
@@ -110,56 +132,43 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         }
     }
 
-    private double m_LeftEncoderCountsPerRev = 0;
-    private double m_RightEncoderCountsPerRev = 0;
-    private double m_MidEncoderCountsPerRev = 0;
-
-    private double m_LeftEncoderWheelCircumference = 0;
-    private double m_RightEncoderWheelCircumference = 0;
-    private double m_MidEncoderWheelCircumference = 0;
-
-    private Robot3Wheel2DTracker.Robot2DPassive3WheelTracker_Runnable m_RunnableTracking = null;
+    private MecanumChassis2DPositionTracker_Runnable m_RunnableTracking = null;
     private Thread m_TrackingThread = null;
     private boolean m_TrackingThreadRunned = false;
 
 
-    public Robot3Wheel2DTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, DcMotor leftEncoder, DcMotor rightEncoder, DcMotor centerEncoder, double LeftEncoderCountsPerRev, double LeftEncoderWheelRadius, double LeftEncoderDistanceFromCenterOfRobot, double RightEncoderCountsPerRev, double RightEncoderWheelRadius, double RightEncoderDistanceFromCenterOfRobot, double MidEncoderCountsPerRev, double MidEncoderWheelRadius) {
+    public MecanumChassis2DPositionTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, RobotMotion LTMotion, RobotMotion RTMotion, RobotMotion LBMotion, RobotMotion RBMotion){
         super(initialPosition);
         __setupRunnable();
-        __setupParams(initSoftwareGyro,leftEncoder,rightEncoder,centerEncoder,LeftEncoderCountsPerRev,LeftEncoderWheelRadius,LeftEncoderDistanceFromCenterOfRobot,RightEncoderCountsPerRev,RightEncoderWheelRadius,RightEncoderDistanceFromCenterOfRobot,MidEncoderCountsPerRev,MidEncoderWheelRadius);
+        __setupParams(initSoftwareGyro, LTMotion, RTMotion, LBMotion, RBMotion);
     }
 
-    public Robot3Wheel2DTracker(Robot3Wheel2DTracker oldTracker) {
+    public MecanumChassis2DPositionTracker(MecanumChassis2DPositionTracker oldTracker) {
         super(oldTracker);
         __setupRunnable();
-        __setupParams(oldTracker.getGyro() != null,oldTracker.getLeftEncoder(),oldTracker.getRightEncoder(),oldTracker.getMidEncoder(),oldTracker.getLeftEncoderCountsPerRev(),oldTracker.getLeftEncoderWheelRadius(),oldTracker.getDistanceOfLeftEncoderFromCenterOfRobot(),oldTracker.getRightEncoderCountsPerRev(),oldTracker.getRightEncoderWheelRadius(),oldTracker.getDistanceOfRightEncoderFromCenterOfRobot(),oldTracker.getMidEncoderCountsPerRev(),oldTracker.getMidEncoderWheelRadius());
+        __setupParams(oldTracker.getGyro() != null, oldTracker.getLTMotion(), oldTracker.getRTMotion(), oldTracker.getLBMotion(), oldTracker.getRBMotion());
     }
 
     private void __setupRunnable(){
-        this.m_RunnableTracking = new Robot3Wheel2DTracker.Robot2DPassive3WheelTracker_Runnable();
+        this.m_RunnableTracking = new MecanumChassis2DPositionTracker_Runnable();
         this.m_TrackingThread = new Thread(this.m_RunnableTracking);
         this.m_TrackingThreadRunned = false;
     }
 
-    private void __setupParams(boolean initSoftwareGyro, DcMotor leftEncoder, DcMotor rightEncoder, DcMotor centerEncoder, double LeftEncoderCountsPerRev, double LeftEncoderWheelRadius, double LeftEncoderDistanceFromCenterOfRobot, double RightEncoderCountsPerRev, double RightEncoderWheelRadius, double RightEncoderDistanceFromCenterOfRobot, double MidEncoderCountsPerRev, double MidEncoderWheelRadius) {
-        this.m_RunnableTracking.m_LeftEncoder = leftEncoder;
-        this.m_RunnableTracking.m_RightEncoder = rightEncoder;
-        this.m_RunnableTracking.m_MidEncoder = centerEncoder;
+    private void __setupParams(boolean initSoftwareGyro, RobotMotion LTMotion, RobotMotion RTMotion, RobotMotion LBMotion, RobotMotion RBMotion) {
+        this.m_RunnableTracking.LTMotion = LTMotion;
+        this.m_RunnableTracking.RTMotion = RTMotion;
+        this.m_RunnableTracking.LBMotion = LBMotion;
+        this.m_RunnableTracking.RBMotion = RBMotion;
 
-        this.m_LeftEncoderCountsPerRev = LeftEncoderCountsPerRev;
-        this.m_LeftEncoderWheelCircumference = LeftEncoderWheelRadius * (2 * Math.PI);
-        this.__recalculateLeftCountsPerCM();
+        this.m_RunnableTracking.m_CONST_180_OVER_PIR = XYPlaneCalculations.CONST_180_OVER_PI / LTMotion.getRobotWheel().getRadius();
+        this.m_RunnableTracking.m_CONST_PIR_OVER_4T180 = XYPlaneCalculations.CONST_PI_OVER_180 * LTMotion.getRobotWheel().getRadius() / 4.0;
+        this.m_RunnableTracking.m_CONST_R_OVER_4TKl = LTMotion.getRobotWheel().getRadius() / (4 * (LTMotion.getRobotWheel().getOnRobotPosition().getX() + LTMotion.getRobotWheel().getOnRobotPosition().getY()));
 
-        this.m_MidEncoderCountsPerRev = MidEncoderCountsPerRev;
-        this.m_MidEncoderWheelCircumference = MidEncoderWheelRadius * (2 * Math.PI);
-        this.__recalculateMidCountsPerCM();
-
-        this.m_RightEncoderCountsPerRev = RightEncoderCountsPerRev;
-        this.m_RightEncoderWheelCircumference = RightEncoderWheelRadius * (2 * Math.PI);
-        this.__recalculateRightCountsPerCM();
-
-        this.setDistanceOfLeftEncoderFromCenterOfRobot(LeftEncoderDistanceFromCenterOfRobot);
-        this.setDistanceOfRightEncoderFromCenterOfRobot(RightEncoderDistanceFromCenterOfRobot);
+        this.m_RunnableTracking.m_CONST_LTCountsPerDeg = LTMotion.getMotorController().getMotor().getMotorType().getCountsPerRev() / 360.0;
+        this.m_RunnableTracking.m_CONST_RTCountsPerDeg = RTMotion.getMotorController().getMotor().getMotorType().getCountsPerRev() / 360.0;
+        this.m_RunnableTracking.m_CONST_LBCountsPerDeg = LBMotion.getMotorController().getMotor().getMotorType().getCountsPerRev() / 360.0;
+        this.m_RunnableTracking.m_CONST_RBCountsPerDeg = RBMotion.getMotorController().getMotor().getMotorType().getCountsPerRev() / 360.0;
 
         if(initSoftwareGyro){
             this.m_RunnableTracking.m_Gyro = new SynchronizedSoftwareGyro(0.0f);
@@ -193,145 +202,20 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         return this.m_RunnableTracking.m_Gyro;
     }
 
-    public DcMotor getLeftEncoder(){
-        return this.m_RunnableTracking.m_LeftEncoder;
+    public RobotMotion getLTMotion(){
+        return this.m_RunnableTracking.LTMotion;
     }
 
-    public DcMotor getRightEncoder(){
-        return this.m_RunnableTracking.m_RightEncoder;
+    public RobotMotion getRTMotion(){
+        return this.m_RunnableTracking.RTMotion;
     }
 
-    public DcMotor getMidEncoder(){
-        return this.m_RunnableTracking.m_MidEncoder;
+    public RobotMotion getLBMotion(){
+        return this.m_RunnableTracking.LBMotion;
     }
 
-    public double getDistanceOfLeftEncoderFromCenterOfRobot(){
-        return this.m_RunnableTracking.m_LeftEncoderRotationCircumferenceInCM / (2 * Math.PI);
-    }
-
-    public void setDistanceOfLeftEncoderFromCenterOfRobot(double Distance){
-        this.m_RunnableTracking.m_LeftEncoderRotationCircumferenceInCM = Distance * (2 * Math.PI);
-    }
-
-    public double getDistanceOfRightEncoderFromCenterOfRobot(){
-        return this.m_RunnableTracking.m_RightEncoderRotationCircumferenceInCM / (2 * Math.PI);
-    }
-
-    public void setDistanceOfRightEncoderFromCenterOfRobot(double Distance){
-        this.m_RunnableTracking.m_RightEncoderRotationCircumferenceInCM = Distance * (2 * Math.PI);
-    }
-
-    public boolean isLeftEncoderReversed(){
-        return this.m_RunnableTracking.m_LeftEncoderReversed;
-    }
-
-    public void setLeftEncoderReversed(boolean Reversed){
-        this.m_RunnableTracking.m_LeftEncoderReversed = Reversed;
-    }
-
-    public boolean isRightEncoderReversed(){
-        return this.m_RunnableTracking.m_RightEncoderReversed;
-    }
-
-    public void setRightEncoderReversed(boolean Reversed){
-        this.m_RunnableTracking.m_RightEncoderReversed = Reversed;
-    }
-
-    public boolean isMidEncoderReversed(){
-        return this.m_RunnableTracking.m_MidEncoderReversed;
-    }
-
-    public void setMidEncoderReversed(boolean Reversed){
-        this.m_RunnableTracking.m_MidEncoderReversed = Reversed;
-    }
-
-    public double getLeftEncoderCountsPerRev(){
-        return this.m_LeftEncoderCountsPerRev;
-    }
-
-    public void setLeftEncoderCountsPerRev(double CountsPerRev){
-        this.m_LeftEncoderCountsPerRev = CountsPerRev;
-        this.__recalculateLeftCountsPerCM();
-    }
-
-    public double getLeftEncoderWheelCircumference(){
-        return this.m_LeftEncoderWheelCircumference;
-    }
-
-    public double getLeftEncoderWheelRadius(){
-        return this.m_LeftEncoderWheelCircumference / (2 * Math.PI);
-    }
-
-    public void setLeftEncoderWheelCircumference(double Circumference){
-        this.m_LeftEncoderWheelCircumference = Circumference;
-        this.__recalculateLeftCountsPerCM();
-    }
-
-    public void setLeftEncoderWheelRadius(double Radius){
-        this.setLeftEncoderWheelCircumference(Radius * (2 * Math.PI));
-    }
-
-    protected void __recalculateLeftCountsPerCM(){
-        this.m_RunnableTracking.m_LeftEncoderCountsPerCM = this.m_LeftEncoderCountsPerRev * (1.0 / this.m_LeftEncoderWheelCircumference);
-    }
-    public double getRightEncoderCountsPerRev(){
-        return this.m_RightEncoderCountsPerRev;
-    }
-
-    public void setRightEncoderCountsPerRev(double CountsPerRev){
-        this.m_RightEncoderCountsPerRev = CountsPerRev;
-        this.__recalculateRightCountsPerCM();
-    }
-
-    public double getRightEncoderWheelCircumference(){
-        return this.m_RightEncoderWheelCircumference;
-    }
-
-    public double getRightEncoderWheelRadius(){
-        return this.m_RightEncoderWheelCircumference / (2 * Math.PI);
-    }
-
-    public void setRightEncoderWheelCircumference(double Circumference){
-        this.m_RightEncoderWheelCircumference = Circumference;
-        this.__recalculateRightCountsPerCM();
-    }
-
-    public void setRightEncoderWheelRadius(double Radius){
-        this.setRightEncoderWheelCircumference(Radius * (2 * Math.PI));
-    }
-
-    protected void __recalculateRightCountsPerCM(){
-        this.m_RunnableTracking.m_RightEncoderCountsPerCM = this.m_RightEncoderCountsPerRev * (1.0 / this.m_RightEncoderWheelCircumference);
-    }
-
-    public double getMidEncoderCountsPerRev(){
-        return this.m_MidEncoderCountsPerRev;
-    }
-
-    public void setMidEncoderCountsPerRev(double CountsPerRev){
-        this.m_MidEncoderCountsPerRev = CountsPerRev;
-        this.__recalculateMidCountsPerCM();
-    }
-
-    public double getMidEncoderWheelCircumference(){
-        return this.m_MidEncoderWheelCircumference;
-    }
-
-    public double getMidEncoderWheelRadius(){
-        return this.m_MidEncoderWheelCircumference / (2 * Math.PI);
-    }
-
-    public void setMidEncoderWheelCircumference(double Circumference){
-        this.m_MidEncoderWheelCircumference = Circumference;
-        this.__recalculateMidCountsPerCM();
-    }
-
-    public void setMidEncoderWheelRadius(double Radius){
-        this.setMidEncoderWheelCircumference(Radius * (2 * Math.PI));
-    }
-
-    protected void __recalculateMidCountsPerCM(){
-        this.m_RunnableTracking.m_MidEncoderCountsPerCM = this.m_MidEncoderCountsPerRev * (1.0 / this.m_MidEncoderWheelCircumference);
+    public RobotMotion getRBMotion(){
+        return this.m_RunnableTracking.RBMotion;
     }
 
     protected void drive_MoveThroughRobotAxisOffset(Robot2DPositionIndicator robotAxisValues) {
@@ -339,4 +223,14 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         this.setCurrentPosition(tempField);
         this.offsetRelative(robotAxisValues);
     }
+
+
+    public static Robot2DPositionIndicator calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed, RobotWheel LTWheel){
+
+    }
+
+    public static double[] calculateAngularSpeedInDegPerSecForEachWheel(Robot2DPositionIndicator RobotSpeed, RobotWheel LTWheel){
+
+    }
+
 }
