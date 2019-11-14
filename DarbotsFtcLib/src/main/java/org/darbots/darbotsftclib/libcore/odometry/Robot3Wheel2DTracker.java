@@ -109,6 +109,7 @@ public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
                 m_LastRightEncoderCount = newRightCount;
                 m_LastLeftEncoderCount = newLeftCount;
 
+                m_Time.reset();
             }
             m_IsRunning = false;
         }

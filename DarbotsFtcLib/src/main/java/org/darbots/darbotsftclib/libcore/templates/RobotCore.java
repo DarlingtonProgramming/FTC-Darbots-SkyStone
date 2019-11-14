@@ -48,6 +48,7 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
             this.updateStatus();
         }
     }
+    public abstract void updateTelemetry();
     public RobotGyro getGyro(){
         return this.m_Gyro;
     }

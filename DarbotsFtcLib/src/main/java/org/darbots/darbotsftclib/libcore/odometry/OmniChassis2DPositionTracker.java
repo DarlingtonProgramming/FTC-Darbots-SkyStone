@@ -1,6 +1,5 @@
 package org.darbots.darbotsftclib.libcore.odometry;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
@@ -9,11 +8,10 @@ import org.darbots.darbotsftclib.libcore.sensors.gyros.SynchronizedSoftwareGyro;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
-import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
 
-public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPositionTracker {
-    private class MecanumChassis2DPositionTracker_Runnable implements Runnable{
+public class OmniChassis2DPositionTracker extends RobotSynchronized2DPositionTracker {
+    private class OmniChassis2DPositionTracker_Runnable implements Runnable{
         private volatile int m_SleepTimeInMillis = 75;
         private volatile boolean m_IsRunning = false;
 
@@ -31,11 +29,11 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         private double m_CONST_LBCountsPerDeg = 0;
         private double m_CONST_RBCountsPerDeg = 0;
 
-        private double m_CONST_180_OVER_PIR = 0;
-        private double m_CONST_PIR_OVER_4T180 = 0;
-        private double m_CONST_R_OVER_4TKl = 0;
-        private double m_CONST_Kl_OVER_R = 0;
-        private double m_CONST_K = 0;
+        private double m_CONST_180_OVER_PIRTSQRT2 = 0;
+        private double m_CONST_PIRTSQRT2_OVER_4T180 = 0;
+        private double m_CONST_R_OVER_4TD = 0;
+        private double m_CONST_D_OVER_R = 0;
+        private double m_CONST_D = 0;
         private double m_CONST_POWER_PER_DEG_S = 0;
 
 
@@ -101,9 +99,9 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
                  */
 
                 Robot2DPositionIndicator chassisSpeed = new Robot2DPositionIndicator(
-                        m_CONST_PIR_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed),
-                        m_CONST_PIR_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed),
-                        m_CONST_R_OVER_4TKl * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed)
+                        m_CONST_PIRTSQRT2_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed),
+                        m_CONST_PIRTSQRT2_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed),
+                        m_CONST_R_OVER_4TD * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed)
                 );
 
 
@@ -112,13 +110,13 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
                 double deltaAngMoved = chassisSpeed.getRotationZ() * secondsDriven;
 
 
-                MecanumChassis2DPositionTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
+                OmniChassis2DPositionTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
                         deltaXMoved,
                         deltaYMoved,
                         deltaAngMoved
                 ));
 
-                MecanumChassis2DPositionTracker.this.setCurrentVelocityVector(chassisSpeed);
+                OmniChassis2DPositionTracker.this.setCurrentVelocityVector(chassisSpeed);
 
                 if(this.m_Gyro != null){
                     this.m_Gyro.offsetHeading((float) deltaAngMoved);
@@ -139,25 +137,25 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         }
     }
 
-    private MecanumChassis2DPositionTracker_Runnable m_RunnableTracking = null;
+    private OmniChassis2DPositionTracker_Runnable m_RunnableTracking = null;
     private Thread m_TrackingThread = null;
     private boolean m_TrackingThreadRunned = false;
 
 
-    public MecanumChassis2DPositionTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, RobotMotion LTMotion, RobotMotion RTMotion, RobotMotion LBMotion, RobotMotion RBMotion){
+    public OmniChassis2DPositionTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, RobotMotion LTMotion, RobotMotion RTMotion, RobotMotion LBMotion, RobotMotion RBMotion){
         super(initialPosition);
         __setupRunnable();
         __setupParams(initSoftwareGyro, LTMotion, RTMotion, LBMotion, RBMotion);
     }
 
-    public MecanumChassis2DPositionTracker(MecanumChassis2DPositionTracker oldTracker) {
+    public OmniChassis2DPositionTracker(OmniChassis2DPositionTracker oldTracker) {
         super(oldTracker);
         __setupRunnable();
         __setupParams(oldTracker.getGyro() != null, oldTracker.getLTMotion(), oldTracker.getRTMotion(), oldTracker.getLBMotion(), oldTracker.getRBMotion());
     }
 
     private void __setupRunnable(){
-        this.m_RunnableTracking = new MecanumChassis2DPositionTracker_Runnable();
+        this.m_RunnableTracking = new OmniChassis2DPositionTracker_Runnable();
         this.m_TrackingThread = new Thread(this.m_RunnableTracking);
         this.m_TrackingThreadRunned = false;
     }
@@ -168,13 +166,14 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         this.m_RunnableTracking.LBMotion = LBMotion;
         this.m_RunnableTracking.RBMotion = RBMotion;
 
+        double CONST_SQRT2 = Math.sqrt(2);
 
-        this.m_RunnableTracking.m_CONST_K = (LTMotion.getRobotWheel().getOnRobotPosition().getX() + LTMotion.getRobotWheel().getOnRobotPosition().getY());
+        this.m_RunnableTracking.m_CONST_D = Math.sqrt(Math.pow(LTMotion.getRobotWheel().getOnRobotPosition().getX(),2) + Math.pow(LTMotion.getRobotWheel().getOnRobotPosition().getY(),2));
 
-        this.m_RunnableTracking.m_CONST_180_OVER_PIR = XYPlaneCalculations.CONST_180_OVER_PI / LTMotion.getRobotWheel().getRadius();
-        this.m_RunnableTracking.m_CONST_PIR_OVER_4T180 = XYPlaneCalculations.CONST_PI_OVER_180 * LTMotion.getRobotWheel().getRadius() / 4.0;
-        this.m_RunnableTracking.m_CONST_R_OVER_4TKl = LTMotion.getRobotWheel().getRadius() / (4 * this.m_RunnableTracking.m_CONST_K);
-        this.m_RunnableTracking.m_CONST_Kl_OVER_R = (this.m_RunnableTracking.m_CONST_K / LTMotion.getRobotWheel().getRadius());
+        this.m_RunnableTracking.m_CONST_180_OVER_PIRTSQRT2 = XYPlaneCalculations.CONST_180_OVER_PI / (LTMotion.getRobotWheel().getRadius() * CONST_SQRT2);
+        this.m_RunnableTracking.m_CONST_PIRTSQRT2_OVER_4T180 = XYPlaneCalculations.CONST_PI_OVER_180 * (LTMotion.getRobotWheel().getRadius() * CONST_SQRT2) / 4.0;
+        this.m_RunnableTracking.m_CONST_R_OVER_4TD = LTMotion.getRobotWheel().getRadius() / (4 * this.m_RunnableTracking.m_CONST_D);
+        this.m_RunnableTracking.m_CONST_D_OVER_R = (this.m_RunnableTracking.m_CONST_D / LTMotion.getRobotWheel().getRadius());
 
         this.m_RunnableTracking.m_CONST_LTCountsPerDeg = LTMotion.getMotorController().getMotor().getMotorType().getCountsPerRev() / 360.0;
         this.m_RunnableTracking.m_CONST_RTCountsPerDeg = RTMotion.getMotorController().getMotor().getMotorType().getCountsPerRev() / 360.0;
@@ -237,9 +236,9 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
     }
 
     public Robot2DPositionIndicator calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed){
-        double xSpeed = this.m_RunnableTracking.m_CONST_PIR_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed);
-        double ySpeed = this.m_RunnableTracking.m_CONST_PIR_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed);
-        double angularSpeed = this.m_RunnableTracking.m_CONST_R_OVER_4TKl * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed);
+        double xSpeed = this.m_RunnableTracking.m_CONST_PIRTSQRT2_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed);
+        double ySpeed = this.m_RunnableTracking.m_CONST_PIRTSQRT2_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed);
+        double angularSpeed = this.m_RunnableTracking.m_CONST_R_OVER_4TD * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed);
         return new Robot2DPositionIndicator(xSpeed,ySpeed,angularSpeed);
     }
 
@@ -248,9 +247,9 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         double ySpeed = RobotSpeed.getY();
         double rotSpeed = RobotSpeed.getRotationZ();
 
-        double xSpeedConst = this.m_RunnableTracking.m_CONST_180_OVER_PIR * xSpeed;
-        double ySpeedConst = this.m_RunnableTracking.m_CONST_180_OVER_PIR * ySpeed;
-        double rotSpeedConst = this.m_RunnableTracking.m_CONST_Kl_OVER_R * rotSpeed;
+        double xSpeedConst = this.m_RunnableTracking.m_CONST_180_OVER_PIRTSQRT2 * xSpeed;
+        double ySpeedConst = this.m_RunnableTracking.m_CONST_180_OVER_PIRTSQRT2 * ySpeed;
+        double rotSpeedConst = this.m_RunnableTracking.m_CONST_D_OVER_R * rotSpeed;
 
         double LTSpeed = - xSpeedConst + ySpeedConst + rotSpeedConst;
         double RTSpeed = xSpeedConst + ySpeedConst + rotSpeedConst;
@@ -271,11 +270,13 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
 
 
     public static Robot2DPositionIndicator calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed, RobotWheel LTWheel){
-        double CONST_PIR_OVER_4T180 = XYPlaneCalculations.CONST_PI_OVER_180 * LTWheel.getRadius() / 4.0;
-        double CONST_R_OVER_4TKl = LTWheel.getRadius() / (4 * (LTWheel.getOnRobotPosition().getX() + LTWheel.getOnRobotPosition().getY()));
-        double xSpeed = CONST_PIR_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed);
-        double ySpeed = CONST_PIR_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed);
-        double angularSpeed = CONST_R_OVER_4TKl * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed);
+        double CONST_D = Math.sqrt(Math.pow(LTWheel.getOnRobotPosition().getX(),2) + Math.pow(LTWheel.getOnRobotPosition().getY(),2));
+        double CONST_SQRT2 = Math.sqrt(2);
+        double CONST_PIRTSQRT2_OVER_4T180 = XYPlaneCalculations.CONST_PI_OVER_180 * LTWheel.getRadius() * CONST_SQRT2 / 4.0;
+        double CONST_R_OVER_4TD = LTWheel.getRadius() / (4 * CONST_D);
+        double xSpeed = CONST_PIRTSQRT2_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed);
+        double ySpeed = CONST_PIRTSQRT2_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed);
+        double angularSpeed = CONST_R_OVER_4TD * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed);
         return new Robot2DPositionIndicator(xSpeed,ySpeed,angularSpeed);
     }
 
@@ -289,12 +290,15 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         double xSpeed = RobotSpeed.getX();
         double ySpeed = RobotSpeed.getY();
         double rotSpeed = RobotSpeed.getRotationZ();
-        double CONST_180_OVER_PIR = XYPlaneCalculations.CONST_180_OVER_PI / LTWheel.getRadius();
-        double CONST_Kl_OVER_R = (LTWheel.getOnRobotPosition().getX() + LTWheel.getOnRobotPosition().getY()) / LTWheel.getRadius();
 
-        double xSpeedConst = CONST_180_OVER_PIR * xSpeed;
-        double ySpeedConst = CONST_180_OVER_PIR * ySpeed;
-        double rotSpeedConst = CONST_Kl_OVER_R * rotSpeed;
+        double CONST_D = Math.sqrt(Math.pow(LTWheel.getOnRobotPosition().getX(),2) + Math.pow(LTWheel.getOnRobotPosition().getY(),2));
+        double CONST_SQRT2 = Math.sqrt(2);
+        double CONST_180_OVER_PIRTSQRT2 = XYPlaneCalculations.CONST_180_OVER_PI / (LTWheel.getRadius() * CONST_SQRT2);
+        double CONST_D_OVER_R = CONST_D / LTWheel.getRadius();
+
+        double xSpeedConst = CONST_180_OVER_PIRTSQRT2 * xSpeed;
+        double ySpeedConst = CONST_180_OVER_PIRTSQRT2 * ySpeed;
+        double rotSpeedConst = CONST_D_OVER_R * rotSpeed;
 
         double LTSpeed = - xSpeedConst + ySpeedConst + rotSpeedConst;
         double RTSpeed = xSpeedConst + ySpeedConst + rotSpeedConst;

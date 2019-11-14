@@ -42,11 +42,19 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private double m_LinearXMotionDistanceFactor;
     private double m_RotationalMotionDistanceFactor;
     private float m_GyroGuidedDrivePublicStartingAngle = -360;
+    private boolean m_CanUpdateTracker = false;
+    private boolean m_CalibrationEnabled = false;
+
     public RobotMotionSystem(Robot2DPositionTracker PositionTracker){
         this.m_TaskLists = new ArrayList();
         this.m_PosTracker = PositionTracker;
         this.setLinearMotionDistanceFactor(1);
         this.m_RotationalMotionDistanceFactor = 1;
+        if(PositionTracker != null && PositionTracker instanceof RobotNonBlockingDevice){
+            this.m_CanUpdateTracker = true;
+        }else{
+            this.m_CanUpdateTracker = false;
+        }
     }
     public RobotMotionSystem(RobotMotionSystem MotionSystem){
         this.m_TaskLists = new ArrayList();
@@ -55,6 +63,11 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_LinearXMotionDistanceFactor = MotionSystem.m_LinearXMotionDistanceFactor;
         this.m_RotationalMotionDistanceFactor = MotionSystem.m_RotationalMotionDistanceFactor;
         this.m_GyroGuidedDrivePublicStartingAngle = MotionSystem.m_GyroGuidedDrivePublicStartingAngle;
+        if(MotionSystem.m_PosTracker != null && MotionSystem.m_PosTracker instanceof RobotNonBlockingDevice){
+            this.m_CanUpdateTracker = true;
+        }else{
+            this.m_CanUpdateTracker = false;
+        }
     }
 
     public double getLinearYMotionDistanceFactor(){
@@ -88,6 +101,11 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     }
     public void setPositionTracker(Robot2DPositionTracker PositionTracker){
         this.m_PosTracker = PositionTracker;
+        if(PositionTracker != null && PositionTracker instanceof RobotNonBlockingDevice){
+            this.m_CanUpdateTracker = true;
+        }else{
+            this.m_CanUpdateTracker = false;
+        }
     }
     public void addTask(@NonNull RobotMotionSystemTask Task){
         this.m_TaskLists.add(Task);
@@ -166,6 +184,10 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
             if(this.m_TaskLists.get(0).isBusy())
                 this.m_TaskLists.get(0).updateStatus();
         }
+        if(this.m_CanUpdateTracker){
+            RobotNonBlockingDevice NonBlockingTracker = (RobotNonBlockingDevice) this.m_PosTracker;
+            NonBlockingTracker.updateStatus();
+        }
     }
 
     @Override
@@ -202,6 +224,14 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         if(this.getPositionTracker() != null){
             this.getPositionTracker().stop();
         }
+    }
+
+    public boolean isCalibrationEnabled(){
+        return this.m_CalibrationEnabled;
+    }
+
+    public void setCalibrationEnabled(boolean Enabled){
+        this.m_CalibrationEnabled = Enabled;
     }
 
     public abstract RobotMotionSystemFixedXDistanceTask getFixedXDistanceTask(double XDistance, double Speed);

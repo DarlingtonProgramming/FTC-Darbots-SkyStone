@@ -36,8 +36,8 @@ public abstract class RobotMotionSystemFixedTurnTask extends RobotMotionSystemTa
     }
     @Override
     public void stopTask(){
-        if(this.isBusy() && this.getMotionSystem().isGyroGuidedDriveEnabled()){
-            this.getMotionSystem().setGyroGuidedDrivePublicStartingAngle(XYPlaneCalculations.normalizeDeg(this.getMotionSystem().getGyroGuidedDrivePublicStartingAngle() + ((float) this.getTurnDeg())));
+        if(this.isBusy() && this.getMotionSystem().isCalibrationEnabled()){
+            this.getMotionSystem().setGyroGuidedDrivePublicStartingAngle(XYPlaneCalculations.normalizeDeg(this.__getGyroStartAng() + ((float) this.getTurnDeg())));
         }
         super.stopTask();
     }
