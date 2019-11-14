@@ -56,11 +56,11 @@ public class OmiChassis extends LinearOpMode {
             b = gamepad1.left_stick_x;
             c = gamepad1.left_trigger;
             d = gamepad1.right_trigger;
-            lfpower = Range.clip(a - b - c + d, -1.0, 1.0);
-            rfpower = Range.clip(a + b + c - d, -1.0, 1.0);
-            lbpower = Range.clip(a + b - c + d, -1.0, 1.0);
+            lfpower = Range.clip(a - b - c + d, -0.4, 0.4);
+            rfpower = Range.clip(a + b + c - d, -0.4, 0.4);
+            lbpower = Range.clip(a + b - c + d, -0.4, 0.4);
             ;
-            rbpower = Range.clip(a - b + c - d, -1.0, 1.0);
+            rbpower = Range.clip(a - b + c - d, -0.4, 0.4);
 
 
             // Send calculated power to wheels

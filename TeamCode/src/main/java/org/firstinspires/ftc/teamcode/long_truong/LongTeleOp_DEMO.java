@@ -31,12 +31,11 @@ package org.firstinspires.ftc.teamcode.long_truong;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Long TeleOp", group="Linear Opmode")
+@TeleOp(name="Long TeleOp DEMO", group="Linear Opmode")
 //@Disabled
-public class LongTeleOp extends LinearOpMode {
+public class LongTeleOp_DEMO extends LinearOpMode {
     HardwareLongBot robot = new HardwareLongBot();
 
 //    public void stop_andResetEncoders(){
@@ -85,9 +84,9 @@ public class LongTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             //Chassis Movement Control
-            double strafeSpeed = gamepad1.left_stick_x;
-            double forwardSpeed = -gamepad1.left_stick_y;
-            double rotSpeed = -gamepad1.right_stick_x;
+            double strafeSpeed = gamepad1.left_stick_x * 0.4;
+            double forwardSpeed = -gamepad1.left_stick_y * 0.4;
+            double rotSpeed = -gamepad1.right_stick_x * 0.4;
             double FLMotorSpeed = -strafeSpeed - forwardSpeed + rotSpeed;
             double FRMotorSpeed = - strafeSpeed + forwardSpeed + rotSpeed;
             double BLMotorSpeed = + strafeSpeed - forwardSpeed + rotSpeed;
