@@ -27,11 +27,9 @@ package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 
 import android.support.annotation.NonNull;
 
-import com.qualcomm.robotcore.util.Range;
-
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogger;
+import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogFile;
 import org.darbots.darbotsftclib.libcore.odometry.Robot2DPositionSoftwareTracker;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
@@ -96,8 +94,8 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
             return;
         }
         this.m_IsWorking = true;
-        GlobalUtil.addLog("RobotMotionSystemTask","BeforeTask","", RobotLogger.LogLevel.DEBUG);
-        GlobalUtil.addLog("RobotMotionSystemTask","TaskInfo",this.getTaskDetailString(), RobotLogger.LogLevel.DEBUG);
+        GlobalUtil.addLog("RobotMotionSystemTask","BeforeTask","", RobotLogFile.LogLevel.DEBUG);
+        GlobalUtil.addLog("RobotMotionSystemTask","TaskInfo",this.getTaskDetailString(), RobotLogFile.LogLevel.DEBUG);
         if((!this.getMotionSystem().isCalibrationEnabled()) && GlobalUtil.getGyro() != null){
             RobotGyro globalGyro = GlobalUtil.getGyro();
             globalGyro.updateStatus();
@@ -118,7 +116,7 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         if(!this.m_IsWorking){
             return;
         }
-        GlobalUtil.addLog("RobotMotionSystemTask","AfterTask","Task ends", RobotLogger.LogLevel.DEBUG);
+        GlobalUtil.addLog("RobotMotionSystemTask","AfterTask","Task ends", RobotLogFile.LogLevel.DEBUG);
         this.m_IsWorking = false;
         MotionSystemTaskFinishInfo finishInfo = this.__taskFinished();
         if(this.m_MotionSystem.getPositionTracker() != null){

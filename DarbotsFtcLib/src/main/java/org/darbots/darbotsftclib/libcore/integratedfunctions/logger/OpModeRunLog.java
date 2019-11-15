@@ -3,11 +3,10 @@ package org.darbots.darbotsftclib.libcore.integratedfunctions.logger;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.darbots.darbotsftclib.libcore.calculations.timecalculation.TimeCalculation;
+import org.darbots.darbotsftclib.libcore.templates.log.LogContent;
+import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 
-import java.lang.reflect.Array;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,15 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class OpModeRunLog implements Map<String, Object> {
     public long initTime = 0;
     public String runningOpMode;
     public int threadPriority;
-    public List<LogEntry> logEntries;
+    public Collection<LogEntry> logEntries;
     public long startTime = -1;
     public long endTime = -1;
 
@@ -35,14 +31,19 @@ public class OpModeRunLog implements Map<String, Object> {
     }
 
     public OpModeRunLog(Map m){
-        if(m.containsKey("startTime") && m.containsKey("runningOpMode") && m.containsKey("priority") && m.containsKey("logs") && m.containsKey("initTime") && m.containsKey("endTime")){
-            this.putAll(m);
-        }
+        this.logEntries = new ArrayList<LogEntry>();
+        this.putAll(m);
     }
 
     public void useCurrentThreadToCalculateThreadPriority(){
         int threadPriority = Thread.currentThread().getPriority();
         this.threadPriority = threadPriority;
+    }
+
+    public void addLogContent(String moduleName, String logCaption, LogContent logContent, LogLevel logLevel){
+        long TimeOfLog = TimeCalculation.getCurrentMillisUTCTimeFromEPOCH() - this.initTime;
+        LogEntry newEntry = new LogEntry(moduleName,logCaption,TimeOfLog,logContent,logLevel);
+        this.logEntries.add(newEntry);
     }
 
     public void startOpMode(){
@@ -98,9 +99,6 @@ public class OpModeRunLog implements Map<String, Object> {
     @Nullable
     @Override
     public Object put(@NonNull String key, @NonNull Object value) {
-        if(!this.containsKey(key)){
-            return null;
-        }
         if(key.equals("startTime") && value instanceof Number){
             this.startTime = ((Number) value).longValue();
             return new Long(this.startTime);
@@ -110,8 +108,16 @@ public class OpModeRunLog implements Map<String, Object> {
         }else if(key.equals("priority") && value instanceof Number){
             this.threadPriority = ((Number) value).intValue();
             return new Integer(this.threadPriority);
-        }else if(key.equals("logs") && value instanceof List) {
-            this.logEntries = (List) value;
+        }else if(key.equals("logs") && value instanceof Collection) {
+            Collection collectionVal = (Collection) value;
+            this.logEntries.clear();
+            for(Object i : collectionVal){
+                if(i instanceof LogEntry){
+                    this.logEntries.add((LogEntry) i);
+                }else if(i instanceof Map){
+                    this.logEntries.add(new LogEntry((Map) i));
+                }
+            }
             return this.logEntries;
         }else if(key.equals("initTime") && value instanceof Number) {
             this.initTime = ((Number) value).longValue();

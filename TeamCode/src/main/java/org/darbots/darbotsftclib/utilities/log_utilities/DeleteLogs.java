@@ -3,7 +3,7 @@ package org.darbots.darbotsftclib.utilities.log_utilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogger;
+import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogFile;
 
 @TeleOp(group = "DarbotsLib-Utilities", name = "DeleteAllLogs")
 public class DeleteLogs extends LinearOpMode {
@@ -15,7 +15,7 @@ public class DeleteLogs extends LinearOpMode {
         if(opModeIsActive()){
             telemetry.addData("LogDeleter","Deleting...");
             telemetry.update();
-            RobotLogger.deleteAllLogs();
+            RobotLogFile.deleteAllLogs();
             telemetry.addData("LogDeleter","Finished");
             telemetry.update();
         }
