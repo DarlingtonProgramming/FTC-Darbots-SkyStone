@@ -31,16 +31,17 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
             this.m_TimerSinceStart = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
             RunThisOpMode();
         }
-        GlobalUtil.OpModeEnded();
         GlobalUtil.addLog("DarbotsBasicOpMode","Status",new String_Log("OpMode stopping"), LogLevel.DEBUG);
 
         if(this.getRobotCore() != null)
             this.getRobotCore().stop();
 
         GlobalUtil.addLog("DarbotsBasicOpMode","Status",new String_Log("OpMode finished"), LogLevel.DEBUG);
+        GlobalUtil.OpModeEnded();
         this.getRobotCore().getLogger().saveToFile();
         this.hardwareDestroy();
         GlobalRegister.runningOpMode = null;
+        GlobalRegister.currentLog = null;
         this.m_TimerSinceStart = null;
         this.m_TimerSinceInit = null;
     }
