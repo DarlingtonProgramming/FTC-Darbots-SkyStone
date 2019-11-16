@@ -1,7 +1,5 @@
 package org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation;
 
-import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
-
 public class XYPlaneCalculations {
     public static final double CONST_180_OVER_PI = 180.0 / Math.PI;
     public static final double CONST_PI_OVER_180 = Math.PI / 180;
