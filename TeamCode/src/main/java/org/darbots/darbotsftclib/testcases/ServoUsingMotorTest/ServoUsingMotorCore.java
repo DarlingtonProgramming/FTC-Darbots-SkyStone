@@ -58,6 +58,11 @@ public class ServoUsingMotorCore extends RobotCore {
     }
 
     @Override
+    public void updateTelemetry() {
+        return;
+    }
+
+    @Override
     public boolean isBusy() {
         return this.m_ServoUsingMotor.isBusy();
     }
