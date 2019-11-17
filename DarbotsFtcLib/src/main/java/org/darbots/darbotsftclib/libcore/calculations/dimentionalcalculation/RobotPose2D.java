@@ -25,16 +25,21 @@ SOFTWARE.
 package org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation;
 
 
-public class Robot2DPositionIndicator {
+public class RobotPose2D {
     protected double m_X;
     protected double m_Y;
     protected double m_RotationZ;
-    public Robot2DPositionIndicator(double X, double Y, double YRotation){
+    public RobotPose2D(double X, double Y, double YRotation){
         this.m_X = X;
         this.m_Y = Y;
         this.m_RotationZ = XYPlaneCalculations.normalizeDeg(YRotation);
     }
-    public Robot2DPositionIndicator(Robot2DPositionIndicator Pos2D){
+    public RobotPose2D(RobotPoint2D Point, double ZRotation) {
+        this.m_X = Point.X;
+        this.m_Y = Point.Y;
+        this.m_RotationZ = ZRotation;
+    }
+    public RobotPose2D(RobotPose2D Pos2D){
         this.m_X = Pos2D.m_X;
         this.m_Y = Pos2D.m_Y;
         this.m_RotationZ = Pos2D.m_RotationZ;
@@ -59,5 +64,8 @@ public class Robot2DPositionIndicator {
     }
     public void setRotationZ(double RotationZ){
         this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
+    }
+    public RobotPoint2D toPoint2D() {
+        return new RobotPoint2D(this);
     }
 }

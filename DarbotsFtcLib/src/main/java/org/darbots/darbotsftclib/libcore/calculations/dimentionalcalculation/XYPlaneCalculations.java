@@ -26,7 +26,7 @@ public class XYPlaneCalculations {
         return result;
     }
 
-    public static Robot2DPositionIndicator getRelativePosition(Robot2DPositionIndicator PerspectiveOrigin, Robot2DPositionIndicator Target){
+    public static RobotPose2D getRelativePosition(RobotPose2D PerspectiveOrigin, RobotPose2D Target){
         //First step - move the Perspective Origin to the Origin of the Axis.
         double[] targetPoint = {Target.getX() - PerspectiveOrigin.getX(),Target.getY() - PerspectiveOrigin.getY()};
         //Second step - rotate the targetPoint so that the coordinate system (X and Z scalars) of the Perspective Origin overlaps with the Field Coordinate.
@@ -36,10 +36,10 @@ public class XYPlaneCalculations {
         //Third step - calculate relative delta Rotation Y;
         double deltaRotZ = normalizeDeg(Target.getRotationZ() - PerspectiveOrigin.getRotationZ());
 
-        return new Robot2DPositionIndicator(rotatedTargetPoint[0],rotatedTargetPoint[1],deltaRotZ);
+        return new RobotPose2D(rotatedTargetPoint[0],rotatedTargetPoint[1],deltaRotZ);
     }
 
-    public static Robot2DPositionIndicator getAbsolutePosition(Robot2DPositionIndicator PerspectiveOrigin, Robot2DPositionIndicator RelativePosition){
+    public static RobotPose2D getAbsolutePosition(RobotPose2D PerspectiveOrigin, RobotPose2D RelativePosition){
         //First Step - calculate absolute Rotation Y.
         double absRotZ = normalizeDeg(RelativePosition.getRotationZ() + PerspectiveOrigin.getRotationZ());
         //Second Step - rotate the coordinates back.
@@ -49,7 +49,7 @@ public class XYPlaneCalculations {
         //Third Step - move the PerspectiveOrigin back to the Absolute Point on the Field.
         double[] movedTargetPoint = {rotatedTargetPoint[0] + PerspectiveOrigin.getX(),rotatedTargetPoint[1] + PerspectiveOrigin.getY()};
 
-        return new Robot2DPositionIndicator(movedTargetPoint[0],movedTargetPoint[1],absRotZ);
+        return new RobotPose2D(movedTargetPoint[0],movedTargetPoint[1],absRotZ);
     }
 
     public static double chooseAngleFromRange(double[] angleList, double angleSmallestRange, double angleBiggestRange) {

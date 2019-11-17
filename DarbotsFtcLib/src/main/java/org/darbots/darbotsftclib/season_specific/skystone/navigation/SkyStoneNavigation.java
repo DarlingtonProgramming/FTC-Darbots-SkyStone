@@ -2,8 +2,7 @@ package org.darbots.darbotsftclib.season_specific.skystone.navigation;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot3DPositionIndicator;
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose3D;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotCamera;
@@ -40,15 +39,15 @@ public class SkyStoneNavigation implements RobotNonBlockingDevice {
     private static final float halfField = 72 * MMPERINCH;
     private static final float quadField  = 36 * MMPERINCH;
 
-    private Robot3DPositionIndicator m_CameraPos; //Distance in CM, Rotation in Darbots Transformation
+    private RobotPose3D m_CameraPos; //Distance in CM, Rotation in Darbots Transformation
     private RobotCamera m_Camera;
     private VuforiaTrackables m_TargetsSkyStone;
     private List<VuforiaTrackable> m_AllTrackables;
     private ElapsedTime m_LastTime;
-    private Robot3DPositionIndicator m_LastPosition;
+    private RobotPose3D m_LastPosition;
     private boolean m_LastUpdateGotLocation;
 
-    public SkyStoneNavigation(Robot3DPositionIndicator CameraPosition, RobotCamera Camera){
+    public SkyStoneNavigation(RobotPose3D CameraPosition, RobotCamera Camera){
         this.m_LastUpdateGotLocation = false;
         this.m_Camera = Camera;
         this.m_CameraPos = CameraPosition;
@@ -72,15 +71,15 @@ public class SkyStoneNavigation implements RobotNonBlockingDevice {
     public RobotCamera getCamera(){
         return this.m_Camera;
     }
-    public Robot3DPositionIndicator getCameraPosition(){
+    public RobotPose3D getCameraPosition(){
         return this.m_CameraPos;
     }
-    public void setCameraPosition(Robot3DPositionIndicator CameraPosition){
+    public void setCameraPosition(RobotPose3D CameraPosition){
         this.m_CameraPos = CameraPosition;
         this.__setupCamera();
     }
 
-    public Robot3DPositionIndicator getDarbotsFieldPosition(){
+    public RobotPose3D getDarbotsFieldPosition(){
         return this.__getFTCFieldPosition();
     }
 
@@ -238,7 +237,7 @@ public class SkyStoneNavigation implements RobotNonBlockingDevice {
 
         // Next, translate the camera lens to where it is on the robot.
         // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
-        Robot3DPositionIndicator FTCRobotPos = m_CameraPos;
+        RobotPose3D FTCRobotPos = m_CameraPos;
         float CAMERA_X_DISPLACEMENT  = (float) (FTCRobotPos.getX() * 10.0);
         float CAMERA_Y_DISPLACEMENT = (float) (FTCRobotPos.getY() * 10.0);
         float CAMERA_Z_DISPLACEMENT = (float) (FTCRobotPos.getZ() * 10.0);
@@ -256,7 +255,7 @@ public class SkyStoneNavigation implements RobotNonBlockingDevice {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, cameraDirection);
         }
     }
-    protected Robot3DPositionIndicator __getFTCFieldPosition(){
+    protected RobotPose3D __getFTCFieldPosition(){
         boolean targetVisible = false;
         OpenGLMatrix lastLocation = null;
         for (VuforiaTrackable trackable : m_AllTrackables) {
@@ -281,25 +280,25 @@ public class SkyStoneNavigation implements RobotNonBlockingDevice {
 
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-            return new Robot3DPositionIndicator(translation.get(0) / 10,translation.get(1) / 10,translation.get(2) / 10, rotation.firstAngle,rotation.secondAngle,rotation.thirdAngle);
+            return new RobotPose3D(translation.get(0) / 10,translation.get(1) / 10,translation.get(2) / 10, rotation.firstAngle,rotation.secondAngle,rotation.thirdAngle);
         }
         else {
             return null;
         }
     }
 
-    protected Robot3DPositionIndicator __getFTCRobotAxisStonePosition(){
+    protected RobotPose3D __getFTCRobotAxisStonePosition(){
         VuforiaTrackableDefaultListener trackable = (VuforiaTrackableDefaultListener) m_AllTrackables.get(0).getListener();
         if(trackable.isVisible()){
             OpenGLMatrix stonePosition = this.getCamera() instanceof RobotOnPhoneCamera ? trackable.getPosePhone() : trackable.getFtcCameraFromTarget();
             VectorF translation = stonePosition.getTranslation();
             Orientation rotation = Orientation.getOrientation(stonePosition,EXTRINSIC,XYZ,DEGREES);
-            return new Robot3DPositionIndicator(translation.get(0) / 10, translation.get(1) / 10, translation.get(2) / 10, rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+            return new RobotPose3D(translation.get(0) / 10, translation.get(1) / 10, translation.get(2) / 10, rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
         }
         return null;
     }
-    public Robot3DPositionIndicator getDarbotsRobotAxisStonePosition(){
-        Robot3DPositionIndicator FTCRobotAxis = this.__getFTCRobotAxisStonePosition();
+    public RobotPose3D getDarbotsRobotAxisStonePosition(){
+        RobotPose3D FTCRobotAxis = this.__getFTCRobotAxisStonePosition();
         if(FTCRobotAxis != null){
             return FTCRobotAxis;
         }
@@ -313,7 +312,7 @@ public class SkyStoneNavigation implements RobotNonBlockingDevice {
 
     @Override
     public void updateStatus() {
-        Robot3DPositionIndicator newestPos = this.getDarbotsFieldPosition();
+        RobotPose3D newestPos = this.getDarbotsFieldPosition();
         if(newestPos != null){
             this.m_LastTime.reset();
             this.m_LastPosition = newestPos;
@@ -328,7 +327,7 @@ public class SkyStoneNavigation implements RobotNonBlockingDevice {
         return;
     }
 
-    public Robot3DPositionIndicator getLastPosition(){
+    public RobotPose3D getLastPosition(){
         return this.m_LastPosition;
     }
 

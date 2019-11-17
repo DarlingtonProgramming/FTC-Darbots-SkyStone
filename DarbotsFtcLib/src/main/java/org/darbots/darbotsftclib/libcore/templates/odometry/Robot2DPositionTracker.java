@@ -1,20 +1,19 @@
 package org.darbots.darbotsftclib.libcore.templates.odometry;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 
 public interface Robot2DPositionTracker {
 
-    Robot2DPositionIndicator getInitialPos();
-    Robot2DPositionIndicator getCurrentPosition();
+    RobotPose2D getInitialPos();
+    RobotPose2D getCurrentPosition();
 
-    Robot2DPositionIndicator getCurrentVelocityVector();
+    RobotPose2D getCurrentVelocityVector();
 
     void stop();
 
-    Robot2DPositionIndicator fieldAxisFromRobotAxis(Robot2DPositionIndicator RobotAxisPoint);
-    Robot2DPositionIndicator robotAxisFromFieldAxis(Robot2DPositionIndicator FieldAxisPoint);
+    RobotPose2D fieldAxisFromRobotAxis(RobotPose2D RobotAxisPoint);
+    RobotPose2D robotAxisFromFieldAxis(RobotPose2D FieldAxisPoint);
 
     void resetRelativeOffset();
-    Robot2DPositionIndicator getRelativeOffset();
+    RobotPose2D getRelativeOffset();
 }

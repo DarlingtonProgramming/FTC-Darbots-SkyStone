@@ -27,7 +27,7 @@ package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 
 import android.support.annotation.NonNull;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogFile;
 import org.darbots.darbotsftclib.libcore.odometry.Robot2DPositionSoftwareTracker;
@@ -122,7 +122,7 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         if(this.m_MotionSystem.getPositionTracker() != null){
             if(this.m_MotionSystem.getPositionTracker() instanceof Robot2DPositionSoftwareTracker){
                 Robot2DPositionSoftwareTracker softTracker = (Robot2DPositionSoftwareTracker) this.m_MotionSystem.getPositionTracker();
-                softTracker.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
+                softTracker.drive_MoveThroughRobotAxisOffset(new RobotPose2D(
                         finishInfo.xMoved,
                         finishInfo.yMoved,
                         finishInfo.zRotMoved

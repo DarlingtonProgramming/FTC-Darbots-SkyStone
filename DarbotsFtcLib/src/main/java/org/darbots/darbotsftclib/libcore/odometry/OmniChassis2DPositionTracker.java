@@ -2,7 +2,7 @@ package org.darbots.darbotsftclib.libcore.odometry;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.sensors.gyros.SynchronizedSoftwareGyro;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
@@ -98,7 +98,7 @@ public class OmniChassis2DPositionTracker extends RobotSynchronized2DPositionTra
                 Those constants are calculated when we are initializing the MecanumChassis2DPositionTrackerClass, and they help us to reduce double multiplications in speed calculation.
                  */
 
-                Robot2DPositionIndicator chassisSpeed = new Robot2DPositionIndicator(
+                RobotPose2D chassisSpeed = new RobotPose2D(
                         m_CONST_PIRTSQRT2_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed),
                         m_CONST_PIRTSQRT2_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed),
                         m_CONST_R_OVER_4TD * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed)
@@ -110,7 +110,7 @@ public class OmniChassis2DPositionTracker extends RobotSynchronized2DPositionTra
                 double deltaAngMoved = chassisSpeed.getRotationZ() * secondsDriven;
 
 
-                OmniChassis2DPositionTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
+                OmniChassis2DPositionTracker.this.drive_MoveThroughRobotAxisOffset(new RobotPose2D(
                         deltaXMoved,
                         deltaYMoved,
                         deltaAngMoved
@@ -142,7 +142,7 @@ public class OmniChassis2DPositionTracker extends RobotSynchronized2DPositionTra
     private boolean m_TrackingThreadRunned = false;
 
 
-    public OmniChassis2DPositionTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, RobotMotion LTMotion, RobotMotion RTMotion, RobotMotion LBMotion, RobotMotion RBMotion){
+    public OmniChassis2DPositionTracker(RobotPose2D initialPosition, boolean initSoftwareGyro, RobotMotion LTMotion, RobotMotion RTMotion, RobotMotion LBMotion, RobotMotion RBMotion){
         super(initialPosition);
         __setupRunnable();
         __setupParams(initSoftwareGyro, LTMotion, RTMotion, LBMotion, RBMotion);
@@ -229,20 +229,20 @@ public class OmniChassis2DPositionTracker extends RobotSynchronized2DPositionTra
         return this.m_RunnableTracking.RBMotion;
     }
 
-    protected void drive_MoveThroughRobotAxisOffset(Robot2DPositionIndicator robotAxisValues) {
-        Robot2DPositionIndicator tempField = this.fieldAxisFromRobotAxis(robotAxisValues);
+    protected void drive_MoveThroughRobotAxisOffset(RobotPose2D robotAxisValues) {
+        RobotPose2D tempField = this.fieldAxisFromRobotAxis(robotAxisValues);
         this.setCurrentPosition(tempField);
         this.offsetRelative(robotAxisValues);
     }
 
-    public Robot2DPositionIndicator calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed){
+    public RobotPose2D calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed){
         double xSpeed = this.m_RunnableTracking.m_CONST_PIRTSQRT2_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed);
         double ySpeed = this.m_RunnableTracking.m_CONST_PIRTSQRT2_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed);
         double angularSpeed = this.m_RunnableTracking.m_CONST_R_OVER_4TD * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed);
-        return new Robot2DPositionIndicator(xSpeed,ySpeed,angularSpeed);
+        return new RobotPose2D(xSpeed,ySpeed,angularSpeed);
     }
 
-    public double[] calculateWheelAngularSpeedInDegPerSec(Robot2DPositionIndicator RobotSpeed){
+    public double[] calculateWheelAngularSpeedInDegPerSec(RobotPose2D RobotSpeed){
         double xSpeed = RobotSpeed.getX();
         double ySpeed = RobotSpeed.getY();
         double rotSpeed = RobotSpeed.getRotationZ();
@@ -259,7 +259,7 @@ public class OmniChassis2DPositionTracker extends RobotSynchronized2DPositionTra
         return speedReturn;
     }
 
-    public double[] calculateMotorPowers(Robot2DPositionIndicator RobotSpeed){
+    public double[] calculateMotorPowers(RobotPose2D RobotSpeed){
         double[] WheelDegPerSec = calculateWheelAngularSpeedInDegPerSec(RobotSpeed);
         double[] MotorSpeed = new double[WheelDegPerSec.length];
         for(int i = 0; i < WheelDegPerSec.length; i++) {
@@ -269,7 +269,7 @@ public class OmniChassis2DPositionTracker extends RobotSynchronized2DPositionTra
     }
 
 
-    public static Robot2DPositionIndicator calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed, RobotWheel LTWheel){
+    public static RobotPose2D calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed, RobotWheel LTWheel){
         double CONST_D = Math.sqrt(Math.pow(LTWheel.getOnRobotPosition().getX(),2) + Math.pow(LTWheel.getOnRobotPosition().getY(),2));
         double CONST_SQRT2 = Math.sqrt(2);
         double CONST_PIRTSQRT2_OVER_4T180 = XYPlaneCalculations.CONST_PI_OVER_180 * LTWheel.getRadius() * CONST_SQRT2 / 4.0;
@@ -277,7 +277,7 @@ public class OmniChassis2DPositionTracker extends RobotSynchronized2DPositionTra
         double xSpeed = CONST_PIRTSQRT2_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed);
         double ySpeed = CONST_PIRTSQRT2_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed);
         double angularSpeed = CONST_R_OVER_4TD * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed);
-        return new Robot2DPositionIndicator(xSpeed,ySpeed,angularSpeed);
+        return new RobotPose2D(xSpeed,ySpeed,angularSpeed);
     }
 
     /**
@@ -286,7 +286,7 @@ public class OmniChassis2DPositionTracker extends RobotSynchronized2DPositionTra
      * @param LTWheel The LTWheel RobotMotion class of the
      * @return The angular speed of each motor, in deg per sec, in order of LT, RT, LB, RB.
      */
-    public static double[] calculateWheelAngularSpeedInDegPerSec(Robot2DPositionIndicator RobotSpeed, RobotWheel LTWheel){
+    public static double[] calculateWheelAngularSpeedInDegPerSec(RobotPose2D RobotSpeed, RobotWheel LTWheel){
         double xSpeed = RobotSpeed.getX();
         double ySpeed = RobotSpeed.getY();
         double rotSpeed = RobotSpeed.getRotationZ();

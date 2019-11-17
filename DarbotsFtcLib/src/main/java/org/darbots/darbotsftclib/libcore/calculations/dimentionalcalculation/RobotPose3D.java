@@ -26,14 +26,14 @@ SOFTWARE.
 package org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation;
 
 
-public class Robot3DPositionIndicator {
+public class RobotPose3D {
     protected double m_X;
     protected double m_Y;
     protected double m_Z;
     protected double m_RotationX;
     protected double m_RotationZ;
     protected double m_RotationY;
-    public Robot3DPositionIndicator(double X, double Y, double Z, double RotationX, double RotationY, double RotationZ){
+    public RobotPose3D(double X, double Y, double Z, double RotationX, double RotationY, double RotationZ){
         this.m_X = X;
         this.m_Y = Y;
         this.m_Z = Z;
@@ -41,7 +41,7 @@ public class Robot3DPositionIndicator {
         this.m_RotationY = XYPlaneCalculations.normalizeDeg(RotationY);
         this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
     }
-    public Robot3DPositionIndicator(Robot2DPositionIndicator Pos2D, double Z, double RotationX, double RotationY){
+    public RobotPose3D(RobotPose2D Pos2D, double Z, double RotationX, double RotationY){
         this.m_X = Pos2D.m_X;
         this.m_Y = Pos2D.m_Y;
         this.m_Z = Z;
@@ -49,7 +49,7 @@ public class Robot3DPositionIndicator {
         this.m_RotationZ = XYPlaneCalculations.normalizeDeg(Pos2D.m_RotationZ);
         this.m_RotationY = XYPlaneCalculations.normalizeDeg(RotationY);
     }
-    public Robot3DPositionIndicator(Robot3DPositionIndicator Pos3D){
+    public RobotPose3D(RobotPose3D Pos3D){
         this.m_X = Pos3D.m_X;
         this.m_Y = Pos3D.m_Y;
         this.m_Z = Pos3D.m_Z;
@@ -78,8 +78,8 @@ public class Robot3DPositionIndicator {
     public double getDistanceToOrigin(){
         return (Math.sqrt(Math.pow(this.getX(),2) + Math.pow(this.getZ(),2) + Math.pow(this.getY(),2)));
     }
-    public Robot2DPositionIndicator get2DPosition(){
-        return new Robot2DPositionIndicator(this.getX(),this.getY(),this.getRotationZ());
+    public RobotPose2D get2DPosition(){
+        return new RobotPose2D(this.getX(),this.getY(),this.getRotationZ());
     }
     public double getRotationX(){
         return this.m_RotationX;

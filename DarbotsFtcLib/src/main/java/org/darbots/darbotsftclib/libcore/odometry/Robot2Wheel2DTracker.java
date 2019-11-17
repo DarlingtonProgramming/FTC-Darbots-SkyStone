@@ -3,7 +3,7 @@ package org.darbots.darbotsftclib.libcore.odometry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
@@ -80,7 +80,7 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
                 double deltaYMoved = deltaStrafeCM;
                 double deltaAngMoved = newGyroReading - m_LastGyroReading;
 
-                Robot2DPositionIndicator currentVelocityVector = new Robot2DPositionIndicator(
+                RobotPose2D currentVelocityVector = new RobotPose2D(
                         deltaXMoved / secondsDriven,
                         deltaYMoved / secondsDriven,
                         deltaAngMoved / secondsDriven
@@ -90,7 +90,7 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
                     deltaAngMoved = -deltaAngMoved;
                 }
 
-                Robot2Wheel2DTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
+                Robot2Wheel2DTracker.this.drive_MoveThroughRobotAxisOffset(new RobotPose2D(
                         deltaXMoved,
                         deltaYMoved,
                         deltaAngMoved
@@ -123,7 +123,7 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
     private boolean m_TrackingThreadRunned = false;
 
 
-    public Robot2Wheel2DTracker(Robot2DPositionIndicator initialPosition, RobotGyro Gyro, DcMotor DriveEncoder, DcMotor StrafeEncoder, double DriveEncoderCountsPerRev, double DriveEncoderWheelRadius, double StrafeEncoderCountsPerRev, double StrafeEncoderWheelRadius) {
+    public Robot2Wheel2DTracker(RobotPose2D initialPosition, RobotGyro Gyro, DcMotor DriveEncoder, DcMotor StrafeEncoder, double DriveEncoderCountsPerRev, double DriveEncoderWheelRadius, double StrafeEncoderCountsPerRev, double StrafeEncoderWheelRadius) {
         super(initialPosition);
         __setupRunnable();
         __setupParams(Gyro,DriveEncoder,StrafeEncoder,DriveEncoderCountsPerRev,DriveEncoderWheelRadius,StrafeEncoderCountsPerRev,StrafeEncoderWheelRadius);
@@ -271,8 +271,8 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
         this.m_RunnableTracking.m_StrafeEncoderCountsPerCM = this.m_StrafeEncoderCountsPerRev * (1.0 / this.m_StrafeEncoderWheelCircumference);
     }
 
-    protected void drive_MoveThroughRobotAxisOffset(Robot2DPositionIndicator robotAxisValues) {
-        Robot2DPositionIndicator tempField = this.fieldAxisFromRobotAxis(robotAxisValues);
+    protected void drive_MoveThroughRobotAxisOffset(RobotPose2D robotAxisValues) {
+        RobotPose2D tempField = this.fieldAxisFromRobotAxis(robotAxisValues);
         this.setCurrentPosition(tempField);
         this.offsetRelative(robotAxisValues);
     }

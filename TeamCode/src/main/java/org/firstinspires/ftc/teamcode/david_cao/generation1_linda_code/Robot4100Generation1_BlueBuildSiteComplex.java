@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.david_cao.generation1_linda_code;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot3DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose3D;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
 import org.darbots.darbotsftclib.season_specific.skystone.navigation.SkyStoneNavigation;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
@@ -23,7 +23,7 @@ public class Robot4100Generation1_BlueBuildSiteComplex extends DarbotsBasicOpMod
     public void hardwareInitialize() {
         this.m_RobotCore = new Robot4100Generation1_LindaCore(this.hardwareMap);
         Camera = new RobotOnPhoneCamera(this,Robot4100Generation1_Settings.AUTONOMOUS_TENSORFLOW_PREVIEW, RobotOnPhoneCamera.PhoneCameraDirection.Back, Robot4100Common.VUFORIA_LICENSE);
-        Robot3DPositionIndicator CameraPosition = new Robot3DPositionIndicator(Robot4100Generation1_Settings.AUTONOMOUS_CAMERAPOSONPHONE);
+        RobotPose3D CameraPosition = new RobotPose3D(Robot4100Generation1_Settings.AUTONOMOUS_CAMERAPOSONPHONE);
         this.m_Navigation = new SkyStoneNavigation(CameraPosition,Camera);
     }
 
@@ -188,7 +188,7 @@ public class Robot4100Generation1_BlueBuildSiteComplex extends DarbotsBasicOpMod
         this.m_Navigation.setActivated(false);
         double firstScanZOffset = 0;
         double firstScanXOffset = 0;
-        Robot3DPositionIndicator firstScanStonePosition = this.m_Navigation.getDarbotsRobotAxisStonePosition();
+        RobotPose3D firstScanStonePosition = this.m_Navigation.getDarbotsRobotAxisStonePosition();
         if(firstScanStonePosition != null){
             firstScanZOffset = -firstScanStonePosition.getZ();
             firstScanXOffset = -firstScanStonePosition.getX();

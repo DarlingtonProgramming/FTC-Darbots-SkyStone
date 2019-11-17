@@ -1,10 +1,10 @@
 package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 
 public interface RobotAutonomousPath {
-    Robot2DPositionIndicator getPathEndPoint();
-    void getError(Robot2DPositionIndicator currentPosition, Robot2DPositionIndicator errorReceiver);
+    RobotPose2D getPathEndPoint();
+    void getError(RobotPose2D currentPosition, RobotPose2D errorReceiver);
 
-    boolean isPathFinished(Robot2DPositionIndicator currentPosition);
+    boolean isPathFinished(RobotPose2D currentPosition);
 }

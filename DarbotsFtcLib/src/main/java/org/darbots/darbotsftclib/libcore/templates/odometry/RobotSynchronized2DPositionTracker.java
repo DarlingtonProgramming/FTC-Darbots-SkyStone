@@ -1,10 +1,10 @@
 package org.darbots.darbotsftclib.libcore.templates.odometry;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
 
 public abstract class RobotSynchronized2DPositionTracker extends RobotBasic2DPositionTracker {
-    public RobotSynchronized2DPositionTracker(Robot2DPositionIndicator initialPosition) {
+    public RobotSynchronized2DPositionTracker(RobotPose2D initialPosition) {
         super(initialPosition);
     }
 
@@ -12,27 +12,27 @@ public abstract class RobotSynchronized2DPositionTracker extends RobotBasic2DPos
         super(oldTracker);
     }
 
-    public Robot2DPositionIndicator getInitialPos(){
+    public RobotPose2D getInitialPos(){
         synchronized (super.getInitialPos()){
-            return new Robot2DPositionIndicator(super.getInitialPos());
+            return new RobotPose2D(super.getInitialPos());
         }
     }
-    public void setInitialPos(Robot2DPositionIndicator initialPos){
+    public void setInitialPos(RobotPose2D initialPos){
         synchronized (super.getInitialPos()) {
-            Robot2DPositionIndicator readInitialPos = super.getInitialPos();
+            RobotPose2D readInitialPos = super.getInitialPos();
             readInitialPos.setX(initialPos.getX());
             readInitialPos.setY(initialPos.getY());
             readInitialPos.setRotationZ(initialPos.getRotationZ());
         }
     }
-    public Robot2DPositionIndicator getCurrentPosition(){
-        Robot2DPositionIndicator read2DPosition = super.getCurrentPosition();
+    public RobotPose2D getCurrentPosition(){
+        RobotPose2D read2DPosition = super.getCurrentPosition();
         synchronized (read2DPosition) {
-            return new Robot2DPositionIndicator(read2DPosition);
+            return new RobotPose2D(read2DPosition);
         }
     }
-    public void setCurrentPosition(Robot2DPositionIndicator currentPosition){
-        Robot2DPositionIndicator read2DPosition = super.getCurrentPosition();
+    public void setCurrentPosition(RobotPose2D currentPosition){
+        RobotPose2D read2DPosition = super.getCurrentPosition();
         synchronized (read2DPosition) {
             read2DPosition.setX(currentPosition.getX());
             read2DPosition.setY(currentPosition.getY());
@@ -40,31 +40,31 @@ public abstract class RobotSynchronized2DPositionTracker extends RobotBasic2DPos
         }
     }
 
-    public void offsetPosition(Robot2DPositionIndicator offsetPosition) {
-        Robot2DPositionIndicator read2DPosition = super.getCurrentPosition();
+    public void offsetPosition(RobotPose2D offsetPosition) {
+        RobotPose2D read2DPosition = super.getCurrentPosition();
         synchronized (read2DPosition) {
             super.offsetPosition(offsetPosition);
         }
     }
     @Override
     public void resetRelativeOffset() {
-        Robot2DPositionIndicator readRelativePos = super.getRelativeOffset();
+        RobotPose2D readRelativePos = super.getRelativeOffset();
         synchronized (readRelativePos){
             super.resetRelativeOffset();
         }
     }
 
     @Override
-    public Robot2DPositionIndicator getRelativeOffset() {
-        Robot2DPositionIndicator readRelativePos = super.getRelativeOffset();
+    public RobotPose2D getRelativeOffset() {
+        RobotPose2D readRelativePos = super.getRelativeOffset();
         synchronized (readRelativePos){
-            return new Robot2DPositionIndicator(readRelativePos);
+            return new RobotPose2D(readRelativePos);
         }
     }
 
     @Override
-    protected void offsetRelative(Robot2DPositionIndicator offsetRobot) {
-        Robot2DPositionIndicator readRelativePos = super.getRelativeOffset();
+    protected void offsetRelative(RobotPose2D offsetRobot) {
+        RobotPose2D readRelativePos = super.getRelativeOffset();
         synchronized (readRelativePos) {
             double originalX = readRelativePos.getX(), originalY = readRelativePos.getY(), originalRotZ = readRelativePos.getRotationZ();
             double newX = originalX, newY = originalY, newRotZ = originalRotZ;
@@ -86,15 +86,15 @@ public abstract class RobotSynchronized2DPositionTracker extends RobotBasic2DPos
     }
 
     @Override
-    public Robot2DPositionIndicator getCurrentVelocityVector(){
-        Robot2DPositionIndicator readVelocityVector = super.getCurrentVelocityVector();
+    public RobotPose2D getCurrentVelocityVector(){
+        RobotPose2D readVelocityVector = super.getCurrentVelocityVector();
         synchronized (readVelocityVector) {
-            return new Robot2DPositionIndicator(readVelocityVector);
+            return new RobotPose2D(readVelocityVector);
         }
     }
 
-    public void setCurrentVelocityVector(Robot2DPositionIndicator velocityVector){
-        Robot2DPositionIndicator readVelocityVector = super.getCurrentVelocityVector();
+    public void setCurrentVelocityVector(RobotPose2D velocityVector){
+        RobotPose2D readVelocityVector = super.getCurrentVelocityVector();
         synchronized (readVelocityVector){
             readVelocityVector.setX(velocityVector.getX());
             readVelocityVector.setY(velocityVector.getY());

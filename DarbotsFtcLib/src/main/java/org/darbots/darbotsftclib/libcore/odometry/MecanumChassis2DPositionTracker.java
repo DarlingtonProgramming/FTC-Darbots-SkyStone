@@ -1,15 +1,13 @@
 package org.darbots.darbotsftclib.libcore.odometry;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.sensors.gyros.SynchronizedSoftwareGyro;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
-import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
 
 public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPositionTracker {
@@ -100,7 +98,7 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
                 Those constants are calculated when we are initializing the MecanumChassis2DPositionTrackerClass, and they help us to reduce double multiplications in speed calculation.
                  */
 
-                Robot2DPositionIndicator chassisSpeed = new Robot2DPositionIndicator(
+                RobotPose2D chassisSpeed = new RobotPose2D(
                         m_CONST_PIR_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed),
                         m_CONST_PIR_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed),
                         m_CONST_R_OVER_4TKl * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed)
@@ -112,7 +110,7 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
                 double deltaAngMoved = chassisSpeed.getRotationZ() * secondsDriven;
 
 
-                MecanumChassis2DPositionTracker.this.drive_MoveThroughRobotAxisOffset(new Robot2DPositionIndicator(
+                MecanumChassis2DPositionTracker.this.drive_MoveThroughRobotAxisOffset(new RobotPose2D(
                         deltaXMoved,
                         deltaYMoved,
                         deltaAngMoved
@@ -144,7 +142,7 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
     private boolean m_TrackingThreadRunned = false;
 
 
-    public MecanumChassis2DPositionTracker(Robot2DPositionIndicator initialPosition, boolean initSoftwareGyro, RobotMotion LTMotion, RobotMotion RTMotion, RobotMotion LBMotion, RobotMotion RBMotion){
+    public MecanumChassis2DPositionTracker(RobotPose2D initialPosition, boolean initSoftwareGyro, RobotMotion LTMotion, RobotMotion RTMotion, RobotMotion LBMotion, RobotMotion RBMotion){
         super(initialPosition);
         __setupRunnable();
         __setupParams(initSoftwareGyro, LTMotion, RTMotion, LBMotion, RBMotion);
@@ -230,20 +228,20 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         return this.m_RunnableTracking.RBMotion;
     }
 
-    protected void drive_MoveThroughRobotAxisOffset(Robot2DPositionIndicator robotAxisValues) {
-        Robot2DPositionIndicator tempField = this.fieldAxisFromRobotAxis(robotAxisValues);
+    protected void drive_MoveThroughRobotAxisOffset(RobotPose2D robotAxisValues) {
+        RobotPose2D tempField = this.fieldAxisFromRobotAxis(robotAxisValues);
         this.setCurrentPosition(tempField);
         this.offsetRelative(robotAxisValues);
     }
 
-    public Robot2DPositionIndicator calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed){
+    public RobotPose2D calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed){
         double xSpeed = this.m_RunnableTracking.m_CONST_PIR_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed);
         double ySpeed = this.m_RunnableTracking.m_CONST_PIR_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed);
         double angularSpeed = this.m_RunnableTracking.m_CONST_R_OVER_4TKl * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed);
-        return new Robot2DPositionIndicator(xSpeed,ySpeed,angularSpeed);
+        return new RobotPose2D(xSpeed,ySpeed,angularSpeed);
     }
 
-    public double[] calculateWheelAngularSpeedInDegPerSec(Robot2DPositionIndicator RobotSpeed){
+    public double[] calculateWheelAngularSpeedInDegPerSec(RobotPose2D RobotSpeed){
         double xSpeed = RobotSpeed.getX();
         double ySpeed = RobotSpeed.getY();
         double rotSpeed = RobotSpeed.getRotationZ();
@@ -260,7 +258,7 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         return speedReturn;
     }
 
-    public double[] calculateMotorPowers(Robot2DPositionIndicator RobotSpeed){
+    public double[] calculateMotorPowers(RobotPose2D RobotSpeed){
         double[] WheelDegPerSec = calculateWheelAngularSpeedInDegPerSec(RobotSpeed);
         double[] MotorSpeed = new double[WheelDegPerSec.length];
         for(int i = 0; i < WheelDegPerSec.length; i++) {
@@ -270,13 +268,13 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
     }
 
 
-    public static Robot2DPositionIndicator calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed, RobotWheel LTWheel){
+    public static RobotPose2D calculateRobotSpeed(double LTAngularSpeed, double RTAngularSpeed, double LBAngularSpeed, double RBAngularSpeed, RobotWheel LTWheel){
         double CONST_PIR_OVER_4T180 = XYPlaneCalculations.CONST_PI_OVER_180 * LTWheel.getRadius() / 4.0;
         double CONST_R_OVER_4TKl = LTWheel.getRadius() / (4 * (LTWheel.getOnRobotPosition().getX() + LTWheel.getOnRobotPosition().getY()));
         double xSpeed = CONST_PIR_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed);
         double ySpeed = CONST_PIR_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed);
         double angularSpeed = CONST_R_OVER_4TKl * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed);
-        return new Robot2DPositionIndicator(xSpeed,ySpeed,angularSpeed);
+        return new RobotPose2D(xSpeed,ySpeed,angularSpeed);
     }
 
     /**
@@ -285,7 +283,7 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
      * @param LTWheel The LTWheel RobotMotion class of the
      * @return The angular speed of each motor, in deg per sec, in order of LT, RT, LB, RB.
      */
-    public static double[] calculateWheelAngularSpeedInDegPerSec(Robot2DPositionIndicator RobotSpeed, RobotWheel LTWheel){
+    public static double[] calculateWheelAngularSpeedInDegPerSec(RobotPose2D RobotSpeed, RobotWheel LTWheel){
         double xSpeed = RobotSpeed.getX();
         double ySpeed = RobotSpeed.getY();
         double rotSpeed = RobotSpeed.getRotationZ();
