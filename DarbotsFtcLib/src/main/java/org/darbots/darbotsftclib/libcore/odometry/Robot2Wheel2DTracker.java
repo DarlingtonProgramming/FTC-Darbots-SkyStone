@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
-public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
+public class Robot2Wheel2DTracker extends RobotActive2DPositionTracker {
     private class Robot2DPassive2WheelTracker_Runnable implements Runnable{
-        private volatile int m_SleepTimeInMillis = 75;
         private volatile boolean m_IsRunning = false;
 
         private DcMotor m_DriveEncoder;
@@ -52,7 +52,7 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
 
             while(m_IsRunning){
                 try{
-                   Thread.sleep(m_SleepTimeInMillis);
+                   Thread.sleep(Robot2Wheel2DTracker.this.m_ThreadSleepTimeInMs);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
@@ -79,6 +79,9 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
                 double deltaXMoved = deltaDriveCM;
                 double deltaYMoved = deltaStrafeCM;
                 double deltaAngMoved = newGyroReading - m_LastGyroReading;
+
+                deltaXMoved /= Robot2Wheel2DTracker.this.m_XDistanceFactor;
+                deltaYMoved /= Robot2Wheel2DTracker.this.m_YDistanceFactor;
 
                 RobotPose2D currentVelocityVector = new RobotPose2D(
                         deltaXMoved / secondsDriven,
@@ -155,14 +158,6 @@ public class Robot2Wheel2DTracker extends RobotSynchronized2DPositionTracker {
         this.m_StrafeEncoderWheelCircumference = StrafeEncoderWheelRadius * (2 * Math.PI);
         this.__recalculateStrafeCountsPerCM();
 
-    }
-
-    public float getSleepTimeInSec(){
-        return this.m_RunnableTracking.m_SleepTimeInMillis / 1000.0f;
-    }
-
-    public void setSleepTimeInSec(float second){
-        this.m_RunnableTracking.m_SleepTimeInMillis = Math.round(Math.abs(second) / 1000.0f);
     }
 
     @Override

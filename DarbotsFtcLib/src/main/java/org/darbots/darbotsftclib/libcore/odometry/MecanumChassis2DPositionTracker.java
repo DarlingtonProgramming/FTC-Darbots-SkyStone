@@ -8,11 +8,11 @@ import org.darbots.darbotsftclib.libcore.sensors.gyros.SynchronizedSoftwareGyro;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
 
-public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPositionTracker {
+public class MecanumChassis2DPositionTracker extends RobotActive2DPositionTracker {
     private class MecanumChassis2DPositionTracker_Runnable implements Runnable{
-        private volatile int m_SleepTimeInMillis = 75;
         private volatile boolean m_IsRunning = false;
 
         private SynchronizedSoftwareGyro m_Gyro = null;
@@ -65,7 +65,7 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
 
             while(m_IsRunning){
                 try{
-                    Thread.sleep(m_SleepTimeInMillis);
+                    Thread.sleep(MecanumChassis2DPositionTracker.this.m_ThreadSleepTimeInMs);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
@@ -99,9 +99,9 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
                  */
 
                 RobotPose2D chassisSpeed = new RobotPose2D(
-                        m_CONST_PIR_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed),
-                        m_CONST_PIR_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed),
-                        m_CONST_R_OVER_4TKl * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed)
+                        (m_CONST_PIR_OVER_4T180 * (-LTAngularSpeed + RTAngularSpeed - LBAngularSpeed + RBAngularSpeed)) / MecanumChassis2DPositionTracker.this.m_XDistanceFactor,
+                        (m_CONST_PIR_OVER_4T180 * (LTAngularSpeed + RTAngularSpeed - LBAngularSpeed - RBAngularSpeed)) / MecanumChassis2DPositionTracker.this.m_YDistanceFactor,
+                        (m_CONST_R_OVER_4TKl * (LTAngularSpeed + RTAngularSpeed + LBAngularSpeed + RBAngularSpeed)) / MecanumChassis2DPositionTracker.this.m_ZRotDistanceFactor
                 );
 
 
@@ -183,14 +183,6 @@ public class MecanumChassis2DPositionTracker extends RobotSynchronized2DPosition
         if(initSoftwareGyro){
             this.m_RunnableTracking.m_Gyro = new SynchronizedSoftwareGyro(0.0f);
         }
-    }
-
-    public float getSleepTimeInSec(){
-        return this.m_RunnableTracking.m_SleepTimeInMillis / 1000.0f;
-    }
-
-    public void setSleepTimeInSec(float second){
-        this.m_RunnableTracking.m_SleepTimeInMillis = Math.round(Math.abs(second) / 1000.0f);
     }
 
     public void stop(){

@@ -4,6 +4,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Rob
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
 
 public abstract class RobotSynchronized2DPositionTracker extends RobotBasic2DPositionTracker {
+
     public RobotSynchronized2DPositionTracker(RobotPose2D initialPosition) {
         super(initialPosition);
     }

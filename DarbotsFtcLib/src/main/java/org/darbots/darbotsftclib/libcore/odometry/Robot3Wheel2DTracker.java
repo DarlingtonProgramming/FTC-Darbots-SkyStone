@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.sensors.gyros.SynchronizedSoftwareGyro;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
 
-public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
+public class Robot3Wheel2DTracker extends RobotActive2DPositionTracker {
     private class Robot2DPassive3WheelTracker_Runnable implements Runnable{
-        private volatile int m_SleepTimeInMillis = 75;
         private volatile boolean m_IsRunning = false;
 
         private SynchronizedSoftwareGyro m_Gyro = null;
@@ -57,7 +57,7 @@ public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
 
             while(m_IsRunning){
                 try{
-                   Thread.sleep(m_SleepTimeInMillis);
+                   Thread.sleep(Robot3Wheel2DTracker.this.m_ThreadSleepTimeInMs);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
@@ -86,6 +86,10 @@ public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
                 double deltaXMoved = (-deltaLeftCM + deltaRightCM) / 2;
                 double deltaYMoved = deltaMidCM;
                 double deltaAngMoved = (deltaLeftCM / this.m_LeftEncoderRotationCircumferenceInCM + deltaRightCM / this.m_LeftEncoderRotationCircumferenceInCM) / 2.0 * 360.0;
+
+                deltaXMoved /= Robot3Wheel2DTracker.this.m_XDistanceFactor;
+                deltaYMoved /= Robot3Wheel2DTracker.this.m_YDistanceFactor;
+                deltaAngMoved /= Robot3Wheel2DTracker.this.m_ZRotDistanceFactor;
 
                 RobotPose2D currentVelocityVector = new RobotPose2D(
                         deltaXMoved / secondsDriven,
@@ -173,14 +177,6 @@ public class Robot3Wheel2DTracker extends RobotSynchronized2DPositionTracker {
         if(initSoftwareGyro){
             this.m_RunnableTracking.m_Gyro = new SynchronizedSoftwareGyro(0.0f);
         }
-    }
-
-        public float getSleepTimeInSec(){
-        return this.m_RunnableTracking.m_SleepTimeInMillis / 1000.0f;
-    }
-
-    public void setSleepTimeInSec(float second){
-        this.m_RunnableTracking.m_SleepTimeInMillis = Math.round(Math.abs(second) / 1000.0f);
     }
 
     @Override
