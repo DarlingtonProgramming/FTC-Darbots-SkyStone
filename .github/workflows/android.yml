@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: creating a Robot_Common Java Class
-      run: mv TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot_common/Robot4100Common_Github.java TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot_common/Robot4100Common.java
+      run: mv TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot_common/Robot4100Common_Github.template TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot_common/Robot4100Common.java
     - name: set up JDK 1.8
       uses: actions/setup-java@v1
       with:

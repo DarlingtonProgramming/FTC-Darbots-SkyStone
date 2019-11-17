@@ -195,8 +195,10 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         if (globalGyro.getHeadingRotationPositiveOrientation() == RobotGyro.HeadingRotationPositiveOrientation.Clockwise) {
             deltaAng = -deltaAng;
         }
+
         double absDeltaAng = Math.abs(deltaAng);
         double deltaSpeedEachSide = 0;
+
         if (absDeltaAng >= 5) {
             deltaSpeedEachSide = Range.clip(0.4 * AbsSpeed, 0, 0.2);
         } else if (absDeltaAng >= 1.5) {
@@ -207,11 +209,15 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         if (deltaSpeedEachSide < 0.02 && deltaSpeedEachSide != 0) {
             deltaSpeedEachSide = 0.02;
         }
+
         if (deltaAng > 0) {
             return -deltaSpeedEachSide;
         } else if (deltaAng < 0) {
             return deltaSpeedEachSide;
         }
         return 0;
+
+        //return (-deltaAng) * 0.025;
+
     }
 }

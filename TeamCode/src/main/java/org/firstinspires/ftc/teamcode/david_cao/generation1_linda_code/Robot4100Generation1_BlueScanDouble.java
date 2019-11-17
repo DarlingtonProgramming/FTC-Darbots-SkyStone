@@ -42,7 +42,7 @@ public class Robot4100Generation1_BlueScanDouble extends DarbotsBasicOpMode<Robo
         Camera.setFlashlightEnabled(true);
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
                 50,
-                0.6
+                0.5
         ));
         if(!waitForDrive()){
             return;
@@ -166,28 +166,41 @@ public class Robot4100Generation1_BlueScanDouble extends DarbotsBasicOpMode<Robo
             return;
         }
 
-        double thirdResultOffset = this.ScanResult == 3 ? -3 : 0;
-
         this.getRobotCore().getChassis().addTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
                 60,
                 0.2
         ));
         this.getRobotCore().getChassis().addTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
-                -((2*Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE) - ((this.ScanResult - 1) * Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE) + 3 + thirdResultOffset),
+                -((2*Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE) - ((this.ScanResult - 1) * Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE) + 5),
                 0.25
         ));
+
+
         this.getRobotCore().getChassis().addTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
                 -50,
                 0.2
         ));
+
+        if(this.ScanResult == 3) {
+            this.getRobotCore().getChassis().addTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
+                    5,
+                    0.25
+            ));
+        }else{
+            this.getRobotCore().getChassis().addTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
+                    2,
+                    0.25
+            ));
+        }
+
         if(!waitForDrive()){
             return;
         }
         this.getRobotCore().setAutonomousDragStoneServoLeftToDrag(true);
         sleep(400);
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                50 + 30,
-                0.5
+                50 + 15,
+                0.4
         ));
         this.getRobotCore().getChassis().addTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
                 -(110 + (3*Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE) + firstScanExtraDistance),

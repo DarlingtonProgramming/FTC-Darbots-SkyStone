@@ -43,7 +43,7 @@ public class Robot4100Generation1_BlueScanComplex extends DarbotsBasicOpMode<Rob
         this.m_Navigation.setActivated(true);
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
                 50,
-                0.6
+                0.5
         ));
         if(!waitForDrive()){
             return;
