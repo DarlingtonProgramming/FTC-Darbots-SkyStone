@@ -3,7 +3,7 @@ package org.darbots.darbotsftclib.testcases.MecanumPosTrackerTest;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark2964;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark3637;
 import org.darbots.darbotsftclib.libcore.odometry.MecanumChassis2DPositionTracker;
@@ -43,25 +43,25 @@ public class MecanumPosTrackerTest_Core extends RobotCore {
         m_LeftBottomDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         m_RightTopDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         m_RightBottomDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        RobotWheel m_LeftTopWheel = new RobotWheel(new Robot2DPositionIndicator(WheelPosition[0],WheelPosition[1],45),WheelRadius);
-        RobotWheel m_RightTopWheel = new RobotWheel(new Robot2DPositionIndicator(WheelPosition[0],-WheelPosition[1],-45),WheelRadius);
-        RobotWheel m_LeftBottomWheel = new RobotWheel(new Robot2DPositionIndicator(WheelPosition[0],-WheelPosition[1],135),WheelRadius);
-        RobotWheel m_RightBottomWheel = new RobotWheel(new Robot2DPositionIndicator(-WheelPosition[0],-WheelPosition[1],-135),WheelRadius);
+        RobotWheel m_LeftTopWheel = new RobotWheel(new RobotPose2D(WheelPosition[0],WheelPosition[1],45),WheelRadius);
+        RobotWheel m_RightTopWheel = new RobotWheel(new RobotPose2D(WheelPosition[0],-WheelPosition[1],-45),WheelRadius);
+        RobotWheel m_LeftBottomWheel = new RobotWheel(new RobotPose2D(WheelPosition[0],-WheelPosition[1],135),WheelRadius);
+        RobotWheel m_RightBottomWheel = new RobotWheel(new RobotPose2D(-WheelPosition[0],-WheelPosition[1],-135),WheelRadius);
         RobotMotion LTMotion = new RobotMotion(new RobotMotorController(new RobotMotorWithEncoder(m_LeftTopDC,ChassisMotorType),false,0),m_LeftTopWheel);
         RobotMotion LBMotion = new RobotMotion(new RobotMotorController(new RobotMotorWithEncoder(m_LeftBottomDC,ChassisMotorType),false,0),m_LeftBottomWheel);
         RobotMotion RTMotion = new RobotMotion(new RobotMotorController(new RobotMotorWithEncoder(m_RightTopDC,ChassisMotorType),false,0),m_RightTopWheel);
         RobotMotion RBMotion = new RobotMotion(new RobotMotorController(new RobotMotorWithEncoder(m_RightBottomDC,ChassisMotorType),false,0),m_RightBottomWheel);
-        this.m_PosTracker = new MecanumChassis2DPositionTracker(new Robot2DPositionIndicator(0,0,0),false,LTMotion,RTMotion,LBMotion,RBMotion);
+        this.m_PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),false,LTMotion,RTMotion,LBMotion,RBMotion);
         this.m_PosTracker.start();
     }
 
     @Override
-    public void stop() {
+    protected void __stop() {
 
     }
 
     @Override
-    public void terminate() {
+    protected void __terminate() {
         this.m_PosTracker.stop();
     }
 
@@ -74,7 +74,7 @@ public class MecanumPosTrackerTest_Core extends RobotCore {
     public void updateTelemetry() {
         Telemetry globalTele = GlobalUtil.getTelemetry();
         if(globalTele != null){
-            Robot2DPositionIndicator currentPos = this.m_PosTracker.getCurrentPosition();
+            RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
             globalTele.addLine("Current Position")
                     .addData("X", currentPos.getX())
                     .addData("Y",currentPos.getY())
@@ -88,7 +88,7 @@ public class MecanumPosTrackerTest_Core extends RobotCore {
     }
 
     @Override
-    public void updateStatus() {
+    protected void __updateStatus() {
 
     }
 }

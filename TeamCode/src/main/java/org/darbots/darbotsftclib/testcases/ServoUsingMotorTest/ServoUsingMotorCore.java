@@ -43,12 +43,12 @@ public class ServoUsingMotorCore extends RobotCore {
     }
 
     @Override
-    public void stop() {
+    protected void __stop() {
         this.m_ServoUsingMotor.deleteAllTasks();
     }
 
     @Override
-    public void terminate() {
+    protected void __terminate() {
         return;
     }
 
@@ -68,7 +68,7 @@ public class ServoUsingMotorCore extends RobotCore {
     }
 
     @Override
-    public void updateStatus() {
+    protected void __updateStatus() {
         this.m_ServoUsingMotor.updateStatus();
     }
 }

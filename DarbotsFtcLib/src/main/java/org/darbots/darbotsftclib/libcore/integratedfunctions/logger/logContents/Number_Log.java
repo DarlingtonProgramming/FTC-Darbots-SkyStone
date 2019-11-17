@@ -3,17 +3,19 @@ package org.darbots.darbotsftclib.libcore.integratedfunctions.logger.logContents
 import org.darbots.darbotsftclib.libcore.templates.log.LogContent;
 import org.darbots.darbotsftclib.libcore.templates.log.LogType;
 
-public class String_Log extends LogContent {
-    private String m_Content;
-    public String_Log(Object content){
+public class Number_Log extends LogContent {
+    private Number m_Content;
+
+    public Number_Log(Object content){
         this.setContentValue(content);
     }
-    public String_Log(LogContent log){
+    public Number_Log(LogContent log){
         this.setContentValue(log.getContentValue());
     }
+
     @Override
     public LogType getContentType() {
-        return LogType.STRING_LOG;
+        return LogType.NUMBER_LOG;
     }
 
     @Override
@@ -23,6 +25,8 @@ public class String_Log extends LogContent {
 
     @Override
     public void setContentValue(Object contentVal) {
-        this.m_Content = contentVal.toString();
+        if(contentVal instanceof Number){
+            this.m_Content = (Number) contentVal;
+        }
     }
 }

@@ -3,6 +3,7 @@ package org.darbots.darbotsftclib.libcore.templates.log;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.logContents.Number_Log;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.logContents.String_Log;
 
 import java.util.AbstractMap;
@@ -106,9 +107,11 @@ public abstract class LogContent implements Map<String, Object> {
 
     @Nullable
     public static LogContent getInstance(String logType, Object value){
-        if(logType.equals(LogType.STRING_LOG.name())){
+        if(logType.equals(LogType.STRING_LOG.name())) {
             //Initialize a String Log
             return new String_Log(value);
+        }else if(logType.equals(LogType.NUMBER_LOG.name())){
+            return new Number_Log(value);
         }else{
             return null;
         }

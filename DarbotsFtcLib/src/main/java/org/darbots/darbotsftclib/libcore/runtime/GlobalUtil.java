@@ -2,6 +2,7 @@ package org.darbots.darbotsftclib.libcore.runtime;
 
 import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCFileIO;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogFile;
+import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.logContents.Number_Log;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.logContents.String_Log;
 import org.darbots.darbotsftclib.libcore.templates.log.LogContent;
 import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
@@ -11,14 +12,20 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.io.File;
 
 public class GlobalUtil {
-    public static void addLog(String module, String captain, LogContent content, LogLevel logLevel){
-        if(GlobalRegister.currentLog != null){
-            GlobalRegister.currentLog.addLogContent(module,captain, content, logLevel);
+    public static LogLevel LowestLogLevel = LogLevel.INFO;
+    public static void addLog(String module, String caption, LogContent content, LogLevel logLevel){
+        if(GlobalRegister.currentLog != null && logLevel.value() >= LowestLogLevel.value()){
+            GlobalRegister.currentLog.addLogContent(module,caption, content, logLevel);
         }
     }
-    public static void addLog(String module, String captain, String content, LogLevel logLevel){
-        if(GlobalRegister.currentLog != null){
-            GlobalRegister.currentLog.addLogContent(module,captain, new String_Log(content), logLevel);
+    public static void addLog(String module, String caption, String content, LogLevel logLevel){
+        if(GlobalRegister.currentLog != null && logLevel.value() >= LowestLogLevel.value()){
+            GlobalRegister.currentLog.addLogContent(module,caption, new String_Log(content), logLevel);
+        }
+    }
+    public static void addLog(String module, String caption, Number content, LogLevel logLevel){
+        if(GlobalRegister.currentLog != null && logLevel.value() >= LowestLogLevel.value()){
+            GlobalRegister.currentLog.addLogContent(module,caption,new Number_Log(content),logLevel);
         }
     }
 
