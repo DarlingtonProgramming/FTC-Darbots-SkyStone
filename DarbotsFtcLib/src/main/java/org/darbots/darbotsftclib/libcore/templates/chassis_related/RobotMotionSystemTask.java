@@ -34,6 +34,7 @@ import org.darbots.darbotsftclib.libcore.odometry.Robot2DPositionSoftwareTracker
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
+import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
 public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
@@ -94,8 +95,8 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
             return;
         }
         this.m_IsWorking = true;
-        GlobalUtil.addLog("RobotMotionSystemTask","BeforeTask","", RobotLogFile.LogLevel.DEBUG);
-        GlobalUtil.addLog("RobotMotionSystemTask","TaskInfo",this.getTaskDetailString(), RobotLogFile.LogLevel.DEBUG);
+        GlobalUtil.addLog("RobotMotionSystemTask","BeforeTask","", LogLevel.DEBUG);
+        GlobalUtil.addLog("RobotMotionSystemTask","TaskInfo",this.getTaskDetailString(), LogLevel.DEBUG);
         if((!this.getMotionSystem().isCalibrationEnabled()) && GlobalUtil.getGyro() != null){
             RobotGyro globalGyro = GlobalUtil.getGyro();
             globalGyro.updateStatus();
@@ -116,7 +117,7 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         if(!this.m_IsWorking){
             return;
         }
-        GlobalUtil.addLog("RobotMotionSystemTask","AfterTask","Task ends", RobotLogFile.LogLevel.DEBUG);
+        GlobalUtil.addLog("RobotMotionSystemTask","AfterTask","Task ends", LogLevel.DEBUG);
         this.m_IsWorking = false;
         MotionSystemTaskFinishInfo finishInfo = this.__taskFinished();
         if(this.m_MotionSystem.getPositionTracker() != null){
