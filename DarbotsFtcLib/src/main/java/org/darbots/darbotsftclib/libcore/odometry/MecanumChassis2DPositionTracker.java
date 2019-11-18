@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.libcore.odometry;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
@@ -10,6 +11,8 @@ import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSynchronized2DPositionTracker;
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.ExpansionHubMotor;
 
 public class MecanumChassis2DPositionTracker extends RobotActive2DPositionTracker {
     private class MecanumChassis2DPositionTracker_Runnable implements Runnable{
