@@ -25,10 +25,15 @@ SOFTWARE.
 
 package org.darbots.darbotsftclib.libcore.sensors.cameras;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.vuforia.Image;
+import com.vuforia.PIXEL_FORMAT;
+import com.vuforia.Vuforia;
 
+import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotCamera;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -58,6 +63,46 @@ public class RobotWebcamCamera implements RobotCamera {
         return this.m_Preview;
     }
 
+    @Override
+    public Bitmap getFrame() {
+        if(this.m_Vuforia == null){
+            return null;
+        }
+        Image tempVuforiaImage = null;
+        VuforiaLocalizer.CloseableFrame closeableFrame = null;
+        while(tempVuforiaImage == null){
+            if(GlobalRegister.runningOpMode != null){
+                if(GlobalRegister.runningOpMode.isStarted() && (!GlobalRegister.runningOpMode.opModeIsActive())){
+                    break;
+                }
+            }
+            try {
+                closeableFrame = this.m_Vuforia.getFrameQueue().take();
+                long numImages = closeableFrame.getNumImages();
+
+                for (int i = 0; i < numImages; i++) {
+                    if (closeableFrame.getImage(i).getFormat() == PIXEL_FORMAT.RGB565) {
+                        tempVuforiaImage = closeableFrame.getImage(i);
+                        if (tempVuforiaImage != null) {
+                            break;
+                        }
+                    }
+                }
+            }catch(InterruptedException e){
+
+            }finally{
+                if (closeableFrame != null) closeableFrame.close();
+            }
+        }
+        if(tempVuforiaImage == null){
+            return null;
+        }
+        // copy the bitmap from the Vuforia frame
+        Bitmap bitmap = Bitmap.createBitmap(tempVuforiaImage.getWidth(), tempVuforiaImage.getHeight(), Bitmap.Config.RGB_565);
+        bitmap.copyPixelsFromBuffer(tempVuforiaImage.getPixels());
+        return bitmap;
+    }
+
     protected void createVuforia(){
         VuforiaLocalizer.Parameters parameters = null;
         if(this.m_Preview){
@@ -73,6 +118,8 @@ public class RobotWebcamCamera implements RobotCamera {
 
         //  Instantiate the Vuforia engine
         this.m_Vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565,true);
+        this.m_Vuforia.setFrameQueueCapacity(1);
     }
     public WebcamName getWebcam(){
         return m_WebcamName;
