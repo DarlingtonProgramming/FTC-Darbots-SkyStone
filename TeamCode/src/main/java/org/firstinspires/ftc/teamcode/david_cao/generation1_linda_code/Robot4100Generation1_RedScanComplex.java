@@ -5,13 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot3DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
+import org.darbots.darbotsftclib.season_specific.skystone.darbots_vuforia_skystone_detection.DarbotsSkyStoneDifferentiation;
 import org.darbots.darbotsftclib.season_specific.skystone.navigation.SkyStoneNavigation;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 @Autonomous(group = "4100", name = "4100Gen1Auto-RedScanComplex")
 public class Robot4100Generation1_RedScanComplex extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
     private Robot4100Generation1_LindaCore m_RobotCore;
-    private SkyStoneNavigation m_Navigation;
+    private DarbotsSkyStoneDifferentiation m_Navigation;
     private int ScanResult = 0;
     private RobotOnPhoneCamera Camera;
 
@@ -25,7 +26,7 @@ public class Robot4100Generation1_RedScanComplex extends DarbotsBasicOpMode<Robo
         this.m_RobotCore = new Robot4100Generation1_LindaCore(this.hardwareMap);
         Camera = new RobotOnPhoneCamera(this,Robot4100Generation1_Settings.AUTONOMOUS_TENSORFLOW_PREVIEW, RobotOnPhoneCamera.PhoneCameraDirection.Back, Robot4100Common.VUFORIA_LICENSE);
         Robot3DPositionIndicator CameraPosition = new Robot3DPositionIndicator(Robot4100Generation1_Settings.AUTONOMOUS_CAMERAPOSONPHONE);
-        this.m_Navigation = new SkyStoneNavigation(CameraPosition,Camera);
+        this.m_Navigation = new DarbotsSkyStoneDifferentiation(CameraPosition,Camera);
     }
 
     @Override

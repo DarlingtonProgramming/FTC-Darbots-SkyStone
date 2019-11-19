@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.david_cao.generation1_linda_code;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -8,6 +9,7 @@ import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_t
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystemTeleOpControlTask;
 
 @TeleOp(name = "4100Gen1TeleOp_dcao_DEMO",group = "4100")
+@Disabled
 public class Robot4100Generation1_TeleOp_DEMONSTRATION extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
     private Robot4100Generation1_LindaCore m_RobotCore;
     private LoopableTimer m_TimerStoneOrient = null;

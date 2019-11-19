@@ -1,8 +1,4 @@
-package org.darbots.darbotsftclib.testcases.DarbotsVuforiaTargetTest;
-
-import android.webkit.WebStorage;
-
-import com.qualcomm.robotcore.util.ElapsedTime;
+package org.darbots.darbotsftclib.season_specific.skystone.darbots_vuforia_skystone_detection;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot3DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
@@ -24,21 +20,21 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
-public class DarbotsSkyStoneNavigation_TestDifferenciation implements RobotNonBlockingDevice {
+public class DarbotsSkyStoneDifferentiation implements RobotNonBlockingDevice {
 
     private Robot3DPositionIndicator m_CameraPos; //Distance in CM, Rotation in Darbots Transformation
     private RobotCamera m_Camera;
     private VuforiaTrackables m_TargetsSkyStone;
     private List<VuforiaTrackable> m_AllTrackables;
 
-    public DarbotsSkyStoneNavigation_TestDifferenciation(Robot3DPositionIndicator CameraPosition, RobotCamera Camera){
+    public DarbotsSkyStoneDifferentiation(Robot3DPositionIndicator CameraPosition, RobotCamera Camera){
         this.m_Camera = Camera;
         this.m_CameraPos = CameraPosition;
         m_AllTrackables = new ArrayList<VuforiaTrackable>();
         this.__setupVuforia();
     }
 
-    public DarbotsSkyStoneNavigation_TestDifferenciation(DarbotsSkyStoneNavigation_TestDifferenciation oldNav){
+    public DarbotsSkyStoneDifferentiation(DarbotsSkyStoneDifferentiation oldNav){
         this.m_CameraPos = oldNav.m_CameraPos;
         this.m_Camera = oldNav.m_Camera;
         this.m_TargetsSkyStone = oldNav.m_TargetsSkyStone;
@@ -61,14 +57,9 @@ public class DarbotsSkyStoneNavigation_TestDifferenciation implements RobotNonBl
         VuforiaLocalizer vuforia = this.m_Camera.getVuforia();
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
-        m_TargetsSkyStone = vuforia.loadTrackablesFromAsset("Skystone_Darbots_Comparison");
+        m_TargetsSkyStone = vuforia.loadTrackablesFromAsset("Skystone_Darbots");
 
-        //m_TargetsSkyStone.remove(0);
-
-        VuforiaTrackable OriginalStoneTarget = m_TargetsSkyStone.get(0);
-        OriginalStoneTarget.setName("Original Stone Target");
-
-        VuforiaTrackable DarbotsStoneTarget = m_TargetsSkyStone.get(1);
+        VuforiaTrackable DarbotsStoneTarget = m_TargetsSkyStone.get(0);
         DarbotsStoneTarget.setName("Stone Target");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
@@ -118,26 +109,7 @@ public class DarbotsSkyStoneNavigation_TestDifferenciation implements RobotNonBl
         }
     }
 
-
-    protected Robot3DPositionIndicator __getFTCRobotAxisOriginalStonePosition(){
-        VuforiaTrackableDefaultListener trackable = (VuforiaTrackableDefaultListener) m_AllTrackables.get(0).getListener();
-        if(trackable.isVisible()){
-            OpenGLMatrix stonePosition = this.getCamera() instanceof RobotOnPhoneCamera ? trackable.getPosePhone() : trackable.getFtcCameraFromTarget();
-            VectorF translation = stonePosition.getTranslation();
-            Orientation rotation = Orientation.getOrientation(stonePosition,EXTRINSIC,XYZ,DEGREES);
-            return new Robot3DPositionIndicator(translation.get(0) / 10, translation.get(1) / 10, translation.get(2) / 10, rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-        }
-        return null;
-    }
-    public Robot3DPositionIndicator getDarbotsRobotAxisOriginalStonePosition(){
-        Robot3DPositionIndicator FTCRobotAxis = this.__getFTCRobotAxisOriginalStonePosition();
-        if(FTCRobotAxis != null){
-            return FTCRobotAxis.fromFTCRobotAxisToDarbotsRobotAxis();
-        }
-        return null;
-    }
-
-    protected Robot3DPositionIndicator __getFTCRobotAxisDarbotsStonePosition(){
+    protected Robot3DPositionIndicator __getFTCRobotAxisStonePosition(){
         VuforiaTrackableDefaultListener trackable = (VuforiaTrackableDefaultListener) m_AllTrackables.get(1).getListener();
         if(trackable.isVisible()){
             OpenGLMatrix stonePosition = this.getCamera() instanceof RobotOnPhoneCamera ? trackable.getPosePhone() : trackable.getFtcCameraFromTarget();
@@ -147,8 +119,8 @@ public class DarbotsSkyStoneNavigation_TestDifferenciation implements RobotNonBl
         }
         return null;
     }
-    public Robot3DPositionIndicator getDarbotsRobotAxisDarbotsStonePosition(){
-        Robot3DPositionIndicator FTCRobotAxis = this.__getFTCRobotAxisDarbotsStonePosition();
+    public Robot3DPositionIndicator getDarbotsRobotAxisStonePosition(){
+        Robot3DPositionIndicator FTCRobotAxis = this.__getFTCRobotAxisStonePosition();
         if(FTCRobotAxis != null){
             return FTCRobotAxis.fromFTCRobotAxisToDarbotsRobotAxis();
         }
