@@ -29,10 +29,10 @@ public class RobotPose2D {
     protected double m_X;
     protected double m_Y;
     protected double m_RotationZ;
-    public RobotPose2D(double X, double Y, double YRotation){
+    public RobotPose2D(double X, double Y, double ZRotation){
         this.m_X = X;
         this.m_Y = Y;
-        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(YRotation);
+        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(ZRotation);
     }
     public RobotPose2D(RobotPoint2D Point, double ZRotation) {
         this.m_X = Point.X;
@@ -55,6 +55,28 @@ public class RobotPose2D {
     }
     public void setY(double Y){
         this.m_Y = Y;
+    }
+    public double[] getValues(){
+        double values[] = {this.m_X, this.m_Y, this.m_RotationZ};
+        return values;
+    }
+    public void setValues(double X, double Y, double RotationZ){
+        this.m_X = X;
+        this.m_Y = Y;
+        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
+    }
+    public void setValues(RobotPose2D pose2D){
+        this.m_X = pose2D.m_X;
+        this.m_Y = pose2D.m_Y;
+        this.m_RotationZ = pose2D.m_RotationZ;
+    }
+    public void offsetValues(double X, double Y, double RotationZ){
+        this.m_X += X;
+        this.m_Y += Y;
+        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(this.m_RotationZ + RotationZ);
+    }
+    public void offsetValues(RobotPose2D pose2D){
+        this.offsetValues(pose2D.getX(),pose2D.getY(),pose2D.getRotationZ());
     }
     public double getDistanceToOrigin(){
         return (Math.sqrt(Math.pow(this.getX(),2) + Math.pow(this.getY(),2)));
