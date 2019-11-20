@@ -69,7 +69,7 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
         sleep(500);
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedZDistanceTask(
-                        90,
+                        95,
                         0.5
                 )
         );
@@ -102,7 +102,7 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
 
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedXDistanceTask(
-                        -40,
+                        -50,
                         0.4
                 )
         );
@@ -141,7 +141,7 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
 
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedZDistanceTask(
-                        115,
+                        110,
                         0.5
                 )
         );
@@ -245,7 +245,7 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
         }
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                120 + firstScanExtraDistance,
+                125 + firstScanExtraDistance,
                 1.0
         ));
         if(!waitForDrive()){
@@ -256,7 +256,7 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
         sleep(400);
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                -60,
+                -65,
                 0.5
         ));
         if(!waitForDrive()){

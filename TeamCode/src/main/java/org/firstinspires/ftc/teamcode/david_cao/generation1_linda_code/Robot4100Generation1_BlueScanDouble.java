@@ -188,10 +188,6 @@ public class Robot4100Generation1_BlueScanDouble extends DarbotsBasicOpMode<Robo
                     0.25
             ));
         }else{
-            this.getRobotCore().getChassis().addTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
-                    2,
-                    0.25
-            ));
         }
 
         if(!waitForDrive()){

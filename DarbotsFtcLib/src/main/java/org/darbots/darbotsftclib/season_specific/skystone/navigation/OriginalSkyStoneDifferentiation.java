@@ -110,7 +110,7 @@ public class OriginalSkyStoneDifferentiation implements RobotNonBlockingDevice {
     }
 
     protected Robot3DPositionIndicator __getFTCRobotAxisStonePosition(){
-        VuforiaTrackableDefaultListener trackable = (VuforiaTrackableDefaultListener) m_AllTrackables.get(1).getListener();
+        VuforiaTrackableDefaultListener trackable = (VuforiaTrackableDefaultListener) m_AllTrackables.get(0).getListener();
         if(trackable.isVisible()){
             OpenGLMatrix stonePosition = this.getCamera() instanceof RobotOnPhoneCamera ? trackable.getPosePhone() : trackable.getFtcCameraFromTarget();
             VectorF translation = stonePosition.getTranslation();

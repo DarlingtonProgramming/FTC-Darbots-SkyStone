@@ -188,7 +188,7 @@ public class Robot4100Generation1_RedScanDouble extends DarbotsBasicOpMode<Robot
             ));
         }else{
             this.getRobotCore().getChassis().addTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
-                    2,
+                    5,
                     0.25
             ));
         }

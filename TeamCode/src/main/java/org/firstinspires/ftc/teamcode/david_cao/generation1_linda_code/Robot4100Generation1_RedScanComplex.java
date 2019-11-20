@@ -187,7 +187,7 @@ public class Robot4100Generation1_RedScanComplex extends DarbotsBasicOpMode<Robo
         sleep(500);
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedZDistanceTask(
-                        90,
+                        95,
                         0.5
                 )
         );

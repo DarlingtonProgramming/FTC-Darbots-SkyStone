@@ -188,7 +188,7 @@ public class Robot4100Generation1_BlueScanComplex extends DarbotsBasicOpMode<Rob
         sleep(500);
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedZDistanceTask(
-                        90,
+                        95,
                         0.5
                 )
         );
