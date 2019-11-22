@@ -3,7 +3,7 @@ package org.darbots.darbotsftclib.libcore.sensors.gyros;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
-public class SoftwareGyro extends RobotGyro {
+public class SoftwareGyro implements RobotGyro {
     protected float m_LastAng = 0;
 
     public SoftwareGyro(){
@@ -16,11 +16,6 @@ public class SoftwareGyro extends RobotGyro {
 
     public SoftwareGyro(RobotGyro oldGyro){
         this.m_LastAng = oldGyro.getHeading();
-    }
-
-    @Override
-    protected void updateData() {
-        return;
     }
 
     @Override

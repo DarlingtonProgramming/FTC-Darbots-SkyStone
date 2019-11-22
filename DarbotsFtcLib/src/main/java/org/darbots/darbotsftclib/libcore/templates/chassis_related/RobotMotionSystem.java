@@ -41,9 +41,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private double m_LinearYMotionDistanceFactor;
     private double m_LinearXMotionDistanceFactor;
     private double m_RotationalMotionDistanceFactor;
-    private float m_GyroGuidedDrivePublicStartingAngle = -360;
-    private boolean m_CanUpdateTracker = false;
-    private boolean m_CalibrationEnabled = false;
+    private boolean m_PosTrackerIsAsync;
 
     public RobotMotionSystem(Robot2DPositionTracker PositionTracker){
         this.m_TaskLists = new ArrayList();
@@ -51,9 +49,9 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.setLinearMotionDistanceFactor(1);
         this.m_RotationalMotionDistanceFactor = 1;
         if(PositionTracker != null && PositionTracker instanceof RobotNonBlockingDevice){
-            this.m_CanUpdateTracker = true;
+            this.m_PosTrackerIsAsync = true;
         }else{
-            this.m_CanUpdateTracker = false;
+            this.m_PosTrackerIsAsync = false;
         }
     }
     public RobotMotionSystem(RobotMotionSystem MotionSystem){
@@ -62,11 +60,10 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_LinearYMotionDistanceFactor = MotionSystem.m_LinearYMotionDistanceFactor;
         this.m_LinearXMotionDistanceFactor = MotionSystem.m_LinearXMotionDistanceFactor;
         this.m_RotationalMotionDistanceFactor = MotionSystem.m_RotationalMotionDistanceFactor;
-        this.m_GyroGuidedDrivePublicStartingAngle = MotionSystem.m_GyroGuidedDrivePublicStartingAngle;
         if(MotionSystem.m_PosTracker != null && MotionSystem.m_PosTracker instanceof RobotNonBlockingDevice){
-            this.m_CanUpdateTracker = true;
+            this.m_PosTrackerIsAsync = true;
         }else{
-            this.m_CanUpdateTracker = false;
+            this.m_PosTrackerIsAsync = false;
         }
     }
 
@@ -102,9 +99,9 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     public void setPositionTracker(Robot2DPositionTracker PositionTracker){
         this.m_PosTracker = PositionTracker;
         if(PositionTracker != null && PositionTracker instanceof RobotNonBlockingDevice){
-            this.m_CanUpdateTracker = true;
+            this.m_PosTrackerIsAsync = true;
         }else{
-            this.m_CanUpdateTracker = false;
+            this.m_PosTrackerIsAsync = false;
         }
     }
     public void addTask(@NonNull RobotMotionSystemTask Task){
@@ -184,7 +181,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
             if(this.m_TaskLists.get(0).isBusy())
                 this.m_TaskLists.get(0).updateStatus();
         }
-        if(this.m_CanUpdateTracker){
+        if(this.m_PosTrackerIsAsync){
             RobotNonBlockingDevice NonBlockingTracker = (RobotNonBlockingDevice) this.m_PosTracker;
             NonBlockingTracker.updateStatus();
         }
@@ -202,23 +199,6 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         }
     }
 
-    public void updateGyroGuidedPublicStartingAngle(){
-        if(GlobalUtil.getGyro() != null){
-            GlobalUtil.getGyro().updateStatus();
-            this.m_GyroGuidedDrivePublicStartingAngle = GlobalUtil.getGyro().getHeading();
-        }
-    }
-
-    public float getGyroGuidedDrivePublicStartingAngle(){
-        if(this.m_GyroGuidedDrivePublicStartingAngle == -360){
-            return 0;
-        }
-        return this.m_GyroGuidedDrivePublicStartingAngle;
-    }
-
-    public void setGyroGuidedDrivePublicStartingAngle(float Ang){
-        this.m_GyroGuidedDrivePublicStartingAngle = XYPlaneCalculations.normalizeDeg(Ang);
-    }
 
     public void stop(){
         if(this.getPositionTracker() != null){
@@ -226,16 +206,5 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         }
     }
 
-    public boolean isCalibrationEnabled(){
-        return this.m_CalibrationEnabled;
-    }
 
-    public void setCalibrationEnabled(boolean Enabled){
-        this.m_CalibrationEnabled = Enabled;
-    }
-
-    public abstract RobotMotionSystemFixedXDistanceTask getFixedXDistanceTask(double XDistance, double Speed);
-    public abstract RobotMotionSystemFixedYDistanceTask getFixedYDistanceTask(double YDistance, double Speed);
-    public abstract RobotMotionSystemFixedTurnTask getFixedTurnTask(double Deg, double Speed);
-    public abstract RobotMotionSystemTeleOpControlTask getTeleOpTask();
 }

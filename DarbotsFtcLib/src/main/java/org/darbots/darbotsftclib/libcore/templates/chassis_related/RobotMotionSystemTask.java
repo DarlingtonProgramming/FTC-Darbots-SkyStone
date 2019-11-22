@@ -40,7 +40,6 @@ import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
     private RobotMotionSystem m_MotionSystem;
     private boolean m_IsWorking;
-    private float m_GyroStartAng = 0.0f;
 
     public static class MotionSystemTaskFinishInfo{
         public double xError = 0;
@@ -95,29 +94,15 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
             return;
         }
         this.m_IsWorking = true;
-        GlobalUtil.addLog("RobotMotionSystemTask","BeforeTask","", LogLevel.DEBUG);
-        GlobalUtil.addLog("RobotMotionSystemTask","TaskInfo",this.getTaskDetailString(), LogLevel.DEBUG);
-        if((!this.getMotionSystem().isCalibrationEnabled()) && GlobalUtil.getGyro() != null){
-            RobotGyro globalGyro = GlobalUtil.getGyro();
-            globalGyro.updateStatus();
-            this.m_GyroStartAng = globalGyro.getHeading();
-        } else if(this.getMotionSystem().isCalibrationEnabled()){
-            this.m_GyroStartAng = this.getMotionSystem().getGyroGuidedDrivePublicStartingAngle();
-        }
         this.__startTask();
     }
     protected abstract void __startTask();
     protected abstract MotionSystemTaskFinishInfo __taskFinished();
 
-    protected float __getGyroStartAng(){
-        return this.m_GyroStartAng;
-    }
-
     public void stopTask(){
         if(!this.m_IsWorking){
             return;
         }
-        GlobalUtil.addLog("RobotMotionSystemTask","AfterTask","Task ends", LogLevel.DEBUG);
         this.m_IsWorking = false;
         MotionSystemTaskFinishInfo finishInfo = this.__taskFinished();
         if(this.m_MotionSystem.getPositionTracker() != null){
