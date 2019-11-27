@@ -28,7 +28,7 @@ public class XYPlaneCalculations {
 
     public static RobotPose2D getRelativePosition(RobotPose2D PerspectiveOrigin, RobotPose2D Target){
         //First step - move the Perspective Origin to the Origin of the Axis.
-        double[] targetPoint = {Target.getX() - PerspectiveOrigin.getX(),Target.getY() - PerspectiveOrigin.getY()};
+        double[] targetPoint = {Target.X - PerspectiveOrigin.X,Target.Y - PerspectiveOrigin.Y};
         //Second step - rotate the targetPoint so that the coordinate system (X and Z scalars) of the Perspective Origin overlaps with the Field Coordinate.
         //We are basically rotating field coordinate here.
         double[] origin = {0,0};
@@ -44,10 +44,10 @@ public class XYPlaneCalculations {
         double absRotZ = normalizeDeg(RelativePosition.getRotationZ() + PerspectiveOrigin.getRotationZ());
         //Second Step - rotate the coordinates back.
         double[] origin = {0,0};
-        double[] relativeTargetPoint = {RelativePosition.getX(),RelativePosition.getY()};
+        double[] relativeTargetPoint = {RelativePosition.X,RelativePosition.Y};
         double[] rotatedTargetPoint = rotatePointAroundFixedPoint_Deg(relativeTargetPoint,origin,PerspectiveOrigin.getRotationZ());
         //Third Step - move the PerspectiveOrigin back to the Absolute Point on the Field.
-        double[] movedTargetPoint = {rotatedTargetPoint[0] + PerspectiveOrigin.getX(),rotatedTargetPoint[1] + PerspectiveOrigin.getY()};
+        double[] movedTargetPoint = {rotatedTargetPoint[0] + PerspectiveOrigin.X,rotatedTargetPoint[1] + PerspectiveOrigin.Y};
 
         return new RobotPose2D(movedTargetPoint[0],movedTargetPoint[1],absRotZ);
     }

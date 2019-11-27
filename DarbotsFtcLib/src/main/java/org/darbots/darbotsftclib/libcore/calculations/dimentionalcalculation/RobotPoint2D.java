@@ -12,7 +12,7 @@ public class RobotPoint2D {
     	this.Y = oldPoint.Y;
     }
     public RobotPoint2D(RobotPose2D indicator) {
-    	this.X = indicator.getX();
-    	this.Y = indicator.getY();
+    	this.X = indicator.X;
+    	this.Y = indicator.Y;
     }
 }

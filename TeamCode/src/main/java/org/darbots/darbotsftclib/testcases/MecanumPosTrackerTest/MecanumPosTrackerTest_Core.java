@@ -76,8 +76,8 @@ public class MecanumPosTrackerTest_Core extends RobotCore {
         if(globalTele != null){
             RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
             globalTele.addLine("Current Position")
-                    .addData("X", currentPos.getX())
-                    .addData("Y",currentPos.getY())
+                    .addData("X", currentPos.X)
+                    .addData("Y",currentPos.Y)
                     .addData("RotZ", currentPos.getRotationZ());
         }
     }

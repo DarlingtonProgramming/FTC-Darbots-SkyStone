@@ -27,61 +27,40 @@ package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 
 import android.support.annotation.NonNull;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogFile;
 import org.darbots.darbotsftclib.libcore.odometry.Robot2DPositionSoftwareTracker;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
+import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
+import org.firstinspires.ftc.robotcore.internal.android.dx.io.instructions.ZeroRegisterDecodedInstruction;
 
 public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
     private RobotMotionSystem m_MotionSystem;
     private boolean m_IsWorking;
-
-    public static class MotionSystemTaskFinishInfo{
-        public double xError = 0;
-        public double yError = 0;
-        public double zRotError = 0;
-        public double xMoved = 0;
-        public double yMoved = 0;
-        public double zRotMoved = 0;
-
-        public MotionSystemTaskFinishInfo(){
-            xError = 0;
-            yError = 0;
-            zRotError = 0;
-            xMoved = 0;
-            yMoved = 0;
-            zRotMoved = 0;
-        }
-        public MotionSystemTaskFinishInfo(double xError, double yError, double ZRotError, double xMoved, double yMoved, double zRotMoved){
-            this.xError = xError;
-            this.yError = yError;
-            this.zRotError = zRotMoved;
-            this.xMoved = xMoved;
-            this.yMoved = yMoved;
-            this.zRotMoved = zRotMoved;
-        }
-        public MotionSystemTaskFinishInfo(MotionSystemTaskFinishInfo oldInfo){
-            this.xError = oldInfo.xError;
-            this.yError = oldInfo.yError;
-            this.zRotError = oldInfo.zRotError;
-            this.xMoved = oldInfo.xMoved;
-            this.yMoved = oldInfo.yMoved;
-            this.zRotMoved = oldInfo.zRotMoved;
-        }
-
-    }
+    private static final double LASTSPEED_NOTSET = -100000;
+    private static final double SPEEDFACTOR_NONE = -100000;
+    private double m_LastXSpeed = LASTSPEED_NOTSET, m_LastYSpeed = LASTSPEED_NOTSET, m_LastRotZSpeed = LASTSPEED_NOTSET;
+    private ElapsedTime m_SpeedControlTimer;
+    private ElapsedTime m_TaskTimer;
 
     public RobotMotionSystemTask(){
         this.m_IsWorking = false;
+        this.m_SpeedControlTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        this.m_TaskTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     }
-    public RobotMotionSystemTask(@NonNull RobotMotionSystemTask Task){
+    public RobotMotionSystemTask(@NonNull RobotMotionSystemTask Task) {
         this.m_MotionSystem = Task.m_MotionSystem;
         this.m_IsWorking = false;
+        this.m_SpeedControlTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        this.m_TaskTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     }
     public RobotMotionSystem getMotionSystem(){
         return this.m_MotionSystem;
@@ -89,32 +68,24 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
     public void setMotionSystem(@NonNull RobotMotionSystem MotionSystem){
         this.m_MotionSystem = MotionSystem;
     }
+
     public void startTask(){
         if(this.m_IsWorking){
             return;
         }
         this.m_IsWorking = true;
+        this.m_TaskTimer.reset();
         this.__startTask();
     }
     protected abstract void __startTask();
-    protected abstract MotionSystemTaskFinishInfo __taskFinished();
+    protected abstract RobotPose2D __taskFinished();
 
     public void stopTask(){
         if(!this.m_IsWorking){
             return;
         }
         this.m_IsWorking = false;
-        MotionSystemTaskFinishInfo finishInfo = this.__taskFinished();
-        if(this.m_MotionSystem.getPositionTracker() != null){
-            if(this.m_MotionSystem.getPositionTracker() instanceof Robot2DPositionSoftwareTracker){
-                Robot2DPositionSoftwareTracker softTracker = (Robot2DPositionSoftwareTracker) this.m_MotionSystem.getPositionTracker();
-                softTracker.drive_MoveThroughRobotAxisOffset(new RobotPose2D(
-                        finishInfo.xMoved,
-                        finishInfo.yMoved,
-                        finishInfo.zRotMoved
-                ));
-            }
-        }
+        RobotPose2D finishPose = this.__taskFinished();
         this.m_MotionSystem.__checkTasks();
     }
     @Override
@@ -132,39 +103,18 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
             this.updateStatus();
         }
     }
-    public abstract String getTaskDetailString();
-    public abstract double getTaskProgressRatio();
 
-    protected double __getGyroGuidedDeltaSpeed(double AbsSpeed){
-        if(!this.isBusy()){
-            return 0;
-        }
-        if(GlobalUtil.getGyro() == null || (!this.getMotionSystem().isCalibrationEnabled())){
-            return 0;
-        }
-        RobotGyro globalGyro = GlobalUtil.getGyro();
-        globalGyro.updateStatus();
-        double currentAng = globalGyro.getHeading();
-        double deltaAng = XYPlaneCalculations.normalizeDeg(currentAng - m_GyroStartAng);
 
-        if (globalGyro.getHeadingRotationPositiveOrientation() == RobotGyro.HeadingRotationPositiveOrientation.Clockwise) {
-            deltaAng = -deltaAng;
-        }
-        double absDeltaAng = Math.abs(deltaAng);
-        double deltaSpeedEachSide = 0;
-        /*
-        if (absDeltaAng >= 5) {
-            deltaSpeedEachSide = Range.clip(0. * AbsSpeed, 0, 0.2);
-        } else if (absDeltaAng >= 1.5) {
-            deltaSpeedEachSide = Range.clip(0.2 * AbsSpeed, 0, 0.15);
-        } else if (absDeltaAng >= 0.5) {
-            deltaSpeedEachSide = Range.clip(0.1 * AbsSpeed, 0, 0.1);
-        }
-        if (deltaSpeedEachSide < 0.02 && deltaSpeedEachSide != 0) {
-            deltaSpeedEachSide = 0.02;
-        }
-         */
-        deltaSpeedEachSide = (-deltaAng) * 0.03; //Proportional Speed Gain
-        return deltaSpeedEachSide;
+    private RobotPose2D getCorrectionVelocity(RobotPose2D supposedPosition){
+        RobotPose2D errorVals = XYPlaneCalculations.getRelativePosition(this.getMotionSystem().getPositionTracker().getCurrentPosition(),supposedPosition);
+        this.getMotionSystem().getPIDCalculator().feedError(errorVals);
+        RobotPose2D newDeltaVelocity = this.getMotionSystem().getPIDCalculator().getPDPower();
+        return newDeltaVelocity;
     }
+
+
+    public double getSecondsSinceTaskStart(){
+        return this.m_TaskTimer.seconds();
+    }
+
 }

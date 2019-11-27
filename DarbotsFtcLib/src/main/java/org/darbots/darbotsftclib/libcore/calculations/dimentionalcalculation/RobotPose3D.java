@@ -27,59 +27,41 @@ package org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation;
 
 
 public class RobotPose3D {
-    protected double m_X;
-    protected double m_Y;
-    protected double m_Z;
+    public double X;
+    public double Y;
+    public double Z;
     protected double m_RotationX;
     protected double m_RotationZ;
     protected double m_RotationY;
     public RobotPose3D(double X, double Y, double Z, double RotationX, double RotationY, double RotationZ){
-        this.m_X = X;
-        this.m_Y = Y;
-        this.m_Z = Z;
+        this.X = X;
+        this.Y = Y;
+        this.Z = Z;
         this.m_RotationX = XYPlaneCalculations.normalizeDeg(RotationX);
         this.m_RotationY = XYPlaneCalculations.normalizeDeg(RotationY);
         this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
     }
     public RobotPose3D(RobotPose2D Pos2D, double Z, double RotationX, double RotationY){
-        this.m_X = Pos2D.m_X;
-        this.m_Y = Pos2D.m_Y;
-        this.m_Z = Z;
+        this.X = Pos2D.X;
+        this.Y = Pos2D.Y;
+        this.Z = Z;
         this.m_RotationX = XYPlaneCalculations.normalizeDeg(RotationX);
-        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(Pos2D.m_RotationZ);
+        this.m_RotationZ = Pos2D.getRotationZ();
         this.m_RotationY = XYPlaneCalculations.normalizeDeg(RotationY);
     }
     public RobotPose3D(RobotPose3D Pos3D){
-        this.m_X = Pos3D.m_X;
-        this.m_Y = Pos3D.m_Y;
-        this.m_Z = Pos3D.m_Z;
+        this.X = Pos3D.X;
+        this.Y = Pos3D.Y;
+        this.Z = Pos3D.Z;
         this.m_RotationX = Pos3D.m_RotationX;
         this.m_RotationY = Pos3D.m_RotationY;
         this.m_RotationZ = Pos3D.m_RotationZ;
     }
-    public double getX(){
-        return this.m_X;
-    }
-    public void setX(double X){
-        this.m_X = X;
-    }
-    public double getY(){
-        return this.m_Y;
-    }
-    public void setY(double Y){
-        this.m_Y = Y;
-    }
-    public double getZ(){
-        return this.m_Z;
-    }
-    public void setZ(double Z){
-        this.m_Z = Z;
-    }
     public double getDistanceToOrigin(){
-        return (Math.sqrt(Math.pow(this.getX(),2) + Math.pow(this.getZ(),2) + Math.pow(this.getY(),2)));
+        return (Math.sqrt(Math.pow(this.X,2) + Math.pow(this.Y,2) + Math.pow(this.Z,2)));
     }
     public RobotPose2D get2DPosition(){
-        return new RobotPose2D(this.getX(),this.getY(),this.getRotationZ());
+        return new RobotPose2D(this.X,this.Y,this.getRotationZ());
     }
     public double getRotationX(){
         return this.m_RotationX;

@@ -27,43 +27,43 @@ public class ChassisPIDCalculator {
     }
     public RobotPose2D getPIDPower(){
         ChassisPIDIntegrator.ChassisPIDErrorInfo errorInfo = this.m_PIDCalculator.getPIDErrorInfo();
-        double XPower = this.xPIDCoefficients.Kp * errorInfo.Error.getX() + this.xPIDCoefficients.Ki * errorInfo.Integral.getX() + this.xPIDCoefficients.Kd * errorInfo.Derivative.getX();
-        double YPower = this.yPIDCoefficients.Kp * errorInfo.Error.getY() + this.yPIDCoefficients.Ki * errorInfo.Integral.getY() + this.yPIDCoefficients.Kd * errorInfo.Derivative.getY();
+        double XPower = this.xPIDCoefficients.Kp * errorInfo.Error.X + this.xPIDCoefficients.Ki * errorInfo.Integral.X + this.xPIDCoefficients.Kd * errorInfo.Derivative.X;
+        double YPower = this.yPIDCoefficients.Kp * errorInfo.Error.Y + this.yPIDCoefficients.Ki * errorInfo.Integral.Y + this.yPIDCoefficients.Kd * errorInfo.Derivative.Y;
         double RotZPower = this.rotZPIDCoefficients.Kp * errorInfo.Error.getRotationZ() + this.rotZPIDCoefficients.Ki * errorInfo.Integral.getRotationZ() + this.rotZPIDCoefficients.Kd * errorInfo.Derivative.getRotationZ();
         return new RobotPose2D(XPower,YPower,RotZPower);
     }
     public RobotPose2D getPIPower(){
         ChassisPIDIntegrator.ChassisPIDErrorInfo errorInfo = this.m_PIDCalculator.getPIDErrorInfo();
-        double XPower = this.xPIDCoefficients.Kp * errorInfo.Error.getX() + this.xPIDCoefficients.Ki * errorInfo.Integral.getX();
-        double YPower = this.yPIDCoefficients.Kp * errorInfo.Error.getY() + this.yPIDCoefficients.Ki * errorInfo.Integral.getY();
+        double XPower = this.xPIDCoefficients.Kp * errorInfo.Error.X + this.xPIDCoefficients.Ki * errorInfo.Integral.X;
+        double YPower = this.yPIDCoefficients.Kp * errorInfo.Error.Y + this.yPIDCoefficients.Ki * errorInfo.Integral.Y;
         double RotZPower = this.rotZPIDCoefficients.Kp * errorInfo.Error.getRotationZ() + this.rotZPIDCoefficients.Ki * errorInfo.Integral.getRotationZ();
         return new RobotPose2D(XPower,YPower,RotZPower);
     }
     public RobotPose2D getPDPower(){
         ChassisPIDIntegrator.ChassisPIDErrorInfo errorInfo = this.m_PIDCalculator.getPIDErrorInfo();
-        double XPower = this.xPIDCoefficients.Kp * errorInfo.Error.getX() + this.xPIDCoefficients.Kd * errorInfo.Derivative.getX();
-        double YPower = this.yPIDCoefficients.Kp * errorInfo.Error.getY() + this.yPIDCoefficients.Kd * errorInfo.Derivative.getY();
+        double XPower = this.xPIDCoefficients.Kp * errorInfo.Error.X + this.xPIDCoefficients.Kd * errorInfo.Derivative.X;
+        double YPower = this.yPIDCoefficients.Kp * errorInfo.Error.Y + this.yPIDCoefficients.Kd * errorInfo.Derivative.Y;
         double RotZPower = this.rotZPIDCoefficients.Kp * errorInfo.Error.getRotationZ() + this.rotZPIDCoefficients.Kd * errorInfo.Derivative.getRotationZ();
         return new RobotPose2D(XPower,YPower,RotZPower);
     }
     public RobotPose2D getPPower(){
         ChassisPIDIntegrator.ChassisPIDErrorInfo errorInfo = this.m_PIDCalculator.getPIDErrorInfo();
-        double XPower = this.xPIDCoefficients.Kp * errorInfo.Error.getX();
-        double YPower = this.yPIDCoefficients.Kp * errorInfo.Error.getY();
+        double XPower = this.xPIDCoefficients.Kp * errorInfo.Error.X;
+        double YPower = this.yPIDCoefficients.Kp * errorInfo.Error.Y;
         double RotZPower = this.rotZPIDCoefficients.Kp * errorInfo.Error.getRotationZ();
         return new RobotPose2D(XPower,YPower,RotZPower);
     }
     public RobotPose2D getIPower(){
         ChassisPIDIntegrator.ChassisPIDErrorInfo errorInfo = this.m_PIDCalculator.getPIDErrorInfo();
-        double XPower = this.xPIDCoefficients.Ki * errorInfo.Integral.getX();
-        double YPower = this.yPIDCoefficients.Ki * errorInfo.Integral.getY();
+        double XPower = this.xPIDCoefficients.Ki * errorInfo.Integral.X;
+        double YPower = this.yPIDCoefficients.Ki * errorInfo.Integral.Y;
         double RotZPower = this.rotZPIDCoefficients.Ki * errorInfo.Integral.getRotationZ();
         return new RobotPose2D(XPower,YPower,RotZPower);
     }
     public RobotPose2D getDPower(){
         ChassisPIDIntegrator.ChassisPIDErrorInfo errorInfo = this.m_PIDCalculator.getPIDErrorInfo();
-        double XPower = this.xPIDCoefficients.Kd * errorInfo.Derivative.getX();
-        double YPower = this.yPIDCoefficients.Kd * errorInfo.Derivative.getY();
+        double XPower = this.xPIDCoefficients.Kd * errorInfo.Derivative.X;
+        double YPower = this.yPIDCoefficients.Kd * errorInfo.Derivative.Y;
         double RotZPower = this.rotZPIDCoefficients.Kd * errorInfo.Derivative.getRotationZ();
         return new RobotPose2D(XPower,YPower,RotZPower);
     }

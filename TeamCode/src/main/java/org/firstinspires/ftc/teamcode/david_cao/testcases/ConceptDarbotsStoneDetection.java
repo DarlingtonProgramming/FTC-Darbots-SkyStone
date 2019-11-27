@@ -50,9 +50,9 @@ public class ConceptDarbotsStoneDetection extends DarbotsBasicOpMode {
                 if(StonePosition != null){
                     telemetry.addLine("stonePosition")
                             .addData("Status","Visible")
-                            .addData("X",StonePosition.getX())
-                            .addData("Z",StonePosition.getZ())
-                            .addData("Y",StonePosition.getY())
+                            .addData("X",StonePosition.X)
+                            .addData("Z",StonePosition.Z)
+                            .addData("Y",StonePosition.Y)
                             .addData("XRot",StonePosition.getRotationX())
                             .addData("ZRot",StonePosition.getRotationZ())
                             .addData("YRot",StonePosition.getRotationY());

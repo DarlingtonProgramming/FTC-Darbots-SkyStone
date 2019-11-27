@@ -27,7 +27,10 @@ package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 
 import android.support.annotation.NonNull;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.ChassisPIDCalculator;
+import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.PIDCalculator;
+import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.PIDCoefficients;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
@@ -36,18 +39,31 @@ import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionTrack
 import java.util.ArrayList;
 
 public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
+    public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(0.1,0,0.025);
+    public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(0.1,0,0.025);
+    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(0.025,0,0.01);
+
     private ArrayList<RobotMotionSystemTask> m_TaskLists;
     private Robot2DPositionTracker m_PosTracker;
     private double m_LinearYMotionDistanceFactor;
     private double m_LinearXMotionDistanceFactor;
     private double m_RotationalMotionDistanceFactor;
     private boolean m_PosTrackerIsAsync;
+    private PIDCoefficients m_LinearXPIDCoefficient, m_LinearYPIDCoefficient, m_RotationalPIDCoefficient;
+    private RobotPose2D m_AccumulatedError;
+    private ChassisPIDCalculator m_PIDCalculator;
 
     public RobotMotionSystem(Robot2DPositionTracker PositionTracker){
         this.m_TaskLists = new ArrayList();
         this.m_PosTracker = PositionTracker;
         this.setLinearMotionDistanceFactor(1);
         this.m_RotationalMotionDistanceFactor = 1;
+        this.m_LinearXPIDCoefficient = LINEAR_X_PID_DEFAULT;
+        this.m_LinearYPIDCoefficient = LINEAR_Y_PID_DEFAULT;
+        this.m_RotationalPIDCoefficient = ROTATIONAL_Z_PID_DEFAULT;
+        this.m_PIDCalculator = new ChassisPIDCalculator(this.m_LinearXPIDCoefficient,this.m_LinearYPIDCoefficient,this.m_RotationalPIDCoefficient);
+        this.m_AccumulatedError = new RobotPose2D(0,0,0);
+
         if(PositionTracker != null && PositionTracker instanceof RobotNonBlockingDevice){
             this.m_PosTrackerIsAsync = true;
         }else{
@@ -60,11 +76,21 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_LinearYMotionDistanceFactor = MotionSystem.m_LinearYMotionDistanceFactor;
         this.m_LinearXMotionDistanceFactor = MotionSystem.m_LinearXMotionDistanceFactor;
         this.m_RotationalMotionDistanceFactor = MotionSystem.m_RotationalMotionDistanceFactor;
+        this.m_LinearXPIDCoefficient = MotionSystem.m_LinearXPIDCoefficient;
+        this.m_LinearYPIDCoefficient = MotionSystem.m_LinearYPIDCoefficient;
+        this.m_RotationalPIDCoefficient = MotionSystem.m_RotationalPIDCoefficient;
+        this.m_PIDCalculator = new ChassisPIDCalculator(this.m_LinearXPIDCoefficient,this.m_LinearYPIDCoefficient,this.m_RotationalPIDCoefficient);
+        this.m_AccumulatedError = new RobotPose2D(MotionSystem.m_AccumulatedError);
+
         if(MotionSystem.m_PosTracker != null && MotionSystem.m_PosTracker instanceof RobotNonBlockingDevice){
             this.m_PosTrackerIsAsync = true;
         }else{
             this.m_PosTrackerIsAsync = false;
         }
+    }
+
+    public ChassisPIDCalculator getPIDCalculator(){
+        return this.m_PIDCalculator;
     }
 
     public double getLinearYMotionDistanceFactor(){
@@ -91,6 +117,40 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
 
     public void setRotationalMotionDistanceFactor(double Factor){
         this.m_RotationalMotionDistanceFactor = Factor;
+    }
+
+    public PIDCoefficients getLinearXPIDCoefficient(){
+        return this.m_LinearXPIDCoefficient;
+    }
+
+    public void setLinearXPIDCoefficient(@NonNull PIDCoefficients LinearXPID){
+        this.m_LinearXPIDCoefficient = LinearXPID;
+        this.m_PIDCalculator.xPIDCoefficients = LinearXPID;
+    }
+
+    public PIDCoefficients getLinearYPIDCoefficient(){
+        return this.m_LinearYPIDCoefficient;
+    }
+
+    public void setLinearYPIDCoefficient(@NonNull PIDCoefficients LinearYPID){
+        this.m_LinearYPIDCoefficient = LinearYPID;
+        this.m_PIDCalculator.yPIDCoefficients = LinearYPID;
+    }
+
+    public void setLinearPIDCoefficients(@NonNull PIDCoefficients LinearPIDs){
+        this.m_LinearXPIDCoefficient = LinearPIDs;
+        this.m_LinearYPIDCoefficient = LinearPIDs;
+        this.m_PIDCalculator.xPIDCoefficients = LinearPIDs;
+        this.m_PIDCalculator.yPIDCoefficients = LinearPIDs;
+    }
+
+    public PIDCoefficients getRotationalPIDCoefficient(){
+        return this.m_RotationalPIDCoefficient;
+    }
+
+    public void setRotationalPIDCoefficient(@NonNull PIDCoefficients RotationalPID){
+        this.m_RotationalPIDCoefficient = RotationalPID;
+        this.m_PIDCalculator.rotZPIDCoefficients = RotationalPID;
     }
 
     public Robot2DPositionTracker getPositionTracker(){
@@ -201,10 +261,30 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
 
 
     public void stop(){
+        this.deleteAllTasks();
         if(this.getPositionTracker() != null){
             this.getPositionTracker().stop();
         }
     }
 
-
+    public abstract RobotPose2D getTheoreticalMaximumMotionState(double WantedXSpeedInCMPerSec, double WantedYSpeedInCMPerSec, double WantedZRotSpeedInDegPerSec);
+    public RobotPose2D getTheoreticalMaximumMotionState(RobotPose2D WantedVelocityVector){
+        return this.getTheoreticalMaximumMotionState(WantedVelocityVector.X,WantedVelocityVector.Y,WantedVelocityVector.getRotationZ());
+    }
+    protected abstract void __setRobotSpeed(double XSpeedInCMPerSec, double YSpeedInCMPerSec, double ZRotSpeedInDegPerSec);
+    public void setRobotSpeed(RobotPose2D VelocityVector){
+        this.setRobotSpeed(VelocityVector.X,VelocityVector.Y,VelocityVector.getRotationZ());
+    }
+    public void setRobotSpeed(double XSpeedInCMPerSec, double YSpeedInCMPerSec, double ZRotSpeedInDegPerSec){
+        RobotPose2D biggestSpeed = this.getTheoreticalMaximumMotionState(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
+        if(XSpeedInCMPerSec > biggestSpeed.X || YSpeedInCMPerSec > biggestSpeed.Y || ZRotSpeedInDegPerSec > biggestSpeed.getRotationZ()){
+            this.__setRobotSpeed(biggestSpeed.X,biggestSpeed.Y,biggestSpeed.getRotationZ());
+        }
+        this.__setRobotSpeed(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
+    }
+    public abstract double[] calculateWheelAngularSpeeds(double RobotXSpeedInCMPerSec, double RobotYSpeedInCMPerSec, double RobotZRotSpeedInDegPerSec);
+    public double[] calculateWheelAngularSpeeds(RobotPose2D RobotVelocity){
+        return this.calculateWheelAngularSpeeds(RobotVelocity.X,RobotVelocity.Y,RobotVelocity.getRotationZ());
+    }
+    public abstract RobotPose2D calculateRobotSpeed(double[] wheelSpeeds);
 }

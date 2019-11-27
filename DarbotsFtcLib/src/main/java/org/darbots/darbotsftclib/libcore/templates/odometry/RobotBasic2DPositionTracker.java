@@ -29,8 +29,8 @@ public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTrac
     }
 
     public void setInitialPos(RobotPose2D initialPos){
-        this.m_InitialPos.setX(initialPos.getX());
-        this.m_InitialPos.setY(initialPos.getY());
+        this.m_InitialPos.X = initialPos.X;
+        this.m_InitialPos.Y = initialPos.Y;
         this.m_InitialPos.setRotationZ(initialPos.getRotationZ());
     }
 
@@ -40,8 +40,8 @@ public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTrac
     }
 
     public void setCurrentPosition(RobotPose2D currentPosition){
-        this.m_CurrentPos.setX(currentPosition.getX());
-        this.m_CurrentPos.setY(currentPosition.getY());
+        this.m_CurrentPos.X = currentPosition.X;
+        this.m_CurrentPos.Y = currentPosition.Y;
         this.m_CurrentPos.setRotationZ(currentPosition.getRotationZ());
     }
 
@@ -56,8 +56,8 @@ public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTrac
 
     @Override
     public void resetRelativeOffset() {
-        this.m_RelativeOffset.setX(0);
-        this.m_RelativeOffset.setY(0);
+        this.m_RelativeOffset.X = 0;
+        this.m_RelativeOffset.Y = 0;
         this.m_RelativeOffset.setRotationZ(0);
     }
 
@@ -68,31 +68,31 @@ public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTrac
 
     protected void offsetPosition(RobotPose2D offsetPosition) {
         RobotPose2D currentPosition = this.m_CurrentPos;
-        if(offsetPosition.getX() != 0)
-            currentPosition.setX(currentPosition.getX() + offsetPosition.getX());
-        if(offsetPosition.getY() != 0)
-            currentPosition.setY(currentPosition.getY() + offsetPosition.getY());
+        if(offsetPosition.X != 0)
+            currentPosition.X += offsetPosition.X;
+        if(offsetPosition.Y != 0)
+            currentPosition.Y += offsetPosition.Y;
         if(offsetPosition.getRotationZ() != 0)
             currentPosition.setRotationZ(currentPosition.getRotationZ() + offsetPosition.getRotationZ());
     }
 
-    protected void offsetRelative(RobotPose2D offsetRobot){
-        double originalX = this.m_RelativeOffset.getX(), originalY = this.m_RelativeOffset.getY(), originalRotZ = this.m_RelativeOffset.getRotationZ();
-        double newX=originalX, newY = originalY, newRotZ = originalRotZ;
-
-        if(offsetRobot.getRotationZ() != 0){
-            double[] originalXY = {originalX,originalY};
-            double[] origin = {0,0};
-            double[] newXY = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(originalXY,origin,-offsetRobot.getRotationZ());
-            newX = newXY[0];
-            newY = newXY[1];
-            newRotZ += offsetRobot.getRotationZ();
-        }
-        newX += offsetRobot.getX();
-        newY += offsetRobot.getY();
-        this.m_RelativeOffset.setX(newX);
-        this.m_RelativeOffset.setY(newY);
+    protected void offsetRelative(RobotPose2D offsetValues){
+        double originalX = this.m_RelativeOffset.X, originalY = this.m_RelativeOffset.Y, originalRotZ = this.m_RelativeOffset.getRotationZ();
+        double newX=originalX + offsetValues.X, newY = originalY + offsetValues.Y, newRotZ = originalRotZ + offsetValues.getRotationZ();
+        this.m_RelativeOffset.X = newX;
+        this.m_RelativeOffset.Y = newY;
         this.m_RelativeOffset.setRotationZ(newRotZ);
+    }
+
+    protected void offsetRelative_RobotAxis(RobotPose2D offsetRobotAxis){
+        double[] originalRobotAxis = {offsetRobotAxis.X, offsetRobotAxis.Y};
+        double[] origin = {0,0};
+        double[] OffsetOriginPerspectiveValues = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(originalRobotAxis,origin,-this.m_RelativeOffset.getRotationZ());
+        this.offsetRelative(new RobotPose2D(
+                OffsetOriginPerspectiveValues[0],
+                OffsetOriginPerspectiveValues[1],
+                offsetRobotAxis.getRotationZ()
+        ));
     }
 
     @Override
@@ -101,8 +101,8 @@ public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTrac
     }
 
     public void setCurrentVelocityVector(RobotPose2D velocityVector){
-        this.m_VelocityVector.setX(velocityVector.getX());
-        this.m_VelocityVector.setY(velocityVector.getY());
+        this.m_VelocityVector.X = velocityVector.X;
+        this.m_VelocityVector.Y = velocityVector.Y;
         this.m_VelocityVector.setRotationZ(velocityVector.getRotationZ());
     }
 }

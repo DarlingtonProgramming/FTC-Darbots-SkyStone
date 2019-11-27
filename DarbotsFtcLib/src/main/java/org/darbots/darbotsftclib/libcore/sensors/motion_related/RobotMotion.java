@@ -28,132 +28,21 @@ package org.darbots.darbotsftclib.libcore.sensors.motion_related;
 
 import android.support.annotation.NonNull;
 
-import org.darbots.darbotsftclib.libcore.internal.MotionTaskCallBackToMotorTaskCallBack;
-import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorController;
-import org.darbots.darbotsftclib.libcore.tasks.motor_tasks.RobotFixCountSpeedCtlTask;
-import org.darbots.darbotsftclib.libcore.tasks.motor_tasks.RobotFixCountTask;
-import org.darbots.darbotsftclib.libcore.templates.motion_related.RobotMotionTask;
-import org.darbots.darbotsftclib.libcore.templates.motion_related.RobotMotionTaskCallBack;
+import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
 
 public class RobotMotion {
-    protected RobotMotorController m_MotorController;
+    protected RobotMotor m_Motor;
     protected RobotWheel m_Wheel;
-    public class FixedDistanceTask extends RobotFixCountTask implements RobotMotionTask {
-        double m_Distance;
-        public FixedDistanceTask(double Distance, double Speed, RobotMotionTaskCallBack TaskCallBack) {
-            super(0, Speed, TaskCallBack == null ? null : new MotionTaskCallBackToMotorTaskCallBack(RobotMotion.this,TaskCallBack));
-            super.setMotorController(RobotMotion.this.getMotorController());
-            this.setDistance(Distance);
-        }
-        public FixedDistanceTask(FixedDistanceTask Task){
-            super(Task);
-            super.setMotorController(RobotMotion.this.getMotorController());
-            this.m_Distance = Task.m_Distance;
-        }
-        public double getDistance(){
-            return this.m_Distance;
-        }
-        public void setDistance(double Distance){
-            this.m_Distance = Distance;
-            double Revolution = Distance / RobotMotion.this.getRobotWheel().getCircumference();
-            int Counts = (int) Math.round(Revolution * RobotMotion.this.getMotorController().getMotor().getMotorType().getCountsPerRev());
-            super.setCounts(Counts);
-        }
 
-        @Override
-        public RobotMotionTaskCallBack getMotionTaskCallBack(){
-            if(super.getTaskCallBack() != null) {
-                return ((MotionTaskCallBackToMotorTaskCallBack) super.getTaskCallBack()).getTaskCallBack();
-            }else{
-                return null;
-            }
-        }
-
-        @Override
-        public void setMotionTaskCallBack(RobotMotionTaskCallBack TaskCallBack) {
-            if(TaskCallBack == null){
-                super.setTaskCallBack(null);
-            }else{
-                if(super.getTaskCallBack() != null){
-                    ((MotionTaskCallBackToMotorTaskCallBack) super.getTaskCallBack()).setTaskCallBack(TaskCallBack);
-                }else{
-                    super.setTaskCallBack(new MotionTaskCallBackToMotorTaskCallBack(RobotMotion.this,TaskCallBack));
-                }
-            }
-        }
-        @Override
-        public String getTaskDetailString() {
-            String result="TaskType: RobotFixedDistanceTask, ";
-            result += "Distance: " + this.getDistance() + ", ";
-            result += "Count: " + this.getCounts() + ", ";
-            result += "Speed: " + this.getSpeed();
-            return result;
-        }
-    }
-    public class FixedDistanceSpeedCtlTask extends RobotFixCountSpeedCtlTask implements RobotMotionTask{
-        double m_Distance;
-        public FixedDistanceSpeedCtlTask(double Distance, double Speed, RobotMotionTaskCallBack TaskCallBack, boolean isCountCtl) {
-            super(0, Speed, TaskCallBack == null ? null : new MotionTaskCallBackToMotorTaskCallBack(RobotMotion.this,TaskCallBack),isCountCtl);
-            super.setMotorController(RobotMotion.this.getMotorController());
-            this.setDistance(Distance);
-        }
-        public FixedDistanceSpeedCtlTask(FixedDistanceSpeedCtlTask Task){
-            super(Task);
-            super.setMotorController(RobotMotion.this.getMotorController());
-            this.m_Distance = Task.m_Distance;
-        }
-        public double getDistance(){
-            return this.m_Distance;
-        }
-        public void setDistance(double Distance){
-            this.m_Distance = Distance;
-            double Revolution = Distance / RobotMotion.this.getRobotWheel().getCircumference();
-            int Counts = (int) Math.round(Revolution * RobotMotion.this.getMotorController().getMotor().getMotorType().getCountsPerRev());
-            super.setCounts(Counts);
-        }
-
-        @Override
-        public RobotMotionTaskCallBack getMotionTaskCallBack(){
-            if(super.getTaskCallBack() != null) {
-                return ((MotionTaskCallBackToMotorTaskCallBack) super.getTaskCallBack()).getTaskCallBack();
-            }else{
-                return null;
-            }
-        }
-
-        @Override
-        public void setMotionTaskCallBack(RobotMotionTaskCallBack TaskCallBack) {
-            if(TaskCallBack == null){
-                super.setTaskCallBack(null);
-            }else{
-                if(super.getTaskCallBack() != null){
-                    ((MotionTaskCallBackToMotorTaskCallBack) super.getTaskCallBack()).setTaskCallBack(TaskCallBack);
-                }else{
-                    super.setTaskCallBack(new MotionTaskCallBackToMotorTaskCallBack(RobotMotion.this,TaskCallBack));
-                }
-            }
-        }
-
-        @Override
-        public String getTaskDetailString() {
-            String result="TaskType: RobotFixedDistanceSpeedCtlTask, ";
-            result += "TimeInSeconds: " + this.getTimeInSeconds() + ", ";
-            result += "Speed: " + this.getSpeed() + ", ";
-            result += "Count: " + this.getCounts() + ", ";
-            result += "Distance: " + this.getDistance() + ", ";
-            result += "CountControl: " + (this.isCountCtl() ? "Enabled" : "Disabled");
-            return result;
-        }
-    }
-    public RobotMotion(@NonNull RobotMotorController MotorController, @NonNull RobotWheel RobotWheel){
-        this.m_MotorController = MotorController;
+    public RobotMotion(@NonNull RobotMotor MotorController, @NonNull RobotWheel RobotWheel){
+        this.m_Motor = MotorController;
         this.m_Wheel = RobotWheel;
     }
-    public RobotMotorController getMotorController(){
-        return this.m_MotorController;
+    public RobotMotor getMotor(){
+        return this.m_Motor;
     }
-    public void setMotorController(@NonNull RobotMotorController MotorController){
-        this.m_MotorController = MotorController;
+    public void setMotor(@NonNull RobotMotor Motor){
+        this.m_Motor = Motor;
     }
     public RobotWheel getRobotWheel(){
         return this.m_Wheel;

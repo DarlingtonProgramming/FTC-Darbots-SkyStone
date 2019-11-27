@@ -43,9 +43,9 @@ public class ChassisPIDIntegrator {
     }
     public void feedError(RobotPose2D error){
         double deltaTime = this.m_ErrorTime.seconds();
-        double deltaErrorX = this.m_LastError.getX() - error.getX(), deltaErrorY = this.m_LastError.getY() - error.getY(), deltaErrorRotZ = this.m_LastError.getRotationZ() - error.getRotationZ();
+        double deltaErrorX = this.m_LastError.X - error.X, deltaErrorY = this.m_LastError.Y - error.Y, deltaErrorRotZ = this.m_LastError.getRotationZ() - error.getRotationZ();
 
-        this.m_IntegratedError.offsetValues(error.getX() * deltaTime, error.getY() * deltaTime, error.getRotationZ() * deltaTime);
+        this.m_IntegratedError.offsetValues(error.X * deltaTime, error.Y * deltaTime, error.getRotationZ() * deltaTime);
 
         this.m_DerivedError.setValues(deltaErrorX / deltaTime,deltaErrorY / deltaTime,deltaErrorRotZ / deltaTime);
 
@@ -53,7 +53,7 @@ public class ChassisPIDIntegrator {
     }
     public void feedError(double X, double Y, double RotZ){
         double deltaTime = this.m_ErrorTime.seconds();
-        double deltaErrorX = this.m_LastError.getX() - X, deltaErrorY = this.m_LastError.getY() - Y, deltaErrorRotZ = this.m_LastError.getRotationZ() - RotZ;
+        double deltaErrorX = this.m_LastError.X - X, deltaErrorY = this.m_LastError.Y - Y, deltaErrorRotZ = this.m_LastError.getRotationZ() - RotZ;
 
         this.m_IntegratedError.offsetValues(X * deltaTime, X * deltaTime, RotZ * deltaTime);
 
