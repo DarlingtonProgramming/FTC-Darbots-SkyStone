@@ -1,28 +1,25 @@
 package org.darbots.darbotsftclib.libcore.motionsystems;
 
-import android.support.annotation.NonNull;
-
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.PIDCoefficients;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
 import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionTracker;
 
 /**
- * A class for controlling Mecanum Drivetrains.
+ * A class for controlling Omni Wheel Drivetrains.
  * Orders for Motors
  * i = 0, LT
  * i = 1, RT
  * i = 2, LB
  * i = 3, RB
  */
-public class MecanumDrivetrain extends RobotMotionSystem {
-    private double c_Kwl, c_Kwr, c_Krl, c_Krr, c_Kl, c_Wmax, c_R;
+public class OmniDrivetrain extends RobotMotionSystem {
+    private double c_Kwl, c_Kwr, c_Krl, c_Krr, c_Kd, c_Wmax, c_R;
     private RobotMotion m_LT, m_RT, m_LB, m_RB;
     RobotMotor m_LTMotor, m_RTMotor, m_LBMotor, m_RBMotor;
-    public MecanumDrivetrain(Robot2DPositionTracker PositionTracker, RobotMotion LT, RobotMotion RT, RobotMotion LB, RobotMotion RB) {
+    public OmniDrivetrain(Robot2DPositionTracker PositionTracker, RobotMotion LT, RobotMotion RT, RobotMotion LB, RobotMotion RB) {
         super(PositionTracker);
         this.m_LT = LT;
         this.m_RT = RT;
@@ -36,16 +33,16 @@ public class MecanumDrivetrain extends RobotMotionSystem {
 
     protected void __calculateConstants(){
         double Lx = Math.abs(this.m_LT.getRobotWheel().getOnRobotPosition().X), Ly = Math.abs(this.m_LT.getRobotWheel().getOnRobotPosition().Y);
-        this.c_Kl = Lx + Ly;
+        this.c_Kd = this.m_LT.getRobotWheel().getOnRobotPosition().getDistanceToOrigin();
         this.c_Wmax = this.m_LTMotor.getMotorType().getRevPerSec() * 360.0;
         this.c_R = this.m_LT.getRobotWheel().getRadius();
-        this.c_Kwl = XYPlaneCalculations.CONST_180_OVER_PI / this.c_R;
-        this.c_Kwr = this.c_Kl / this.c_R;
-        this.c_Krl = XYPlaneCalculations.CONST_PI_OVER_180 * this.c_R / 4.0;
-        this.c_Krr = this.c_R / (4.0 * this.c_Kl);
+        this.c_Kwl = XYPlaneCalculations.CONST_180_OVER_PI / (this.c_R * Math.sqrt(2));
+        this.c_Kwr = this.c_Kd / this.c_R;
+        this.c_Krl = XYPlaneCalculations.CONST_PI_OVER_180 * (Math.sqrt(2) * this.c_R / 4.0);
+        this.c_Krr = this.c_R / (4.0 * this.c_Kd);
     }
 
-    public MecanumDrivetrain(RobotMotionSystem MotionSystem) {
+    public OmniDrivetrain(RobotMotionSystem MotionSystem) {
         super(MotionSystem);
     }
 

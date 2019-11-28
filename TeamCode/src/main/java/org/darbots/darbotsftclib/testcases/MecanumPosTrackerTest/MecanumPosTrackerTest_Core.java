@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark2964;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark3637;
 import org.darbots.darbotsftclib.libcore.odometry.MecanumChassis2DPositionTracker;
@@ -22,6 +23,7 @@ public class MecanumPosTrackerTest_Core extends RobotCore {
     public static final MotorType ChassisMotorType = new AndyMark3637();
     public static final double WheelRadius = 5;
 
+    private MecanumDrivetrain m_Chassis;
     private MecanumChassis2DPositionTracker m_PosTracker;
 
     public MecanumPosTrackerTest_Core(HardwareMap hardwareMap) {
@@ -47,17 +49,19 @@ public class MecanumPosTrackerTest_Core extends RobotCore {
         RobotWheel m_RightTopWheel = new RobotWheel(new RobotPose2D(WheelPosition[0],-WheelPosition[1],-45),WheelRadius);
         RobotWheel m_LeftBottomWheel = new RobotWheel(new RobotPose2D(WheelPosition[0],-WheelPosition[1],135),WheelRadius);
         RobotWheel m_RightBottomWheel = new RobotWheel(new RobotPose2D(-WheelPosition[0],-WheelPosition[1],-135),WheelRadius);
-        RobotMotion LTMotion = new RobotMotion(new RobotMotorController(new RobotMotorWithEncoder(m_LeftTopDC,ChassisMotorType),false,0),m_LeftTopWheel);
-        RobotMotion LBMotion = new RobotMotion(new RobotMotorController(new RobotMotorWithEncoder(m_LeftBottomDC,ChassisMotorType),false,0),m_LeftBottomWheel);
-        RobotMotion RTMotion = new RobotMotion(new RobotMotorController(new RobotMotorWithEncoder(m_RightTopDC,ChassisMotorType),false,0),m_RightTopWheel);
-        RobotMotion RBMotion = new RobotMotion(new RobotMotorController(new RobotMotorWithEncoder(m_RightBottomDC,ChassisMotorType),false,0),m_RightBottomWheel);
-        this.m_PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),false,LTMotion,RTMotion,LBMotion,RBMotion);
+        RobotMotion LTMotion = new RobotMotion(new RobotMotorWithEncoder(m_LeftTopDC,ChassisMotorType),m_LeftTopWheel);
+        RobotMotion LBMotion = new RobotMotion(new RobotMotorWithEncoder(m_LeftBottomDC,ChassisMotorType),m_LeftBottomWheel);
+        RobotMotion RTMotion = new RobotMotion(new RobotMotorWithEncoder(m_RightTopDC,ChassisMotorType),m_RightTopWheel);
+        RobotMotion RBMotion = new RobotMotion(new RobotMotorWithEncoder(m_RightBottomDC,ChassisMotorType),m_RightBottomWheel);
+
+        this.m_Chassis = new MecanumDrivetrain(null,LTMotion,RTMotion,LBMotion,RBMotion);
+        this.m_PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),this.m_Chassis);
         this.m_PosTracker.start();
     }
 
     @Override
     protected void __stop() {
-
+        this.m_Chassis.stop();
     }
 
     @Override
@@ -67,7 +71,7 @@ public class MecanumPosTrackerTest_Core extends RobotCore {
 
     @Override
     public RobotMotionSystem getChassis() {
-        return null;
+        return this.m_Chassis;
     }
 
     @Override
@@ -89,6 +93,6 @@ public class MecanumPosTrackerTest_Core extends RobotCore {
 
     @Override
     protected void __updateStatus() {
-
+        this.m_Chassis.updateStatus();
     }
 }

@@ -28,38 +28,30 @@ package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 import android.support.annotation.NonNull;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogFile;
-import org.darbots.darbotsftclib.libcore.odometry.Robot2DPositionSoftwareTracker;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
-import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
-import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
-import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
-import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
-import org.firstinspires.ftc.robotcore.internal.android.dx.io.instructions.ZeroRegisterDecodedInstruction;
 
 public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
+    public final static float CONST_TASKSTARTANG_NOTSET = -10000.0f;
+
     private RobotMotionSystem m_MotionSystem;
     private boolean m_IsWorking;
-    private static final double LASTSPEED_NOTSET = -100000;
-    private static final double SPEEDFACTOR_NONE = -100000;
-    private double m_LastXSpeed = LASTSPEED_NOTSET, m_LastYSpeed = LASTSPEED_NOTSET, m_LastRotZSpeed = LASTSPEED_NOTSET;
-    private ElapsedTime m_SpeedControlTimer;
     private ElapsedTime m_TaskTimer;
+    private RobotPose2D m_TaskStartFieldPos = null;
+    private RobotPose2D m_TaskRelativeErrorOffset = null;
+    private float m_TaskStartAng = CONST_TASKSTARTANG_NOTSET;
+    public RobotMotionSystemTaskCallBack TaskCallBack = null;
 
     public RobotMotionSystemTask(){
         this.m_IsWorking = false;
-        this.m_SpeedControlTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         this.m_TaskTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     }
     public RobotMotionSystemTask(@NonNull RobotMotionSystemTask Task) {
         this.m_MotionSystem = Task.m_MotionSystem;
         this.m_IsWorking = false;
-        this.m_SpeedControlTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         this.m_TaskTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     }
     public RobotMotionSystem getMotionSystem(){
@@ -74,18 +66,36 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
             return;
         }
         this.m_IsWorking = true;
+        this.m_TaskStartFieldPos = this.m_MotionSystem.getPositionTracker().getCurrentPosition();
+        this.m_TaskRelativeErrorOffset = this.m_MotionSystem.getAccumulatedError();
+        this.m_MotionSystem.getPositionTracker().resetRelativeOffset();
+        if(this.m_MotionSystem.getGyroValueProvider() != null){
+            if(this.m_MotionSystem.getGyroValueProvider() instanceof RobotNonBlockingDevice){
+                ((RobotNonBlockingDevice) this.m_MotionSystem.getGyroValueProvider()).updateStatus();
+            }
+            this.m_TaskStartAng = this.m_MotionSystem.getGyroValueProvider().getHeading();
+        }
         this.m_TaskTimer.reset();
         this.__startTask();
     }
+
     protected abstract void __startTask();
-    protected abstract RobotPose2D __taskFinished();
+    protected abstract void __taskFinished();
+    protected abstract void __updateStatus();
+    protected abstract RobotPose2D __getSupposedTaskFinishPos();
 
     public void stopTask(){
         if(!this.m_IsWorking){
             return;
         }
         this.m_IsWorking = false;
-        RobotPose2D finishPose = this.__taskFinished();
+        this.__taskFinished();
+        RobotPose2D supposedFinishRelativeOffset = this.__getSupposedTaskFinishPos();
+        RobotPose2D RelativePosMoved = this.m_MotionSystem.getPositionTracker().getRelativeOffset();
+        if(this.TaskCallBack != null){
+            RobotPose2D CurrentPos = this.m_MotionSystem.getPositionTracker().getCurrentPosition();
+            this.TaskCallBack.taskFinished(this.m_MotionSystem,this.m_TaskStartFieldPos,CurrentPos,RelativePosMoved);
+        }
         this.m_MotionSystem.__checkTasks();
     }
     @Override
@@ -104,17 +114,36 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         }
     }
 
-
-    private RobotPose2D getCorrectionVelocity(RobotPose2D supposedPosition){
-        RobotPose2D errorVals = XYPlaneCalculations.getRelativePosition(this.getMotionSystem().getPositionTracker().getCurrentPosition(),supposedPosition);
-        this.getMotionSystem().getPIDCalculator().feedError(errorVals);
-        RobotPose2D newDeltaVelocity = this.getMotionSystem().getPIDCalculator().getPDPower();
-        return newDeltaVelocity;
+    public void updateStatus(){
+        this.__updateStatus();
     }
-
 
     public double getSecondsSinceTaskStart(){
         return this.m_TaskTimer.seconds();
     }
-
+    protected RobotPose2D getRelativePositionOffsetRawSinceStart(){
+        RobotPose2D offset = this.m_MotionSystem.getPositionTracker().getRelativeOffset();
+        if(this.m_MotionSystem.getGyroValueProvider() != null && this.m_TaskStartAng != CONST_TASKSTARTANG_NOTSET) {
+            double angleMoved = XYPlaneCalculations.normalizeDeg(this.m_MotionSystem.getGyroValueProvider().getHeading() - this.m_TaskStartAng);
+            offset.setRotationZ(angleMoved);
+        }
+        return offset;
+    }
+    protected RobotPose2D getRelativePositionOffsetSinceStart(){
+        RobotPose2D offset = this.getRelativePositionOffsetRawSinceStart();
+        offset.X -= this.m_TaskRelativeErrorOffset.X;
+        offset.Y -= this.m_TaskRelativeErrorOffset.Y;
+        offset.setRotationZ(offset.getRotationZ() - this.m_TaskRelativeErrorOffset.getRotationZ());
+        return offset;
+    }
+    protected RobotPose2D getErrorCorrectionVelocityVector(RobotPose2D supposedPosition){
+        double errorX, errorY, errorRotZ;
+        RobotPose2D offsetSinceStart = this.getRelativePositionOffsetSinceStart();
+        errorX = supposedPosition.X - offsetSinceStart.X;
+        errorY = supposedPosition.Y - offsetSinceStart.Y;
+        errorRotZ = supposedPosition.getRotationZ() - offsetSinceStart.getRotationZ();
+        this.m_MotionSystem.getPIDCalculator().feedError(errorX,errorY,errorRotZ);
+        RobotPose2D correctionVelocity = this.m_MotionSystem.getPIDCalculator().getPIDPower();
+        return correctionVelocity;
+    }
 }

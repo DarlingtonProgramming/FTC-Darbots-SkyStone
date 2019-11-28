@@ -35,13 +35,14 @@ import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
 import java.util.ArrayList;
 
 public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
-    public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(0.1,0,0.025);
-    public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(0.1,0,0.025);
-    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(0.025,0,0.01);
+    public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(0.4,0,0.05);
+    public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(0.4,0,0.05);
+    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(0.4,0,0.05);
 
     private ArrayList<RobotMotionSystemTask> m_TaskLists;
     private Robot2DPositionTracker m_PosTracker;
@@ -52,6 +53,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private PIDCoefficients m_LinearXPIDCoefficient, m_LinearYPIDCoefficient, m_RotationalPIDCoefficient;
     private RobotPose2D m_AccumulatedError;
     private ChassisPIDCalculator m_PIDCalculator;
+    private RobotGyro m_Gyro;
 
     public RobotMotionSystem(Robot2DPositionTracker PositionTracker){
         this.m_TaskLists = new ArrayList();
@@ -87,6 +89,14 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         }else{
             this.m_PosTrackerIsAsync = false;
         }
+    }
+
+    public RobotGyro getGyroValueProvider(){
+        return this.m_Gyro;
+    }
+
+    public void setGyroValueProvider(RobotGyro GyroValueProvider){
+        this.m_Gyro = GyroValueProvider;
     }
 
     public ChassisPIDCalculator getPIDCalculator(){
@@ -237,6 +247,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
 
     @Override
     public void updateStatus(){
+        this.__updateMotorStatus();
         if((!this.m_TaskLists.isEmpty())){
             if(this.m_TaskLists.get(0).isBusy())
                 this.m_TaskLists.get(0).updateStatus();
@@ -246,6 +257,8 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
             NonBlockingTracker.updateStatus();
         }
     }
+
+    protected abstract void __updateMotorStatus();
 
     @Override
     public void waitUntilFinish(){
@@ -259,6 +272,15 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         }
     }
 
+    public RobotPose2D getAccumulatedError(){
+        return this.m_AccumulatedError;
+    }
+
+    public void setAccumulatedError(RobotPose2D AccumulatedError){
+        this.m_AccumulatedError.X = AccumulatedError.X;
+        this.m_AccumulatedError.Y = AccumulatedError.Y;
+        this.m_AccumulatedError.setRotationZ(AccumulatedError.getRotationZ());
+    }
 
     public void stop(){
         this.deleteAllTasks();
@@ -287,4 +309,12 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         return this.calculateWheelAngularSpeeds(RobotVelocity.X,RobotVelocity.Y,RobotVelocity.getRotationZ());
     }
     public abstract RobotPose2D calculateRobotSpeed(double[] wheelSpeeds);
+    public double calculateMaxLinearSpeedInCMPerSec(){
+        return this.calculateMaxLinearSpeedInCMPerSec(0);
+    }
+    public double calculateMaxAngularSpeedInDegPerSec(){
+        return this.calculateMaxAngularSpeedInDegPerSec(0);
+    }
+    public abstract double calculateMaxLinearSpeedInCMPerSec(double angularSpeedInDegPerSec);
+    public abstract double calculateMaxAngularSpeedInDegPerSec(double linearSpeedInCMPerSec);
 }
