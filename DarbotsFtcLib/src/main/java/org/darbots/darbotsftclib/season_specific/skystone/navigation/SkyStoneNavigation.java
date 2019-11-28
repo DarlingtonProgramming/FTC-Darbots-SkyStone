@@ -2,7 +2,7 @@ package org.darbots.darbotsftclib.season_specific.skystone.navigation;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose3D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose3D;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotCamera;

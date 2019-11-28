@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
-package org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation;
+package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 
 
 public class RobotPose2D {

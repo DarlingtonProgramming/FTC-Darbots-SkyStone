@@ -1,6 +1,6 @@
 package org.darbots.darbotsftclib.libcore.sensors.gyros;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
 public class SoftwareGyro implements RobotGyro {

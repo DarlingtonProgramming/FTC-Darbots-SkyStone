@@ -1,7 +1,7 @@
 package org.darbots.darbotsftclib.libcore.templates.odometry;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 
 public abstract class RobotSynchronized2DPositionTracker extends RobotBasic2DPositionTracker {
 

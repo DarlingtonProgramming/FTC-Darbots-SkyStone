@@ -1,4 +1,4 @@
-package org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation;
+package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 
 public class XYPlaneCalculations {
     public static final double CONST_180_OVER_PI = 180.0 / Math.PI;

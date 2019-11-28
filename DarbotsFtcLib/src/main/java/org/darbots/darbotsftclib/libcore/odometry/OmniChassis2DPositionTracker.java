@@ -1,8 +1,7 @@
 package org.darbots.darbotsftclib.libcore.odometry;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.motionsystems.OmniDrivetrain;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;

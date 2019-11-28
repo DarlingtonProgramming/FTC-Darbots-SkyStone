@@ -3,7 +3,7 @@ package org.darbots.darbotsftclib.libcore.sensors.gyros;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;

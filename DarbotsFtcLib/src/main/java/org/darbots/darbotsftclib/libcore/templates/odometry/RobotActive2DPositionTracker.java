@@ -2,7 +2,7 @@ package org.darbots.darbotsftclib.libcore.templates.odometry;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 
 public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPositionTracker {
     private class RobotActive2DPositionTracker_Runnable implements Runnable{

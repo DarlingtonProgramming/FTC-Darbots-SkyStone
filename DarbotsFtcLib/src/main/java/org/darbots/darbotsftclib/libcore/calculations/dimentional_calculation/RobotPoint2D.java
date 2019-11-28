@@ -1,4 +1,4 @@
-package org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation;
+package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 
 public class RobotPoint2D {
 	public double X;

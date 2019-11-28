@@ -23,7 +23,7 @@ SOFTWARE.
 
 */
 
-package org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation;
+package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 
 
 public class RobotPose3D {

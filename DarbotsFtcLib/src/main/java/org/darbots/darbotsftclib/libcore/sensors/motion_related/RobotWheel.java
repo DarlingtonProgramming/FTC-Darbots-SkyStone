@@ -26,7 +26,7 @@ SOFTWARE.
 package org.darbots.darbotsftclib.libcore.sensors.motion_related;
 
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 
 public class RobotWheel {
     private double m_Radius;

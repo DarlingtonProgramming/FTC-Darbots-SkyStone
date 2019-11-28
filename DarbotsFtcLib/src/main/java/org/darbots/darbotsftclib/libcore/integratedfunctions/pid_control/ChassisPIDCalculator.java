@@ -1,6 +1,6 @@
 package org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 
 public class ChassisPIDCalculator {
     public PIDCoefficients xPIDCoefficients;

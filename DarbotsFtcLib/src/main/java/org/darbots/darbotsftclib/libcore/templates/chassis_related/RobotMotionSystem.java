@@ -27,12 +27,10 @@ package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 
 import android.support.annotation.NonNull;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.ChassisPIDCalculator;
-import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.PIDCalculator;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.PIDCoefficients;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
-import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.odometry.Robot2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
