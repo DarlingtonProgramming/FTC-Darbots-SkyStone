@@ -91,11 +91,17 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         this.m_IsWorking = false;
         this.__taskFinished();
         RobotPose2D supposedFinishRelativeOffset = this.__getSupposedTaskFinishPos();
-        RobotPose2D RelativePosMoved = this.m_MotionSystem.getPositionTracker().getRelativeOffset();
+        RobotPose2D RelativePosMoved = this.getRelativePositionOffsetSinceStart();
         if(this.TaskCallBack != null){
             RobotPose2D CurrentPos = this.m_MotionSystem.getPositionTracker().getCurrentPosition();
             this.TaskCallBack.taskFinished(this.m_MotionSystem,this.m_TaskStartFieldPos,CurrentPos,RelativePosMoved);
         }
+        RobotPose2D error = new RobotPose2D(
+                supposedFinishRelativeOffset.X - RelativePosMoved.X,
+                supposedFinishRelativeOffset.Y - RelativePosMoved.Y,
+                supposedFinishRelativeOffset.getRotationZ() - RelativePosMoved.getRotationZ()
+        );
+        this.m_MotionSystem.setAccumulatedError(error);
         this.m_MotionSystem.__checkTasks();
     }
     @Override
@@ -141,9 +147,14 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         RobotPose2D offsetSinceStart = this.getRelativePositionOffsetSinceStart();
         errorX = supposedPosition.X - offsetSinceStart.X;
         errorY = supposedPosition.Y - offsetSinceStart.Y;
-        errorRotZ = supposedPosition.getRotationZ() - offsetSinceStart.getRotationZ();
+        errorRotZ = XYPlaneCalculations.normalizeDeg(supposedPosition.getRotationZ() - offsetSinceStart.getRotationZ());
         this.m_MotionSystem.getPIDCalculator().feedError(errorX,errorY,errorRotZ);
         RobotPose2D correctionVelocity = this.m_MotionSystem.getPIDCalculator().getPIDPower();
         return correctionVelocity;
+    }
+    protected RobotPose2D setRobotSpeed(RobotPose2D robotSpeed, RobotPose2D supposedRelativePose){
+        RobotPose2D correctionVector = this.getErrorCorrectionVelocityVector(supposedRelativePose);
+        RobotPose2D afterCorrectionVector = new RobotPose2D(robotSpeed.X + correctionVector.X,robotSpeed.Y + correctionVector.Y,robotSpeed.getRotationZ() + correctionVector.getRotationZ());
+        return this.m_MotionSystem.setRobotSpeed(afterCorrectionVector);
     }
 }

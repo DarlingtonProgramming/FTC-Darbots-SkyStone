@@ -78,6 +78,7 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
         }
         return this.opModeIsActive();
     }
+
     public double getSecondsSinceOpModeStarted(){
         if(this.m_TimerSinceStart == null){
             return 0;
@@ -85,6 +86,7 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
             return this.m_TimerSinceStart.seconds();
         }
     }
+
     public double getSecondsSinceOpModeInited(){
         if(this.m_TimerSinceInit == null){
             return 0;

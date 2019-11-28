@@ -294,15 +294,17 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         return this.getTheoreticalMaximumMotionState(WantedVelocityVector.X,WantedVelocityVector.Y,WantedVelocityVector.getRotationZ());
     }
     protected abstract void __setRobotSpeed(double XSpeedInCMPerSec, double YSpeedInCMPerSec, double ZRotSpeedInDegPerSec);
-    public void setRobotSpeed(RobotPose2D VelocityVector){
-        this.setRobotSpeed(VelocityVector.X,VelocityVector.Y,VelocityVector.getRotationZ());
+    public RobotPose2D setRobotSpeed(RobotPose2D VelocityVector){
+        return this.setRobotSpeed(VelocityVector.X,VelocityVector.Y,VelocityVector.getRotationZ());
     }
-    public void setRobotSpeed(double XSpeedInCMPerSec, double YSpeedInCMPerSec, double ZRotSpeedInDegPerSec){
+    public RobotPose2D setRobotSpeed(double XSpeedInCMPerSec, double YSpeedInCMPerSec, double ZRotSpeedInDegPerSec){
         RobotPose2D biggestSpeed = this.getTheoreticalMaximumMotionState(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
-        if(XSpeedInCMPerSec > biggestSpeed.X || YSpeedInCMPerSec > biggestSpeed.Y || ZRotSpeedInDegPerSec > biggestSpeed.getRotationZ()){
+        if(Math.abs(XSpeedInCMPerSec) > Math.abs(biggestSpeed.X) || Math.abs(YSpeedInCMPerSec) > Math.abs(biggestSpeed.Y) || Math.abs(ZRotSpeedInDegPerSec) > Math.abs(biggestSpeed.getRotationZ())){
             this.__setRobotSpeed(biggestSpeed.X,biggestSpeed.Y,biggestSpeed.getRotationZ());
+            return biggestSpeed;
         }
         this.__setRobotSpeed(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
+        return new RobotPose2D(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
     }
     public abstract double[] calculateWheelAngularSpeeds(double RobotXSpeedInCMPerSec, double RobotYSpeedInCMPerSec, double RobotZRotSpeedInDegPerSec);
     public double[] calculateWheelAngularSpeeds(RobotPose2D RobotVelocity){
