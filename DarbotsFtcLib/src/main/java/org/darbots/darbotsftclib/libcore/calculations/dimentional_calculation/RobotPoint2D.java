@@ -15,4 +15,7 @@ public class RobotPoint2D {
     	this.X = indicator.X;
     	this.Y = indicator.Y;
     }
+    public double distanceTo(RobotPoint2D secondPoint){
+        return Math.sqrt(Math.pow(secondPoint.X - this.X,2) + Math.pow(secondPoint.Y - this.Y,2));
+    }
 }

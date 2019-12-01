@@ -23,7 +23,7 @@ public class MotionProfileGenerator {
             double cruiseTime = (PathTotalDistance - accelerateAnddecelerateDistance) / cruiseVelocity;
             MotionProfileSegment cruiseSegment = new MotionProfileSegment(0,0,cruiseTime);
             returnProfile.addAtEnd(accelerateProfile);
-            returnProfile.getMotionSegments().add(cruiseSegment);
+            returnProfile.addAtEnd(cruiseSegment);
             returnProfile.addAtEnd(decelerateProfile);
             return returnProfile;
         }else if(Math.abs(accelerateAnddecelerateDistance - PathTotalDistance) <= PATH_DISTANCE_ERROR_MARGIN){
@@ -38,7 +38,7 @@ public class MotionProfileGenerator {
                 MotionProfile returnProfile = new MotionProfile(cruiseVelocity);
                 double cruiseTime = PathTotalDistance / cruiseVelocity;
                 MotionProfileSegment cruiseSegment = new MotionProfileSegment(0,0,cruiseTime);
-                returnProfile.getMotionSegments().add(cruiseSegment);
+                returnProfile.addAtEnd(cruiseSegment);
                 return returnProfile;
             }else{
                 //try to lower cruise speed and see if we can achieve anything better than just cruise at cruise speed.
@@ -70,7 +70,7 @@ public class MotionProfileGenerator {
                     MotionProfile returnProfile = new MotionProfile(cruiseVelocity);
                     double cruiseTime = PathTotalDistance / cruiseVelocity;
                     MotionProfileSegment cruiseSegment = new MotionProfileSegment(0,0,cruiseTime);
-                    returnProfile.getMotionSegments().add(cruiseSegment);
+                    returnProfile.addAtEnd(cruiseSegment);
                     return returnProfile;
                 }else{
                     MotionProfile newAccelerateProfile = generateMotionProfile(constraints,0,0, startVelocity,solvedCruiseSpeed);
@@ -84,7 +84,7 @@ public class MotionProfileGenerator {
                     double newCruiseTime = (PathTotalDistance - newAccelerateAnddecelerateDistance) / solvedCruiseSpeed;
                     MotionProfileSegment newCruiseSegment = new MotionProfileSegment(0,0,newCruiseTime);
                     returnProfile.addAtEnd(newAccelerateProfile);
-                    returnProfile.getMotionSegments().add(newCruiseSegment);
+                    returnProfile.addAtEnd(newCruiseSegment);
                     returnProfile.addAtEnd(newDecelerateProfile);
                     return returnProfile;
                 }
@@ -94,7 +94,7 @@ public class MotionProfileGenerator {
     public static MotionProfile generateMotionProfile(double constantVelocity, double duration){
         MotionProfile returnProfile = new MotionProfile(constantVelocity);
         MotionProfileSegment segment = new MotionProfileSegment(0,0,duration);
-        returnProfile.getMotionSegments().add(segment);
+        returnProfile.addAtEnd(segment);
         return returnProfile;
     }
     public static MotionProfile generateMotionProfile(MotionSystemConstraints constraints, double startAcceleration, double endAcceleration, double startVelocity, double endVelocity){
@@ -118,7 +118,7 @@ public class MotionProfileGenerator {
         }
         MotionProfile returnProfile = new MotionProfile(startVelocity);
         if(segmentVelocityToEndSpeed != null){
-            returnProfile.getMotionSegments().add(segmentVelocityToEndSpeed);
+            returnProfile.addAtEnd(segmentVelocityToEndSpeed);
         }
         return returnProfile;
     }

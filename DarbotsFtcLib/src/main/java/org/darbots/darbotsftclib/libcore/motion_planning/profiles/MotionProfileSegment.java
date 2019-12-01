@@ -29,6 +29,9 @@ public class MotionProfileSegment {
     public double getAccelerationAt(double duration){
         return this.acceleration + this.jerk * duration;
     }
+    public double getAccelerationBetween(double startDuration, double endDuration){
+        return this.acceleration + this.jerk * (endDuration + startDuration) / 2.0;
+    }
     public double getDistanceTravelled(double initialSpeed, double duration){
         return initialSpeed * duration + (this.acceleration * Math.pow(duration,2) / 2.0 + this.jerk * Math.pow(duration,3) / 6.0);
     }

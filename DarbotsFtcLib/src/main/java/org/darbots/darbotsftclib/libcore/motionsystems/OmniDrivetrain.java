@@ -109,13 +109,13 @@ public class OmniDrivetrain extends RobotMotionSystem {
     }
 
     @Override
-    public double calculateMaxLinearSpeedInCMPerSec(double angularSpeedInDegPerSec) {
+    public double calculateMaxLinearSpeedCombinationsInCMPerSec(double angularSpeedInDegPerSec) {
         return (this.c_Wmax - this.c_Kwr * Math.abs(angularSpeedInDegPerSec)) / this.c_Krl;
     }
 
     @Override
-    public double calculateMaxAngularSpeedInDegPerSec(double linearSpeedInCMPerSec) {
-        return (this.c_Wmax - this.c_Kwl * Math.abs(linearSpeedInCMPerSec)) / this.c_Kwr;
+    public double calculateMaxAngularSpeedInDegPerSec(double linearSpeedCombinationInCMPerSec) {
+        return (this.c_Wmax - this.c_Kwl * Math.abs(linearSpeedCombinationInCMPerSec)) / this.c_Kwr;
     }
 
     public RobotMotion getLTMotion(){

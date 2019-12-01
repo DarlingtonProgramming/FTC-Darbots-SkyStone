@@ -309,12 +309,18 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         return this.calculateWheelAngularSpeeds(RobotVelocity.X,RobotVelocity.Y,RobotVelocity.getRotationZ());
     }
     public abstract RobotPose2D calculateRobotSpeed(double[] wheelSpeeds);
-    public double calculateMaxLinearSpeedInCMPerSec(){
-        return this.calculateMaxLinearSpeedInCMPerSec(0);
+    public double calculateMaxLinearSpeedCombinationsInCMPerSec(){
+        return this.calculateMaxLinearSpeedCombinationsInCMPerSec(0);
     }
     public double calculateMaxAngularSpeedInDegPerSec(){
         return this.calculateMaxAngularSpeedInDegPerSec(0);
     }
-    public abstract double calculateMaxLinearSpeedInCMPerSec(double angularSpeedInDegPerSec);
-    public abstract double calculateMaxAngularSpeedInDegPerSec(double linearSpeedInCMPerSec);
+    public abstract double calculateMaxLinearSpeedCombinationsInCMPerSec(double angularSpeedInDegPerSec);
+    public abstract double calculateMaxAngularSpeedInDegPerSec(double linearSpeedCombinationInCMPerSec);
+    public double calculateMaxLinearSpeedInCMPerSec(){
+        return Math.sqrt(2 * Math.pow(this.calculateMaxLinearSpeedCombinationsInCMPerSec() / 2.0,2));
+    }
+    public MotionSystemConstraints getMotionSystemConstraints(double maximumAcceleration, double maximumJerk){
+        return new MotionSystemConstraints(this.calculateMaxLinearSpeedInCMPerSec(),maximumAcceleration,maximumJerk);
+    }
 }

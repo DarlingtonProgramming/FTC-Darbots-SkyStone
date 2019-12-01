@@ -22,15 +22,25 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
     private RobotGyro m_Gyro;
     private long m_UpdateStatusCount = 0;
     public RobotCore(String logFileName, HardwareMap hardwareMap){
-        m_Logger = new RobotLogFile(logFileName);
-        GlobalRegister.currentLog = m_Logger.addNewRunLog();
+        if(logFileName != null && (!logFileName.isEmpty())) {
+            m_Logger = new RobotLogFile(logFileName);
+            GlobalRegister.currentLog = m_Logger.addNewRunLog();
+        }else{
+            m_Logger = null;
+            GlobalRegister.currentLog = null;
+        }
         GlobalUtil.LowestLogLevel = LogLevel.INFO;
         m_Gyro = new BNO055Gyro(hardwareMap,"imu");
         this.m_UpdateStatusCount = 0;
     }
     public RobotCore(String logFileName, HardwareMap hardwareMap, int ThreadPriority){
-        m_Logger = new RobotLogFile(logFileName);
-        GlobalRegister.currentLog = m_Logger.addNewRunLog();
+        if(logFileName != null && (!logFileName.isEmpty())) {
+            m_Logger = new RobotLogFile(logFileName);
+            GlobalRegister.currentLog = m_Logger.addNewRunLog();
+        }else{
+            m_Logger = null;
+            GlobalRegister.currentLog = null;
+        }
         GlobalUtil.LowestLogLevel = LogLevel.INFO;
         m_Gyro = new BNO055Gyro(hardwareMap,"imu");
         if(ThreadPriority >= Thread.MIN_PRIORITY || ThreadPriority <= Thread.MAX_PRIORITY){

@@ -96,11 +96,20 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
             RobotPose2D CurrentPos = this.m_MotionSystem.getPositionTracker().getCurrentPosition();
             this.TaskCallBack.taskFinished(this.m_MotionSystem,this.m_TaskStartFieldPos,CurrentPos,RelativePosMoved);
         }
-        RobotPose2D error = new RobotPose2D(
-                supposedFinishRelativeOffset.X - RelativePosMoved.X,
-                supposedFinishRelativeOffset.Y - RelativePosMoved.Y,
-                supposedFinishRelativeOffset.getRotationZ() - RelativePosMoved.getRotationZ()
-        );
+        RobotPose2D error = null;
+        if(supposedFinishRelativeOffset != null){
+            error = new RobotPose2D(
+                    supposedFinishRelativeOffset.X - RelativePosMoved.X,
+                    supposedFinishRelativeOffset.Y - RelativePosMoved.Y,
+                    supposedFinishRelativeOffset.getRotationZ() - RelativePosMoved.getRotationZ()
+            );
+        }else{
+            error = new RobotPose2D(
+                    0,
+                    0,
+                    0
+            );
+        }
         this.m_MotionSystem.setAccumulatedError(error);
         this.m_MotionSystem.__checkTasks();
     }
@@ -121,11 +130,16 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
     }
 
     public void updateStatus(){
-        this.__updateStatus();
+        if(this.isBusy()){
+            this.__updateStatus();
+        }
     }
 
     public double getSecondsSinceTaskStart(){
         return this.m_TaskTimer.seconds();
+    }
+    public int getMSSinceTaskStart(){
+        return (int) this.m_TaskTimer.milliseconds();
     }
     protected RobotPose2D getRelativePositionOffsetRawSinceStart(){
         RobotPose2D offset = this.m_MotionSystem.getPositionTracker().getRelativeOffset();

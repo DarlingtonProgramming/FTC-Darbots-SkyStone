@@ -87,7 +87,37 @@ public class MotionProfile {
     }
 
     public void addAtEnd(MotionProfile profile){
-        this.m_MotionSegments.addAll(profile.getMotionSegments());
+        if(this.m_MotionSegments.isEmpty()){
+            this.m_MotionSegments.addAll(profile.getMotionSegments());
+            return;
+        }
+        MotionProfileSegment segmentToAdd = profile.getMotionSegments().get(0);
+        ArrayList<MotionProfileSegment> segmentsToAdd = profile.getMotionSegments();
+        MotionProfileSegment lastSegment = this.m_MotionSegments.get(this.m_MotionSegments.size() - 1);
+        if(segmentToAdd.acceleration == lastSegment.getAccelerationAt(lastSegment.getDuration()) && segmentToAdd.jerk == lastSegment.jerk){
+            lastSegment.setDuration(lastSegment.getDuration() + segmentToAdd.getDuration());
+            if(segmentsToAdd.size() > 1) {
+                for (int i = 1; i<segmentsToAdd.size(); i++){
+                    this.m_MotionSegments.add(segmentsToAdd.get(i));
+                }
+            }
+        }else {
+            for (int i = 0; i < segmentsToAdd.size(); i++) {
+                this.m_MotionSegments.add(segmentsToAdd.get(i));
+            }
+        }
+    }
+
+    public void addAtEnd(MotionProfileSegment segmentToAdd){
+        if(this.m_MotionSegments.isEmpty()){
+            this.m_MotionSegments.add(segmentToAdd);
+        }
+        MotionProfileSegment lastSegment = this.m_MotionSegments.get(this.m_MotionSegments.size() - 1);
+        if(segmentToAdd.acceleration == lastSegment.getAccelerationAt(lastSegment.getDuration()) && segmentToAdd.jerk == lastSegment.jerk){
+            lastSegment.setDuration(lastSegment.getDuration() + segmentToAdd.getDuration());
+        }else{
+            this.m_MotionSegments.add(segmentToAdd);
+        }
     }
 
     public MotionProfile reversed(){
@@ -104,8 +134,6 @@ public class MotionProfile {
     public MotionProfile clipped(double startDuration, double endDuration){
         double velocityCounter = 0;
         double durationCounter = 0;
-
-        boolean startPuttingIn = false;
 
         double timeToCountInSegment = 0;
         boolean finalSegment = false;
@@ -132,10 +160,9 @@ public class MotionProfile {
                 ProfileSegmentGettingCounted = i;
             }
 
-            if(!startCounting) {
-                velocityCounter += i.getTotalDeltaSpeed();
-            }
+            velocityCounter += i.getTotalDeltaSpeed();
             durationCounter += i.getDuration();
+
             if(startCounting){
                 newProfileSegments.add(ProfileSegmentGettingCounted);
             }

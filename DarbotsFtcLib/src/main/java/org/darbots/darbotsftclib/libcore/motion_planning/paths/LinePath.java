@@ -4,8 +4,31 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Da
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
 
+import java.util.InvalidPropertiesFormatException;
+
 public class LinePath implements RobotPath {
     private double targetX, targetY;
+
+    public LinePath(double targetX, double targetY) throws InvalidPropertiesFormatException {
+        if(targetX == 0 && targetY == 0){
+            throw new InvalidPropertiesFormatException("both target points cannot be zero");
+        }
+        this.targetX = targetX;
+        this.targetY = targetY;
+    }
+
+    public LinePath(LinePath oldPath){
+        this.targetX = oldPath.targetX;
+        this.targetY = oldPath.targetY;
+    }
+
+    public double getTargetX(){
+        return this.targetX;
+    }
+
+    public double getTargetY(){
+        return this.targetY;
+    }
 
     @Override
     public double getTotalDistance() {
