@@ -1,4 +1,4 @@
-package org.darbots.darbotsftclib.testcases.MecanumPosTrackerTest;
+package org.darbots.darbotsftclib.testcases.MecanumMotionProfilingTest;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -16,7 +16,7 @@ import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSy
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class MecanumPosTrackerTest_Core extends RobotCore {
+public class MecanumMotionProfilingTest_Core extends RobotCore {
     public static final double[] WheelPosition = {14,18.415};
     public static final MotorType ChassisMotorType = new AndyMark3637();
     public static final double WheelRadius = 5;
@@ -24,12 +24,12 @@ public class MecanumPosTrackerTest_Core extends RobotCore {
     private MecanumDrivetrain m_Chassis;
     private MecanumChassis2DPositionTracker m_PosTracker;
 
-    public MecanumPosTrackerTest_Core(HardwareMap hardwareMap) {
+    public MecanumMotionProfilingTest_Core(HardwareMap hardwareMap) {
         super("MecanumPosTrackerTest.log", hardwareMap);
         __initHardware(hardwareMap);
     }
 
-    public MecanumPosTrackerTest_Core(HardwareMap hardwareMap, int ThreadPriority) {
+    public MecanumMotionProfilingTest_Core(HardwareMap hardwareMap, int ThreadPriority) {
         super("MecanumPosTrackerTest.log", hardwareMap, ThreadPriority);
         __initHardware(hardwareMap);
     }
