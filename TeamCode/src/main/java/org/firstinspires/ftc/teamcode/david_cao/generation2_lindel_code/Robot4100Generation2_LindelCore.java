@@ -123,12 +123,12 @@ public class Robot4100Generation2_LindelCore extends OmniChassisRobotCore {
         Speed = Math.abs(Speed);
         switch(status){
             case SUCK:
-                this.m_IntakeLeft.setPower(Speed);
-                this.m_IntakeRight.setPower(-Speed);
-                break;
-            case VOMIT:
                 this.m_IntakeLeft.setPower(-Speed);
                 this.m_IntakeRight.setPower(Speed);
+                break;
+            case VOMIT:
+                this.m_IntakeLeft.setPower(Speed);
+                this.m_IntakeRight.setPower(-Speed);
                 break;
             case STOP:
                 this.m_IntakeLeft.setPower(0);
@@ -146,9 +146,9 @@ public class Robot4100Generation2_LindelCore extends OmniChassisRobotCore {
     }
 
     public IntakeSystemStatus getIntakeSystemStatus(){
-        if(this.m_IntakeLeft.getPower() > 0) {
+        if(this.m_IntakeLeft.getPower() < 0) {
             return IntakeSystemStatus.SUCK;
-        }else if(this.m_IntakeLeft.getPower() < 0){
+        }else if(this.m_IntakeLeft.getPower() > 0){
             return IntakeSystemStatus.VOMIT;
         }else{
             return IntakeSystemStatus.STOP;
