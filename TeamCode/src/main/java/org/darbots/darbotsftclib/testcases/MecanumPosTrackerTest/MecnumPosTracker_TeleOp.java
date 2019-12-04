@@ -3,18 +3,19 @@ package org.darbots.darbotsftclib.testcases.MecanumPosTrackerTest;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
+import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "MecanumPosTrackerTest")
-public class MecnumPosTracker_TeleOp extends DarbotsBasicOpMode<MecanumPosTrackerTest_Core> {
-    private MecanumPosTrackerTest_Core m_Core;
+public class MecnumPosTracker_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> {
+    private TestMecanumCore m_Core;
     @Override
-    public MecanumPosTrackerTest_Core getRobotCore() {
-        return null;
+    public TestMecanumCore getRobotCore() {
+        return m_Core;
     }
 
     @Override
     public void hardwareInitialize() {
-        this.m_Core = new MecanumPosTrackerTest_Core(this.hardwareMap);
+        this.m_Core = new TestMecanumCore(this.hardwareMap,"MecanumPosTrackerTest.log");
     }
 
     @Override

@@ -2,8 +2,6 @@ package org.darbots.darbotsftclib.libcore.motion_planning.profiles;
 
 import org.darbots.darbotsftclib.libcore.calculations.algebraic_calculation.OrderedValueProvider;
 import org.darbots.darbotsftclib.libcore.calculations.algebraic_calculation.OrderedValueSolver;
-
-import java.security.Provider;
 import java.util.ArrayList;
 
 public class MotionProfile {

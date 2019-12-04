@@ -12,7 +12,7 @@ public class OrderedValueSolver {
     }
     protected static double __solve(OrderedValueProvider valueProvider, double errorMargin, double independentVarMin, double independentVarMax, double desiredValue){
         double deltaMaxMin = independentVarMax - independentVarMin;
-        if(deltaMaxMin >= -INFINATELY_SMALL && deltaMaxMin <= INFINATELY_SMALL){
+        if(Math.abs(deltaMaxMin) <= INFINATELY_SMALL){
             return RESULT_NOSOLUTION;
         }
         double middleVar = (independentVarMax + independentVarMin) / 2.0;

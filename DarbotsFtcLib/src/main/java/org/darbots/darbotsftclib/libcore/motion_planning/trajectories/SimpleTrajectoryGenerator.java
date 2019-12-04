@@ -1,6 +1,7 @@
 package org.darbots.darbotsftclib.libcore.motion_planning.trajectories;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
+import org.darbots.darbotsftclib.libcore.debug.Assertions;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfile;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfileGenerator;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfileIterator;
@@ -63,6 +64,13 @@ public class SimpleTrajectoryGenerator {
             //Step 3.3: measure x-y acceleration.
             double pieceApproximateXAcceleration = (pieceApproximateEndXYSpeed[0] - pieceApproximateStartXYSpeed[0]) / secondsToGo;
             double pieceApproximateYAcceleration = (pieceApproximateEndXYSpeed[1] - pieceApproximateStartXYSpeed[1]) / secondsToGo;
+
+            assert Assertions.isDoubleValid(pieceStartPoint.X) : "Start X Position is invalid";
+            assert Assertions.isDoubleValid(pieceStartPoint.Y) : "Start Y Position is invalid";
+            assert Assertions.isDoubleValid(pieceApproximateStartXYSpeed[0]) : "Start X Speed is invalid";
+            assert Assertions.isDoubleValid(pieceApproximateStartXYSpeed[1]) : "Start Y Speed is invalid";
+            assert Assertions.isDoubleValid(pieceApproximateXAcceleration) : "X Accel is invalid";
+            assert Assertions.isDoubleValid(pieceApproximateYAcceleration) : "Y Accel is invalid";
 
             //Step 4: construct trajectory motion segment
             TrajectoryMotionSegment currentSegment = new TrajectoryMotionSegment(

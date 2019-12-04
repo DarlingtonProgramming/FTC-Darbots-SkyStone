@@ -1,4 +1,4 @@
-package org.darbots.darbotsftclib.testcases.MecanumMotionProfilingTest;
+package org.darbots.darbotsftclib.testcases.common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -16,21 +16,21 @@ import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSy
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class MecanumMotionProfilingTest_Core extends RobotCore {
-    public static final double[] WheelPosition = {14,18.415};
+public class TestMecanumCore extends RobotCore {
+    public static final double[] WheelPosition = {18.415,14};
     public static final MotorType ChassisMotorType = new AndyMark3637();
     public static final double WheelRadius = 5;
 
     private MecanumDrivetrain m_Chassis;
     private MecanumChassis2DPositionTracker m_PosTracker;
 
-    public MecanumMotionProfilingTest_Core(HardwareMap hardwareMap) {
-        super("MecanumPosTrackerTest.log", hardwareMap);
+    public TestMecanumCore(HardwareMap hardwareMap, String logFileName) {
+        super(logFileName, hardwareMap);
         __initHardware(hardwareMap);
     }
 
-    public MecanumMotionProfilingTest_Core(HardwareMap hardwareMap, int ThreadPriority) {
-        super("MecanumPosTrackerTest.log", hardwareMap, ThreadPriority);
+    public TestMecanumCore(HardwareMap hardwareMap, String logFileName, int ThreadPriority) {
+        super(logFileName, hardwareMap, ThreadPriority);
         __initHardware(hardwareMap);
     }
 
@@ -79,14 +79,18 @@ public class MecanumMotionProfilingTest_Core extends RobotCore {
         if(globalTele != null){
             RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
             RobotPose2D offsetPos = this.m_PosTracker.getRelativeOffset();
-            globalTele.addLine("Current Position")
-                    .addData("X", currentPos.X)
-                    .addData("Y",currentPos.Y)
-                    .addData("RotZ", currentPos.getRotationZ());
-            globalTele.addLine("Current Offset")
-                    .addData("X",offsetPos.X)
-                    .addData("Y",offsetPos.Y)
-                    .addData("RotZ",currentPos.getRotationZ());
+            {
+                Telemetry.Line positionLine = globalTele.addLine("Current Position");
+                positionLine.addData("X", currentPos.X);
+                positionLine.addData("Y", currentPos.Y);
+                positionLine.addData("RotZ", currentPos.getRotationZ());
+            }
+            {
+                Telemetry.Line offsetPositionLine = globalTele.addLine("Current Offset");
+                offsetPositionLine.addData("X", offsetPos.X);
+                offsetPositionLine.addData("Y", offsetPos.Y);
+                offsetPositionLine.addData("RotZ", offsetPos.getRotationZ());
+            }
         }
     }
 
