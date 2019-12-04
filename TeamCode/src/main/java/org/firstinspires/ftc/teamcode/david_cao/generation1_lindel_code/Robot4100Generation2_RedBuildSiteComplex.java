@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.david_cao.generation1_linda_code;
+package org.firstinspires.ftc.teamcode.david_cao.generation1_lindel_code;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -6,25 +6,24 @@ import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot3DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
 import org.darbots.darbotsftclib.season_specific.skystone.darbots_vuforia_skystone_detection.DarbotsSkyStoneDifferentiation;
-import org.darbots.darbotsftclib.season_specific.skystone.navigation.SkyStoneNavigation;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 @Autonomous(name = "4100Gen1Auto-RedBuildSiteComplex",group="4100")
-public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
-    private Robot4100Generation1_LindaCore m_RobotCore;
+public class Robot4100Generation2_RedBuildSiteComplex extends DarbotsBasicOpMode<Robot4100Generation2_LindelCore> {
+    private Robot4100Generation2_LindelCore m_RobotCore;
     private DarbotsSkyStoneDifferentiation m_Navigation;
     private int ScanResult = 0;
     private RobotOnPhoneCamera Camera;
     @Override
-    public Robot4100Generation1_LindaCore getRobotCore() {
+    public Robot4100Generation2_LindelCore getRobotCore() {
         return m_RobotCore;
     }
 
     @Override
     public void hardwareInitialize() {
-        this.m_RobotCore = new Robot4100Generation1_LindaCore(this.hardwareMap);
-        Camera = new RobotOnPhoneCamera(this,Robot4100Generation1_Settings.AUTONOMOUS_TENSORFLOW_PREVIEW, RobotOnPhoneCamera.PhoneCameraDirection.Back, Robot4100Common.VUFORIA_LICENSE);
-        Robot3DPositionIndicator CameraPosition = new Robot3DPositionIndicator(Robot4100Generation1_Settings.AUTONOMOUS_CAMERAPOSONPHONE);
+        this.m_RobotCore = new Robot4100Generation2_LindelCore(this.hardwareMap);
+        Camera = new RobotOnPhoneCamera(this, Robot4100Generation2_Settings.AUTONOMOUS_TENSORFLOW_PREVIEW, RobotOnPhoneCamera.PhoneCameraDirection.Back, Robot4100Common.VUFORIA_LICENSE);
+        Robot3DPositionIndicator CameraPosition = new Robot3DPositionIndicator(Robot4100Generation2_Settings.AUTONOMOUS_CAMERAPOSONPHONE);
         this.m_Navigation = new DarbotsSkyStoneDifferentiation(CameraPosition,Camera);
     }
 
@@ -186,9 +185,9 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
                 this.ScanResult = stepResult[i];
                 break;
             }
-            firstScanExtraDistance += Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE;
+            firstScanExtraDistance += Robot4100Generation2_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE;
             this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
-                    Robot4100Generation1_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE,
+                    Robot4100Generation2_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE,
                     0.25
             ));
             if(!waitForDrive()){
@@ -204,13 +203,13 @@ public class Robot4100Generation1_RedBuildSiteComplex extends DarbotsBasicOpMode
             firstScanZOffset = -firstScanStonePosition.getZ();
             firstScanXOffset = -firstScanStonePosition.getX();
         }
-        firstScanExtraDistance -= Robot4100Generation1_Settings.AUTONOMOUS_DISTANCE_BETWEEN_PHONE_AND_STONEGRABBER;
+        firstScanExtraDistance -= Robot4100Generation2_Settings.AUTONOMOUS_DISTANCE_BETWEEN_PHONE_AND_STONEGRABBER;
         telemetry.addData("ZOffset",firstScanZOffset);
         telemetry.addData("XOffset",firstScanXOffset);
-        telemetry.addData("distanceToMove",firstScanZOffset + Robot4100Generation1_Settings.AUTONOMOUS_DISTANCE_BETWEEN_PHONE_AND_STONEGRABBER);
+        telemetry.addData("distanceToMove",firstScanZOffset + Robot4100Generation2_Settings.AUTONOMOUS_DISTANCE_BETWEEN_PHONE_AND_STONEGRABBER);
         telemetry.update();
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
-                firstScanZOffset + Robot4100Generation1_Settings.AUTONOMOUS_DISTANCE_BETWEEN_PHONE_AND_STONEGRABBER,
+                firstScanZOffset + Robot4100Generation2_Settings.AUTONOMOUS_DISTANCE_BETWEEN_PHONE_AND_STONEGRABBER,
                 0.15
         ));
         if(!waitForDrive()){

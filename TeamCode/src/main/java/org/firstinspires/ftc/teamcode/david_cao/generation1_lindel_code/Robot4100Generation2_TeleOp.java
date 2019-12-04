@@ -1,32 +1,30 @@
-package org.firstinspires.ftc.teamcode.david_cao.generation1_linda_code;
+package org.firstinspires.ftc.teamcode.david_cao.generation1_lindel_code;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.LoopableTimer;
-import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosSpeedCtlTask;
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystemTeleOpControlTask;
-import org.darbots.darbotsftclib.libcore.templates.servo_related.motor_powered_servos.RobotServoUsingMotorCallBack;
-import org.darbots.darbotsftclib.libcore.templates.servo_related.motor_powered_servos.RobotServoUsingMotorTask;
 
 @TeleOp(name = "4100Gen1TeleOp_dcao",group = "4100")
-public class Robot4100Generation1_TeleOp extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
-    private Robot4100Generation1_LindaCore m_RobotCore;
+public class Robot4100Generation2_TeleOp extends DarbotsBasicOpMode<Robot4100Generation2_LindelCore> {
+    private Robot4100Generation2_LindelCore m_RobotCore;
     private LoopableTimer m_TimerStoneOrient = null;
     private LoopableTimer m_TimerCapStoneDelivery = null;
     private double m_SpeedFactor = 1.0;
+    private boolean keepSucking = true;
 
     @Override
-    public Robot4100Generation1_LindaCore getRobotCore() {
+    public Robot4100Generation2_LindelCore getRobotCore() {
         return m_RobotCore;
     }
 
     @Override
     public void hardwareInitialize() {
-        this.m_RobotCore = new Robot4100Generation1_LindaCore(this.hardwareMap);
+        this.m_RobotCore = new Robot4100Generation2_LindelCore(this.hardwareMap);
         this.m_RobotCore.getChassis().replaceTask(this.m_RobotCore.getChassis().getTeleOpTask());
-        this.m_RobotCore.getLinearSlide().adjustCurrentPosition(Robot4100Generation1_Settings.LINEARSLIDE_GRAB);
+        this.m_RobotCore.getLinearSlide().adjustCurrentPosition(Robot4100Generation2_Settings.LINEARSLIDE_GRAB);
     }
 
     @Override
@@ -56,9 +54,9 @@ public class Robot4100Generation1_TeleOp extends DarbotsBasicOpMode<Robot4100Gen
             if(Math.abs(Turn) < 0.1){
                 Turn = 0;
             }
-            ZAxis *= Robot4100Generation1_Settings.TELEOP_MAXSPEED;
-            XAxis *= Robot4100Generation1_Settings.TELEOP_MAXSPEED;
-            Turn *= Robot4100Generation1_Settings.TELEOP_MAXSPEED;
+            ZAxis *= Robot4100Generation2_Settings.TELEOP_MAXSPEED;
+            XAxis *= Robot4100Generation2_Settings.TELEOP_MAXSPEED;
+            Turn *= Robot4100Generation2_Settings.TELEOP_MAXSPEED;
             double SlowDownFactor = this.m_SpeedFactor;
             ZAxis *= SlowDownFactor;
             XAxis *= SlowDownFactor;
@@ -69,11 +67,11 @@ public class Robot4100Generation1_TeleOp extends DarbotsBasicOpMode<Robot4100Gen
 
             if(gamepad2.left_stick_y < -0.1){
                 if((!this.m_RobotCore.getLinearSlide().isBusy())) {
-                    this.m_RobotCore.getLinearSlide().replaceTask(new TargetPosTask(null, this.m_RobotCore.getLinearSlide().getMaxPos(), Robot4100Generation1_Settings.TELEOP_LINEARSLIDESPEED));
+                    this.m_RobotCore.getLinearSlide().replaceTask(new TargetPosTask(null, this.m_RobotCore.getLinearSlide().getMaxPos(), Robot4100Generation2_Settings.TELEOP_LINEARSLIDESPEED));
                 }
             }else if(gamepad2.left_stick_y > 0.1){
                 if((!this.m_RobotCore.getLinearSlide().isBusy())) {
-                    this.m_RobotCore.getLinearSlide().replaceTask(new TargetPosTask(null, this.m_RobotCore.getLinearSlide().getMinPos(), Robot4100Generation1_Settings.TELEOP_LINEARSLIDESPEED));
+                    this.m_RobotCore.getLinearSlide().replaceTask(new TargetPosTask(null, this.m_RobotCore.getLinearSlide().getMinPos(), Robot4100Generation2_Settings.TELEOP_LINEARSLIDESPEED));
                 }
             }else{
                 this.m_RobotCore.getLinearSlide().deleteAllTasks();
@@ -81,11 +79,17 @@ public class Robot4100Generation1_TeleOp extends DarbotsBasicOpMode<Robot4100Gen
 
             //Gamepad1 Intake System Control
             if(gamepad1.right_trigger > 0.2){//gamepad1.b){
-                this.m_RobotCore.setIntakeSystemStatus(Robot4100Generation1_LindaCore.IntakeSystemStatus.SUCK,gamepad1.right_trigger * Robot4100Generation1_Settings.INTAKEMOTOR_SPEED);
+                this.m_RobotCore.setIntakeSystemStatus(Robot4100Generation2_LindelCore.IntakeSystemStatus.SUCK,gamepad1.right_trigger * Robot4100Generation2_Settings.INTAKEMOTOR_SPEED);
+                keepSucking = true;
             }else if(gamepad1.left_trigger > 0.2){ //gamepad1.y){
-                this.m_RobotCore.setIntakeSystemStatus(Robot4100Generation1_LindaCore.IntakeSystemStatus.VOMIT, gamepad1.left_trigger * Robot4100Generation1_Settings.INTAKEMOTOR_SPEED);
+                this.m_RobotCore.setIntakeSystemStatus(Robot4100Generation2_LindelCore.IntakeSystemStatus.VOMIT, gamepad1.left_trigger * Robot4100Generation2_Settings.INTAKEMOTOR_SPEED);
+                keepSucking = false;
             }else{
-                this.m_RobotCore.setIntakeSystemStatus(Robot4100Generation1_LindaCore.IntakeSystemStatus.STOP,0);
+                if(keepSucking){
+                    this.m_RobotCore.setIntakeSystemStatus(Robot4100Generation2_LindelCore.IntakeSystemStatus.SUCK, Robot4100Generation2_Settings.INTAKEMOTOR_SPEED);
+                }else {
+                    this.m_RobotCore.setIntakeSystemStatus(Robot4100Generation2_LindelCore.IntakeSystemStatus.STOP, 0);
+                }
             }
 
             if(gamepad2.right_bumper){
@@ -94,9 +98,9 @@ public class Robot4100Generation1_TeleOp extends DarbotsBasicOpMode<Robot4100Gen
                 this.m_RobotCore.setGrabberServoToGrab(true);
             }
             if(gamepad2.right_trigger > 0){
-                this.m_RobotCore.setGrabberRotServoToOutside(true,Robot4100Generation1_Settings.TELEOP_GRABBERROT_OUT_SPEED);
+                this.m_RobotCore.setGrabberRotServoToOutside(true, Robot4100Generation2_Settings.TELEOP_GRABBERROT_OUT_SPEED);
             }else if(gamepad2.left_trigger > 0){
-                this.m_RobotCore.setGrabberRotServoToOutside(false,Robot4100Generation1_Settings.TELEOP_GRABBERROT_IN_SPEED);
+                this.m_RobotCore.setGrabberRotServoToOutside(false, Robot4100Generation2_Settings.TELEOP_GRABBERROT_IN_SPEED);
             }
 
             if(gamepad2.a){

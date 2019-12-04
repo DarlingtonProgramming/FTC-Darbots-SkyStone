@@ -1,30 +1,27 @@
-package org.firstinspires.ftc.teamcode.david_cao.generation1_linda_code;
+package org.firstinspires.ftc.teamcode.david_cao.generation1_lindel_code;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
-import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.GyroGuidedTurn;
-import org.darbots.darbotsftclib.testcases.OmniDriveTest.OmniCore;
 
 @Autonomous(group = "4100", name = "4100Gen1-MovementSquare")
 @Disabled
-public class Robot4100Generation1_AutoMovementSquare extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
-    private Robot4100Generation1_LindaCore m_RobotCore;
+public class Robot4100Generation2_AutoMovementSquare extends DarbotsBasicOpMode<Robot4100Generation2_LindelCore> {
+    private Robot4100Generation2_LindelCore m_RobotCore;
     private String m_ChassisStatus;
     public String getChassisStatus(){
         return this.m_ChassisStatus;
     }
     @Override
-    public Robot4100Generation1_LindaCore getRobotCore() {
+    public Robot4100Generation2_LindelCore getRobotCore() {
         return m_RobotCore;
     }
 
     @Override
     public void hardwareInitialize() {
-        this.m_RobotCore = new Robot4100Generation1_LindaCore(this.hardwareMap);
+        this.m_RobotCore = new Robot4100Generation2_LindelCore(this.hardwareMap);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.david_cao.generation1_linda_code;
+package org.firstinspires.ftc.teamcode.david_cao.generation1_lindel_code;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot3DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark2964;
@@ -7,7 +7,7 @@ import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS755HB;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 
-public class Robot4100Generation1_Settings {
+public class Robot4100Generation2_Settings {
     //------------Autonomous Settings------------
     public static final double AUTONOMOUS_MINIMUM_CONFIDENCE = 0.5;
     public static final double AUTONOMOUS_LENGTH_FOR_EACH_STONE = 20;

@@ -1,25 +1,21 @@
-package org.firstinspires.ftc.teamcode.david_cao.generation1_linda_code;
+package org.firstinspires.ftc.teamcode.david_cao.generation1_lindel_code;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.sensors.gyros.BNO055Gyro;
-import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.GyroGuidedTurn;
-import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 
 @Autonomous(name = "4100Gen1Auto-BlueBuildSiteBasic",group="4100")
-public class Robot4100Generation1_BlueBuildSiteBasic extends DarbotsBasicOpMode<Robot4100Generation1_LindaCore> {
-    private Robot4100Generation1_LindaCore m_RobotCore;
+public class Robot4100Generation2_BlueBuildSiteBasic extends DarbotsBasicOpMode<Robot4100Generation2_LindelCore> {
+    private Robot4100Generation2_LindelCore m_RobotCore;
     private float m_OldAng;
     @Override
-    public Robot4100Generation1_LindaCore getRobotCore() {
+    public Robot4100Generation2_LindelCore getRobotCore() {
         return m_RobotCore;
     }
 
     @Override
     public void hardwareInitialize() {
-        this.m_RobotCore = new Robot4100Generation1_LindaCore(this.hardwareMap);
+        this.m_RobotCore = new Robot4100Generation2_LindelCore(this.hardwareMap);
     }
 
     @Override
