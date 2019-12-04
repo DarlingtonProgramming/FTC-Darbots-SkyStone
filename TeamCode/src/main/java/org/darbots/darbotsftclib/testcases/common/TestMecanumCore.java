@@ -17,7 +17,7 @@ import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TestMecanumCore extends RobotCore {
-    public static final double[] WheelPosition = {18.415,14};
+    public static final double[] WheelPosition = {28.5/2,34.0/2};
     public static final MotorType ChassisMotorType = new AndyMark3637();
     public static final double WheelRadius = 5;
 

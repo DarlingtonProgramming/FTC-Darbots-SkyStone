@@ -42,7 +42,7 @@ public class LinePath implements RobotPath {
 
     @Override
     public independentVariable getIndependentVariable() {
-        if(this.targetX > targetY){
+        if(Math.abs(this.targetX) > Math.abs(targetY)){
             return independentVariable.X;
         }else{ //targetX <= targetY
             return independentVariable.Y;

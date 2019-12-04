@@ -1,6 +1,7 @@
 package org.darbots.darbotsftclib.libcore.motionsystems;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
@@ -68,10 +69,10 @@ public class MecanumDrivetrain extends RobotMotionSystem {
     }
 
     @Override
-    public RobotPose2D getTheoreticalMaximumMotionState(double WantedXSpeedInCMPerSec, double WantedYSpeedInCMPerSec, double WantedZRotSpeedInDegPerSec) {
+    public RobotVector2D getTheoreticalMaximumMotionState(double WantedXSpeedInCMPerSec, double WantedYSpeedInCMPerSec, double WantedZRotSpeedInDegPerSec) {
         double scenarioW = this.c_Kwl * Math.abs(WantedXSpeedInCMPerSec) + this.c_Kwl * Math.abs(WantedYSpeedInCMPerSec) + this.c_Kwr * Math.abs(WantedZRotSpeedInDegPerSec);
         double fraction = this.c_Wmax / scenarioW;
-        return new RobotPose2D(
+        return new RobotVector2D(
                 WantedXSpeedInCMPerSec * fraction,
                 WantedYSpeedInCMPerSec * fraction,
                 WantedZRotSpeedInDegPerSec * fraction
@@ -105,12 +106,12 @@ public class MecanumDrivetrain extends RobotMotionSystem {
     }
 
     @Override
-    public RobotPose2D calculateRobotSpeed(double[] wheelSpeeds) {
+    public RobotVector2D calculateRobotSpeed(double[] wheelSpeeds) {
         double LTSpeed = wheelSpeeds[0], RTSpeed = wheelSpeeds[1], LBSpeed = wheelSpeeds[2], RBSpeed = wheelSpeeds[3];
         double RobotXSpeed = this.c_Krl * (- LTSpeed + RTSpeed - LBSpeed + RBSpeed);
         double RobotYSpeed = this.c_Krl * (+ LTSpeed + RTSpeed - LBSpeed - RBSpeed);
         double RobotRotZSpeed = this.c_Krr * (+ LTSpeed + RTSpeed + LBSpeed + RBSpeed);
-        return new RobotPose2D(RobotXSpeed, RobotYSpeed, RobotRotZSpeed);
+        return new RobotVector2D(RobotXSpeed, RobotYSpeed, RobotRotZSpeed);
     }
 
     @Override

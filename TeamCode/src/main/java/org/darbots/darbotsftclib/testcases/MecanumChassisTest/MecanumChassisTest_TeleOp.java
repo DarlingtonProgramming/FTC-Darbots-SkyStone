@@ -33,13 +33,13 @@ public class MecanumChassisTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCor
             double normalizedXSpeed = -this.gamepad1.left_stick_y;
             double normalizedYSpeed = -this.gamepad1.left_stick_x;
             double normalizedRotSpeed = -this.gamepad1.right_stick_x;
-            if(normalizedXSpeed < 0.15){
+            if(Math.abs(normalizedXSpeed) < 0.15){
                 normalizedXSpeed = 0;
             }
-            if(normalizedYSpeed < 0.15){
+            if(Math.abs(normalizedYSpeed) < 0.15){
                 normalizedYSpeed = 0;
             }
-            if(normalizedRotSpeed < 0.15){
+            if(Math.abs(normalizedRotSpeed) < 0.15){
                 normalizedRotSpeed = 0;
             }
             teleOpTask.xSpeedNormalized = normalizedXSpeed;

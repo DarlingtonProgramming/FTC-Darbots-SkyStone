@@ -3,6 +3,7 @@ package org.darbots.darbotsftclib.testcases.MecanumMotionProfilingTest;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.motion_planning.followers.TrajectoryFollower;
 import org.darbots.darbotsftclib.libcore.motion_planning.paths.LinePath;
 import org.darbots.darbotsftclib.libcore.motion_planning.trajectories.SimpleTrajectoryGenerator;
@@ -21,12 +22,11 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
     public static final double CONST_TEST_CRUISESPEED_NORMALIZED = 0.7;
     public static final double CONST_TEST_ENDSPEED_NORMALIZED = 0;
     public static final double CONST_TRAJECTORY_RESOLUTION = 0.02;
-    public static final double CONST_MAX_ACCELERATION_NORMALIZED = 0.05;
+    public static final double CONST_MAX_ACCELERATION_NORMALIZED = 0.1;
     public static final double CONST_TEST_PREFERRED_NEW_ANGLE = 0;
 
+    private RobotPath LTPath, RTPath, LBPath, RBPath, PXPath, PYPath, NXPath, NYPath;
     private TestMecanumCore m_Core;
-    private RobotTrajectory m_LTTrack, m_RTTrack, m_LBTrack, m_RBTrack, m_PXTrack, m_PYTrack, m_NXTrack, m_NYTrack;
-
     @Override
     public TestMecanumCore getRobotCore() {
         return null;
@@ -39,7 +39,7 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
                 this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec() * CONST_MAX_ACCELERATION_NORMALIZED,
                 0
         );
-        RobotPath LTPath, RTPath, LBPath, RBPath, PXPath, PYPath, NXPath, NYPath;
+
         try{
             telemetry.addData("Status","Generating LTPath");
             telemetry.update();
@@ -69,46 +69,11 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
             e.printStackTrace();
             return;
         }
-        double startSpeed = CONST_TEST_STARTSPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec();
-        double cruiseSpeed = CONST_TEST_CRUISESPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec();
-        double endSpeed = CONST_TEST_ENDSPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec();
-
-        telemetry.addData("Status","Generating LT Trajectory");
-        telemetry.update();
-        this.m_LTTrack = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, LTPath, startSpeed, cruiseSpeed, endSpeed);
-        telemetry.addData("Status","Generating RT Trajectory");
-        telemetry.update();
-        this.m_RTTrack = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, RTPath, startSpeed, cruiseSpeed, endSpeed);
-        telemetry.addData("Status","Generating LB Trajectory");
-        telemetry.update();
-        this.m_LBTrack = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, LBPath, startSpeed, cruiseSpeed, endSpeed);
-        telemetry.addData("Status","Generating RB Trajectory");
-        telemetry.update();
-        this.m_RBTrack = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, RBPath, startSpeed, cruiseSpeed, endSpeed);
-        telemetry.addData("Status","Generating PX Trajectory");
-        telemetry.update();
-        this.m_PXTrack = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, PXPath, startSpeed, cruiseSpeed, endSpeed);
-        telemetry.addData("Status","Generating PY Trajectory");
-        telemetry.update();
-        this.m_PYTrack = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, PYPath, startSpeed, cruiseSpeed, endSpeed);
-        telemetry.addData("Status","Generating NX Trajectory");
-        telemetry.update();
-        this.m_NXTrack = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, NXPath, startSpeed, cruiseSpeed, endSpeed);
-        telemetry.addData("Status","Generating NY Trajectory");
-        telemetry.update();
-        this.m_NYTrack = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, NYPath, startSpeed, cruiseSpeed, endSpeed);
     }
 
     @Override
     public void hardwareDestroy() {
-        this.m_LTTrack = null;
-        this.m_RTTrack = null;
-        this.m_LBTrack = null;
-        this.m_RBTrack = null;
-        this.m_PXTrack = null;
-        this.m_PYTrack = null;
-        this.m_NXTrack = null;
-        this.m_NYTrack = null;
+
     }
 
     @Override
@@ -122,35 +87,44 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
             telemetry.addData("Note","to reset offset Position, simply press x on gamepad 1");
 
             if(!this.m_Core.getChassis().isBusy()){
-                if(gamepad1.left_stick_x > 0.2 || gamepad1.left_stick_y > 0.2){
-                    RobotTrajectory trajectoryToGo = null;
+                if(Math.abs(gamepad1.left_stick_x) > 0.2 || Math.abs(gamepad1.left_stick_y) > 0.2){
+                    RobotPath pathToGo = null;
                     double mappedX = -gamepad1.left_stick_y;
                     double mappedY = -gamepad1.left_stick_x;
                     if(Math.abs(mappedX) >= Math.abs(mappedY) / 2.0 && Math.abs(mappedX) <= Math.abs(mappedY) * 2.0){
                         if(mappedX > 0 && mappedY > 0){
-                            trajectoryToGo = m_LTTrack;
+                            pathToGo = LTPath;
                         }else if(mappedX > 0 && mappedY < 0){
-                            trajectoryToGo = m_RTTrack;
+                            pathToGo = RTPath;
                         }else if(mappedX < 0 && mappedY > 0){
-                            trajectoryToGo = m_LBTrack;
+                            pathToGo = LBPath;
                         }else{ //mappedX <= 0 && mappedY <= 0
-                            trajectoryToGo = m_RBTrack;
+                            pathToGo = RBPath;
                         }
                     }else{
                         if(Math.abs(mappedX) > Math.abs(mappedY)){
                             if(mappedX > 0){
-                                trajectoryToGo = m_PXTrack;
+                                pathToGo = PXPath;
                             }else{
-                                trajectoryToGo = m_NXTrack;
+                                pathToGo = NXPath;
                             }
                         }else{
                             if(mappedY > 0){
-                                trajectoryToGo = m_PYTrack;
+                                pathToGo = PYPath;
                             }else{
-                                trajectoryToGo = m_NXTrack;
+                                pathToGo = NXPath;
                             }
                         }
                     }
+                    double startSpeed = CONST_TEST_STARTSPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec();
+                    double cruiseSpeed = CONST_TEST_CRUISESPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec();
+                    double endSpeed = CONST_TEST_ENDSPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec();
+                    MotionSystemConstraints constraints = this.m_Core.getChassis().getMotionSystemConstraints(
+                            this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec() * CONST_MAX_ACCELERATION_NORMALIZED,
+                            0
+                    );
+
+                    RobotTrajectory trajectoryToGo = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, pathToGo, startSpeed, cruiseSpeed, endSpeed);
                     TrajectoryFollower follower = new TrajectoryFollower(trajectoryToGo,CONST_TEST_PREFERRED_NEW_ANGLE);
                     this.m_Core.getChassis().addTask(follower);
                 }

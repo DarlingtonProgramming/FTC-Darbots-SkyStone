@@ -30,6 +30,7 @@ import android.support.annotation.NonNull;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
@@ -156,19 +157,19 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         offset.setRotationZ(offset.getRotationZ() - this.m_TaskRelativeErrorOffset.getRotationZ());
         return offset;
     }
-    protected RobotPose2D getErrorCorrectionVelocityVector(RobotPose2D supposedPosition){
+    protected RobotVector2D getErrorCorrectionVelocityVector(RobotPose2D supposedPosition){
         double errorX, errorY, errorRotZ;
         RobotPose2D offsetSinceStart = this.getRelativePositionOffsetSinceStart();
         errorX = supposedPosition.X - offsetSinceStart.X;
         errorY = supposedPosition.Y - offsetSinceStart.Y;
         errorRotZ = XYPlaneCalculations.normalizeDeg(supposedPosition.getRotationZ() - offsetSinceStart.getRotationZ());
         this.m_MotionSystem.getPIDCalculator().feedError(errorX,errorY,errorRotZ);
-        RobotPose2D correctionVelocity = this.m_MotionSystem.getPIDCalculator().getPIDPower();
+        RobotVector2D correctionVelocity = this.m_MotionSystem.getPIDCalculator().getPIDPower();
         return correctionVelocity;
     }
-    protected RobotPose2D setRobotSpeed(RobotPose2D robotSpeed, RobotPose2D supposedRelativePose){
-        RobotPose2D correctionVector = this.getErrorCorrectionVelocityVector(supposedRelativePose);
-        RobotPose2D afterCorrectionVector = new RobotPose2D(robotSpeed.X + correctionVector.X,robotSpeed.Y + correctionVector.Y,robotSpeed.getRotationZ() + correctionVector.getRotationZ());
+    protected RobotVector2D setRobotSpeed(RobotPose2D robotSpeed, RobotPose2D supposedRelativePose){
+        RobotVector2D correctionVector = this.getErrorCorrectionVelocityVector(supposedRelativePose);
+        RobotVector2D afterCorrectionVector = new RobotVector2D(robotSpeed.X + correctionVector.X,robotSpeed.Y + correctionVector.Y,robotSpeed.getRotationZ() + correctionVector.getRotationZ());
         return this.m_MotionSystem.setRobotSpeed(afterCorrectionVector);
     }
 }

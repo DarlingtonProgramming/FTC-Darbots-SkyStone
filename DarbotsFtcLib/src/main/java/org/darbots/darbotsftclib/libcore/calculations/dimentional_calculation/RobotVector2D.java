@@ -25,35 +25,53 @@ SOFTWARE.
 package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 
 
-public class RobotPose2D extends RobotVector2D {
-    public RobotPose2D(double X, double Y, double ZRotation) {
-        super(X, Y, XYPlaneCalculations.normalizeDeg(ZRotation));
+public class RobotVector2D {
+    public double X;
+    public double Y;
+    protected double m_RotationZ;
+    public RobotVector2D(double X, double Y, double ZRotation){
+        this.X = X;
+        this.Y = Y;
+        this.m_RotationZ = ZRotation;
     }
-
-    public RobotPose2D(RobotPoint2D Point, double ZRotation) {
-        super(Point, XYPlaneCalculations.normalizeDeg(ZRotation));
+    public RobotVector2D(RobotPoint2D Point, double ZRotation) {
+        this.X = Point.X;
+        this.Y = Point.Y;
+        this.m_RotationZ = ZRotation;
     }
-
-    public RobotPose2D(RobotVector2D Pos2D) {
-        super(Pos2D.X,Pos2D.Y,XYPlaneCalculations.normalizeDeg(Pos2D.m_RotationZ));
+    public RobotVector2D(RobotVector2D Pos2D){
+        this.X = Pos2D.X;
+        this.Y = Pos2D.Y;
+        this.m_RotationZ = Pos2D.m_RotationZ;
     }
-
     public void setValues(double X, double Y, double RotationZ){
         this.X = X;
         this.Y = Y;
-        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
+        this.m_RotationZ = RotationZ;
     }
     public void setValues(RobotVector2D pose2D){
         this.X = pose2D.X;
         this.Y = pose2D.Y;
-        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(pose2D.m_RotationZ);
+        this.m_RotationZ = pose2D.m_RotationZ;
     }
     public void offsetValues(double X, double Y, double RotationZ){
         this.X += X;
         this.Y += Y;
-        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(this.m_RotationZ + RotationZ);
+        this.m_RotationZ += RotationZ;
+    }
+    public void offsetValues(RobotVector2D pose2D){
+        this.offsetValues(pose2D.X,pose2D.Y,pose2D.getRotationZ());
+    }
+    public double getDistanceToOrigin(){
+        return (Math.sqrt(Math.pow(this.X,2) + Math.pow(this.Y,2)));
+    }
+    public double getRotationZ(){
+        return this.m_RotationZ;
     }
     public void setRotationZ(double RotationZ){
-        this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
+        this.m_RotationZ = RotationZ;
+    }
+    public RobotPoint2D toPoint2D() {
+        return new RobotPoint2D(this);
     }
 }

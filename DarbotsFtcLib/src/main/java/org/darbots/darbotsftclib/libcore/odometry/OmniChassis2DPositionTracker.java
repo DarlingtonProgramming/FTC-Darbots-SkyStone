@@ -1,6 +1,7 @@
 package org.darbots.darbotsftclib.libcore.odometry;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.motionsystems.OmniDrivetrain;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
@@ -87,7 +88,7 @@ public class OmniChassis2DPositionTracker extends RobotActive2DPositionTracker i
                  */
 
         double[] wheelSpeeds = {LTAngularSpeed, RTAngularSpeed, LBAngularSpeed, RBAngularSpeed};
-        RobotPose2D chassisSpeed = m_MotionSystem.calculateRobotSpeed(wheelSpeeds);
+        RobotVector2D chassisSpeed = m_MotionSystem.calculateRobotSpeed(wheelSpeeds);
 
 
         double deltaXMoved = chassisSpeed.X * secondsSinceLastLoop;

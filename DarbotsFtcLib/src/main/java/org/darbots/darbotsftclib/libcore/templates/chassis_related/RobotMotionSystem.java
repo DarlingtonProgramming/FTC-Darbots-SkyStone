@@ -28,6 +28,7 @@ package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 import android.support.annotation.NonNull;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.ChassisPIDCalculator;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.PIDCoefficients;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
@@ -38,9 +39,9 @@ import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 import java.util.ArrayList;
 
 public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
-    public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(0.4,0,0.05);
-    public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(0.4,0,0.05);
-    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(0.4,0,0.05);
+    public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(0.5,0,0.05);
+    public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(0.5,0,0.05);
+    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(0.5,0,0.05);
 
     private ArrayList<RobotMotionSystemTask> m_TaskLists;
     private Robot2DPositionTracker m_PosTracker;
@@ -286,16 +287,16 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         }
     }
 
-    public abstract RobotPose2D getTheoreticalMaximumMotionState(double WantedXSpeedInCMPerSec, double WantedYSpeedInCMPerSec, double WantedZRotSpeedInDegPerSec);
-    public RobotPose2D getTheoreticalMaximumMotionState(RobotPose2D WantedVelocityVector){
+    public abstract RobotVector2D getTheoreticalMaximumMotionState(double WantedXSpeedInCMPerSec, double WantedYSpeedInCMPerSec, double WantedZRotSpeedInDegPerSec);
+    public RobotVector2D getTheoreticalMaximumMotionState(RobotVector2D WantedVelocityVector){
         return this.getTheoreticalMaximumMotionState(WantedVelocityVector.X,WantedVelocityVector.Y,WantedVelocityVector.getRotationZ());
     }
     protected abstract void __setRobotSpeed(double XSpeedInCMPerSec, double YSpeedInCMPerSec, double ZRotSpeedInDegPerSec);
-    public RobotPose2D setRobotSpeed(RobotPose2D VelocityVector){
+    public RobotVector2D setRobotSpeed(RobotVector2D VelocityVector){
         return this.setRobotSpeed(VelocityVector.X,VelocityVector.Y,VelocityVector.getRotationZ());
     }
-    public RobotPose2D setRobotSpeed(double XSpeedInCMPerSec, double YSpeedInCMPerSec, double ZRotSpeedInDegPerSec){
-        RobotPose2D biggestSpeed = this.getTheoreticalMaximumMotionState(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
+    public RobotVector2D setRobotSpeed(double XSpeedInCMPerSec, double YSpeedInCMPerSec, double ZRotSpeedInDegPerSec){
+        RobotVector2D biggestSpeed = this.getTheoreticalMaximumMotionState(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
         if(Math.abs(XSpeedInCMPerSec) > Math.abs(biggestSpeed.X) || Math.abs(YSpeedInCMPerSec) > Math.abs(biggestSpeed.Y) || Math.abs(ZRotSpeedInDegPerSec) > Math.abs(biggestSpeed.getRotationZ())){
             this.__setRobotSpeed(biggestSpeed.X,biggestSpeed.Y,biggestSpeed.getRotationZ());
             return biggestSpeed;
@@ -307,7 +308,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     public double[] calculateWheelAngularSpeeds(RobotPose2D RobotVelocity){
         return this.calculateWheelAngularSpeeds(RobotVelocity.X,RobotVelocity.Y,RobotVelocity.getRotationZ());
     }
-    public abstract RobotPose2D calculateRobotSpeed(double[] wheelSpeeds);
+    public abstract RobotVector2D calculateRobotSpeed(double[] wheelSpeeds);
     public double calculateMaxLinearSpeedCombinationsInCMPerSec(){
         return this.calculateMaxLinearSpeedCombinationsInCMPerSec(0);
     }

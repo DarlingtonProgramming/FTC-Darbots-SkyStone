@@ -11,7 +11,7 @@ public class RobotPoint2D {
     	this.X = oldPoint.X;
     	this.Y = oldPoint.Y;
     }
-    public RobotPoint2D(RobotPose2D indicator) {
+    public RobotPoint2D(RobotVector2D indicator) {
     	this.X = indicator.X;
     	this.Y = indicator.Y;
     }

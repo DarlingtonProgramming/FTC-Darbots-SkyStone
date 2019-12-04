@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionState;
 import org.darbots.darbotsftclib.libcore.motion_planning.trajectories.TrajectoryMotionState;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystemTask;
@@ -65,14 +66,14 @@ public class TrajectoryFollower extends RobotMotionSystemTask {
         }
         TrajectoryMotionState supposedMotionState = this.m_TrajectoryIterator.forward(currentTime - this.m_TrajectoryIterator.getCurrentDuration());
         RobotPose2D supposedDistancePose = new RobotPose2D(supposedMotionState.xDisplacement,supposedMotionState.yDisplacement,this.m_TargetEndPose.getRotationZ());
-        RobotPose2D correctionPose = this.getErrorCorrectionVelocityVector(supposedDistancePose);
-        RobotPose2D afterCorrectionVelocity = new RobotPose2D(supposedMotionState.xVelocity+correctionPose.X,supposedMotionState.yVelocity+correctionPose.Y,0);
-        RobotPose2D motionSystemMaxVelocity = this.getMotionSystem().getTheoreticalMaximumMotionState(afterCorrectionVelocity);
-        RobotPose2D actualVelocity = null;
+        RobotVector2D correctionPose = this.getErrorCorrectionVelocityVector(supposedDistancePose);
+        RobotVector2D afterCorrectionVelocity = new RobotPose2D(supposedMotionState.xVelocity+correctionPose.X,supposedMotionState.yVelocity+correctionPose.Y,0);
+        RobotVector2D motionSystemMaxVelocity = this.getMotionSystem().getTheoreticalMaximumMotionState(afterCorrectionVelocity);
+        RobotVector2D actualVelocity = null;
         if(Math.abs(afterCorrectionVelocity.X) > Math.abs(motionSystemMaxVelocity.X) || Math.abs(afterCorrectionVelocity.Y) > Math.abs(motionSystemMaxVelocity.Y)){
-            actualVelocity = new RobotPose2D(motionSystemMaxVelocity);
+            actualVelocity = new RobotVector2D(motionSystemMaxVelocity);
         }else{
-            actualVelocity = new RobotPose2D(motionSystemMaxVelocity);
+            actualVelocity = new RobotVector2D(afterCorrectionVelocity);
         }
         double possibleMaxZRot = this.getMotionSystem().calculateMaxAngularSpeedInDegPerSec(Math.abs(actualVelocity.X) + Math.abs(actualVelocity.Y));
         double rotZCorrectionVelocity = Range.clip(correctionPose.getRotationZ(),-possibleMaxZRot,possibleMaxZRot);

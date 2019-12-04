@@ -1,13 +1,14 @@
 package org.darbots.darbotsftclib.libcore.templates.odometry;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 
 public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTracker {
     private RobotPose2D m_InitialPos;
     private RobotPose2D m_CurrentPos;
     private RobotPose2D m_RelativeOffset;
-    private RobotPose2D m_VelocityVector;
+    private RobotVector2D m_VelocityVector;
 
     public RobotBasic2DPositionTracker(RobotPose2D initialPosition){
         this.m_InitialPos = new RobotPose2D(initialPosition);
@@ -96,11 +97,11 @@ public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTrac
     }
 
     @Override
-    public RobotPose2D getCurrentVelocityVector(){
+    public RobotVector2D getCurrentVelocityVector(){
         return this.m_VelocityVector;
     }
 
-    public void setCurrentVelocityVector(RobotPose2D velocityVector){
+    public void setCurrentVelocityVector(RobotVector2D velocityVector){
         this.m_VelocityVector.X = velocityVector.X;
         this.m_VelocityVector.Y = velocityVector.Y;
         this.m_VelocityVector.setRotationZ(velocityVector.getRotationZ());
