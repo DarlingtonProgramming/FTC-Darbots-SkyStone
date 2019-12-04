@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.david_cao.generation1_lindel_code;
+package org.firstinspires.ftc.teamcode.david_cao.generation2_lindel_code;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot3DPositionIndicator;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark2964;
@@ -60,8 +60,8 @@ public class Robot4100Generation2_Settings {
     public static final double GRABBERROTSERVO_OUTSIDEPOS = 0.025;
     public static final ServoType GRABBERROTSERVO_TYPE = new HS755HB();
 
-    public static final double STONEORIENTSERVO_ZEROPOS = 0;
-    public static final double STONEORIENTSERVO_ORIENTPOS = 0.5;
+    public static final double STONEORIENTSERVO_ZEROPOS = 0.55;
+    public static final double STONEORIENTSERVO_ORIENTPOS = 1.0;
 
     public static final double AUTONOMOUSDRAGSTONESERVO_LEFT_OUTPOS = 0;
     public static final double AUTONOMOUSDRAGSTONESERVO_LEFT_INPOS = 0.6;

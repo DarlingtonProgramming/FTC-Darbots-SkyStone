@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.david_cao.generation1_lindel_code;
+package org.firstinspires.ftc.teamcode.david_cao.generation2_lindel_code;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

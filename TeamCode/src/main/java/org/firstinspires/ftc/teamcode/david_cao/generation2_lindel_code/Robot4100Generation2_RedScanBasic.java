@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.david_cao.generation1_lindel_code;
+package org.firstinspires.ftc.teamcode.david_cao.generation2_lindel_code;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -8,8 +8,8 @@ import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
 import org.darbots.darbotsftclib.season_specific.skystone.darbots_vuforia_skystone_detection.DarbotsSkyStoneDifferentiation;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
-@Autonomous(group = "4100", name="4100Gen1Auto-BlueScanBasic")
-public class Robot4100Generation2_BlueScanBasic extends DarbotsBasicOpMode<Robot4100Generation2_LindelCore> {
+@Autonomous(group = "4100", name="4100Gen1Auto-RedScanBasic")
+public class Robot4100Generation2_RedScanBasic extends DarbotsBasicOpMode<Robot4100Generation2_LindelCore> {
     private Robot4100Generation2_LindelCore m_RobotCore;
     private DarbotsSkyStoneDifferentiation m_Navigation;
     private int ScanResult = 0;
@@ -77,7 +77,7 @@ public class Robot4100Generation2_BlueScanBasic extends DarbotsBasicOpMode<Robot
             }
             firstScanExtraDistance += Robot4100Generation2_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE;
             this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedZDistanceTask(
-                    -Robot4100Generation2_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE,
+                    Robot4100Generation2_Settings.AUTONOMOUS_LENGTH_FOR_EACH_STONE,
                     0.25
             ));
             if(!waitForDrive()){
@@ -125,7 +125,7 @@ public class Robot4100Generation2_BlueScanBasic extends DarbotsBasicOpMode<Robot
         }
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedTurnTask(
-                90,
+                -90,
                 0.5
         ));
 
@@ -134,7 +134,7 @@ public class Robot4100Generation2_BlueScanBasic extends DarbotsBasicOpMode<Robot
         }
 
         this.getRobotCore().getChassis().replaceTask(this.getRobotCore().getChassis().getFixedXDistanceTask(
-                135 + firstScanExtraDistance,
+                115 + firstScanExtraDistance,
                 1.0
         ));
         if(!waitForDrive()){
