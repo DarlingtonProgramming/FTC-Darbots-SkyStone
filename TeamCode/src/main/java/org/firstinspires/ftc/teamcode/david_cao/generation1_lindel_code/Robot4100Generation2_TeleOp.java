@@ -45,13 +45,13 @@ public class Robot4100Generation2_TeleOp extends DarbotsBasicOpMode<Robot4100Gen
             }
             RobotMotionSystemTeleOpControlTask teleOpTask = (RobotMotionSystemTeleOpControlTask) this.m_RobotCore.getChassis().getCurrentTask();
             double ZAxis = -gamepad1.left_stick_y, XAxis = gamepad1.left_stick_x, Turn = (-gamepad1.right_stick_x);//gamepad1.left_trigger - gamepad1.right_trigger;
-            if(Math.abs(ZAxis) < 0.1){
+            if(Math.abs(ZAxis) < 0.15){
                 ZAxis = 0;
             }
-            if(Math.abs(XAxis) < 0.1){
+            if(Math.abs(XAxis) < 0.15){
                 XAxis = 0;
             }
-            if(Math.abs(Turn) < 0.1){
+            if(Math.abs(Turn) < 0.15){
                 Turn = 0;
             }
             ZAxis *= Robot4100Generation2_Settings.TELEOP_MAXSPEED;
@@ -65,11 +65,11 @@ public class Robot4100Generation2_TeleOp extends DarbotsBasicOpMode<Robot4100Gen
             teleOpTask.setDriveZSpeed(ZAxis);
             teleOpTask.setDriveRotationSpeed(Turn);
 
-            if(gamepad2.left_stick_y < -0.1){
+            if(gamepad2.left_stick_y < -0.15){
                 if((!this.m_RobotCore.getLinearSlide().isBusy())) {
                     this.m_RobotCore.getLinearSlide().replaceTask(new TargetPosTask(null, this.m_RobotCore.getLinearSlide().getMaxPos(), Robot4100Generation2_Settings.TELEOP_LINEARSLIDESPEED));
                 }
-            }else if(gamepad2.left_stick_y > 0.1){
+            }else if(gamepad2.left_stick_y > 0.15){
                 if((!this.m_RobotCore.getLinearSlide().isBusy())) {
                     this.m_RobotCore.getLinearSlide().replaceTask(new TargetPosTask(null, this.m_RobotCore.getLinearSlide().getMinPos(), Robot4100Generation2_Settings.TELEOP_LINEARSLIDESPEED));
                 }
