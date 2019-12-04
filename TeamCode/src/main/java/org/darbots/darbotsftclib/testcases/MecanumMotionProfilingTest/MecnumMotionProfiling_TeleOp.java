@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.InvalidPropertiesFormatException;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "MecanumMotionProfilingTest")
-public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<MecanumPosTrackerTest_Core> {
+public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<MecanumMotionProfilingTest_Core> {
     public static final double CONST_TEST_DISTANCE = 30;
     public static final double CONST_TEST_DISTANCE_SIDELENGTH = CONST_TEST_DISTANCE / Math.sqrt(2);
     public static final double CONST_TEST_STARTSPEED_NORMALIZED = 0;
@@ -27,17 +27,17 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<MecanumPosT
     public static final double CONST_MAX_ACCELERATION_NORMALIZED = 0.05;
     public static final double CONST_TEST_PREFERRED_NEW_ANGLE = 0;
 
-    private MecanumPosTrackerTest_Core m_Core;
+    private MecanumMotionProfilingTest_Core m_Core;
     private RobotTrajectory m_LTTrack, m_RTTrack, m_LBTrack, m_RBTrack, m_PXTrack, m_PYTrack, m_NXTrack, m_NYTrack;
 
     @Override
-    public MecanumPosTrackerTest_Core getRobotCore() {
+    public MecanumMotionProfilingTest_Core getRobotCore() {
         return null;
     }
 
     @Override
     public void hardwareInitialize() {
-        this.m_Core = new MecanumPosTrackerTest_Core(this.hardwareMap);
+        this.m_Core = new MecanumMotionProfilingTest_Core(this.hardwareMap);
         MotionSystemConstraints constraints = this.m_Core.getChassis().getMotionSystemConstraints(
                 this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec() * CONST_MAX_ACCELERATION_NORMALIZED,
                 0

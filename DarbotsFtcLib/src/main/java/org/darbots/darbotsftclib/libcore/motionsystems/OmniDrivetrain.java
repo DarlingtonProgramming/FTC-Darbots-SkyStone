@@ -29,6 +29,7 @@ public class OmniDrivetrain extends RobotMotionSystem {
         this.m_RTMotor = RT.getMotor();
         this.m_LBMotor = LB.getMotor();
         this.m_RBMotor = RB.getMotor();
+        this.__calculateConstants();
     }
 
     protected void __calculateConstants(){
@@ -110,7 +111,7 @@ public class OmniDrivetrain extends RobotMotionSystem {
 
     @Override
     public double calculateMaxLinearSpeedCombinationsInCMPerSec(double angularSpeedInDegPerSec) {
-        return (this.c_Wmax - this.c_Kwr * Math.abs(angularSpeedInDegPerSec)) / this.c_Krl;
+        return (this.c_Wmax - this.c_Kwr * Math.abs(angularSpeedInDegPerSec)) / this.c_Kwl;
     }
 
     @Override

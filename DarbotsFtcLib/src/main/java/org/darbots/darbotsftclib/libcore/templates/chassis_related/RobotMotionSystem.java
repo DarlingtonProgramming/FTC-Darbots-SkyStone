@@ -247,8 +247,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     public void updateStatus(){
         this.__updateMotorStatus();
         if((!this.m_TaskLists.isEmpty())){
-            if(this.m_TaskLists.get(0).isBusy())
-                this.m_TaskLists.get(0).updateStatus();
+            this.m_TaskLists.get(0).updateStatus();
         }
         if(this.m_PosTrackerIsAsync){
             RobotNonBlockingDevice NonBlockingTracker = (RobotNonBlockingDevice) this.m_PosTracker;

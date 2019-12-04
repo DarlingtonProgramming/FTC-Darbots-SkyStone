@@ -54,6 +54,7 @@ public class MecanumMotionProfilingTest_Core extends RobotCore {
 
         this.m_Chassis = new MecanumDrivetrain(null,LTMotion,RTMotion,LBMotion,RBMotion);
         this.m_PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),this.m_Chassis);
+        this.m_Chassis.setPositionTracker(this.m_PosTracker);
         this.m_PosTracker.start();
     }
 

@@ -1,7 +1,5 @@
 package org.darbots.darbotsftclib.libcore.motion_planning.profiles;
 
-import com.qualcomm.robotcore.util.Range;
-
 import org.darbots.darbotsftclib.libcore.calculations.algebraic_calculation.OrderedValueProvider;
 import org.darbots.darbotsftclib.libcore.calculations.algebraic_calculation.OrderedValueSolver;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.MotionSystemConstraints;
@@ -75,16 +73,8 @@ public class MotionProfileGenerator {
                 }else{
                     MotionProfile newAccelerateProfile = generateMotionProfile(constraints,0,0, startVelocity,solvedCruiseSpeed);
                     MotionProfile newDecelerateProfile = generateMotionProfile(constraints,0,0, solvedCruiseSpeed,endVelocity);
-                    double newAccelerateTotalDuration = newAccelerateProfile.getTotalDuration();
-                    double newDecelerateTotalDuration = newDecelerateProfile.getTotalDuration();
-                    MotionState newAccelerateEndState = newAccelerateProfile.getMotionStateAt(newAccelerateTotalDuration);
-                    MotionState newDecelerateEndState = newDecelerateProfile.getMotionStateAt(newDecelerateTotalDuration);
-                    double newAccelerateAnddecelerateDistance = newAccelerateEndState.distance + newDecelerateEndState.distance;
                     MotionProfile returnProfile = new MotionProfile(startVelocity);
-                    double newCruiseTime = (PathTotalDistance - newAccelerateAnddecelerateDistance) / solvedCruiseSpeed;
-                    MotionProfileSegment newCruiseSegment = new MotionProfileSegment(0,0,newCruiseTime);
                     returnProfile.addAtEnd(newAccelerateProfile);
-                    returnProfile.addAtEnd(newCruiseSegment);
                     returnProfile.addAtEnd(newDecelerateProfile);
                     return returnProfile;
                 }

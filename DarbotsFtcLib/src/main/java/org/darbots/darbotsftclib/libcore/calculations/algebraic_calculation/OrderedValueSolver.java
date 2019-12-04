@@ -1,7 +1,7 @@
 package org.darbots.darbotsftclib.libcore.calculations.algebraic_calculation;
 
 public class OrderedValueSolver {
-    public static final double INFINATELY_SMALL = 1 * Math.pow(10,-5);
+    public static final double INFINATELY_SMALL = 0.00000001;
     public static final double RESULT_NOSOLUTION = -1000000000000000.0;
     public static double solve(OrderedValueProvider valueProvider, double errorMargin, double independentVarMin, double independentVarMax, double desiredValue){
         if((valueProvider.orderIncremental() && independentVarMax > independentVarMin) || ((!valueProvider.orderIncremental()) && independentVarMax < independentVarMin)){
@@ -11,8 +11,8 @@ public class OrderedValueSolver {
         }
     }
     protected static double __solve(OrderedValueProvider valueProvider, double errorMargin, double independentVarMin, double independentVarMax, double desiredValue){
-        double deltaMaxMin = independentVarMin - independentVarMax;
-        if(deltaMaxMin >= -INFINATELY_SMALL || deltaMaxMin <= INFINATELY_SMALL){
+        double deltaMaxMin = independentVarMax - independentVarMin;
+        if(deltaMaxMin >= -INFINATELY_SMALL && deltaMaxMin <= INFINATELY_SMALL){
             return RESULT_NOSOLUTION;
         }
         double middleVar = (independentVarMax + independentVarMin) / 2.0;
