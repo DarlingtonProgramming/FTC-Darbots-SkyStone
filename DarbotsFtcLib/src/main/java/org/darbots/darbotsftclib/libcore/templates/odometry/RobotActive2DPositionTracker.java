@@ -129,7 +129,7 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
         this.m_RunnableTracking.stop();
     }
     public void start(){
-        if(!this.m_RunnableTracking.isRunning()){
+        if(this.m_RunnableTracking.isRunning()){
             return;
         }
         this.m_TrackingThread = new Thread(this.m_RunnableTracking);

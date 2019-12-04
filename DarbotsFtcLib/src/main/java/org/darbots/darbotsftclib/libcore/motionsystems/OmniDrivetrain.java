@@ -29,6 +29,10 @@ public class OmniDrivetrain extends RobotMotionSystem {
         this.m_RTMotor = RT.getMotor();
         this.m_LBMotor = LB.getMotor();
         this.m_RBMotor = RB.getMotor();
+        this.m_LTMotor.setCurrentMovingType(RobotMotor.MovingType.withSpeed);
+        this.m_RTMotor.setCurrentMovingType(RobotMotor.MovingType.withSpeed);
+        this.m_LBMotor.setCurrentMovingType(RobotMotor.MovingType.withSpeed);
+        this.m_RBMotor.setCurrentMovingType(RobotMotor.MovingType.withSpeed);
         this.__calculateConstants();
     }
 
