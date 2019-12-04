@@ -14,17 +14,17 @@ public class MotionProfileGenerator {
         double decelerateTotalDuration = decelerateProfile.getTotalDuration();
         MotionState accelerateEndState = accelerateProfile.getMotionStateAt(accelerateTotalDuration);
         MotionState decelerateEndState = decelerateProfile.getMotionStateAt(decelerateTotalDuration);
-        double accelerateAnddecelerateDistance = accelerateEndState.distance + decelerateEndState.distance;
+        double accelerateAndDecelerateDistance = accelerateEndState.distance + decelerateEndState.distance;
         double PathTotalDistance = Path.getTotalDistance();
-        if(accelerateAnddecelerateDistance < PathTotalDistance){
+        if(accelerateAndDecelerateDistance < PathTotalDistance){
             MotionProfile returnProfile = new MotionProfile(startVelocity);
-            double cruiseTime = (PathTotalDistance - accelerateAnddecelerateDistance) / cruiseVelocity;
+            double cruiseTime = (PathTotalDistance - accelerateAndDecelerateDistance) / cruiseVelocity;
             MotionProfileSegment cruiseSegment = new MotionProfileSegment(0,0,cruiseTime);
             returnProfile.addAtEnd(accelerateProfile);
             returnProfile.addAtEnd(cruiseSegment);
             returnProfile.addAtEnd(decelerateProfile);
             return returnProfile;
-        }else if(Math.abs(accelerateAnddecelerateDistance - PathTotalDistance) <= PATH_DISTANCE_ERROR_MARGIN){
+        }else if(Math.abs(accelerateAndDecelerateDistance - PathTotalDistance) <= PATH_DISTANCE_ERROR_MARGIN){
             MotionProfile returnProfile = new MotionProfile(startVelocity);
             returnProfile.addAtEnd(accelerateProfile);
             returnProfile.addAtEnd(decelerateProfile);
@@ -39,7 +39,7 @@ public class MotionProfileGenerator {
                 returnProfile.addAtEnd(cruiseSegment);
                 return returnProfile;
             }else{
-                //try to lower cruise speed and see if we can achieve anything better than just cruise at cruise speed.
+                //try to lower / rise cruise speed and see if we can achieve anything better than just cruise at cruise speed.
                 final MotionSystemConstraints finalConstraints = constraints;
                 final double finalStartVelocity = startVelocity;
                 final double finalEndVelocity = endVelocity;
@@ -57,8 +57,8 @@ public class MotionProfileGenerator {
                         double decelerateTotalDuration = decelerateProfile.getTotalDuration();
                         MotionState accelerateEndState = accelerateProfile.getMotionStateAt(accelerateTotalDuration);
                         MotionState decelerateEndState = decelerateProfile.getMotionStateAt(decelerateTotalDuration);
-                        double accelerateAnddecelerateDistance = accelerateEndState.distance + decelerateEndState.distance;
-                        return accelerateAnddecelerateDistance;
+                        double accelerateAndDecelerateDistance = accelerateEndState.distance + decelerateEndState.distance;
+                        return accelerateAndDecelerateDistance;
                     }
                 };
                 double solverMinCruise = cruiseVelocity < startEndVMin ? 0 : startEndVMax;
@@ -97,7 +97,7 @@ public class MotionProfileGenerator {
         if(endVelocity < startVelocity){
             return __generateMotionProfile_JERKUNLIMITED(constraints,endVelocity,startVelocity).reversed();
         }
-        double Taccel = 0;
+
         double currentVelocity = startVelocity;
 
         double Tvelocity = 0;

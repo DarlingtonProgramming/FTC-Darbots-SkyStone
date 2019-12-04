@@ -8,9 +8,6 @@ import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionState;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.MotionSystemConstraints;
 import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 public class SimpleTrajectoryGenerator {
     public static SimpleTrajectory generateTrajectory(double resolutionInSeconds, MotionSystemConstraints constraints, RobotPath pathToFollow, double startSpeed, double cruiseSpeed, double endSpeed){
         resolutionInSeconds = Math.abs(resolutionInSeconds);
