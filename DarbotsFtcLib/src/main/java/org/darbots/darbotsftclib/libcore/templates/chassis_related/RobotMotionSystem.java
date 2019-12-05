@@ -50,7 +50,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private double m_RotationalMotionDistanceFactor;
     private boolean m_PosTrackerIsAsync;
     private PIDCoefficients m_LinearXPIDCoefficient, m_LinearYPIDCoefficient, m_RotationalPIDCoefficient;
-    private RobotPose2D m_AccumulatedError;
+    private RobotPose2D m_LastTaskFinishFieldPos;
     private ChassisPIDCalculator m_PIDCalculator;
     private RobotGyro m_Gyro;
 
@@ -63,7 +63,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_LinearYPIDCoefficient = LINEAR_Y_PID_DEFAULT;
         this.m_RotationalPIDCoefficient = ROTATIONAL_Z_PID_DEFAULT;
         this.m_PIDCalculator = new ChassisPIDCalculator(this.m_LinearXPIDCoefficient,this.m_LinearYPIDCoefficient,this.m_RotationalPIDCoefficient);
-        this.m_AccumulatedError = new RobotPose2D(0,0,0);
+        this.m_LastTaskFinishFieldPos = null;
 
         if(PositionTracker != null && PositionTracker instanceof RobotNonBlockingDevice){
             this.m_PosTrackerIsAsync = true;
@@ -81,7 +81,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_LinearYPIDCoefficient = MotionSystem.m_LinearYPIDCoefficient;
         this.m_RotationalPIDCoefficient = MotionSystem.m_RotationalPIDCoefficient;
         this.m_PIDCalculator = new ChassisPIDCalculator(this.m_LinearXPIDCoefficient,this.m_LinearYPIDCoefficient,this.m_RotationalPIDCoefficient);
-        this.m_AccumulatedError = new RobotPose2D(MotionSystem.m_AccumulatedError);
+        this.m_LastTaskFinishFieldPos = MotionSystem.m_LastTaskFinishFieldPos == null ? null : new RobotPose2D(MotionSystem.m_LastTaskFinishFieldPos);
 
         if(MotionSystem.m_PosTracker != null && MotionSystem.m_PosTracker instanceof RobotNonBlockingDevice){
             this.m_PosTrackerIsAsync = true;
@@ -167,6 +167,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     }
     public void setPositionTracker(Robot2DPositionTracker PositionTracker){
         this.m_PosTracker = PositionTracker;
+
         if(PositionTracker != null && PositionTracker instanceof RobotNonBlockingDevice){
             this.m_PosTrackerIsAsync = true;
         }else{
@@ -270,14 +271,19 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         }
     }
 
-    public RobotPose2D getAccumulatedError(){
-        return this.m_AccumulatedError;
+    public RobotPose2D getLastTaskFinishFieldPos(){
+        return this.m_LastTaskFinishFieldPos;
     }
 
-    public void setAccumulatedError(RobotPose2D AccumulatedError){
-        this.m_AccumulatedError.X = AccumulatedError.X;
-        this.m_AccumulatedError.Y = AccumulatedError.Y;
-        this.m_AccumulatedError.setRotationZ(AccumulatedError.getRotationZ());
+    public void setLastTaskFinishFieldPos(RobotPose2D fieldPos){
+        if(fieldPos == null){
+            this.m_LastTaskFinishFieldPos = null;
+        }
+        if(this.m_LastTaskFinishFieldPos != null){
+            this.m_LastTaskFinishFieldPos.setValues(fieldPos);
+        }else{
+            this.m_LastTaskFinishFieldPos = new RobotPose2D(fieldPos);
+        }
     }
 
     public void stop(){

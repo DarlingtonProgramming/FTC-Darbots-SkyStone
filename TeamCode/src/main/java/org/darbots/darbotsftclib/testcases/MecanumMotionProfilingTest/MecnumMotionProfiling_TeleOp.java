@@ -22,7 +22,7 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
     public static final double CONST_TEST_CRUISESPEED_NORMALIZED = 0.7;
     public static final double CONST_TEST_ENDSPEED_NORMALIZED = 0;
     public static final double CONST_TRAJECTORY_RESOLUTION = 0.02;
-    public static final double CONST_MAX_ACCELERATION_NORMALIZED = 0.1;
+    public static final double CONST_MAX_ACCELERATION_NORMALIZED = 0.2;
     public static final double CONST_TEST_PREFERRED_NEW_ANGLE = 0;
 
     private RobotPath LTPath, RTPath, LBPath, RBPath, PXPath, PYPath, NXPath, NYPath;
