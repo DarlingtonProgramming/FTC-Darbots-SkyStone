@@ -8,7 +8,7 @@ public class RobotMotionSystemTeleOpTask extends RobotMotionSystemTask {
     public double xSpeedNormalized = 0;
     public double ySpeedNormalized = 0;
     public double zRotSpeedNormalized = 0;
-    private double theoraticalMaximumLinearX, theoraticalMaximumLinearY, theoraticalMaximumAngular;
+    protected double theoraticalMaximumLinearX, theoraticalMaximumLinearY, theoraticalMaximumAngular;
 
     public RobotMotionSystemTeleOpTask(){
         super();

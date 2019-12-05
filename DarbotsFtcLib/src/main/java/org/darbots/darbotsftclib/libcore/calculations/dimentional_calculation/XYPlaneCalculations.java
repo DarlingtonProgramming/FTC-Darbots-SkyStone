@@ -52,6 +52,32 @@ public class XYPlaneCalculations {
         return new RobotPose2D(movedTargetPoint[0],movedTargetPoint[1],absRotZ);
     }
 
+    public static RobotVector2D getRelativePosition(RobotVector2D PerspectiveOrigin, RobotVector2D Target){
+        //First step - move the Perspective Origin to the Origin of the Axis.
+        double[] targetPoint = {Target.X - PerspectiveOrigin.X,Target.Y - PerspectiveOrigin.Y};
+        //Second step - rotate the targetPoint so that the coordinate system (X and Z scalars) of the Perspective Origin overlaps with the Field Coordinate.
+        //We are basically rotating field coordinate here.
+        double[] origin = {0,0};
+        double[] rotatedTargetPoint = rotatePointAroundFixedPoint_Deg(targetPoint,origin,-PerspectiveOrigin.getRotationZ());
+        //Third step - calculate relative delta Rotation Y;
+        double deltaRotZ = Target.getRotationZ() - PerspectiveOrigin.getRotationZ();
+
+        return new RobotVector2D(rotatedTargetPoint[0],rotatedTargetPoint[1],deltaRotZ);
+    }
+
+    public static RobotVector2D getAbsolutePosition(RobotVector2D PerspectiveOrigin, RobotVector2D RelativePosition){
+        //First Step - calculate absolute Rotation Y.
+        double absRotZ = RelativePosition.getRotationZ() + PerspectiveOrigin.getRotationZ();
+        //Second Step - rotate the coordinates back.
+        double[] origin = {0,0};
+        double[] relativeTargetPoint = {RelativePosition.X,RelativePosition.Y};
+        double[] rotatedTargetPoint = rotatePointAroundFixedPoint_Deg(relativeTargetPoint,origin,PerspectiveOrigin.getRotationZ());
+        //Third Step - move the PerspectiveOrigin back to the Absolute Point on the Field.
+        double[] movedTargetPoint = {rotatedTargetPoint[0] + PerspectiveOrigin.X,rotatedTargetPoint[1] + PerspectiveOrigin.Y};
+
+        return new RobotVector2D(movedTargetPoint[0],movedTargetPoint[1],absRotZ);
+    }
+
     public static double chooseAngleFromRange(double[] angleList, double angleSmallestRange, double angleBiggestRange) {
         for(int i=0;i<angleList.length;i++) {
             if(angleList[i] >= angleSmallestRange && angleList[i] <= angleBiggestRange) {

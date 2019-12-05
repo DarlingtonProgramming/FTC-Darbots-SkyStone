@@ -172,9 +172,21 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         RobotVector2D correctionVelocity = this.m_MotionSystem.getPIDCalculator().getPIDPower();
         return correctionVelocity;
     }
-    protected RobotVector2D setRobotSpeed(RobotPose2D robotSpeed, RobotPose2D supposedRelativePose){
+    protected RobotVector2D setRobotSpeed(RobotVector2D robotSpeed, RobotPose2D supposedRelativePose){
         RobotVector2D correctionVector = this.getErrorCorrectionVelocityVector(supposedRelativePose);
         RobotVector2D afterCorrectionVector = new RobotVector2D(robotSpeed.X + correctionVector.X,robotSpeed.Y + correctionVector.Y,robotSpeed.getRotationZ() + correctionVector.getRotationZ());
-        return this.m_MotionSystem.setRobotSpeed(afterCorrectionVector);
+        RobotVector2D afterCorrectionTheoraticalMaximum = this.m_MotionSystem.getTheoreticalMaximumMotionState(afterCorrectionVector);
+        RobotVector2D actualVector = null;
+        RobotVector2D returnVector = null;
+        if(Math.abs(afterCorrectionVector.X) > Math.abs(afterCorrectionTheoraticalMaximum.X) || Math.abs(afterCorrectionVector.Y) > Math.abs(afterCorrectionTheoraticalMaximum.Y) || Math.abs(afterCorrectionVector.getRotationZ()) > Math.abs(afterCorrectionTheoraticalMaximum.getRotationZ())){
+            actualVector = afterCorrectionTheoraticalMaximum;
+            double factor = actualVector.X / afterCorrectionVector.X;
+            returnVector = new RobotVector2D(robotSpeed.X * factor,robotSpeed.Y * factor, robotSpeed.getRotationZ() * factor);
+        }else{
+            actualVector = afterCorrectionVector;
+            returnVector = new RobotVector2D(robotSpeed);
+        }
+        this.getMotionSystem().__setRobotSpeed(actualVector.X,actualVector.Y,actualVector.getRotationZ());
+        return returnVector;
     }
 }
