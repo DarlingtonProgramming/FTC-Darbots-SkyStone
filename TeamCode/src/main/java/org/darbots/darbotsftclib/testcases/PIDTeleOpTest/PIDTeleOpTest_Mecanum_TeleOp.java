@@ -1,13 +1,14 @@
-package org.darbots.darbotsftclib.testcases.MecanumChassisTest;
+package org.darbots.darbotsftclib.testcases.PIDTeleOpTest;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
+import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.RobotMotionSystemTeleOpPIDTask;
 import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.RobotMotionSystemTeleOpTask;
 import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 
-@TeleOp(group = "DarbotsLib-TestCases", name = "MecanumChassisControllerTest")
-public class MecanumChassisTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> {
+@TeleOp(group = "DarbotsLib-TestCases", name = "PIDTeleOpTest")
+public class PIDTeleOpTest_Mecanum_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> {
     private TestMecanumCore m_Core;
 
     @Override
@@ -27,7 +28,7 @@ public class MecanumChassisTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCor
 
     @Override
     public void RunThisOpMode() {
-        RobotMotionSystemTeleOpTask teleOpTask = new RobotMotionSystemTeleOpTask();
+        RobotMotionSystemTeleOpTask teleOpTask = new RobotMotionSystemTeleOpPIDTask();
         this.getRobotCore().getChassis().addTask(teleOpTask);
         while(this.opModeIsActive()){
             double normalizedXSpeed = -this.gamepad1.left_stick_y;
