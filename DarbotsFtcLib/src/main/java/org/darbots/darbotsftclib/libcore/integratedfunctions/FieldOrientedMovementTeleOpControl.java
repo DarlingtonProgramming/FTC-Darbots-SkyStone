@@ -11,7 +11,7 @@ public abstract class FieldOrientedMovementTeleOpControl {
         double[] humanXY = {HumanPerspectiveSpeed.X, HumanPerspectiveSpeed.Y};
         double deltaAngBetweenRobotAndHuman = this.getCurrentAngleCW() - AngleReadingAtHumanPerspective;
         double[] origin = {0,0};
-        double[] robotXY = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(humanXY,origin,deltaAngBetweenRobotAndHuman);
+        double[] robotXY = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(humanXY,origin,-deltaAngBetweenRobotAndHuman);
         RobotVector2D returnVector = new RobotVector2D(robotXY[0],robotXY[1],HumanPerspectiveSpeed.getRotationZ());
         return returnVector;
     }

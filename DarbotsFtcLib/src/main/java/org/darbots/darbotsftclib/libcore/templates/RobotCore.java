@@ -80,9 +80,6 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
     @Override
     public void updateStatus(){
         this.m_UpdateStatusCount++;
-        if(this.m_Gyro instanceof RobotNonBlockingDevice){
-            ((RobotNonBlockingDevice) this.m_Gyro).updateStatus();
-        }
         this.__updateStatus();
     }
     public long getUpdateStatusCount(){

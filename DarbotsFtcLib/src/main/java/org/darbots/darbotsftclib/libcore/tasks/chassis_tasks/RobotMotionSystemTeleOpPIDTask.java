@@ -5,11 +5,20 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
 
 public class RobotMotionSystemTeleOpPIDTask extends RobotMotionSystemTeleOpTask {
     protected RobotPose2D lastRelativePose;
     protected RobotVector2D lastSpeed;
     protected ElapsedTime timeBetweenUpdateStatusCalls;
+
+    public RobotMotionSystemTeleOpPIDTask(){
+        super();
+    }
+
+    public RobotMotionSystemTeleOpPIDTask(RobotMotionSystemTeleOpTask oldTask){
+        super(oldTask);
+    }
 
     @Override
     protected void __startTask(){

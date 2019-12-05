@@ -12,6 +12,7 @@ import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
+import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -91,6 +92,15 @@ public class TestMecanumCore extends RobotCore {
                 offsetPositionLine.addData("Y", offsetPos.Y);
                 offsetPositionLine.addData("RotZ", offsetPos.getRotationZ());
             }
+            {
+                if (this.getChassis() != null && this.getChassis().isBusy()) {
+                    RobotPose2D lastSupposedPose = this.getChassis().getCurrentTask().getLastSupposedPose();
+                    Telemetry.Line lastSupposedPoseLine = globalTele.addLine("Last Supposed Pose");
+                    lastSupposedPoseLine.addData("X",lastSupposedPose.X);
+                    lastSupposedPoseLine.addData("Y",lastSupposedPose.Y);
+                    lastSupposedPoseLine.addData("RotZ",lastSupposedPose.getRotationZ());
+                }
+            }
         }
     }
 
@@ -102,5 +112,8 @@ public class TestMecanumCore extends RobotCore {
     @Override
     protected void __updateStatus() {
         this.m_Chassis.updateStatus();
+        if(this.getGyro() != null && this.getGyro() instanceof RobotNonBlockingDevice){
+            ((RobotNonBlockingDevice) this.getGyro()).updateStatus();
+        }
     }
 }
