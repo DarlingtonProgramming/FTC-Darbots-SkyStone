@@ -88,7 +88,7 @@ public abstract class RobotBasic2DPositionTracker implements Robot2DPositionTrac
     protected void offsetRelative_RobotAxis(RobotPose2D offsetRobotAxis){
         double[] originalRobotAxis = {offsetRobotAxis.X, offsetRobotAxis.Y};
         double[] origin = {0,0};
-        double[] OffsetOriginPerspectiveValues = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(originalRobotAxis,origin,-this.m_RelativeOffset.getRotationZ());
+        double[] OffsetOriginPerspectiveValues = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(originalRobotAxis,origin,this.m_RelativeOffset.getRotationZ());
         this.offsetRelative(new RobotPose2D(
                 OffsetOriginPerspectiveValues[0],
                 OffsetOriginPerspectiveValues[1],

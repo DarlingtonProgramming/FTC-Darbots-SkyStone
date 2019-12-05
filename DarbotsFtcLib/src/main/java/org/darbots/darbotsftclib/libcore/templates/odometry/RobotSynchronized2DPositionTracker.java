@@ -80,7 +80,7 @@ public abstract class RobotSynchronized2DPositionTracker extends RobotBasic2DPos
         double[] origin = {0,0};
 
         synchronized (readRelativePos) {
-            double[] OffsetOriginPerspectiveValues = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(originalRobotAxis, origin, -readRelativePos.getRotationZ());
+            double[] OffsetOriginPerspectiveValues = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(originalRobotAxis, origin, readRelativePos.getRotationZ());
             double originalX = readRelativePos.X, originalY = readRelativePos.Y, originalRotZ = readRelativePos.getRotationZ();
             double newX = originalX + OffsetOriginPerspectiveValues[0], newY = originalY + OffsetOriginPerspectiveValues[1], newRotZ = originalRotZ + offsetRobotAxis.getRotationZ();
             readRelativePos.X = newX;
