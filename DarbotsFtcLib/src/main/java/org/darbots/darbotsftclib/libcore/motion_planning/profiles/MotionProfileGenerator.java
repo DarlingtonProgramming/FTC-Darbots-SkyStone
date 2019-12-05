@@ -22,8 +22,8 @@ public class MotionProfileGenerator {
         cruiseVelocity = Math.abs(cruiseVelocity);
         endVelocity = Math.abs(endVelocity);
 
-        MotionProfile accelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxVelocity,maxAcceleration,maxJerk,0,0, startVelocity,cruiseVelocity);
-        MotionProfile decelerateProfile = generateMotionProfile(maxVelocity,maxAcceleration,maxJerk,0,0, cruiseVelocity,endVelocity);
+        MotionProfile accelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,maxJerk,0,0, startVelocity,cruiseVelocity);
+        MotionProfile decelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,maxJerk,0,0, cruiseVelocity,endVelocity);
         double accelerateTotalDuration = accelerateProfile.getTotalDuration();
         double decelerateTotalDuration = decelerateProfile.getTotalDuration();
         MotionState accelerateEndState = accelerateProfile.getMotionStateAt(accelerateTotalDuration);
@@ -53,7 +53,7 @@ public class MotionProfileGenerator {
                 return returnProfile;
             }else{
                 //try to lower / rise cruise speed and see if we can achieve anything better than just cruise at cruise speed.
-                final double finalMaxVelocity = maxVelocity, finalMaxAccel = maxAcceleration, finalMaxJerk = maxJerk;
+                final double finalMaxAccel = maxAcceleration, finalMaxJerk = maxJerk;
                 final double finalStartVelocity = startVelocity;
                 final double finalEndVelocity = endVelocity;
                 OrderedValueProvider valueProvider = new OrderedValueProvider() {
@@ -64,8 +64,8 @@ public class MotionProfileGenerator {
 
                     @Override
                     public double valueAt(double independentVar) {
-                        MotionProfile accelerateProfile = generateMotionProfileFromOneSpeedToAnother(finalMaxVelocity,finalMaxAccel,finalMaxJerk,0,0, finalStartVelocity,independentVar);
-                        MotionProfile decelerateProfile = generateMotionProfileFromOneSpeedToAnother(finalMaxVelocity,finalMaxAccel,finalMaxJerk,0,0, independentVar,finalEndVelocity);
+                        MotionProfile accelerateProfile = generateMotionProfileFromOneSpeedToAnother(finalMaxAccel,finalMaxJerk,0,0, finalStartVelocity,independentVar);
+                        MotionProfile decelerateProfile = generateMotionProfileFromOneSpeedToAnother(finalMaxAccel,finalMaxJerk,0,0, independentVar,finalEndVelocity);
                         double accelerateTotalDuration = accelerateProfile.getTotalDuration();
                         double decelerateTotalDuration = decelerateProfile.getTotalDuration();
                         MotionState accelerateEndState = accelerateProfile.getMotionStateAt(accelerateTotalDuration);
@@ -84,8 +84,8 @@ public class MotionProfileGenerator {
                     returnProfile.addAtEnd(cruiseSegment);
                     return returnProfile;
                 }else{
-                    MotionProfile newAccelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxVelocity,maxAcceleration,maxJerk,0,0, startVelocity,solvedCruiseSpeed);
-                    MotionProfile newDecelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxVelocity,maxAcceleration,maxJerk,0,0, solvedCruiseSpeed,endVelocity);
+                    MotionProfile newAccelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,maxJerk,0,0, startVelocity,solvedCruiseSpeed);
+                    MotionProfile newDecelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,maxJerk,0,0, solvedCruiseSpeed,endVelocity);
                     MotionProfile returnProfile = new MotionProfile(startVelocity);
                     returnProfile.addAtEnd(newAccelerateProfile);
                     returnProfile.addAtEnd(newDecelerateProfile);
@@ -100,15 +100,15 @@ public class MotionProfileGenerator {
         returnProfile.addAtEnd(segment);
         return returnProfile;
     }
-    public static MotionProfile generateMotionProfileFromOneSpeedToAnother(double maxVelocity, double maxAccel, double maxJerk, double startAcceleration, double endAcceleration, double startVelocity, double endVelocity){
+    public static MotionProfile generateMotionProfileFromOneSpeedToAnother(double maxAccel, double maxJerk, double startAcceleration, double endAcceleration, double startVelocity, double endVelocity){
         if(endVelocity < startVelocity){
-            return generateMotionProfileFromOneSpeedToAnother(maxVelocity,maxAccel,maxJerk,startAcceleration,endAcceleration,endVelocity,startVelocity).reversed();
+            return generateMotionProfileFromOneSpeedToAnother(maxAccel,maxJerk,startAcceleration,endAcceleration,endVelocity,startVelocity).reversed();
         }
-        return __generateMotionProfileFromOneSpeedToAnother_JERKUNLIMITED(maxVelocity,maxAccel,maxJerk,startVelocity,endVelocity);
+        return __generateMotionProfileFromOneSpeedToAnother_JERKUNLIMITED(maxAccel,startVelocity,endVelocity);
     }
-    public static MotionProfile __generateMotionProfileFromOneSpeedToAnother_JERKUNLIMITED(double maxVelocity, double maxAccel, double maxJerk, double startVelocity, double endVelocity){
+    public static MotionProfile __generateMotionProfileFromOneSpeedToAnother_JERKUNLIMITED(double maxAccel, double startVelocity, double endVelocity){
         if(endVelocity < startVelocity){
-            return __generateMotionProfileFromOneSpeedToAnother_JERKUNLIMITED(maxVelocity,maxAccel,maxJerk,endVelocity,startVelocity).reversed();
+            return __generateMotionProfileFromOneSpeedToAnother_JERKUNLIMITED(maxAccel,endVelocity,startVelocity).reversed();
         }
 
         double currentVelocity = startVelocity;
@@ -125,5 +125,4 @@ public class MotionProfileGenerator {
         }
         return returnProfile;
     }
-
 }

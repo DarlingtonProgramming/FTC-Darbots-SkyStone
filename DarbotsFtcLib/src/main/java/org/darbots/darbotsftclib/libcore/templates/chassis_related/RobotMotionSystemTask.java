@@ -173,20 +173,15 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         RobotPose2D rawOffsetSinceStart = this.getRelativePositionOffsetRawSinceStart();
         RobotPose2D offsetSinceStart = this.calculateErrorCalculatedOffsetPosition(rawOffsetSinceStart);
 
-        errorX = supposedPosition.X - offsetSinceStart.X;
-        errorY = supposedPosition.Y - offsetSinceStart.Y;
-        errorRotZ = XYPlaneCalculations.normalizeDeg(supposedPosition.getRotationZ() - offsetSinceStart.getRotationZ());
+        RobotPose2D error = XYPlaneCalculations.getRelativePosition(offsetSinceStart,supposedPosition);
+        errorX = error.X;
+        errorY = error.Y;
+        errorRotZ = error.getRotationZ();
 
         this.m_MotionSystem.getPIDCalculator().feedError(errorX,errorY,errorRotZ);
         RobotVector2D correctionVelocity = this.m_MotionSystem.getPIDCalculator().getPIDPower();
 
-        //Turn CorrectionVelocity Towards the Current Pose
-        double[] rawCorrectionVelocityXY = {correctionVelocity.X,correctionVelocity.Y};
-        double[] origin = {0,0};
-        double[] turnedCorrectionVelocityXY = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(rawCorrectionVelocityXY,origin,-rawOffsetSinceStart.getRotationZ());
-        RobotVector2D turnedCorrectionVelocity = new RobotVector2D(turnedCorrectionVelocityXY[0],turnedCorrectionVelocityXY[1],correctionVelocity.getRotationZ());
-
-        return turnedCorrectionVelocity;
+        return correctionVelocity;
     }
     protected RobotVector2D setRobotSpeed(RobotVector2D robotSpeed, RobotPose2D supposedRelativePose){
         RobotVector2D correctionVector = this.getErrorCorrectionVelocityVector(supposedRelativePose);
