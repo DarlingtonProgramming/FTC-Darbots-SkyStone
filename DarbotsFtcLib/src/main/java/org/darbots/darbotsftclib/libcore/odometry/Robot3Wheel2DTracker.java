@@ -13,7 +13,7 @@ import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
  */
 public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker implements RobotGyro {
     private int m_LastLeftEncoderCount, m_LastMidEncoderCount, m_LastRightEncoderCount;
-    private volatile double m_HeadingAng = 0.0;
+    private volatile double m_HeadingAngle = 0.0;
     private double c_LEFTENCODER_COUNTS_PER_CM, c_MIDENCODER_COUNTS_PER_CM, c_RIGHTENCODER_COUNTS_PER_CM;
     private double c_MIDENCODER_CM_PER_DEG, c_LEFTENCODER_CM_PER_DEG, c_RIGHTENCODER_CM_PER_DEG;
 
@@ -73,6 +73,11 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
         m_LastRightEncoderCount = this.getRightEncoderCount();
     }
 
+    private void offsetHeading(double offsetAngle){
+        this.m_HeadingAngle = XYPlaneCalculations.normalizeDeg(this.m_HeadingAngle + offsetAngle);
+        return;
+    }
+
     @Override
     protected void __trackLoop(double secondsSinceLastLoop) {
         this.updateData();
@@ -112,14 +117,15 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
         );
 
 
-        this.drive_MoveThroughRobotAxisOffset(new RobotPose2D(
-                deltaXMoved,
-                deltaYMoved,
-                deltaAngMoved
-        ));
+        __trackLoopMoved(currentVelocityVector,
+                new RobotPose2D(
+                    deltaXMoved,
+                    deltaYMoved,
+                    deltaAngMoved
+                )
+        );
 
-        this.setCurrentVelocityVector(currentVelocityVector);
-        this.m_HeadingAng = XYPlaneCalculations.normalizeDeg(this.m_HeadingAng + deltaAngMoved);
+        this.offsetHeading(deltaAngMoved * Robot3Wheel2DTracker.this.m_ZRotDistanceFactor);
 
         m_LastMidEncoderCount = newMidCount;
         m_LastLeftEncoderCount = newLeftCount;
@@ -128,7 +134,7 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
 
     @Override
     public float getHeading() {
-        return (float) this.m_HeadingAng;
+        return (float) this.m_HeadingAngle;
     }
 
     @Override

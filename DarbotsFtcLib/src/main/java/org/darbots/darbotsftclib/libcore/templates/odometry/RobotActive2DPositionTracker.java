@@ -3,6 +3,8 @@ package org.darbots.darbotsftclib.libcore.templates.odometry;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
+import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
 
 public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPositionTracker {
     private class RobotActive2DPositionTracker_Runnable implements Runnable{
@@ -119,6 +121,13 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
         RobotPose2D tempField = this.fieldAxisFromRobotAxis(robotAxisValues);
         this.setCurrentPosition(tempField);
         this.offsetRelative_RobotAxis(robotAxisValues);
+    }
+
+    protected void __trackLoopMoved(RobotVector2D velocity, RobotPose2D deltaRobotAxis){
+        RobotVector2D fixedVelocity = new RobotVector2D(velocity.X * this.m_XDistanceFactor,velocity.Y * this.m_YDistanceFactor,velocity.getRotationZ() * this.m_ZRotDistanceFactor);
+        RobotPose2D fixedDeltaRobotAxis = new RobotPose2D(deltaRobotAxis.X * this.m_XDistanceFactor, deltaRobotAxis.Y * this.m_YDistanceFactor, deltaRobotAxis.getRotationZ() * this.m_ZRotDistanceFactor);
+        this.setCurrentVelocityVector(fixedVelocity);
+        this.drive_MoveThroughRobotAxisOffset(fixedDeltaRobotAxis);
     }
 
     protected abstract void __trackStart();

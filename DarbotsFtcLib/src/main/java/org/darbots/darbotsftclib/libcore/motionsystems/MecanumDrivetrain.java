@@ -70,7 +70,7 @@ public class MecanumDrivetrain extends RobotMotionSystem {
 
     @Override
     public RobotVector2D getTheoreticalMaximumMotionState(double WantedXSpeedInCMPerSec, double WantedYSpeedInCMPerSec, double WantedZRotSpeedInDegPerSec) {
-        double scenarioW = this.c_Kwl * Math.abs(WantedXSpeedInCMPerSec) + this.c_Kwl * Math.abs(WantedYSpeedInCMPerSec) + this.c_Kwr * Math.abs(WantedZRotSpeedInDegPerSec);
+        double scenarioW = this.c_Kwl * Math.abs(WantedXSpeedInCMPerSec) * this.getLinearXMotionDistanceFactor() + this.c_Kwl * Math.abs(WantedYSpeedInCMPerSec) * this.getLinearYMotionDistanceFactor() + this.c_Kwr * Math.abs(WantedZRotSpeedInDegPerSec) * this.getRotationalMotionDistanceFactor();
         double fraction = this.c_Wmax / scenarioW;
         return new RobotVector2D(
                 WantedXSpeedInCMPerSec * fraction,
@@ -94,9 +94,9 @@ public class MecanumDrivetrain extends RobotMotionSystem {
 
     @Override
     public double[] calculateWheelAngularSpeeds(double RobotXSpeedInCMPerSec, double RobotYSpeedInCMPerSec, double RobotZRotSpeedInDegPerSec) {
-        double xSpeedVal = this.c_Kwl * RobotXSpeedInCMPerSec;
-        double ySpeedVal = this.c_Kwl * RobotYSpeedInCMPerSec;
-        double zRotSpeedVal = this.c_Kwr * RobotZRotSpeedInDegPerSec;
+        double xSpeedVal = this.c_Kwl * RobotXSpeedInCMPerSec * this.getLinearXMotionDistanceFactor();
+        double ySpeedVal = this.c_Kwl * RobotYSpeedInCMPerSec * this.getLinearYMotionDistanceFactor();
+        double zRotSpeedVal = this.c_Kwr * RobotZRotSpeedInDegPerSec * this.getRotationalMotionDistanceFactor();
         double LTSpeed = - xSpeedVal + ySpeedVal + zRotSpeedVal;
         double RTSpeed = + xSpeedVal + ySpeedVal + zRotSpeedVal;
         double LBSpeed = - xSpeedVal - ySpeedVal + zRotSpeedVal;
@@ -108,20 +108,25 @@ public class MecanumDrivetrain extends RobotMotionSystem {
     @Override
     public RobotVector2D calculateRobotSpeed(double[] wheelSpeeds) {
         double LTSpeed = wheelSpeeds[0], RTSpeed = wheelSpeeds[1], LBSpeed = wheelSpeeds[2], RBSpeed = wheelSpeeds[3];
-        double RobotXSpeed = this.c_Krl * (- LTSpeed + RTSpeed - LBSpeed + RBSpeed);
-        double RobotYSpeed = this.c_Krl * (+ LTSpeed + RTSpeed - LBSpeed - RBSpeed);
-        double RobotRotZSpeed = this.c_Krr * (+ LTSpeed + RTSpeed + LBSpeed + RBSpeed);
+        double RobotXSpeed = this.c_Krl * (- LTSpeed + RTSpeed - LBSpeed + RBSpeed) / this.getLinearXMotionDistanceFactor();
+        double RobotYSpeed = this.c_Krl * (+ LTSpeed + RTSpeed - LBSpeed - RBSpeed) / this.getLinearYMotionDistanceFactor();
+        double RobotRotZSpeed = this.c_Krr * (+ LTSpeed + RTSpeed + LBSpeed + RBSpeed) / this.getRotationalMotionDistanceFactor();
         return new RobotVector2D(RobotXSpeed, RobotYSpeed, RobotRotZSpeed);
     }
 
     @Override
-    public double calculateMaxLinearSpeedCombinationsInCMPerSec(double angularSpeedInDegPerSec) {
-        return (this.c_Wmax - this.c_Kwr * Math.abs(angularSpeedInDegPerSec)) / this.c_Kwl;
+    public double calculateMaxLinearXSpeedInCMPerSec(double angularSpeedInDegPerSec) {
+        return (this.c_Wmax - this.c_Kwr * Math.abs(angularSpeedInDegPerSec * this.getRotationalMotionDistanceFactor())) / this.c_Kwl / this.getLinearXMotionDistanceFactor();
     }
 
     @Override
-    public double calculateMaxAngularSpeedInDegPerSec(double linearSpeedCombinationInCMPerSec) {
-        return (this.c_Wmax - this.c_Kwl * Math.abs(linearSpeedCombinationInCMPerSec)) / this.c_Kwr;
+    public double calculateMaxLinearYSpeedInCMPerSec(double angularSpeedInDegPerSec) {
+        return (this.c_Wmax - this.c_Kwr * Math.abs(angularSpeedInDegPerSec * this.getRotationalMotionDistanceFactor())) / this.c_Kwl / this.getLinearYMotionDistanceFactor();
+    }
+
+    @Override
+    public double calculateMaxAngularSpeedInDegPerSec(double xSpeedInCMPerSec, double ySpeedInCMPerSec) {
+        return (this.c_Wmax - this.c_Kwl * (Math.abs(xSpeedInCMPerSec * this.getLinearXMotionDistanceFactor()) + Math.abs(ySpeedInCMPerSec * this.getLinearYMotionDistanceFactor()))) / this.c_Kwr / this.getRotationalMotionDistanceFactor();
     }
 
     public RobotMotion getLTMotion(){

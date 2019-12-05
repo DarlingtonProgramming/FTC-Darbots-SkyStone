@@ -246,13 +246,13 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
 
     @Override
     public void updateStatus(){
-        this.__updateMotorStatus();
-        if((!this.m_TaskLists.isEmpty())){
-            this.m_TaskLists.get(0).updateStatus();
-        }
         if(this.m_PosTrackerIsAsync){
             RobotNonBlockingDevice NonBlockingTracker = (RobotNonBlockingDevice) this.m_PosTracker;
             NonBlockingTracker.updateStatus();
+        }
+        this.__updateMotorStatus();
+        if((!this.m_TaskLists.isEmpty())){
+            this.m_TaskLists.get(0).updateStatus();
         }
     }
 
@@ -309,16 +309,20 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         return this.calculateWheelAngularSpeeds(RobotVelocity.X,RobotVelocity.Y,RobotVelocity.getRotationZ());
     }
     public abstract RobotVector2D calculateRobotSpeed(double[] wheelSpeeds);
-    public double calculateMaxLinearSpeedCombinationsInCMPerSec(){
-        return this.calculateMaxLinearSpeedCombinationsInCMPerSec(0);
+    public double calculateMaxLinearXSpeedInCMPerSec(){
+        return this.calculateMaxLinearXSpeedInCMPerSec(0);
+    }
+    public double calculateMaxLinearYSpeedInCMPerSec(){
+        return this.calculateMaxLinearYSpeedInCMPerSec(0);
     }
     public double calculateMaxAngularSpeedInDegPerSec(){
-        return this.calculateMaxAngularSpeedInDegPerSec(0);
+        return this.calculateMaxAngularSpeedInDegPerSec(0,0);
     }
-    public abstract double calculateMaxLinearSpeedCombinationsInCMPerSec(double angularSpeedInDegPerSec);
-    public abstract double calculateMaxAngularSpeedInDegPerSec(double linearSpeedCombinationInCMPerSec);
+    public abstract double calculateMaxLinearXSpeedInCMPerSec(double angularSpeedInDegPerSec);
+    public abstract double calculateMaxLinearYSpeedInCMPerSec(double angularSpeedInDegPerSec);
+    public abstract double calculateMaxAngularSpeedInDegPerSec(double xSpeedInCMPerSec, double ySpeedInCMPerSec);
     public double calculateMaxLinearSpeedInCMPerSec(){
-        return Math.sqrt(2 * Math.pow(this.calculateMaxLinearSpeedCombinationsInCMPerSec() / 2.0,2));
+        return Math.sqrt(Math.pow(this.calculateMaxLinearXSpeedInCMPerSec() / 2.0,2) + Math.pow(this.calculateMaxLinearYSpeedInCMPerSec() / 2.0,2));
     }
     public MotionSystemConstraints getMotionSystemConstraints(double maximumAcceleration, double maximumJerk){
         return new MotionSystemConstraints(this.calculateMaxLinearSpeedInCMPerSec(),maximumAcceleration,maximumJerk);

@@ -100,15 +100,14 @@ public abstract class Robot2Wheel2DTracker extends RobotActive2DPositionTracker 
                 deltaAngMoved / secondsSinceLastLoop
         );
 
-
-        Robot2Wheel2DTracker.this.drive_MoveThroughRobotAxisOffset(new RobotPose2D(
-                deltaXMoved,
-                deltaYMoved,
-                deltaAngMoved
-        ));
-
-        Robot2Wheel2DTracker.this.setCurrentVelocityVector(currentVelocityVector);
-
+        __trackLoopMoved(
+                currentVelocityVector,
+                new RobotPose2D(
+                    deltaXMoved,
+                    deltaYMoved,
+                    deltaAngMoved
+                )
+        );
 
         m_LastStrafeEncoderCount = newMidCount;
         m_LastDriveEncoderCount = newLeftCount;

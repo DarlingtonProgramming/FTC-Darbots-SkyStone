@@ -81,12 +81,6 @@ public class MecanumChassis2DPositionTracker extends RobotActive2DPositionTracke
         double LBAngularSpeed = deltaLBDeg / secondsSinceLastLoop;
         double RBAngularSpeed = deltaRBDeg / secondsSinceLastLoop;
 
-                /*
-                Here we are not calculating the Speed of the Robot by using our static method
-                This is because the calculation of some constants takes up a lot of time, and we don't want to waste our time on repeatedly calculating those constants.
-                Those constants are calculated when we are initializing the MecanumChassis2DPositionTrackerClass, and they help us to reduce double multiplications in speed calculation.
-                 */
-
         double[] wheelSpeeds = {LTAngularSpeed, RTAngularSpeed, LBAngularSpeed, RBAngularSpeed};
         RobotVector2D chassisSpeed = m_MotionSystem.calculateRobotSpeed(wheelSpeeds);
 
@@ -96,15 +90,16 @@ public class MecanumChassis2DPositionTracker extends RobotActive2DPositionTracke
         double deltaAngMoved = chassisSpeed.getRotationZ() * secondsSinceLastLoop;
 
 
-        MecanumChassis2DPositionTracker.this.drive_MoveThroughRobotAxisOffset(new RobotPose2D(
-                deltaXMoved,
-                deltaYMoved,
-                deltaAngMoved
-        ));
+        __trackLoopMoved(
+                chassisSpeed,
+                new RobotPose2D(
+                    deltaXMoved,
+                    deltaYMoved,
+                    deltaAngMoved
+                )
+        );
 
-        MecanumChassis2DPositionTracker.this.setCurrentVelocityVector(chassisSpeed);
-
-        offsetHeading(deltaAngMoved);
+        offsetHeading(deltaAngMoved * MecanumChassis2DPositionTracker.this.m_ZRotDistanceFactor);
 
         m_LastLTEncoderCount = newLTCount;
         m_LastRTEncoderCount = newRTCount;
