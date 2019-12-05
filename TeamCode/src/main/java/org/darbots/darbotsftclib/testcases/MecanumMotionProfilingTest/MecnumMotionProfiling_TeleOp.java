@@ -24,6 +24,7 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
     public static final double CONST_TRAJECTORY_RESOLUTION = 0.02;
     public static final double CONST_MAX_ACCELERATION_NORMALIZED = 0.2;
     public static final double CONST_TEST_PREFERRED_NEW_ANGLE = 0;
+    public static final double CONST_MAX_ANGULAR_ACCELERATION_NORMALIZED = 0.2;
 
     private RobotPath LTPath, RTPath, LBPath, RBPath, PXPath, PYPath, NXPath, NYPath;
     private TestMecanumCore m_Core;
@@ -37,6 +38,8 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
         this.m_Core = new TestMecanumCore(this.hardwareMap,"MecanumMotionProfilingTest.log");
         MotionSystemConstraints constraints = this.m_Core.getChassis().getMotionSystemConstraints(
                 this.m_Core.getChassis().calculateMaxLinearSpeedInCMPerSec() * CONST_MAX_ACCELERATION_NORMALIZED,
+                0,
+                this.m_Core.getChassis().calculateMaxAngularSpeedInDegPerSec() * CONST_MAX_ANGULAR_ACCELERATION_NORMALIZED,
                 0
         );
 
@@ -121,6 +124,8 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
                     double endSpeed = CONST_TEST_ENDSPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedInCMPerSec();
                     MotionSystemConstraints constraints = this.m_Core.getChassis().getMotionSystemConstraints(
                             this.m_Core.getChassis().calculateMaxLinearSpeedInCMPerSec() * CONST_MAX_ACCELERATION_NORMALIZED,
+                            0,
+                            this.m_Core.getChassis().calculateMaxAngularSpeedInDegPerSec() * CONST_MAX_ANGULAR_ACCELERATION_NORMALIZED,
                             0
                     );
 

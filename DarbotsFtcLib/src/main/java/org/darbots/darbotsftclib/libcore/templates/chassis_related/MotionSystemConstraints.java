@@ -29,14 +29,23 @@ public class MotionSystemConstraints {
     public double maximumLinearSpeed;
     public double maximumLinearAcceleration;
     public double maximumLinearJerk;
-    public MotionSystemConstraints(double maximumLinearSpeed, double maximumLinearAcceleration, double maximumLinearJerk){
+    public double maximumAngularSpeed;
+    public double maximumAngularAcceleration;
+    public double maximumAngularJerk;
+    public MotionSystemConstraints(double maximumLinearSpeed, double maximumLinearAcceleration, double maximumLinearJerk, double maximumAngularSpeed, double maximumAngularAcceleration, double maximumAngularJerk){
         this.maximumLinearSpeed = maximumLinearSpeed;
         this.maximumLinearAcceleration = maximumLinearAcceleration;
         this.maximumLinearJerk = maximumLinearJerk;
+        this.maximumAngularSpeed = maximumAngularSpeed;
+        this.maximumAngularAcceleration = maximumAngularAcceleration;
+        this.maximumAngularJerk = maximumAngularJerk;
     }
     public MotionSystemConstraints(MotionSystemConstraints oldConstraint){
         this.maximumLinearSpeed = oldConstraint.maximumLinearSpeed;
         this.maximumLinearAcceleration = oldConstraint.maximumLinearAcceleration;
         this.maximumLinearJerk = oldConstraint.maximumLinearJerk;
+        this.maximumAngularSpeed = oldConstraint.maximumAngularSpeed;
+        this.maximumAngularAcceleration = oldConstraint.maximumAngularAcceleration;
+        this.maximumAngularJerk = oldConstraint.maximumAngularJerk;
     }
 }

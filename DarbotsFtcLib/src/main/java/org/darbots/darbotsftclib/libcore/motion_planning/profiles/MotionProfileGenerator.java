@@ -7,15 +7,28 @@ import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
 
 public class MotionProfileGenerator {
     public static final double PATH_DISTANCE_ERROR_MARGIN = 0.01;
-    public static MotionProfile generateMotionProfile(MotionSystemConstraints constraints, RobotPath Path, double startVelocity, double cruiseVelocity, double endVelocity){
-        MotionProfile accelerateProfile = generateMotionProfile(constraints,0,0, startVelocity,cruiseVelocity);
-        MotionProfile decelerateProfile = generateMotionProfile(constraints,0,0, cruiseVelocity,endVelocity);
+    public static MotionProfile generatePathMotionProfile(MotionSystemConstraints constraints, RobotPath Path, double startVelocity, double cruiseVelocity, double endVelocity){
+        return generateMotionProfile(constraints.maximumLinearSpeed,constraints.maximumLinearAcceleration,constraints.maximumLinearJerk,Path.getTotalDistance(),startVelocity,cruiseVelocity,endVelocity);
+    }
+    public static MotionProfile generateAngularMotionProfile(MotionSystemConstraints constraints, double degToTurn, double startVelocity, double cruiseVelocity, double endVelocity){
+        if(degToTurn < 0){
+            return generateMotionProfile(constraints.maximumAngularSpeed,constraints.maximumAngularAcceleration,constraints.maximumAngularJerk,-degToTurn,startVelocity,cruiseVelocity,endVelocity).negative();
+        }else{
+            return generateMotionProfile(constraints.maximumAngularSpeed,constraints.maximumAngularAcceleration,constraints.maximumAngularJerk,degToTurn,startVelocity,cruiseVelocity,endVelocity);
+        }
+    }
+    public static MotionProfile generateMotionProfile(double maxVelocity, double maxAcceleration, double maxJerk, double PathTotalDistance, double startVelocity, double cruiseVelocity, double endVelocity){
+        startVelocity = Math.abs(startVelocity);
+        cruiseVelocity = Math.abs(cruiseVelocity);
+        endVelocity = Math.abs(endVelocity);
+
+        MotionProfile accelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxVelocity,maxAcceleration,maxJerk,0,0, startVelocity,cruiseVelocity);
+        MotionProfile decelerateProfile = generateMotionProfile(maxVelocity,maxAcceleration,maxJerk,0,0, cruiseVelocity,endVelocity);
         double accelerateTotalDuration = accelerateProfile.getTotalDuration();
         double decelerateTotalDuration = decelerateProfile.getTotalDuration();
         MotionState accelerateEndState = accelerateProfile.getMotionStateAt(accelerateTotalDuration);
         MotionState decelerateEndState = decelerateProfile.getMotionStateAt(decelerateTotalDuration);
         double accelerateAndDecelerateDistance = accelerateEndState.distance + decelerateEndState.distance;
-        double PathTotalDistance = Path.getTotalDistance();
         if(accelerateAndDecelerateDistance < PathTotalDistance){
             MotionProfile returnProfile = new MotionProfile(startVelocity);
             double cruiseTime = (PathTotalDistance - accelerateAndDecelerateDistance) / cruiseVelocity;
@@ -40,7 +53,7 @@ public class MotionProfileGenerator {
                 return returnProfile;
             }else{
                 //try to lower / rise cruise speed and see if we can achieve anything better than just cruise at cruise speed.
-                final MotionSystemConstraints finalConstraints = constraints;
+                final double finalMaxVelocity = maxVelocity, finalMaxAccel = maxAcceleration, finalMaxJerk = maxJerk;
                 final double finalStartVelocity = startVelocity;
                 final double finalEndVelocity = endVelocity;
                 OrderedValueProvider valueProvider = new OrderedValueProvider() {
@@ -51,8 +64,8 @@ public class MotionProfileGenerator {
 
                     @Override
                     public double valueAt(double independentVar) {
-                        MotionProfile accelerateProfile = generateMotionProfile(finalConstraints,0,0, finalStartVelocity,independentVar);
-                        MotionProfile decelerateProfile = generateMotionProfile(finalConstraints,0,0, independentVar,finalEndVelocity);
+                        MotionProfile accelerateProfile = generateMotionProfileFromOneSpeedToAnother(finalMaxVelocity,finalMaxAccel,finalMaxJerk,0,0, finalStartVelocity,independentVar);
+                        MotionProfile decelerateProfile = generateMotionProfileFromOneSpeedToAnother(finalMaxVelocity,finalMaxAccel,finalMaxJerk,0,0, independentVar,finalEndVelocity);
                         double accelerateTotalDuration = accelerateProfile.getTotalDuration();
                         double decelerateTotalDuration = decelerateProfile.getTotalDuration();
                         MotionState accelerateEndState = accelerateProfile.getMotionStateAt(accelerateTotalDuration);
@@ -71,8 +84,8 @@ public class MotionProfileGenerator {
                     returnProfile.addAtEnd(cruiseSegment);
                     return returnProfile;
                 }else{
-                    MotionProfile newAccelerateProfile = generateMotionProfile(constraints,0,0, startVelocity,solvedCruiseSpeed);
-                    MotionProfile newDecelerateProfile = generateMotionProfile(constraints,0,0, solvedCruiseSpeed,endVelocity);
+                    MotionProfile newAccelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxVelocity,maxAcceleration,maxJerk,0,0, startVelocity,solvedCruiseSpeed);
+                    MotionProfile newDecelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxVelocity,maxAcceleration,maxJerk,0,0, solvedCruiseSpeed,endVelocity);
                     MotionProfile returnProfile = new MotionProfile(startVelocity);
                     returnProfile.addAtEnd(newAccelerateProfile);
                     returnProfile.addAtEnd(newDecelerateProfile);
@@ -81,30 +94,30 @@ public class MotionProfileGenerator {
             }
         }
     }
-    public static MotionProfile generateMotionProfile(double constantVelocity, double duration){
+    public static MotionProfile generateMotionProfileWithConstantVelocity(double constantVelocity, double duration){
         MotionProfile returnProfile = new MotionProfile(constantVelocity);
         MotionProfileSegment segment = new MotionProfileSegment(0,0,duration);
         returnProfile.addAtEnd(segment);
         return returnProfile;
     }
-    public static MotionProfile generateMotionProfile(MotionSystemConstraints constraints, double startAcceleration, double endAcceleration, double startVelocity, double endVelocity){
+    public static MotionProfile generateMotionProfileFromOneSpeedToAnother(double maxVelocity, double maxAccel, double maxJerk, double startAcceleration, double endAcceleration, double startVelocity, double endVelocity){
         if(endVelocity < startVelocity){
-            return generateMotionProfile(constraints,startAcceleration,endAcceleration,endVelocity,startVelocity).reversed();
+            return generateMotionProfileFromOneSpeedToAnother(maxVelocity,maxAccel,maxJerk,startAcceleration,endAcceleration,endVelocity,startVelocity).reversed();
         }
-        return __generateMotionProfile_JERKUNLIMITED(constraints,startVelocity,endVelocity);
+        return __generateMotionProfileFromOneSpeedToAnother_JERKUNLIMITED(maxVelocity,maxAccel,maxJerk,startVelocity,endVelocity);
     }
-    public static MotionProfile __generateMotionProfile_JERKUNLIMITED(MotionSystemConstraints constraints, double startVelocity, double endVelocity){
+    public static MotionProfile __generateMotionProfileFromOneSpeedToAnother_JERKUNLIMITED(double maxVelocity, double maxAccel, double maxJerk, double startVelocity, double endVelocity){
         if(endVelocity < startVelocity){
-            return __generateMotionProfile_JERKUNLIMITED(constraints,endVelocity,startVelocity).reversed();
+            return __generateMotionProfileFromOneSpeedToAnother_JERKUNLIMITED(maxVelocity,maxAccel,maxJerk,endVelocity,startVelocity).reversed();
         }
 
         double currentVelocity = startVelocity;
 
         double Tvelocity = 0;
-        Tvelocity = (endVelocity - currentVelocity) / constraints.maximumLinearAcceleration;
+        Tvelocity = (endVelocity - currentVelocity) /  maxAccel;
         MotionProfileSegment segmentVelocityToEndSpeed = null;
         if(Tvelocity != 0){
-            segmentVelocityToEndSpeed = new MotionProfileSegment(constraints.maximumLinearAcceleration,0,Tvelocity);
+            segmentVelocityToEndSpeed = new MotionProfileSegment(maxAccel,0,Tvelocity);
         }
         MotionProfile returnProfile = new MotionProfile(startVelocity);
         if(segmentVelocityToEndSpeed != null){
@@ -112,4 +125,5 @@ public class MotionProfileGenerator {
         }
         return returnProfile;
     }
+
 }

@@ -41,4 +41,7 @@ public class MotionProfileSegment {
     public MotionProfileSegment clipped(double startDuration, double endDuration){
         return new MotionProfileSegment(this.getAccelerationAt(startDuration),this.jerk,endDuration - startDuration);
     }
+    public MotionProfileSegment negative(){
+        return new MotionProfileSegment(-acceleration,-jerk,m_Duration);
+    }
 }

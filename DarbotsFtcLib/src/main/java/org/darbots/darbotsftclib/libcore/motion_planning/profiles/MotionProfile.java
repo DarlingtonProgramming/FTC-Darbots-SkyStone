@@ -187,4 +187,15 @@ public class MotionProfile {
         newProfile.getMotionSegments().addAll(newProfileSegments);
         return newProfile;
     }
+
+    public MotionProfile negative(){
+
+        ArrayList<MotionProfileSegment> newSegment = new ArrayList<>();
+        for(MotionProfileSegment i : this.m_MotionSegments){
+            newSegment.add(i.negative());
+        }
+        MotionProfile negativeProfile = new MotionProfile(this.StartVelocity);
+        negativeProfile.getMotionSegments().addAll(newSegment);
+        return negativeProfile;
+    }
 }

@@ -12,7 +12,7 @@ import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
 public class SimpleTrajectoryGenerator {
     public static SimpleTrajectory generateTrajectory(double resolutionInSeconds, MotionSystemConstraints constraints, RobotPath pathToFollow, double startSpeed, double cruiseSpeed, double endSpeed){
         resolutionInSeconds = Math.abs(resolutionInSeconds);
-        MotionProfile generatedMotionProfile = MotionProfileGenerator.generateMotionProfile(constraints,pathToFollow,startSpeed,cruiseSpeed,endSpeed);
+        MotionProfile generatedMotionProfile = MotionProfileGenerator.generatePathMotionProfile(constraints,pathToFollow,startSpeed,cruiseSpeed,endSpeed);
         SimpleTrajectory TrajectoryResult = new SimpleTrajectory(pathToFollow,generatedMotionProfile,resolutionInSeconds);
 
         double totalDuration = generatedMotionProfile.getTotalDuration();
