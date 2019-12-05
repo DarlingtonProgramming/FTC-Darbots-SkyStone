@@ -52,7 +52,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private PIDCoefficients m_LinearXPIDCoefficient, m_LinearYPIDCoefficient, m_RotationalPIDCoefficient;
     private RobotPose2D m_LastTaskFinishFieldPos;
     private ChassisPIDCalculator m_PIDCalculator;
-    private RobotGyro m_Gyro;
+    private RobotGyro m_Gyro = null;
 
     public RobotMotionSystem(Robot2DPositionTracker PositionTracker){
         this.m_TaskLists = new ArrayList();
