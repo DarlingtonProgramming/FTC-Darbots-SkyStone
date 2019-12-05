@@ -75,7 +75,7 @@ public class TrajectoryFollower extends RobotMotionSystemTask {
         }else{
             actualVelocity = new RobotVector2D(afterCorrectionVelocity);
         }
-        double possibleMaxZRot = this.getMotionSystem().calculateMaxAngularSpeedInDegPerSec(Math.abs(actualVelocity.X) + Math.abs(actualVelocity.Y));
+        double possibleMaxZRot = this.getMotionSystem().calculateMaxAngularSpeedInDegPerSec(actualVelocity.X,actualVelocity.Y);
         double rotZCorrectionVelocity = Range.clip(correctionPose.getRotationZ(),-possibleMaxZRot,possibleMaxZRot);
         actualVelocity.setRotationZ(rotZCorrectionVelocity);
         this.getMotionSystem().setRobotSpeed(actualVelocity);

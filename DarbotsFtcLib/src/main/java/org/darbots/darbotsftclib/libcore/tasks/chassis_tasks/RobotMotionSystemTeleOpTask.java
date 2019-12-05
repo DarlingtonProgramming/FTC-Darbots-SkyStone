@@ -8,7 +8,7 @@ public class RobotMotionSystemTeleOpTask extends RobotMotionSystemTask {
     public double xSpeedNormalized = 0;
     public double ySpeedNormalized = 0;
     public double zRotSpeedNormalized = 0;
-    private double theoraticalMaximumLinearComb, theoraticalMaximumAngular;
+    private double theoraticalMaximumLinearX, theoraticalMaximumLinearY, theoraticalMaximumAngular;
 
     public RobotMotionSystemTeleOpTask(){
         super();
@@ -27,7 +27,8 @@ public class RobotMotionSystemTeleOpTask extends RobotMotionSystemTask {
     @Override
     protected void __startTask() {
         this.theoraticalMaximumAngular = this.getMotionSystem().calculateMaxAngularSpeedInDegPerSec();
-        this.theoraticalMaximumLinearComb = this.getMotionSystem().calculateMaxLinearSpeedCombinationsInCMPerSec();
+        this.theoraticalMaximumLinearX = this.getMotionSystem().calculateMaxLinearXSpeedInCMPerSec();
+        this.theoraticalMaximumLinearY = this.getMotionSystem().calculateMaxLinearYSpeedInCMPerSec();
     }
 
     @Override
@@ -38,8 +39,8 @@ public class RobotMotionSystemTeleOpTask extends RobotMotionSystemTask {
     @Override
     protected void __updateStatus() {
         this.getMotionSystem().setRobotSpeed(
-                this.xSpeedNormalized * theoraticalMaximumLinearComb,
-                this.ySpeedNormalized * theoraticalMaximumLinearComb,
+                this.xSpeedNormalized * theoraticalMaximumLinearX,
+                this.ySpeedNormalized * theoraticalMaximumLinearY,
                 this.zRotSpeedNormalized * theoraticalMaximumAngular
         );
     }

@@ -36,7 +36,7 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
     public void hardwareInitialize() {
         this.m_Core = new TestMecanumCore(this.hardwareMap,"MecanumMotionProfilingTest.log");
         MotionSystemConstraints constraints = this.m_Core.getChassis().getMotionSystemConstraints(
-                this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec() * CONST_MAX_ACCELERATION_NORMALIZED,
+                this.m_Core.getChassis().calculateMaxLinearSpeedInCMPerSec() * CONST_MAX_ACCELERATION_NORMALIZED,
                 0
         );
 
@@ -116,11 +116,11 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
                             }
                         }
                     }
-                    double startSpeed = CONST_TEST_STARTSPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec();
-                    double cruiseSpeed = CONST_TEST_CRUISESPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec();
-                    double endSpeed = CONST_TEST_ENDSPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec();
+                    double startSpeed = CONST_TEST_STARTSPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedInCMPerSec();
+                    double cruiseSpeed = CONST_TEST_CRUISESPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedInCMPerSec();
+                    double endSpeed = CONST_TEST_ENDSPEED_NORMALIZED * this.m_Core.getChassis().calculateMaxLinearSpeedInCMPerSec();
                     MotionSystemConstraints constraints = this.m_Core.getChassis().getMotionSystemConstraints(
-                            this.m_Core.getChassis().calculateMaxLinearSpeedCombinationsInCMPerSec() * CONST_MAX_ACCELERATION_NORMALIZED,
+                            this.m_Core.getChassis().calculateMaxLinearSpeedInCMPerSec() * CONST_MAX_ACCELERATION_NORMALIZED,
                             0
                     );
 
