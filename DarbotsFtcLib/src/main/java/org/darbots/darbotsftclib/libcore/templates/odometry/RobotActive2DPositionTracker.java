@@ -56,7 +56,7 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
     private Thread m_TrackingThread = null;
 
     protected volatile double m_XDistanceFactor, m_YDistanceFactor, m_ZRotDistanceFactor;
-    protected volatile int m_ThreadSleepTimeInMs = 75;
+    protected volatile int m_ThreadSleepTimeInMs = 20;
     public RobotActive2DPositionTracker(RobotPose2D initialPosition) {
         super(initialPosition);
         this.m_XDistanceFactor = 1;
