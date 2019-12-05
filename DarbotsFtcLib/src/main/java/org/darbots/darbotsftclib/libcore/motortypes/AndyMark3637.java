@@ -15,6 +15,8 @@ public class AndyMark3637 implements MotorType {
 
     @Override
     public double getRevPerSec() {
-        return 5.67;
+        return 5.47;
+        // Actually 340 RPM, but we are using NevRest 20 Motor Config, return 328.125 RPM
+        // return 5.67;
     }
 }
