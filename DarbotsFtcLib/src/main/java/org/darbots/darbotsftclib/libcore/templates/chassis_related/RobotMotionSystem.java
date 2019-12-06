@@ -310,11 +310,22 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.__setRobotSpeed(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
         return new RobotPose2D(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
     }
-    public abstract double[] calculateWheelAngularSpeeds(double RobotXSpeedInCMPerSec, double RobotYSpeedInCMPerSec, double RobotZRotSpeedInDegPerSec);
+    public double[] calculateWheelAngularSpeeds(double RobotXSpeedInCMPerSec, double RobotYSpeedInCMPerSec, double RobotZRotSpeedInDegPerSec){
+        return calculateRawWheelAngularSpeeds(RobotXSpeedInCMPerSec * this.getLinearXMotionDistanceFactor(), RobotYSpeedInCMPerSec * this.getLinearYMotionDistanceFactor(), RobotZRotSpeedInDegPerSec * this.getRotationalMotionDistanceFactor());
+    }
     public double[] calculateWheelAngularSpeeds(RobotPose2D RobotVelocity){
         return this.calculateWheelAngularSpeeds(RobotVelocity.X,RobotVelocity.Y,RobotVelocity.getRotationZ());
     }
-    public abstract RobotVector2D calculateRobotSpeed(double[] wheelSpeeds);
+    public abstract double[] calculateRawWheelAngularSpeeds(double RobotXSpeedInCMPerSec, double RobotYSpeedInCMPerSec, double RobotZRotSpeedInDegPerSec);
+
+    public RobotVector2D calculateRobotSpeed(double[] wheelSpeeds){
+        RobotVector2D rawRobotSpeed = this.calculateRawRobotSpeed(wheelSpeeds);
+        rawRobotSpeed.X /= this.getLinearXMotionDistanceFactor();
+        rawRobotSpeed.Y /= this.getLinearYMotionDistanceFactor();
+        rawRobotSpeed.setRotationZ(rawRobotSpeed.getRotationZ() / this.getRotationalMotionDistanceFactor());
+        return rawRobotSpeed;
+    }
+    public abstract RobotVector2D calculateRawRobotSpeed(double[] wheelSpeeds);
     public double calculateMaxLinearXSpeedInCMPerSec(){
         return this.calculateMaxLinearXSpeedInCMPerSec(0);
     }
@@ -324,9 +335,23 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     public double calculateMaxAngularSpeedInDegPerSec(){
         return this.calculateMaxAngularSpeedInDegPerSec(0,0);
     }
-    public abstract double calculateMaxLinearXSpeedInCMPerSec(double angularSpeedInDegPerSec);
-    public abstract double calculateMaxLinearYSpeedInCMPerSec(double angularSpeedInDegPerSec);
-    public abstract double calculateMaxAngularSpeedInDegPerSec(double xSpeedInCMPerSec, double ySpeedInCMPerSec);
+    public double calculateMaxLinearXSpeedInCMPerSec(double angularSpeedInDegPerSec){
+        return this.calculateRawMaxLinearXSpeedInCMPerSec(angularSpeedInDegPerSec * this.getRotationalMotionDistanceFactor()) / this.getLinearXMotionDistanceFactor();
+    }
+    public abstract double calculateRawMaxLinearXSpeedInCMPerSec(double angularSpeedInDegPerSec);
+
+    public double calculateMaxLinearYSpeedInCMPerSec(double angularSpeedInDegPerSec){
+        return this.calculateRawMaxLinearYSpeedInCMPerSec(angularSpeedInDegPerSec * this.getRotationalMotionDistanceFactor()) / this.getLinearYMotionDistanceFactor();
+    }
+
+    public abstract double calculateRawMaxLinearYSpeedInCMPerSec(double angularSpeedInDegPerSec);
+
+    public double calculateMaxAngularSpeedInDegPerSec(double xSpeedInCMPerSec, double ySpeedInCMPerSec){
+        return this.calculateRawMaxAngularSpeedInDegPerSec(xSpeedInCMPerSec * this.getLinearXMotionDistanceFactor(),ySpeedInCMPerSec * this.getLinearYMotionDistanceFactor()) / this.getRotationalMotionDistanceFactor();
+    }
+
+    public abstract double calculateRawMaxAngularSpeedInDegPerSec(double xSpeedInCMPerSec, double ySpeedInCMPerSec);
+
     public double calculateMaxLinearSpeedInCMPerSec(){
         return Math.sqrt(Math.pow(this.calculateMaxLinearXSpeedInCMPerSec() / 2.0,2) + Math.pow(this.calculateMaxLinearYSpeedInCMPerSec() / 2.0,2));
     }

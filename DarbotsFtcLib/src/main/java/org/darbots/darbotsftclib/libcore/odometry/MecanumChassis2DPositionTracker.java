@@ -82,7 +82,7 @@ public class MecanumChassis2DPositionTracker extends RobotActive2DPositionTracke
         double RBAngularSpeed = deltaRBDeg / secondsSinceLastLoop;
 
         double[] wheelSpeeds = {LTAngularSpeed, RTAngularSpeed, LBAngularSpeed, RBAngularSpeed};
-        RobotVector2D chassisSpeed = m_MotionSystem.calculateRobotSpeed(wheelSpeeds);
+        RobotVector2D chassisSpeed = m_MotionSystem.calculateRawRobotSpeed(wheelSpeeds);
 
 
         double deltaXMoved = chassisSpeed.X * secondsSinceLastLoop;
