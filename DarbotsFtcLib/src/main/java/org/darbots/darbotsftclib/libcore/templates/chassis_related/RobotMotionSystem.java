@@ -38,6 +38,7 @@ import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
 import java.util.ArrayList;
 
+//distanceFactor = wantedDistance / actualDistance
 public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(8,0,0.5);
     public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(8,0,0.5);
