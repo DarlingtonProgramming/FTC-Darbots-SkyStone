@@ -139,7 +139,7 @@ public class Robot4100Generation2_BlueBuildSiteComplex extends DarbotsBasicOpMod
 
         this.m_RobotCore.getChassis().replaceTask(
                 this.m_RobotCore.getChassis().getFixedZDistanceTask(
-                        -115,
+                        -110,
                         0.5
                 )
         );
