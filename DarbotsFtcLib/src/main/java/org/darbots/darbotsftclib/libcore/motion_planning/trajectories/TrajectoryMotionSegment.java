@@ -1,5 +1,7 @@
 package org.darbots.darbotsftclib.libcore.motion_planning.trajectories;
 
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
+
 public class TrajectoryMotionSegment {
     public double xDisplacement;
     public double yDisplacement;
@@ -7,14 +9,16 @@ public class TrajectoryMotionSegment {
     public double yVelocity;
     public double xAcceleration;
     public double yAcceleration;
+    private double m_PreferredAngle;
     public double duration;
-    public TrajectoryMotionSegment(double xDisplacement, double yDisplacement, double xVelocity, double yVelocity, double xAcceleration, double yAcceleration, double duration){
+    public TrajectoryMotionSegment(double xDisplacement, double yDisplacement, double xVelocity, double yVelocity, double xAcceleration, double yAcceleration, double preferredAngle, double duration){
         this.xDisplacement = xDisplacement;
         this.yDisplacement = yDisplacement;
         this.xVelocity = xVelocity;
         this.yVelocity = yVelocity;
         this.xAcceleration = xAcceleration;
         this.yAcceleration = yAcceleration;
+        this.m_PreferredAngle = XYPlaneCalculations.normalizeDeg(preferredAngle);
         this.duration = duration;
     }
     public TrajectoryMotionSegment(TrajectoryMotionSegment oldMotionState){
@@ -24,6 +28,7 @@ public class TrajectoryMotionSegment {
         this.yVelocity = oldMotionState.yVelocity;
         this.xAcceleration = oldMotionState.xAcceleration;
         this.yAcceleration = oldMotionState.yAcceleration;
+        this.m_PreferredAngle = oldMotionState.m_PreferredAngle;
         this.duration = oldMotionState.duration;
     }
     public TrajectoryMotionState getStatusAt(double time){
@@ -31,7 +36,14 @@ public class TrajectoryMotionSegment {
                 this.xDisplacement + this.xVelocity * time + this.xAcceleration * time * time / 2.0,
                 this.yDisplacement + this.yVelocity * time + this.yAcceleration * time * time / 2.0,
                 this.xVelocity + this.xAcceleration * time,
-                this.yVelocity + this.yAcceleration * time
+                this.yVelocity + this.yAcceleration * time,
+                this.m_PreferredAngle
         );
+    }
+    public double getPreferredAngle(){
+        return this.m_PreferredAngle;
+    }
+    public void setPreferredAngle(double preferredAngle){
+        this.m_PreferredAngle = preferredAngle;
     }
 }

@@ -2,19 +2,19 @@ package org.darbots.darbotsftclib.libcore.motortypes;
 
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 
-public class GoBlida5202Series43RPMMotor implements MotorType {
+public class GoBilda5202Series60RPMMotor implements MotorType {
     @Override
     public String getMotorName() {
-        return "GoBlida 5202 Series 43RPM Motor";
+        return "GoBlida 5202 Series 60RPM Motor";
     }
 
     @Override
     public double getCountsPerRev() {
-        return 973;
+        return 696.5;
     }
 
     @Override
     public double getRevPerSec() {
-        return 0.717;
+        return 1;
     }
 }

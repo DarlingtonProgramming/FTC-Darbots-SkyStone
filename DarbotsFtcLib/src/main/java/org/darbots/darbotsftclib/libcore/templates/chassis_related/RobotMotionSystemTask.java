@@ -108,8 +108,20 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         RobotPose2D RelativePosMoved = this.getRelativePositionOffsetSinceStart();
         RobotPose2D CurrentFieldPos = this.m_MotionSystem.getPositionTracker().getCurrentPosition();
 
+        if(supposedFinishRelativeOffset != null) {
+            if (Double.isNaN(supposedFinishRelativeOffset.X) || Double.isInfinite(supposedFinishRelativeOffset.X)) {
+                supposedFinishRelativeOffset.X = RelativePosMoved.X;
+            }
+            if (Double.isNaN(supposedFinishRelativeOffset.Y) || Double.isInfinite(supposedFinishRelativeOffset.Y)) {
+                supposedFinishRelativeOffset.Y = RelativePosMoved.Y;
+            }
+            if (Double.isNaN(supposedFinishRelativeOffset.getRotationZ()) || Double.isInfinite(supposedFinishRelativeOffset.getRotationZ())) {
+                supposedFinishRelativeOffset.setRotationZ(RelativePosMoved.getRotationZ());
+            }
+        }
+
         if(this.TaskCallBack != null){
-            this.TaskCallBack.taskFinished(this.m_MotionSystem,this.m_TaskSupposedStartFieldPos,CurrentFieldPos,RelativePosMoved);
+            this.TaskCallBack.taskFinished(this.m_MotionSystem,this.m_TaskSupposedStartFieldPos,CurrentFieldPos,RelativePosMoved,supposedFinishRelativeOffset);
         }
 
         RobotPose2D supposedEndFieldPos = null;
@@ -172,6 +184,23 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         double errorX, errorY, errorRotZ;
         RobotPose2D rawOffsetSinceStart = this.getRelativePositionOffsetRawSinceStart();
         RobotPose2D offsetSinceStart = this.calculateErrorCalculatedOffsetPosition(rawOffsetSinceStart);
+
+        RobotPose2D error = XYPlaneCalculations.getRelativePosition(offsetSinceStart,supposedPosition);
+        errorX = error.X;
+        errorY = error.Y;
+        errorRotZ = error.getRotationZ();
+
+        this.m_MotionSystem.getPIDCalculator().feedError(errorX,errorY,errorRotZ);
+        RobotVector2D correctionVelocity = this.m_MotionSystem.getPIDCalculator().getPIDPower();
+
+        return correctionVelocity;
+    }
+
+    protected RobotVector2D getErrorCorrectionVelocityVector(RobotPose2D supposedPosition, RobotPose2D relativePosition){
+        this.m_LastSupposedPose.setValues(supposedPosition);
+
+        double errorX, errorY, errorRotZ;
+        RobotPose2D offsetSinceStart = relativePosition;
 
         RobotPose2D error = XYPlaneCalculations.getRelativePosition(offsetSinceStart,supposedPosition);
         errorX = error.X;

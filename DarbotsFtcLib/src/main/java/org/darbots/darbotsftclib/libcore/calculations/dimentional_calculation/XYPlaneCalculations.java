@@ -3,7 +3,7 @@ package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 public class XYPlaneCalculations {
     public static final double CONST_180_OVER_PI = 180.0 / Math.PI;
     public static final double CONST_PI_OVER_180 = Math.PI / 180;
-
+    public static final double[] ORIGIN_POINT_ARRAY = {0,0};
 
     public static double[] rotatePointAroundFixedPoint_Deg(double[] point, double[] fixedPoint, double counterClockwiseAng) {
         double relativeY = point[1] - fixedPoint[1], relativeX = point[0] - fixedPoint[0];
@@ -24,6 +24,28 @@ public class XYPlaneCalculations {
         double newY = relativeX * sinDeltaAng + relativeY * cosDeltaAng;
         double[] result = {newX + fixedPoint[0], newY + fixedPoint[1]};
         return result;
+    }
+
+    public static RobotPoint2D getRelativePosition(RobotPose2D PerspectiveOrigin, RobotPoint2D Target){
+        //First step - move the Perspective Origin to the Origin of the Axis.
+        double[] targetPoint = {Target.X - PerspectiveOrigin.X,Target.Y - PerspectiveOrigin.Y};
+        //Second step - rotate the targetPoint so that the coordinate system (X and Z scalars) of the Perspective Origin overlaps with the Field Coordinate.
+        //We are basically rotating field coordinate here.
+        double[] origin = {0,0};
+        double[] rotatedTargetPoint = rotatePointAroundFixedPoint_Deg(targetPoint,origin,-PerspectiveOrigin.getRotationZ());
+
+        return new RobotPoint2D(rotatedTargetPoint[0],rotatedTargetPoint[1]);
+    }
+
+    public static RobotPoint2D getAbsolutePosition(RobotPose2D PerspectiveOrigin, RobotPoint2D RelativePosition){
+        //First Step - rotate the coordinates back.
+        double[] origin = {0,0};
+        double[] relativeTargetPoint = {RelativePosition.X,RelativePosition.Y};
+        double[] rotatedTargetPoint = rotatePointAroundFixedPoint_Deg(relativeTargetPoint,origin,PerspectiveOrigin.getRotationZ());
+        //Second Step - move the PerspectiveOrigin back to the Absolute Point on the Field.
+        double[] movedTargetPoint = {rotatedTargetPoint[0] + PerspectiveOrigin.X,rotatedTargetPoint[1] + PerspectiveOrigin.Y};
+
+        return new RobotPoint2D(movedTargetPoint[0],movedTargetPoint[1]);
     }
 
     public static RobotPose2D getRelativePosition(RobotPose2D PerspectiveOrigin, RobotPose2D Target){

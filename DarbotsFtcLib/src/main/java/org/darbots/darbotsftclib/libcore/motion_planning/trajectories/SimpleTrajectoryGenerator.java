@@ -1,6 +1,8 @@
 package org.darbots.darbotsftclib.libcore.motion_planning.trajectories;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.debug.Assertions;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfile;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfileGenerator;
@@ -9,8 +11,12 @@ import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionState;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.MotionSystemConstraints;
 import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class SimpleTrajectoryGenerator {
-    public static SimpleTrajectory generateTrajectory(double resolutionInSeconds, MotionSystemConstraints constraints, RobotPath pathToFollow, double startSpeed, double cruiseSpeed, double endSpeed){
+    public static SimpleTrajectory generateTrajectory(double resolutionInSeconds, MotionSystemConstraints constraints, RobotPath pathToFollow, double startSpeed, double cruiseSpeed, double endSpeed, double preferredAngle){
+        preferredAngle = XYPlaneCalculations.normalizeDeg(preferredAngle);
         resolutionInSeconds = Math.abs(resolutionInSeconds);
         MotionProfile generatedMotionProfile = MotionProfileGenerator.generatePathMotionProfile(constraints,pathToFollow,startSpeed,cruiseSpeed,endSpeed);
         SimpleTrajectory TrajectoryResult = new SimpleTrajectory(pathToFollow,generatedMotionProfile,resolutionInSeconds);
@@ -73,7 +79,8 @@ public class SimpleTrajectoryGenerator {
                     pieceApproximateEndXYSpeed[1],
                     pieceApproximateXAcceleration,
                     pieceApproximateYAcceleration,
-                    secondsToGo
+                    secondsToGo,
+                    preferredAngle
             );
             TrajectoryResult.getMotionSegments().add(currentSegment);
 

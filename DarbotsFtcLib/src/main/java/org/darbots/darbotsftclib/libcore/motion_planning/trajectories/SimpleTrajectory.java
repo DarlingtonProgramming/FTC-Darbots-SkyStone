@@ -42,6 +42,16 @@ public class SimpleTrajectory implements RobotTrajectory {
         return new SimpleTrajectoryIterator(this);
     }
 
+    @Override
+    public TrajectoryMotionState getEndState() {
+        if(this.m_MotionSegments.isEmpty()){
+            return new TrajectoryMotionState(0,0,0,0,0);
+        }else{
+            TrajectoryMotionSegment lastSegment = this.m_MotionSegments.get(this.m_MotionSegments.size() - 1);
+            return lastSegment.getStatusAt(lastSegment.duration);
+        }
+    }
+
     public ArrayList<TrajectoryMotionSegment> getMotionSegments(){
         return this.m_MotionSegments;
     }

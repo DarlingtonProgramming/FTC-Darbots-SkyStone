@@ -7,4 +7,5 @@ public interface RobotTrajectory {
     RobotPath getPath();
     MotionProfile getMotionProfile();
     RobotMotionProfilingIterator<TrajectoryMotionState,?> getIterator();
+    TrajectoryMotionState getEndState();
 }
