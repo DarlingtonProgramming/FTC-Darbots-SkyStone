@@ -1,9 +1,14 @@
 package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 
+import android.support.annotation.Nullable;
+
+import java.util.ArrayList;
+
 public class XYPlaneCalculations {
     public static final double CONST_180_OVER_PI = 180.0 / Math.PI;
     public static final double CONST_PI_OVER_180 = Math.PI / 180;
     public static final double[] ORIGIN_POINT_ARRAY = {0,0};
+    public static final double VERY_SMALL = 0.00001;
 
     public static double[] rotatePointAroundFixedPoint_Deg(double[] point, double[] fixedPoint, double counterClockwiseAng) {
         double relativeY = point[1] - fixedPoint[1], relativeX = point[0] - fixedPoint[0];
@@ -139,5 +144,164 @@ public class XYPlaneCalculations {
             tempDeg -= 360;
         }
         return tempDeg;
+    }
+
+    public static boolean isPointAtCircleEdge(RobotPoint2D circleCenter, double circleRadius, RobotPoint2D point){
+        if(point.distanceTo(circleCenter) <= VERY_SMALL){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static ArrayList<RobotPoint2D> verticleLineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, double fixedX){
+        double x1 = fixedX - circleCenter.X;
+        double ySquared = Math.pow(circleRadius,2) - Math.pow(x1,2);
+        ArrayList<RobotPoint2D> allPoints = new ArrayList<>();
+        if(ySquared < 0){
+            return allPoints;
+        }
+        if(ySquared == 0){
+            RobotPoint2D root = new RobotPoint2D(fixedX,circleCenter.Y);
+            allPoints.add(root);
+        }else{
+            double sqrtYSquared = Math.sqrt(ySquared);
+            RobotPoint2D root1 = new RobotPoint2D(fixedX,sqrtYSquared + circleCenter.Y);
+            allPoints.add(root1);
+            RobotPoint2D root2 = new RobotPoint2D(fixedX,-sqrtYSquared + circleCenter.Y);
+            allPoints.add(root2);
+        }
+        return allPoints;
+    }
+
+    public static ArrayList<RobotPoint2D> horizontalLineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, double fixedY){
+        double y1 = fixedY - circleCenter.Y;
+        double xSquared = Math.pow(circleRadius,2) - Math.pow(y1,2);
+        ArrayList<RobotPoint2D> allPoints = new ArrayList<>();
+        if(xSquared < 0){
+            return allPoints;
+        }
+        if(xSquared == 0){
+            RobotPoint2D root = new RobotPoint2D(circleCenter.X,fixedY);
+            allPoints.add(root);
+        }else{
+            double sqrtXSquared = Math.sqrt(xSquared);
+            RobotPoint2D root1 = new RobotPoint2D(sqrtXSquared + circleCenter.X,fixedY);
+            allPoints.add(root1);
+            RobotPoint2D root2 = new RobotPoint2D(-sqrtXSquared + circleCenter.X,fixedY);
+            allPoints.add(root2);
+        }
+        return allPoints;
+    }
+
+    public static ArrayList<RobotPoint2D> lineSegmentCircleIntersections(RobotPoint2D circleCenter, double circleRadius, RobotPoint2D linePoint1, RobotPoint2D linePoint2){
+        RobotPoint2D boundingBoxMin = new RobotPoint2D(
+                Math.min(linePoint1.X,linePoint2.X),
+                Math.min(linePoint1.Y,linePoint2.Y)
+        );
+        RobotPoint2D boundingBoxMax = new RobotPoint2D(
+                Math.max(linePoint1.X,linePoint2.X),
+                Math.max(linePoint1.Y,linePoint2.Y)
+        );
+
+        if(linePoint1.X == linePoint2.X || linePoint1.Y == linePoint2.Y){
+            ArrayList<RobotPoint2D> resultArray = null;
+            if(linePoint1.X == linePoint2.X && linePoint1.Y == linePoint2.Y){
+                resultArray = new ArrayList<>();
+                if(isPointAtCircleEdge(circleCenter,circleRadius,linePoint1)){
+                    resultArray.add(linePoint1);
+                }
+            }else if(linePoint1.X == linePoint2.X){
+                resultArray = verticleLineCircleIntersections(circleCenter,circleRadius,linePoint1.X);
+            }else { //linePoint1.Y == linePoint2.Y
+                resultArray = horizontalLineCircleIntersections(circleCenter,circleRadius,linePoint1.Y);
+            }
+            ArrayList<RobotPoint2D> allPoints = new ArrayList<>();
+            for(RobotPoint2D i : resultArray){
+                if(isInBoundingBox(i,boundingBoxMin,boundingBoxMax)){
+                    allPoints.add(i);
+                }
+            }
+            return allPoints;
+        }
+
+        double x1 = linePoint1.X - circleCenter.X;
+        double y1 = linePoint1.Y - circleCenter.Y;
+
+        double m1 = (linePoint2.Y - linePoint1.Y) / (linePoint2.X - linePoint1.X);
+        double quadraticA = 1.0 + Math.pow(m1,2);
+        double quadraticB = (2.0 * m1 * y1) - (2.0 * Math.pow(m1,2) * x1);
+        double quadraticC = ((Math.pow(m1,2) * Math.pow(x1,2))) - (2.0 * y1 * m1 * x1) + Math.pow(y1,2) - Math.pow(circleRadius,2);
+        double quadraticDelta = Math.pow(quadraticB,2) - (4.0 * quadraticA * quadraticC);
+
+        ArrayList<RobotPoint2D> allPoints = new ArrayList<>();
+        if(quadraticDelta > 0) {
+            double xRoot1 = (-quadraticB + Math.sqrt(quadraticDelta)) / (2.0 * quadraticA);
+            double yRoot1 = m1 * (xRoot1 - x1) + y1;
+            xRoot1 += circleCenter.X;
+            yRoot1 += circleCenter.Y;
+            RobotPoint2D root1 = new RobotPoint2D(xRoot1, yRoot1);
+            if (isInBoundingBox(root1, boundingBoxMin, boundingBoxMax)) {
+                allPoints.add(root1);
+            }
+            double xRoot2 = (-quadraticB - Math.sqrt(quadraticDelta)) / (2.0 * quadraticA);
+            double yRoot2 = m1 * (xRoot2 - x1) + y1;
+            xRoot2 += circleCenter.X;
+            yRoot2 += circleCenter.Y;
+            RobotPoint2D root2 = new RobotPoint2D(xRoot2,yRoot2);
+            if(isInBoundingBox(root2,boundingBoxMin,boundingBoxMax)){
+                allPoints.add(root2);
+            }
+        }else if(quadraticDelta == 0){
+            double xRoot1 = (-quadraticB) / (2.0 * quadraticA);
+            double yRoot1 = m1 * (xRoot1 - x1) + y1;
+            xRoot1 += circleCenter.X;
+            yRoot1 += circleCenter.Y;
+            RobotPoint2D root1 = new RobotPoint2D(xRoot1, yRoot1);
+            if (isInBoundingBox(root1, boundingBoxMin, boundingBoxMax)) {
+                allPoints.add(root1);
+            }
+        }
+        return allPoints;
+    }
+    public static boolean isInBoundingBox(RobotPoint2D point, RobotPoint2D minPoint, RobotPoint2D maxPoint){
+        if(point.X >= minPoint.X && point.X <= maxPoint.X && point.Y >= minPoint.Y && point.Y <= maxPoint.Y){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Nullable
+    public static RobotPoint2D nearestPointOnLineSegment(RobotPoint2D point, RobotPoint2D linePoint1, RobotPoint2D linePoint2){
+        if(linePoint1.X == linePoint2.X && linePoint1.Y == linePoint2.Y){
+            return null;
+        }
+        RobotPoint2D pointResult;
+        if(linePoint1.Y == linePoint2.Y){
+            pointResult = new RobotPoint2D(point.X,linePoint1.Y);
+        }else if(linePoint1.X == linePoint2.X){
+            pointResult = new RobotPoint2D(linePoint1.X,point.Y);
+        }else{
+            double m = (linePoint2.Y - linePoint1.Y) / (linePoint2.X - linePoint1.X);
+            double b = linePoint1.Y - linePoint1.X * m;
+            double n = -1.0 / m;
+            double c = point.Y - point.X * n;
+            double nearestPointX = (c-b) / (m-n);
+            pointResult = new RobotPoint2D(nearestPointX,m * nearestPointX + b);
+        }
+        RobotPoint2D boundingBoxMin = new RobotPoint2D(
+                Math.min(linePoint1.X,linePoint2.X),
+                Math.min(linePoint1.Y,linePoint2.Y)
+        );
+        RobotPoint2D boundingBoxMax = new RobotPoint2D(
+                Math.max(linePoint1.X,linePoint2.X),
+                Math.max(linePoint1.Y,linePoint2.Y)
+        );
+        if(isInBoundingBox(pointResult,boundingBoxMin,boundingBoxMax)){
+            return pointResult;
+        }else{
+            return null;
+        }
     }
 }

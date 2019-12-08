@@ -178,22 +178,19 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         RobotPose2D errorFixedOffset = XYPlaneCalculations.getRelativePosition(this.m_TaskSupposedStartFieldPos, currentFieldPos);
         return errorFixedOffset;
     }
-    protected RobotVector2D getErrorCorrectionVelocityVector(RobotPose2D supposedPosition){
-        this.m_LastSupposedPose.setValues(supposedPosition);
 
-        double errorX, errorY, errorRotZ;
-        RobotPose2D rawOffsetSinceStart = this.getRelativePositionOffsetRawSinceStart();
-        RobotPose2D offsetSinceStart = this.calculateErrorCalculatedOffsetPosition(rawOffsetSinceStart);
-
-        RobotPose2D error = XYPlaneCalculations.getRelativePosition(offsetSinceStart,supposedPosition);
-        errorX = error.X;
-        errorY = error.Y;
-        errorRotZ = error.getRotationZ();
+    public RobotVector2D getErrorCorrectionVelocityVector(RobotPose2D currentOffset, double errorX, double errorY, double errorRotZ){
+        RobotPose2D error = new RobotPose2D(errorX,errorY,errorRotZ);
+        RobotPose2D supposedPosition = XYPlaneCalculations.getAbsolutePosition(currentOffset,error);
+        this.m_LastSupposedPose = supposedPosition;
 
         this.m_MotionSystem.getPIDCalculator().feedError(errorX,errorY,errorRotZ);
         RobotVector2D correctionVelocity = this.m_MotionSystem.getPIDCalculator().getPIDPower();
-
         return correctionVelocity;
+    }
+
+    protected RobotVector2D getErrorCorrectionVelocityVector(RobotPose2D supposedPosition){
+        return this.getErrorCorrectionVelocityVector(supposedPosition,this.getRelativePositionOffsetSinceStart());
     }
 
     protected RobotVector2D getErrorCorrectionVelocityVector(RobotPose2D supposedPosition, RobotPose2D relativePosition){
@@ -212,6 +209,11 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
 
         return correctionVelocity;
     }
+
+    protected void updateSupposedPos(RobotPose2D supposedPose){
+        this.m_LastSupposedPose = supposedPose;
+    }
+
     protected RobotVector2D setRobotSpeed(RobotVector2D robotSpeed, RobotPose2D supposedRelativePose){
         RobotVector2D correctionVector = this.getErrorCorrectionVelocityVector(supposedRelativePose);
         RobotVector2D afterCorrectionVector = new RobotVector2D(robotSpeed.X + correctionVector.X,robotSpeed.Y + correctionVector.Y,robotSpeed.getRotationZ() + correctionVector.getRotationZ());

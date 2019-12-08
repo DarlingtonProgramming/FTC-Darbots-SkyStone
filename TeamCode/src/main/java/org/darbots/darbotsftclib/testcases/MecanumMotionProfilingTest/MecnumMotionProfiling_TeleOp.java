@@ -43,35 +43,30 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
                 0
         );
 
-        try{
-            telemetry.addData("Status","Generating LTPath");
-            telemetry.update();
-            LTPath = new LinePath(CONST_TEST_DISTANCE_SIDELENGTH,CONST_TEST_DISTANCE_SIDELENGTH);
-            telemetry.addData("Status","Generating RTPath");
-            telemetry.update();
-            RTPath = new LinePath(CONST_TEST_DISTANCE_SIDELENGTH,-CONST_TEST_DISTANCE_SIDELENGTH);
-            telemetry.addData("Status","Generating LBPath");
-            telemetry.update();
-            LBPath = new LinePath(-CONST_TEST_DISTANCE_SIDELENGTH,CONST_TEST_DISTANCE_SIDELENGTH);
-            telemetry.addData("Status","Generating RBPath");
-            telemetry.update();
-            RBPath = new LinePath(-CONST_TEST_DISTANCE_SIDELENGTH,-CONST_TEST_DISTANCE_SIDELENGTH);
-            telemetry.addData("Status","Generating PXPath");
-            telemetry.update();
-            PXPath = new LinePath(CONST_TEST_DISTANCE,0);
-            telemetry.addData("Status","Generating PYPath");
-            telemetry.update();
-            PYPath = new LinePath(0,CONST_TEST_DISTANCE);
-            telemetry.addData("Status","Generating NXPath");
-            telemetry.update();
-            NXPath = new LinePath(-CONST_TEST_DISTANCE,0);
-            telemetry.addData("Status","Generating NYPath");
-            telemetry.update();
-            NYPath = new LinePath(0,-CONST_TEST_DISTANCE);
-        }catch(InvalidPropertiesFormatException e){
-            e.printStackTrace();
-            return;
-        }
+        telemetry.addData("Status","Generating LTPath");
+        telemetry.update();
+        LTPath = new LinePath(CONST_TEST_DISTANCE_SIDELENGTH,CONST_TEST_DISTANCE_SIDELENGTH);
+        telemetry.addData("Status","Generating RTPath");
+        telemetry.update();
+        RTPath = new LinePath(CONST_TEST_DISTANCE_SIDELENGTH,-CONST_TEST_DISTANCE_SIDELENGTH);
+        telemetry.addData("Status","Generating LBPath");
+        telemetry.update();
+        LBPath = new LinePath(-CONST_TEST_DISTANCE_SIDELENGTH,CONST_TEST_DISTANCE_SIDELENGTH);
+        telemetry.addData("Status","Generating RBPath");
+        telemetry.update();
+        RBPath = new LinePath(-CONST_TEST_DISTANCE_SIDELENGTH,-CONST_TEST_DISTANCE_SIDELENGTH);
+        telemetry.addData("Status","Generating PXPath");
+        telemetry.update();
+        PXPath = new LinePath(CONST_TEST_DISTANCE,0);
+        telemetry.addData("Status","Generating PYPath");
+        telemetry.update();
+        PYPath = new LinePath(0,CONST_TEST_DISTANCE);
+        telemetry.addData("Status","Generating NXPath");
+        telemetry.update();
+        NXPath = new LinePath(-CONST_TEST_DISTANCE,0);
+        telemetry.addData("Status","Generating NYPath");
+        telemetry.update();
+        NYPath = new LinePath(0,-CONST_TEST_DISTANCE);
     }
 
     @Override
@@ -129,8 +124,8 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
                             0
                     );
 
-                    RobotTrajectory trajectoryToGo = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, pathToGo, startSpeed, cruiseSpeed, endSpeed);
-                    TrajectoryFollower follower = new TrajectoryFollower(trajectoryToGo,CONST_TEST_PREFERRED_NEW_ANGLE);
+                    RobotTrajectory trajectoryToGo = SimpleTrajectoryGenerator.generateTrajectory(CONST_TRAJECTORY_RESOLUTION, constraints, pathToGo, startSpeed, cruiseSpeed, endSpeed,CONST_TEST_PREFERRED_NEW_ANGLE);
+                    TrajectoryFollower follower = new TrajectoryFollower(trajectoryToGo);
                     this.m_Core.getChassis().addTask(follower);
                 }
             }
