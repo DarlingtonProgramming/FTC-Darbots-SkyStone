@@ -41,13 +41,6 @@ public class EncoderMotorSpeedMeasure extends DarbotsBasicOpMode {
 
     @Override
     public void RunThisOpMode() {
-        telemetry.addData("Info","This is an opmode that helps you test the actual encoder RPM / RevPerSec speed, press on your gamepad1 X to continue");
-        telemetry.update();
-        while(!gamepad1.x){
-            if(isStopRequested()){
-                return;
-            }
-        }
         telemetry.addData("Info","Accelerating...");
         telemetry.update();
         ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);

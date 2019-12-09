@@ -289,6 +289,10 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
 
     public void stop(){
         this.deleteAllTasks();
+    }
+
+    public void terminate(){
+        this.stop();
         if(this.getPositionTracker() != null){
             this.getPositionTracker().stop();
         }
