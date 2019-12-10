@@ -194,7 +194,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
         double distanceToEndPoint = currentOffset.toPoint2D().distanceTo(endPoint);
 
-        if(this.m_EndingStarted || distanceToEndPoint <= this.m_ProfileToReachEndSpeedTotalDistance || distanceToEndPoint <= this.m_FollowRadius){
+        if(this.m_EndingStarted || distanceToEndPoint <= this.m_ProfileToReachEndSpeedTotalDistance){
             this.m_LastFollowedSegment = this.m_PathToFollow.size() - 2;
             pursuitPoint = endPoint;
             if(!this.m_EndingStarted){
@@ -226,6 +226,9 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                 pursuitSpeed = this.m_CruiseSpeed;
             }
             pursuitPoint = getFollowPoint(currentOffset,this.m_PreferredAngle);
+        }
+        if(distanceToEndPoint <= this.m_FollowRadius){
+            pursuitPoint = endPoint;
         }
         double normalizedPursuitSpeed = pursuitSpeed / this.getMotionSystem().calculateMaxLinearSpeedInCMPerSec();
         double normalizedAngularSpeed = this.m_AngleSpeed / this.getMotionSystem().calculateMaxAngularSpeedInDegPerSec();
