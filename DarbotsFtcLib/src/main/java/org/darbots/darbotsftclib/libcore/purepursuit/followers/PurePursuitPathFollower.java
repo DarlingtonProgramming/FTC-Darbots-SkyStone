@@ -40,6 +40,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         this.m_FollowRadius = Math.abs(followRadius);
         this.m_PreferredAngle = XYPlaneCalculations.normalizeDeg(preferredAngle);
         this.__recalculateProfileToReachEndSpeed();
+        this.updateWayPoints();
     }
 
     public PurePursuitPathFollower(PurePursuitPathFollower follower){
@@ -59,6 +60,29 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
     public ArrayList<PurePursuitWayPoint> getWayPoints(){
         return this.m_PathToFollow;
+    }
+
+    public void updateWayPoints(){
+        if(this.m_PathToFollow.isEmpty()){
+            this.m_PathToFollow.add(new PurePursuitWayPoint(0,0));
+        }else{
+            PurePursuitWayPoint firstPoint = this.m_PathToFollow.get(0);
+            if(firstPoint.X != 0 || firstPoint.Y != 0){
+                this.m_PathToFollow.add(0,new PurePursuitWayPoint(0,0));
+            }
+        }
+    }
+
+    public boolean isPathValid(){
+        if(this.m_PathToFollow.isEmpty()){
+            return false;
+        }else if(this.m_PathToFollow.size() == 1){
+            PurePursuitWayPoint onlyPoint = this.m_PathToFollow.get(0);
+            if(onlyPoint.X == 0 && onlyPoint.Y == 0){
+                return false;
+            }
+        }
+        return true;
     }
 
     public double getPreferredAngle(){
@@ -159,7 +183,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
     @Override
     protected void __updateStatus() {
-        if(m_PathToFollow.isEmpty()){
+        if(!isPathValid()){
             this.stopTask();
             return;
         }
@@ -170,7 +194,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
         double distanceToEndPoint = currentOffset.toPoint2D().distanceTo(endPoint);
 
-        if(this.m_EndingStarted || distanceToEndPoint <= this.m_ProfileToReachEndSpeedTotalDistance){
+        if(this.m_EndingStarted || distanceToEndPoint <= this.m_ProfileToReachEndSpeedTotalDistance || distanceToEndPoint <= this.m_FollowRadius){
             this.m_LastFollowedSegment = this.m_PathToFollow.size() - 2;
             pursuitPoint = endPoint;
             if(!this.m_EndingStarted){
@@ -218,7 +242,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
     }
 
     protected PurePursuitWayPoint getFollowPoint(RobotPose2D currentOffset, double preferredAngle) {
-        if (m_PathToFollow.isEmpty()) {
+        if (!isPathValid()) {
             return new PurePursuitWayPoint(0, 0);
         }
         {

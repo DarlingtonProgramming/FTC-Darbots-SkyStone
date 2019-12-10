@@ -28,7 +28,7 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
     private TestMecanumCore m_Core;
     @Override
     public TestMecanumCore getRobotCore() {
-        return null;
+        return this.m_Core;
     }
 
     @Override
