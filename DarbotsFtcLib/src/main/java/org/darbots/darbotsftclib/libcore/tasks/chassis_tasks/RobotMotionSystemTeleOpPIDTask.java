@@ -30,7 +30,7 @@ public class RobotMotionSystemTeleOpPIDTask extends RobotMotionSystemTeleOpTask 
 
     @Override
     protected void __updateStatus() {
-        double timeInBetween = timeBetweenUpdateStatusCalls.time();
+        double timeInBetween = timeBetweenUpdateStatusCalls.seconds();
         timeBetweenUpdateStatusCalls.reset();
 
         RobotPose2D currentRelative = __calcCurrentRelative(timeInBetween);

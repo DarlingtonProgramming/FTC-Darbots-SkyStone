@@ -183,10 +183,13 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
     @Override
     protected void __updateStatus() {
+        double timeBetweenCall = m_TimeBetweenCalls.seconds();
+        m_TimeBetweenCalls.reset();
         if(!isPathValid()){
             this.stopTask();
             return;
         }
+
         PurePursuitWayPoint endPoint = this.m_PathToFollow.get(this.m_PathToFollow.size() - 1);
         RobotPose2D currentOffset = this.getRelativePositionOffsetSinceStart();
         PurePursuitWayPoint pursuitPoint = null;
@@ -197,12 +200,16 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         if(this.m_EndingStarted || distanceToEndPoint <= this.m_ProfileToReachEndSpeedTotalDistance){
             this.m_LastFollowedSegment = this.m_PathToFollow.size() - 2;
             pursuitPoint = endPoint;
+            double timeForEnding = 0;
+
             if(!this.m_EndingStarted){
                 this.m_EndingStarted = true;
                 this.m_TimeForEnding.reset();
+                timeForEnding = 0;
             }else{
+                timeForEnding = this.m_TimeForEnding.seconds();
                 RobotPoint2D error = XYPlaneCalculations.getRelativePosition(currentOffset,pursuitPoint);
-                if(this.m_TimeForEnding.seconds() >= this.m_ProfileToReachEndSpeed.getTotalDuration() + this.getErrorDuration()){
+                if(timeForEnding >= this.m_ProfileToReachEndSpeed.getTotalDuration() + this.getErrorDuration()){
                     this.stopTask();
                     return;
                 }else if(Math.abs(error.X) <= this.m_ErrorRange && Math.abs(error.Y) <= this.m_ErrorRange){
@@ -210,15 +217,15 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                     return;
                 }
             }
-            MotionState currentMotionState = this.m_ProfileToReachEndSpeed.getMotionStateAt(this.m_TimeForEnding.seconds());
+            MotionState currentMotionState = this.m_ProfileToReachEndSpeed.getMotionStateAt(timeForEnding);
             pursuitSpeed = currentMotionState.velocity;
         }else{
             if(this.m_LastSpeed != this.m_CruiseSpeed){
                 if(this.m_CruiseSpeed > this.m_LastSpeed){
-                    pursuitSpeed = this.m_LastSpeed + this.m_MaximumAcceleration * this.m_TimeBetweenCalls.seconds();
+                    pursuitSpeed = this.m_LastSpeed + this.m_MaximumAcceleration * timeBetweenCall;
                     pursuitSpeed = Range.clip(pursuitSpeed,this.m_LastSpeed,this.m_CruiseSpeed);
                 }else{
-                    pursuitSpeed = this.m_LastSpeed - this.m_MaximumAcceleration * this.m_TimeBetweenCalls.seconds();
+                    pursuitSpeed = this.m_LastSpeed - this.m_MaximumAcceleration * timeBetweenCall;
                     pursuitSpeed = Range.clip(pursuitSpeed,this.m_CruiseSpeed,this.m_LastSpeed);
                 }
 
