@@ -42,7 +42,7 @@ import java.util.ArrayList;
 public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(8,0,0.5);
     public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(8,0,0.5);
-    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(1,0,0.5);
+    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(8,0,0.5);
 
     private ArrayList<RobotMotionSystemTask> m_TaskLists;
     private Robot2DPositionTracker m_PosTracker;
@@ -313,7 +313,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
             return biggestSpeed;
         }
         this.__setRobotSpeed(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
-        return new RobotPose2D(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
+        return new RobotVector2D(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
     }
     public double[] calculateWheelAngularSpeeds(double RobotXSpeedInCMPerSec, double RobotYSpeedInCMPerSec, double RobotZRotSpeedInDegPerSec){
         return calculateRawWheelAngularSpeeds(RobotXSpeedInCMPerSec * this.getLinearXMotionDistanceFactor(), RobotYSpeedInCMPerSec * this.getLinearYMotionDistanceFactor(), RobotZRotSpeedInDegPerSec * this.getRotationalMotionDistanceFactor());

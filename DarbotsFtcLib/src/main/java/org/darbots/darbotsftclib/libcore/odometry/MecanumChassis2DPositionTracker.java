@@ -48,6 +48,7 @@ public class MecanumChassis2DPositionTracker extends RobotActive2DPositionTracke
         m_RTMotor = m_MotionSystem.getRTMotion().getMotor();
         m_LBMotor = m_MotionSystem.getLBMotion().getMotor();
         m_RBMotor = m_MotionSystem.getRBMotion().getMotor();
+
         c_LT_COUNTS_PER_DEG = m_LTMotor.getMotorType().getCountsPerRev() / 360.0;
         c_RT_COUNTS_PER_DEG = m_RTMotor.getMotorType().getCountsPerRev() / 360.0;
         c_LB_COUNTS_PER_DEG = m_LBMotor.getMotorType().getCountsPerRev() / 360.0;

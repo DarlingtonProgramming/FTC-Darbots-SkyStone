@@ -31,6 +31,7 @@ public class EncoderMotorSpeedMeasure extends DarbotsBasicOpMode {
     @Override
     public void hardwareInitialize() {
         this.m_Motor = new RobotMotorWithEncoder(hardwareMap.dcMotor.get(motorConfigName),motorCountsPerRevProvider);
+        this.m_Motor.setCurrentMovingType(RobotMotor.MovingType.reset);
         this.m_Motor.setCurrentMovingType(RobotMotor.MovingType.withSpeed);
     }
 

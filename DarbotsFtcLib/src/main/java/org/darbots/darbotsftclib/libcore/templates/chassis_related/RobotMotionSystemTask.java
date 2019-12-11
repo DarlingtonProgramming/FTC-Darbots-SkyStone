@@ -47,6 +47,7 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
     private float m_TaskStartAng = CONST_TASKSTARTANG_NOTSET;
     public RobotMotionSystemTaskCallBack TaskCallBack = null;
     protected RobotPose2D m_LastSupposedPose = null;
+    protected RobotPose2D m_LastError = null;
 
     public RobotMotionSystemTask(){
         this.m_IsWorking = false;
@@ -183,6 +184,7 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         RobotPose2D error = new RobotPose2D(errorX,errorY,errorRotZ);
         RobotPose2D supposedPosition = XYPlaneCalculations.getAbsolutePosition(currentOffset,error);
         this.m_LastSupposedPose = supposedPosition;
+        this.m_LastError = error;
 
         this.m_MotionSystem.getPIDCalculator().feedError(errorX,errorY,errorRotZ);
         RobotVector2D correctionVelocity = this.m_MotionSystem.getPIDCalculator().getPIDPower();
@@ -200,6 +202,9 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         RobotPose2D offsetSinceStart = relativePosition;
 
         RobotPose2D error = XYPlaneCalculations.getRelativePosition(offsetSinceStart,supposedPosition);
+
+        this.m_LastError = error;
+
         errorX = error.X;
         errorY = error.Y;
         errorRotZ = error.getRotationZ();
@@ -212,6 +217,10 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
 
     protected void updateSupposedPos(RobotPose2D supposedPose){
         this.m_LastSupposedPose = supposedPose;
+    }
+
+    protected void updateError(RobotPose2D error){
+        this.m_LastError = error;
     }
 
     protected RobotVector2D setRobotSpeed(RobotVector2D robotSpeed, RobotPose2D supposedRelativePose){
@@ -233,5 +242,8 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
     }
     public RobotPose2D getLastSupposedPose(){
         return this.m_LastSupposedPose;
+    }
+    public RobotPose2D getLastError(){
+        return this.m_LastError;
     }
 }

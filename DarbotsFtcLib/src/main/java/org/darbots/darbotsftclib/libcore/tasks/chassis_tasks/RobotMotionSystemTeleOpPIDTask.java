@@ -31,6 +31,7 @@ public class RobotMotionSystemTeleOpPIDTask extends RobotMotionSystemTeleOpTask 
     @Override
     protected void __updateStatus() {
         double timeInBetween = timeBetweenUpdateStatusCalls.time();
+        timeBetweenUpdateStatusCalls.reset();
 
         RobotPose2D currentRelative = __calcCurrentRelative(timeInBetween);
 
@@ -40,9 +41,9 @@ public class RobotMotionSystemTeleOpPIDTask extends RobotMotionSystemTeleOpTask 
                 this.zRotSpeedNormalized * theoraticalMaximumAngular
         );
         RobotVector2D actualSpeed = this.setRobotSpeed(wantedSpeed,currentRelative);
-        timeBetweenUpdateStatusCalls.reset();
-        this.lastSpeed = actualSpeed;
-        this.lastRelativePose = currentRelative;
+
+        this.lastSpeed.setValues(actualSpeed);
+        this.lastRelativePose.setValues(currentRelative);
     }
 
     protected RobotPose2D __calcCurrentRelative(double deltaTime){

@@ -30,9 +30,9 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
                     e.printStackTrace();
                 }
 
-                __trackLoop(m_Time.seconds());
-
+                double time = m_Time.seconds();
                 m_Time.reset();
+                __trackLoop(time);
             }
             m_RunningFlag = false;
             m_RunningCommand = false;

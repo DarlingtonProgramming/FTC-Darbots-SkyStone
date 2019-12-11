@@ -29,7 +29,9 @@ public class EncoderCountsPerRevMeasure extends DarbotsBasicOpMode {
     public void hardwareInitialize() {
         this.m_Motor = new RobotMotorWithEncoder(hardwareMap.dcMotor.get(motorConfigName),motorCountsPerRevProvider);
         this.m_Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.m_Motor.setCurrentMovingType(RobotMotor.MovingType.reset);
         this.m_Motor.setCurrentMovingType(RobotMotor.MovingType.withSpeed);
+
     }
 
     @Override

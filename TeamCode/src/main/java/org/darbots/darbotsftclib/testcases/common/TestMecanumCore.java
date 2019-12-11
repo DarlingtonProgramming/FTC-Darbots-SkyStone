@@ -101,6 +101,17 @@ public class TestMecanumCore extends RobotCore {
                     lastSupposedPoseLine.addData("RotZ",lastSupposedPose.getRotationZ());
                 }
             }
+            {
+                if(this.getChassis() != null && this.getChassis().isBusy()){
+                    RobotPose2D lastError = this.getChassis().getCurrentTask().getLastError();
+                    if(lastError != null){
+                        Telemetry.Line lastErrorLine = globalTele.addLine("Last Error");
+                        lastErrorLine.addData("X",lastError.X);
+                        lastErrorLine.addData("Y",lastError.Y);
+                        lastErrorLine.addData("RotZ",lastError.getRotationZ());
+                    }
+                }
+            }
         }
     }
 
