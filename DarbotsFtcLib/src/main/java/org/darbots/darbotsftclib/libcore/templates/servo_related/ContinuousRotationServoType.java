@@ -11,4 +11,6 @@ public abstract class ContinuousRotationServoType implements MotorType {
     public double getCountsPerRev(){
         return 360;
     }
+    public abstract double getPulseLowerInMicroSeconds();
+    public abstract double getPulseUpperInMicroSeconds();
 }

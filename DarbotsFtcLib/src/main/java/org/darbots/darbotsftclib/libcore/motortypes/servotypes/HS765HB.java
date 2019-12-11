@@ -20,6 +20,16 @@ public class HS765HB extends ServoType {
     }
 
     @Override
+    public double getPulseLowerInMicroSeconds() {
+        return 680;
+    }
+
+    @Override
+    public double getPulseUpperInMicroSeconds() {
+        return 2220;
+    }
+
+    @Override
     public double getRevPerSec() {
         return 60.0 / 0.28 / 200.5;
         //60 deg in 0.28s => 4.8V

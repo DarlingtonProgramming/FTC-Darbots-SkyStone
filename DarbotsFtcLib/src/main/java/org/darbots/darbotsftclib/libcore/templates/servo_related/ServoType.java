@@ -19,4 +19,6 @@ public abstract class ServoType implements MotorType {
     public double getPositionFromDeg(double Deg){
         return (Deg - getMinDeg()) / getCountsPerRev();
     }
+    public abstract double getPulseLowerInMicroSeconds();
+    public abstract double getPulseUpperInMicroSeconds();
 }

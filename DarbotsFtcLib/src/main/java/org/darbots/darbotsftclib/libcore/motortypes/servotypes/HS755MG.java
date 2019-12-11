@@ -21,6 +21,16 @@ public class HS755MG extends ServoType {
     }
 
     @Override
+    public double getPulseLowerInMicroSeconds() {
+        return 570;
+    }
+
+    @Override
+    public double getPulseUpperInMicroSeconds() {
+        return 2400;
+    }
+
+    @Override
     public double getRevPerSec() {
         return 60.0 / 0.28 / 200.5;
         //60 deg in 0.28s => 4.8V

@@ -20,6 +20,16 @@ public class HS485HB extends ServoType {
     }
 
     @Override
+    public double getPulseLowerInMicroSeconds() {
+        return 553;
+    }
+
+    @Override
+    public double getPulseUpperInMicroSeconds() {
+        return 2425;
+    }
+
+    @Override
     public double getRevPerSec() {
         return 60 / 0.22 / 190.5;
         //60 deg in 0.22s => 4.8V
