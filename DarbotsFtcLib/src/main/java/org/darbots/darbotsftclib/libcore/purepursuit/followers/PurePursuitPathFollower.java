@@ -20,6 +20,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
     private double m_StartSpeed, m_CruiseSpeed, m_EndSpeed, m_AngleSpeed;
     private MotionProfile m_ProfileToReachEndSpeed;
     private double m_ProfileToReachEndSpeedTotalDistance;
+    private double m_ProfileToReachEndSpeedTotalDuration;
     private double m_LastSpeed;
     private ElapsedTime m_TimeBetweenCalls;
     private ElapsedTime m_TimeForEnding;
@@ -164,6 +165,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         this.m_EndingStarted = false;
         this.m_ProfileToReachEndSpeed = MotionProfileGenerator.generateMotionProfileFromOneSpeedToAnother(this.m_MaximumAcceleration,0,0,0,m_CruiseSpeed,m_EndSpeed);
         this.m_ProfileToReachEndSpeedTotalDistance = this.m_ProfileToReachEndSpeed.getTotalDistance();
+        this.m_ProfileToReachEndSpeedTotalDuration = this.m_ProfileToReachEndSpeed.getTotalDuration();
     }
 
     @Override
@@ -197,26 +199,37 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
         double distanceToEndPoint = currentOffset.toPoint2D().distanceTo(endPoint);
 
-        if(this.m_EndingStarted || distanceToEndPoint <= this.m_ProfileToReachEndSpeedTotalDistance){
+        double timeForEnding = 0;
+
+        if(this.m_EndingStarted){
+            timeForEnding = this.m_TimeForEnding.seconds();
+        }else if((distanceToEndPoint <= this.m_FollowRadius && this.m_ProfileToReachEndSpeedTotalDistance == 0) || distanceToEndPoint <= this.m_ProfileToReachEndSpeedTotalDistance){
+            this.m_EndingStarted = true;
+            this.m_TimeForEnding.reset();
+        }
+
+        if(this.m_EndingStarted){
+            RobotPoint2D error = XYPlaneCalculations.getRelativePosition(currentOffset,pursuitPoint);
+            double timeToEnd;
+            if(this.m_ProfileToReachEndSpeedTotalDistance == 0){
+                timeToEnd = this.m_FollowRadius / ((this.m_CruiseSpeed + this.m_EndSpeed) / 2.0);
+            }else{
+                timeToEnd = this.m_ProfileToReachEndSpeedTotalDuration;
+            }
+            if(timeForEnding >= timeToEnd + this.getErrorDuration()){
+                this.stopTask();
+                return;
+            }
+            if(Math.abs(error.X) <= this.m_ErrorRange && Math.abs(error.Y) <= this.m_ErrorRange){
+                this.stopTask();
+                return;
+            }
+        }
+
+        if(this.m_EndingStarted && distanceToEndPoint <= this.m_ProfileToReachEndSpeedTotalDistance){
             this.m_LastFollowedSegment = this.m_PathToFollow.size() - 2;
             pursuitPoint = endPoint;
-            double timeForEnding = 0;
-
-            if(!this.m_EndingStarted){
-                this.m_EndingStarted = true;
-                this.m_TimeForEnding.reset();
-                timeForEnding = 0;
-            }else{
-                timeForEnding = this.m_TimeForEnding.seconds();
-                RobotPoint2D error = XYPlaneCalculations.getRelativePosition(currentOffset,pursuitPoint);
-                if(timeForEnding >= this.m_ProfileToReachEndSpeed.getTotalDuration() + this.getErrorDuration()){
-                    this.stopTask();
-                    return;
-                }else if(Math.abs(error.X) <= this.m_ErrorRange && Math.abs(error.Y) <= this.m_ErrorRange){
-                    this.stopTask();
-                    return;
-                }
-            }
+            timeForEnding = this.m_TimeForEnding.seconds();
             MotionState currentMotionState = this.m_ProfileToReachEndSpeed.getMotionStateAt(timeForEnding);
             pursuitSpeed = currentMotionState.velocity;
         }else{
@@ -228,7 +241,6 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                     pursuitSpeed = this.m_LastSpeed - this.m_MaximumAcceleration * timeBetweenCall;
                     pursuitSpeed = Range.clip(pursuitSpeed,this.m_CruiseSpeed,this.m_LastSpeed);
                 }
-
             }else{
                 pursuitSpeed = this.m_CruiseSpeed;
             }
@@ -241,7 +253,6 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         double normalizedAngularSpeed = this.m_AngleSpeed / this.getMotionSystem().calculateMaxAngularSpeedInDegPerSec();
         this.gotoPosition(currentOffset,pursuitPoint,normalizedPursuitSpeed,normalizedAngularSpeed,m_PreferredAngle);
         this.m_LastSpeed = pursuitSpeed;
-        this.m_TimeBetweenCalls.reset();
     }
 
     @Override
