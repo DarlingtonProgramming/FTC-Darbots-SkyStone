@@ -54,6 +54,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private RobotPose2D m_LastTaskFinishFieldPos;
     private ChassisPIDCalculator m_PIDCalculator;
     private RobotGyro m_Gyro = null;
+    private double m_Cache_MaxLinearX, m_Cache_MaxLinearY, m_Cache_MaxZRot, m_Cache_MaxLinear;
 
     public RobotMotionSystem(Robot2DPositionTracker PositionTracker){
         this.m_TaskLists = new ArrayList();
@@ -65,6 +66,10 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_RotationalPIDCoefficient = ROTATIONAL_Z_PID_DEFAULT;
         this.m_PIDCalculator = new ChassisPIDCalculator(this.m_LinearXPIDCoefficient,this.m_LinearYPIDCoefficient,this.m_RotationalPIDCoefficient);
         this.m_LastTaskFinishFieldPos = null;
+        this.m_Cache_MaxLinear = -1;
+        this.m_Cache_MaxLinearX = -1;
+        this.m_Cache_MaxLinearY = -1;
+        this.m_Cache_MaxZRot = -1;
 
         if(PositionTracker != null && PositionTracker instanceof RobotNonBlockingDevice){
             this.m_PosTrackerIsAsync = true;
@@ -83,6 +88,10 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_RotationalPIDCoefficient = MotionSystem.m_RotationalPIDCoefficient;
         this.m_PIDCalculator = new ChassisPIDCalculator(this.m_LinearXPIDCoefficient,this.m_LinearYPIDCoefficient,this.m_RotationalPIDCoefficient);
         this.m_LastTaskFinishFieldPos = MotionSystem.m_LastTaskFinishFieldPos == null ? null : new RobotPose2D(MotionSystem.m_LastTaskFinishFieldPos);
+        this.m_Cache_MaxLinear = MotionSystem.m_Cache_MaxLinear;
+        this.m_Cache_MaxLinearX = MotionSystem.m_Cache_MaxLinearX;
+        this.m_Cache_MaxLinearY = MotionSystem.m_Cache_MaxLinearY;
+        this.m_Cache_MaxZRot = MotionSystem.m_Cache_MaxZRot;
 
         if(MotionSystem.m_PosTracker != null && MotionSystem.m_PosTracker instanceof RobotNonBlockingDevice){
             this.m_PosTrackerIsAsync = true;
@@ -108,6 +117,8 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     }
     public void setLinearYMotionDistanceFactor(double Factor){
         this.m_LinearYMotionDistanceFactor = Factor;
+        this.m_Cache_MaxLinearY = -1;
+        this.m_Cache_MaxLinear = -1;
     }
 
     public double getLinearXMotionDistanceFactor(){
@@ -115,6 +126,8 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     }
     public void setLinearXMotionDistanceFactor(double Factor){
         this.m_LinearXMotionDistanceFactor = Factor;
+        this.m_Cache_MaxLinearX = -1;
+        this.m_Cache_MaxLinear = -1;
     }
     public void setLinearMotionDistanceFactor(double Factor){
         this.setLinearYMotionDistanceFactor(Factor);
@@ -127,6 +140,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
 
     public void setRotationalMotionDistanceFactor(double Factor){
         this.m_RotationalMotionDistanceFactor = Factor;
+        this.m_Cache_MaxZRot = -1;
     }
 
     public PIDCoefficients getLinearXPIDCoefficient(){
@@ -332,13 +346,22 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     }
     public abstract RobotVector2D calculateRawRobotSpeed(double[] wheelSpeeds);
     public double calculateMaxLinearXSpeedInCMPerSec(){
-        return this.calculateMaxLinearXSpeedInCMPerSec(0);
+        if(this.m_Cache_MaxLinearX == -1) {
+            this.m_Cache_MaxLinearX = this.calculateMaxLinearXSpeedInCMPerSec(0);
+        }
+        return this.m_Cache_MaxLinearX;
     }
     public double calculateMaxLinearYSpeedInCMPerSec(){
-        return this.calculateMaxLinearYSpeedInCMPerSec(0);
+        if(this.m_Cache_MaxLinearY == -1){
+            this.m_Cache_MaxLinearY = this.calculateMaxLinearYSpeedInCMPerSec(0);
+        }
+        return this.m_Cache_MaxLinearY;
     }
     public double calculateMaxAngularSpeedInDegPerSec(){
-        return this.calculateMaxAngularSpeedInDegPerSec(0,0);
+        if(this.m_Cache_MaxZRot == -1) {
+            this.m_Cache_MaxZRot = this.calculateMaxAngularSpeedInDegPerSec(0, 0);
+        }
+        return this.m_Cache_MaxZRot;
     }
     public double calculateMaxLinearXSpeedInCMPerSec(double angularSpeedInDegPerSec){
         return this.calculateRawMaxLinearXSpeedInCMPerSec(angularSpeedInDegPerSec * this.getRotationalMotionDistanceFactor()) / this.getLinearXMotionDistanceFactor();
@@ -357,8 +380,11 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
 
     public abstract double calculateRawMaxAngularSpeedInDegPerSec(double xSpeedInCMPerSec, double ySpeedInCMPerSec);
 
-    public double calculateMaxLinearSpeedInCMPerSec(){
-        return Math.sqrt(Math.pow(this.calculateMaxLinearXSpeedInCMPerSec() / 2.0,2) + Math.pow(this.calculateMaxLinearYSpeedInCMPerSec() / 2.0,2));
+    public double calculateMaxLinearSpeedInCMPerSec() {
+        if (this.m_Cache_MaxLinear == -1) {
+            this.m_Cache_MaxLinear = Math.sqrt(Math.pow(this.calculateMaxLinearXSpeedInCMPerSec() / 2.0, 2) + Math.pow(this.calculateMaxLinearYSpeedInCMPerSec() / 2.0, 2));
+        }
+        return this.m_Cache_MaxLinear;
     }
     public MotionSystemConstraints getMotionSystemConstraints(double maximumAcceleration, double maximumJerk, double maximumAngularAcceleration, double maximumAngularJerk){
         return new MotionSystemConstraints(this.calculateMaxLinearSpeedInCMPerSec(),maximumAcceleration,maximumJerk,this.calculateMaxAngularSpeedInDegPerSec(),maximumAngularAcceleration,maximumAngularJerk);
