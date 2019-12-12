@@ -39,6 +39,15 @@ public class MotionProfile {
         double timeToCountInSegment = 0;
         boolean finalSegment = false;
 
+        if(time == 0){
+            return new MotionState(
+                    0,
+                    this.StartVelocity,
+                    0,
+                    0
+            );
+        }
+
         for(MotionProfileSegment i : this.m_MotionSegments){
             if(durationCounter + i.getDuration() >= time){
                 timeToCountInSegment = time - durationCounter;

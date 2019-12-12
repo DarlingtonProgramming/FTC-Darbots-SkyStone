@@ -29,6 +29,12 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
             }
             sleep(50);
         }
+        while(this.gamepad1.x){
+            if(this.isStopRequested()){
+                return false;
+            }
+            sleep(50);
+        }
         return true;
     }
 

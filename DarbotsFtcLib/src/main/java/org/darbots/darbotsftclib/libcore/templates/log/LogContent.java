@@ -34,6 +34,7 @@ import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.logContents.
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -124,7 +125,7 @@ public abstract class LogContent implements Map<String, Object> {
     @NonNull
     @Override
     public Set<Entry<String, Object>> entrySet() {
-        Set<Entry<String,Object>> mSet = new TreeSet();
+        HashSet<Entry<String,Object>> mSet = new HashSet<>();
         mSet.add(new AbstractMap.SimpleEntry<String, Object>("type", this.getContentType().name()));
         mSet.add(new AbstractMap.SimpleEntry<String, Object>("value", this.getContentValue()));
         return mSet;

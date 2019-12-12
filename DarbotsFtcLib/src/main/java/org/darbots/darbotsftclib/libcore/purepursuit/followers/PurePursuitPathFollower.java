@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfile;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfileGenerator;
@@ -200,6 +201,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         double distanceToEndPoint = currentOffset.toPoint2D().distanceTo(endPoint);
 
         double timeForEnding = 0;
+        double timeToEnd = 0;
 
         if(this.m_EndingStarted){
             timeForEnding = this.m_TimeForEnding.seconds();
@@ -209,8 +211,6 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         }
 
         if(this.m_EndingStarted){
-            RobotPoint2D error = XYPlaneCalculations.getRelativePosition(currentOffset,pursuitPoint);
-            double timeToEnd;
             if(this.m_ProfileToReachEndSpeedTotalDistance == 0){
                 timeToEnd = this.m_FollowRadius / ((this.m_CruiseSpeed + this.m_EndSpeed) / 2.0);
             }else{
@@ -220,6 +220,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                 this.stopTask();
                 return;
             }
+            RobotPoint2D error = XYPlaneCalculations.getRelativePosition(currentOffset,endPoint);
             if(Math.abs(error.X) <= this.m_ErrorRange && Math.abs(error.Y) <= this.m_ErrorRange){
                 this.stopTask();
                 return;
@@ -229,8 +230,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         if(this.m_EndingStarted && distanceToEndPoint <= this.m_ProfileToReachEndSpeedTotalDistance){
             this.m_LastFollowedSegment = this.m_PathToFollow.size() - 2;
             pursuitPoint = endPoint;
-            timeForEnding = this.m_TimeForEnding.seconds();
-            MotionState currentMotionState = this.m_ProfileToReachEndSpeed.getMotionStateAt(timeForEnding);
+            MotionState currentMotionState = this.m_ProfileToReachEndSpeed.getMotionStateAt(Range.clip(timeForEnding,0,timeToEnd));
             pursuitSpeed = currentMotionState.velocity;
         }else{
             if(this.m_LastSpeed != this.m_CruiseSpeed){
@@ -249,10 +249,14 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         if(distanceToEndPoint <= this.m_FollowRadius){
             pursuitPoint = endPoint;
         }
-        double normalizedPursuitSpeed = pursuitSpeed / this.getMotionSystem().calculateMaxLinearSpeedInCMPerSec();
-        double normalizedAngularSpeed = this.m_AngleSpeed / this.getMotionSystem().calculateMaxAngularSpeedInDegPerSec();
-        this.gotoPosition(currentOffset,pursuitPoint,normalizedPursuitSpeed,normalizedAngularSpeed,m_PreferredAngle);
-        this.m_LastSpeed = pursuitSpeed;
+        if(this.m_EndingStarted && timeForEnding >= timeToEnd){
+            this.setRobotSpeed(new RobotVector2D(0,0,0),new RobotPose2D(endPoint,currentOffset.getRotationZ()));
+        }else {
+            double normalizedPursuitSpeed = pursuitSpeed / this.getMotionSystem().calculateMaxLinearSpeedInCMPerSec();
+            double normalizedAngularSpeed = this.m_AngleSpeed / this.getMotionSystem().calculateMaxAngularSpeedInDegPerSec();
+            this.gotoPosition(currentOffset, pursuitPoint, normalizedPursuitSpeed, normalizedAngularSpeed, m_PreferredAngle);
+            this.m_LastSpeed = pursuitSpeed;
+        }
     }
 
     @Override
@@ -273,13 +277,18 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
             for (int i = m_LastFollowedSegment; i < this.m_PathToFollow.size() - 1; i++) {
                 PurePursuitWayPoint startPoint = this.m_PathToFollow.get(i);
                 PurePursuitWayPoint endPoint = this.m_PathToFollow.get(i + 1);
+                RobotPoint2D endPointInRobotAxis = XYPlaneCalculations.getRelativePosition(currentOffset,endPoint);
+                double endAng = Math.toDegrees(Math.atan2(endPointInRobotAxis.Y,endPointInRobotAxis.X));
+                endAng += preferredAngle;
+
                 ArrayList<RobotPoint2D> intersections = XYPlaneCalculations.lineSegmentCircleIntersections(currentOffset.toPoint2D(), this.m_FollowRadius, startPoint, endPoint);
                 for (RobotPoint2D thisIntersection : intersections) {
                     RobotPoint2D currentRobotAxisTarget = XYPlaneCalculations.getRelativePosition(currentOffset, thisIntersection);
                     double targetPointAngle = Math.toDegrees(Math.atan2(currentRobotAxisTarget.Y, currentRobotAxisTarget.X));
                     double wantedAngleInCurrentRobotAxis = targetPointAngle + preferredAngle;
-                    if (Math.abs(closestAngle) > Math.abs(wantedAngleInCurrentRobotAxis)) {
-                        closestAngle = wantedAngleInCurrentRobotAxis;
+                    double deltaAng = XYPlaneCalculations.normalizeDeg(wantedAngleInCurrentRobotAxis - endAng);
+                    if (Math.abs(closestAngle) > Math.abs(deltaAng)) {
+                        closestAngle = deltaAng;
                         followPoint.setValues(thisIntersection);
                         this.m_LastFollowedSegment = i;
                         foundPoint = true;
@@ -330,7 +339,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         double angularSpeed = Range.clip(wantedAngleInCurrentRobotAxis / 30.0,-1.0,1.0) * normalizedAngularSpeed;
 
         double distanceToTarget = currentRobotAxisTarget.distanceTo(new RobotPoint2D(0,0));
-        if(distanceToTarget < 10){
+        if(distanceToTarget < 5){
             angularSpeed = 0;
         }
 

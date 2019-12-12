@@ -10,6 +10,7 @@ import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -173,7 +174,7 @@ public class LogEntry implements Map<String, Object> {
     @NonNull
     @Override
     public Set<Entry<String, Object>> entrySet() {
-        Set<Entry<String,Object>> mSet = new TreeSet();
+        HashSet<Entry<String,Object>> mSet = new HashSet();
         mSet.add(new AbstractMap.SimpleEntry<String, Object>("module",this.moduleName));
         mSet.add(new AbstractMap.SimpleEntry<String, Object>("caption",this.logCaption));
         mSet.add(new AbstractMap.SimpleEntry<String, Object>("timeStamp",new Long(this.timeOfLog)));

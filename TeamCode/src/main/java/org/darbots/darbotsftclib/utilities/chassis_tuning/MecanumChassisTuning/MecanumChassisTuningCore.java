@@ -17,7 +17,7 @@ import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumChassisTuningCore extends RobotCore {
-    public static final double[] WheelPosition = {28.5/2,34.0/2}; //{RobotLength / 2, RobotWidth / 2
+    public static final double[] WheelPosition = {28.1/2,36.5/2}; //{RobotLength / 2, RobotWidth / 2
     public static final MotorType ChassisMotorType = new AndyMark3637();
     public static final double WheelRadius = 5;
 
@@ -88,7 +88,7 @@ public class MecanumChassisTuningCore extends RobotCore {
             currentPosLine.addData("RotZ",currentPos.getRotationZ());
         }
         {
-            RobotPose2D currentOffset = this.m_Chassis.getPositionTracker().getCurrentPosition();
+            RobotPose2D currentOffset = this.m_Chassis.getPositionTracker().getRelativeOffset();
             Telemetry.Line currentPosLine = telemetry.addLine("Current Offset");
             currentPosLine.addData("X",currentOffset.X);
             currentPosLine.addData("Y",currentOffset.Y);

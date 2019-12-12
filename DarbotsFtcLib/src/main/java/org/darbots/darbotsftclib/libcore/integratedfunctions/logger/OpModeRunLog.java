@@ -8,8 +8,12 @@ import org.darbots.darbotsftclib.libcore.templates.log.LogContent;
 import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 
 import java.util.AbstractMap;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -177,7 +181,8 @@ public class OpModeRunLog implements Map<String, Object> {
     @NonNull
     @Override
     public Set<Entry<String, Object>> entrySet() {
-        Set<Entry<String,Object>> mSet = new TreeSet();
+        HashSet<Entry<String,Object>> mSet = new HashSet<Entry<String, Object>>();
+
         mSet.add(new AbstractMap.SimpleEntry<String, Object>("startTime",new Long(this.startTime)));
         mSet.add(new AbstractMap.SimpleEntry<String, Object>("runningOpMode",this.runningOpMode));
         mSet.add(new AbstractMap.SimpleEntry<String, Object>("priority",new Integer(this.threadPriority)));

@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark3637;
 import org.darbots.darbotsftclib.libcore.odometry.MecanumChassis2DPositionTracker;
@@ -18,9 +19,10 @@ import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TestMecanumCore extends RobotCore {
-    public static final double[] WheelPosition = {28.5/2,34.0/2};
+    public static final double[] WheelPosition = {28.1/2,36.5/2};
     public static final MotorType ChassisMotorType = new AndyMark3637();
     public static final double WheelRadius = 5;
+    public static final double XFactor = 1.0, YFactor = 1.09, RotZFactor = 1.070395;
 
     private MecanumDrivetrain m_Chassis;
     private MecanumChassis2DPositionTracker m_PosTracker;
@@ -54,7 +56,11 @@ public class TestMecanumCore extends RobotCore {
         RobotMotion RBMotion = new RobotMotion(new RobotMotorWithEncoder(m_RightBottomDC,ChassisMotorType),m_RightBottomWheel);
 
         this.m_Chassis = new MecanumDrivetrain(null,LTMotion,RTMotion,LBMotion,RBMotion);
+        this.m_Chassis.setLinearXMotionDistanceFactor(XFactor);
+        this.m_Chassis.setLinearYMotionDistanceFactor(YFactor);
+        this.m_Chassis.setRotationalMotionDistanceFactor(RotZFactor);
         this.m_PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),this.m_Chassis);
+        this.m_PosTracker.setDistanceFactors(new RobotVector2D(XFactor,YFactor,RotZFactor));
         this.m_Chassis.setPositionTracker(this.m_PosTracker);
         this.m_PosTracker.start();
     }

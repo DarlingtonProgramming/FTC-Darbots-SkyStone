@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
+import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
 
 //Factor = trackedDistance / actualDistance
@@ -33,6 +34,9 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
                 double time = m_Time.seconds();
                 m_Time.reset();
                 __trackLoop(time);
+                if(GlobalRegister.runningOpMode != null && GlobalRegister.runningOpMode.isStopRequested()){
+                    break;
+                }
             }
             m_RunningFlag = false;
             m_RunningCommand = false;
@@ -76,7 +80,7 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
 
     public RobotActive2DPositionTracker(RobotActive2DPositionTracker oldTracker){
         super(oldTracker);
-        RobotPose2D oldDistanceFactor = oldTracker.getDistanceFactors();
+        RobotVector2D oldDistanceFactor = oldTracker.getDistanceFactors();
         this.m_XDistanceFactor = oldDistanceFactor.X;
         this.m_YDistanceFactor = oldDistanceFactor.Y;
         this.m_ZRotDistanceFactor = oldDistanceFactor.getRotationZ();
@@ -87,8 +91,8 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
         this.m_RunnableTracking = new RobotActive2DPositionTracker_Runnable();
     }
 
-    public RobotPose2D getDistanceFactors(){
-        return new RobotPose2D(this.m_XDistanceFactor,this.m_YDistanceFactor,this.m_ZRotDistanceFactor);
+    public RobotVector2D getDistanceFactors(){
+        return new RobotVector2D(this.m_XDistanceFactor,this.m_YDistanceFactor,this.m_ZRotDistanceFactor);
     }
 
     /**
@@ -96,7 +100,7 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
      * deltaX,Y,Z = trackedDeltaX,Y,Z / distanceFactor
      * @param DistanceFactor The distance factors of each axis / rotation
      */
-    public void setDistanceFactors(RobotPose2D DistanceFactor){
+    public void setDistanceFactors(RobotVector2D DistanceFactor){
         this.m_XDistanceFactor = DistanceFactor.X;
         this.m_YDistanceFactor = DistanceFactor.Y;
         this.m_ZRotDistanceFactor = DistanceFactor.getRotationZ();
