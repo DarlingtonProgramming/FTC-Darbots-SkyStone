@@ -25,8 +25,28 @@ SOFTWARE.
 
 package org.darbots.darbotsftclib.libcore.templates;
 
+/**
+ * This interface is the lowest level asynchronous Java Interface that we are going to use in Darbots-FTC-Lib.
+ * Since Darbots-FTC-Lib is a library designed with the idea of asynchronous operations, in the main program loop, every sensor's updateStatus() method is called.
+ * @author David Cao
+ */
 public interface RobotNonBlockingDevice {
+
+    /**
+     * This method checks if a sensor is at work.
+     * @return If the sensor has a job at hand, returns true / otherwise returns false
+     */
     boolean isBusy();
+
+    /**
+     * This method lets the sensor update its work / job status.
+     * If the sensor is data-oriented (means it obtains data from some means), it also tries to obtain the new data and put that into its local storage.
+     */
     void updateStatus();
+
+    /**
+     * This method blocks the main program loop.
+     * This method lets the sensor keep updating its status until it is no longer busy (all assigned jobs are finished)
+     */
     void waitUntilFinish();
 }

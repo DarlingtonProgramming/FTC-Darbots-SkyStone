@@ -3,6 +3,9 @@ package org.darbots.darbotsftclib.libcore.templates;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 
+/**
+ * This class is used for programmers to
+ */
 public abstract class DarbotsComboKey implements RobotNonBlockingDevice {
     private boolean m_Busy = false;
 

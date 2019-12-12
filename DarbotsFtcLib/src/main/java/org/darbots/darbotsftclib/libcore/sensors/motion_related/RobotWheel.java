@@ -26,20 +26,20 @@ SOFTWARE.
 package org.darbots.darbotsftclib.libcore.sensors.motion_related;
 
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot2DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 
 public class RobotWheel {
     private double m_Radius;
-    private Robot2DPositionIndicator m_OnRobotPosition;
+    private RobotPose2D m_OnRobotPosition;
 
-    public RobotWheel(Robot2DPositionIndicator OnRobotPosition, double radius){
+    public RobotWheel(RobotPose2D OnRobotPosition, double radius){
         this.m_OnRobotPosition = OnRobotPosition;
         this.m_Radius = radius;
     }
-    public Robot2DPositionIndicator getOnRobotPosition(){
+    public RobotPose2D getOnRobotPosition(){
         return this.m_OnRobotPosition;
     }
-    public void setOnRobotPosition(Robot2DPositionIndicator OnRobotPosition){
+    public void setOnRobotPosition(RobotPose2D OnRobotPosition){
         this.m_OnRobotPosition = OnRobotPosition;
     }
     public double getRadius(){
@@ -52,10 +52,10 @@ public class RobotWheel {
         return this.m_Radius * 2 * Math.PI;
     }
     public double getXPerCounterClockwiseDistance(){
-        return -Math.cos(Math.toRadians(this.m_OnRobotPosition.getRotationY()));
+        return Math.cos(Math.toRadians(this.m_OnRobotPosition.getRotationZ()));
     }
-    public double getZPerCounterClockwiseDistance(){
-        return -Math.sin(Math.toRadians(this.m_OnRobotPosition.getRotationY()));
+    public double getYPerCounterClockwiseDistance(){
+        return Math.sin(Math.toRadians(this.m_OnRobotPosition.getRotationZ()));
     }
     public double getDistanceFromCenterOfRobot(){
         return this.m_OnRobotPosition.getDistanceToOrigin();
