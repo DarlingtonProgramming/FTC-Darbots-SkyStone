@@ -3,7 +3,7 @@ package org.darbots.darbotsftclib.testcases.DarbotsVuforiaTargetTest;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
-import org.darbots.darbotsftclib.libcore.calculations.dimentionalcalculation.Robot3DPositionIndicator;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose3D;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,7 +20,7 @@ public class DarbotsSkyStoneVuforiaTargetConceptValidation extends DarbotsBasicO
     @Override
     public void hardwareInitialize() {
         RobotOnPhoneCamera myCamera = new RobotOnPhoneCamera(this,true, RobotOnPhoneCamera.PhoneCameraDirection.Back, Robot4100Common.VUFORIA_LICENSE);
-        Robot3DPositionIndicator PhonePosition = new Robot3DPositionIndicator(
+        RobotPose3D PhonePosition = new RobotPose3D(
                 0,
                 0,
                 0,
@@ -40,19 +40,19 @@ public class DarbotsSkyStoneVuforiaTargetConceptValidation extends DarbotsBasicO
     @Override
     public void RunThisOpMode() {
         while(this.opModeIsActive()){
-            Robot3DPositionIndicator OriginalPose = Detector.getDarbotsRobotAxisOriginalStonePosition();
-            Robot3DPositionIndicator DarbotsPose = Detector.getDarbotsRobotAxisDarbotsStonePosition();
+            RobotPose3D OriginalPose = Detector.getDarbotsRobotAxisOriginalStonePosition();
+            RobotPose3D DarbotsPose = Detector.getDarbotsRobotAxisDarbotsStonePosition();
             if(OriginalPose != null) {
                 Telemetry.Line OriginalLine = telemetry.addLine("Original Pose");
-                OriginalLine.addData("X", OriginalPose.getX());
-                OriginalLine.addData("Y", OriginalPose.getY());
-                OriginalLine.addData("Z", OriginalPose.getZ());
+                OriginalLine.addData("X", OriginalPose.X);
+                OriginalLine.addData("Y", OriginalPose.Y);
+                OriginalLine.addData("Z", OriginalPose.Z);
             }
             if(DarbotsPose != null) {
                 Telemetry.Line DarbotsLine = telemetry.addLine("Darbots Pose");
-                DarbotsLine.addData("X", DarbotsPose.getX());
-                DarbotsLine.addData("Y", DarbotsPose.getY());
-                DarbotsLine.addData("Z", DarbotsPose.getZ());
+                DarbotsLine.addData("X", DarbotsPose.X);
+                DarbotsLine.addData("Y", DarbotsPose.Y);
+                DarbotsLine.addData("Z", DarbotsPose.Z);
                 telemetry.update();
             }
         }
