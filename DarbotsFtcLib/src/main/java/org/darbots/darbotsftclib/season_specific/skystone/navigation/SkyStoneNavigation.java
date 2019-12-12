@@ -212,8 +212,6 @@ public class SkyStoneNavigation implements RobotNonBlockingDevice {
         // Note: To use the remote camera preview:
         // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
         // Tap the preview window to receive a fresh image.
-
-        m_TargetsSkyStone.activate();
     }
     protected void __setupCamera(){
         // For convenience, gather together all the trackable objects in one easily-iterable collection */

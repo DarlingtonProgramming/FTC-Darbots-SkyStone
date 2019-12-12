@@ -21,16 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-*/
+To use this teamcode,
+Refractor Robot4100Common_Template to Robot4100Common, and fill in the following information.
+ */
+package org.firstinspires.ftc.teamcode.robot_common;
 
-package org.darbots.darbotsftclib.libcore.templates.other_sensors;
+public class Robot4100Common {
+    public static final String VUFORIA_LICENSE = ""; //Paste your Vuforia License Here
 
-import android.graphics.Bitmap;
-
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-
-public interface RobotCamera {
-    VuforiaLocalizer getVuforia();
-    boolean isPreview();
-    Bitmap getFrame();
 }

@@ -27,9 +27,6 @@ public class BNO055Gyro implements RobotGyro, RobotNonBlockingDevice {
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled      = false;
         m_BNO055Gyro.initialize(parameters);
-        while(!this.m_BNO055Gyro.isGyroCalibrated()){
-            sleep(50);
-        }
         this.updateData();
     }
 

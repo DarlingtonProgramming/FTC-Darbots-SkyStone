@@ -240,9 +240,11 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         this.getMotionSystem().__setRobotSpeed(actualVector.X,actualVector.Y,actualVector.getRotationZ());
         return returnVector;
     }
+  
     public RobotPose2D getLastSupposedPose(){
         return this.m_LastSupposedPose;
     }
+  
     public RobotPose2D getLastError(){
         return this.m_LastError;
     }
