@@ -44,7 +44,6 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
     private ElapsedTime m_TaskTimer;
     private RobotPose2D m_TaskActualStartFieldPos = null;
     private RobotPose2D m_TaskSupposedStartFieldPos = null;
-    private float m_TaskStartAng = CONST_TASKSTARTANG_NOTSET;
     public RobotMotionSystemTaskCallBack TaskCallBack = null;
     protected RobotPose2D m_LastSupposedPose = null;
     protected RobotPose2D m_LastError = null;
@@ -76,17 +75,6 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         this.m_TaskSupposedStartFieldPos = this.m_MotionSystem.getLastTaskFinishFieldPos();
         if(this.m_TaskSupposedStartFieldPos == null){
             this.m_TaskSupposedStartFieldPos = new RobotPose2D(this.m_TaskActualStartFieldPos);
-        }
-
-        this.m_MotionSystem.getPositionTracker().resetRelativeOffset();
-
-        if(this.m_MotionSystem.getGyroValueProvider() != null){
-            if(this.m_MotionSystem.getGyroValueProvider() instanceof RobotNonBlockingDevice){
-                ((RobotNonBlockingDevice) this.m_MotionSystem.getGyroValueProvider()).updateStatus();
-            }
-            this.m_TaskStartAng = this.m_MotionSystem.getGyroValueProvider().getHeading();
-        }else{
-            this.m_TaskStartAng = CONST_TASKSTARTANG_NOTSET;
         }
 
         this.m_TaskTimer.reset();
@@ -164,20 +152,16 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         return (int) this.m_TaskTimer.milliseconds();
     }
     protected RobotPose2D getRelativePositionOffsetRawSinceStart(){
-        RobotPose2D offset = this.m_MotionSystem.getPositionTracker().getRelativeOffset();
-        if(this.m_MotionSystem.getGyroValueProvider() != null && this.m_TaskStartAng != CONST_TASKSTARTANG_NOTSET) {
-            double angleMoved = XYPlaneCalculations.normalizeDeg(this.m_MotionSystem.getGyroValueProvider().getHeading() - this.m_TaskStartAng);
-            offset.setRotationZ(angleMoved);
-        }
-        return offset;
+        return XYPlaneCalculations.getRelativePosition(
+                this.m_TaskActualStartFieldPos,
+                this.getMotionSystem().getPositionTracker().getCurrentPosition()
+        );
     }
     protected RobotPose2D getRelativePositionOffsetSinceStart(){
-        return calculateErrorCalculatedOffsetPosition(this.getRelativePositionOffsetRawSinceStart());
-    }
-    private RobotPose2D calculateErrorCalculatedOffsetPosition(RobotPose2D currentRawOffset){
-        RobotPose2D currentFieldPos = XYPlaneCalculations.getAbsolutePosition(this.m_TaskActualStartFieldPos, currentRawOffset);
-        RobotPose2D errorFixedOffset = XYPlaneCalculations.getRelativePosition(this.m_TaskSupposedStartFieldPos, currentFieldPos);
-        return errorFixedOffset;
+        return XYPlaneCalculations.getRelativePosition(
+                this.m_TaskSupposedStartFieldPos,
+                this.getMotionSystem().getPositionTracker().getCurrentPosition()
+        );
     }
 
     public RobotVector2D getErrorCorrectionVelocityVector(RobotPose2D currentOffset, double errorX, double errorY, double errorRotZ){

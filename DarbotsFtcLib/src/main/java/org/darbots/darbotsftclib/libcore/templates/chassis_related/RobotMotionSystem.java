@@ -53,7 +53,6 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private PIDCoefficients m_LinearXPIDCoefficient, m_LinearYPIDCoefficient, m_RotationalPIDCoefficient;
     private RobotPose2D m_LastTaskFinishFieldPos;
     private ChassisPIDCalculator m_PIDCalculator;
-    private RobotGyro m_Gyro = null;
     private double m_Cache_MaxLinearX, m_Cache_MaxLinearY, m_Cache_MaxZRot, m_Cache_MaxLinear;
 
     public RobotMotionSystem(Robot2DPositionTracker PositionTracker){
@@ -98,14 +97,6 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         }else{
             this.m_PosTrackerIsAsync = false;
         }
-    }
-
-    public RobotGyro getGyroValueProvider(){
-        return this.m_Gyro;
-    }
-
-    public void setGyroValueProvider(RobotGyro GyroValueProvider){
-        this.m_Gyro = GyroValueProvider;
     }
 
     public ChassisPIDCalculator getPIDCalculator(){

@@ -14,7 +14,4 @@ public interface Robot2DPositionTracker {
 
     RobotPose2D fieldAxisFromRobotAxis(RobotPose2D RobotAxisPoint);
     RobotPose2D robotAxisFromFieldAxis(RobotPose2D FieldAxisPoint);
-
-    void resetRelativeOffset();
-    RobotPose2D getRelativeOffset();
 }

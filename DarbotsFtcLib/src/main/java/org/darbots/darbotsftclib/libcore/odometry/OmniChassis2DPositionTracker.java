@@ -89,6 +89,7 @@ public class OmniChassis2DPositionTracker extends RobotActive2DPositionTracker i
         double deltaYMoved = chassisSpeed.Y * secondsSinceLastLoop;
         double deltaAngMoved = chassisSpeed.getRotationZ() * secondsSinceLastLoop;
 
+        deltaAngMoved = getDeltaAng(deltaAngMoved);
 
         __trackLoopMoved(
                 chassisSpeed,

@@ -106,6 +106,7 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
         double deltaYMoved = deltaMidCM - deltaAngMoved * c_MIDENCODER_CM_PER_DEG;
 
         deltaAngMoved = XYPlaneCalculations.normalizeDeg(deltaAngMoved);
+        deltaAngMoved = getDeltaAng(deltaAngMoved);
 
         deltaXMoved /= this.m_XDistanceFactor;
         deltaYMoved /= this.m_YDistanceFactor;
@@ -115,7 +116,6 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
                 deltaYMoved / secondsSinceLastLoop,
                 deltaAngMoved / secondsSinceLastLoop
         );
-
 
         __trackLoopMoved(currentVelocityVector,
                 new RobotPose2D(

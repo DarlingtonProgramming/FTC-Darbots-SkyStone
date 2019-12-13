@@ -15,23 +15,22 @@ public abstract class RobotSynchronized2DPositionTracker extends RobotBasic2DPos
     }
 
     public RobotPose2D getInitialPos(){
-        synchronized (super.getInitialPos()){
-            return new RobotPose2D(super.getInitialPos());
+        synchronized (super.m_InitialPos){
+            return new RobotPose2D(super.m_InitialPos);
         }
     }
     public void setInitialPos(RobotPose2D initialPos){
-        synchronized (super.getInitialPos()) {
-            super.setInitialPos(initialPos);
+        synchronized (super.m_InitialPos) {
+            super.m_InitialPos = initialPos;
         }
     }
     public RobotPose2D getCurrentPosition(){
-        RobotPose2D read2DPosition = super.getCurrentPosition();
-        synchronized (read2DPosition) {
-            return new RobotPose2D(read2DPosition);
+        synchronized (super.m_CurrentPos) {
+            return new RobotPose2D(super.m_CurrentPos);
         }
     }
     public void setCurrentPosition(RobotPose2D currentPosition){
-        RobotPose2D read2DPosition = super.getCurrentPosition();
+        RobotPose2D read2DPosition = super.m_CurrentPos;
         synchronized (read2DPosition) {
             read2DPosition.X = currentPosition.X;
             read2DPosition.Y = currentPosition.Y;
@@ -40,65 +39,22 @@ public abstract class RobotSynchronized2DPositionTracker extends RobotBasic2DPos
     }
 
     public void offsetPosition(RobotPose2D offsetPosition) {
-        RobotPose2D read2DPosition = super.getCurrentPosition();
+        RobotPose2D read2DPosition = super.m_CurrentPos;
         synchronized (read2DPosition) {
             super.offsetPosition(offsetPosition);
-        }
-    }
-    @Override
-    public void resetRelativeOffset() {
-        RobotPose2D readRelativePos = super.getRelativeOffset();
-        synchronized (readRelativePos){
-            super.resetRelativeOffset();
-        }
-    }
-
-    @Override
-    public RobotPose2D getRelativeOffset() {
-        RobotPose2D readRelativePos = super.getRelativeOffset();
-        synchronized (readRelativePos){
-            return new RobotPose2D(readRelativePos);
-        }
-    }
-
-    @Override
-    protected void offsetRelative(RobotPose2D offsetValues) {
-        RobotPose2D readRelativePos = super.getRelativeOffset();
-        synchronized (readRelativePos) {
-            double originalX = readRelativePos.X, originalY = readRelativePos.Y, originalRotZ = readRelativePos.getRotationZ();
-            double newX = originalX + offsetValues.X, newY = originalY + offsetValues.Y, newRotZ = originalRotZ + offsetValues.getRotationZ();
-            readRelativePos.X = newX;
-            readRelativePos.Y = newY;
-            readRelativePos.setRotationZ(newRotZ);
-        }
-    }
-
-    @Override
-    protected void offsetRelative_RobotAxis(RobotPose2D offsetRobotAxis){
-        RobotPose2D readRelativePos = super.getRelativeOffset();
-        double[] originalRobotAxis = {offsetRobotAxis.X, offsetRobotAxis.Y};
-        double[] origin = {0,0};
-
-        synchronized (readRelativePos) {
-            double[] OffsetOriginPerspectiveValues = XYPlaneCalculations.rotatePointAroundFixedPoint_Deg(originalRobotAxis, origin, readRelativePos.getRotationZ());
-            double originalX = readRelativePos.X, originalY = readRelativePos.Y, originalRotZ = readRelativePos.getRotationZ();
-            double newX = originalX + OffsetOriginPerspectiveValues[0], newY = originalY + OffsetOriginPerspectiveValues[1], newRotZ = originalRotZ + offsetRobotAxis.getRotationZ();
-            readRelativePos.X = newX;
-            readRelativePos.Y = newY;
-            readRelativePos.setRotationZ(newRotZ);
         }
     }
 
     @Override
     public RobotVector2D getCurrentVelocityVector(){
-        RobotVector2D readVelocityVector = super.getCurrentVelocityVector();
+        RobotVector2D readVelocityVector = super.m_VelocityVector;
         synchronized (readVelocityVector) {
             return new RobotPose2D(readVelocityVector);
         }
     }
 
     public void setCurrentVelocityVector(RobotVector2D velocityVector){
-        RobotVector2D readVelocityVector = super.getCurrentVelocityVector();
+        RobotVector2D readVelocityVector = super.m_VelocityVector;
         synchronized (readVelocityVector){
             readVelocityVector.X = velocityVector.X;
             readVelocityVector.Y = velocityVector.Y;

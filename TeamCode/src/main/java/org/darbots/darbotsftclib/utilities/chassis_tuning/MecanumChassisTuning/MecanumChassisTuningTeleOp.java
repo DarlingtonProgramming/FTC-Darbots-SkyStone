@@ -3,10 +3,22 @@ package org.darbots.darbotsftclib.utilities.chassis_tuning.MecanumChassisTuning;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 
 @TeleOp(group = "DarbotsLib-Utilities", name = "MecanumChassisFactorTuning")
 public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassisTuningCore> {
     private MecanumChassisTuningCore m_Core;
+    private RobotPose2D relativeOffsetPose;
+
+    public void resetRelativeOffset(){
+        this.relativeOffsetPose.setValues(this.getRobotCore().getChassis().getPositionTracker().getCurrentPosition());
+    }
+
+    public RobotPose2D getRelativeOffset(){
+        return XYPlaneCalculations.getRelativePosition(relativeOffsetPose,this.getRobotCore().getChassis().getPositionTracker().getCurrentPosition());
+    }
+
     @Override
     public MecanumChassisTuningCore getRobotCore() {
         return this.m_Core;
@@ -15,6 +27,7 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
     @Override
     public void hardwareInitialize() {
         this.m_Core = new MecanumChassisTuningCore("MecanumChassisTuning.log",this.hardwareMap);
+        this.relativeOffsetPose = new RobotPose2D(0,0,0);
     }
 
     @Override
@@ -52,7 +65,7 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
         if(!waitForPadX()){
             return;
         }
-        this.getRobotCore().getChassis().getPositionTracker().resetRelativeOffset();
+        this.resetRelativeOffset();
         while((!gamepad1.x)){
             if(this.isStopRequested()){
                 return;
@@ -63,7 +76,7 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
             telemetry.update();
             sleep(50);
         }
-        double endXOffset = this.getRobotCore().getChassis().getPositionTracker().getRelativeOffset().X;
+        double endXOffset = this.getRelativeOffset().X;
         telemetry.addData("Info","End of X factor tuning");
         telemetry.addData("X Factor","Actual Distance Pushed / " + endXOffset);
         telemetry.addData("Info", "Press X to continue");
@@ -78,7 +91,7 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
         if(!waitForPadX()){
             return;
         }
-        this.getRobotCore().getChassis().getPositionTracker().resetRelativeOffset();
+        this.resetRelativeOffset();
         while((!gamepad1.x)){
             if(this.isStopRequested()){
                 return;
@@ -89,7 +102,7 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
             telemetry.update();
             sleep(50);
         }
-        double endYOffset = this.getRobotCore().getChassis().getPositionTracker().getRelativeOffset().Y;
+        double endYOffset = this.getRelativeOffset().Y;
         telemetry.addData("Info","End of Y factor tuning");
         telemetry.addData("Y Factor","Actual Distance Pushed / " + endYOffset);
         telemetry.addData("Info","Press X on gamepad to continue");
@@ -104,7 +117,7 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
         if(!waitForPadX()){
             return;
         }
-        this.getRobotCore().getChassis().getPositionTracker().resetRelativeOffset();
+        this.resetRelativeOffset();
         while((!gamepad1.x)){
             if(this.isStopRequested()){
                 return;
@@ -115,7 +128,7 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
             telemetry.update();
             sleep(50);
         }
-        double endZRot = this.getRobotCore().getChassis().getPositionTracker().getRelativeOffset().getRotationZ();
+        double endZRot = this.getRelativeOffset().getRotationZ();
         telemetry.addData("Info","End of Z Rot factor tuning");
         telemetry.addData("Z Rot Factor","Actual Deg Pushed / " + endZRot);
         telemetry.addData("Info","Congrats, Tuning is done!");

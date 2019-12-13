@@ -4,11 +4,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
+import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
+import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
 //Factor = trackedDistance / actualDistance
-public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPositionTracker {
+public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPositionTracker implements RobotGyro {
     private class RobotActive2DPositionTracker_Runnable implements Runnable{
         private volatile boolean m_RunningCommand = false;
         private volatile boolean m_RunningFlag = false;
@@ -59,6 +62,8 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
     }
     private RobotActive2DPositionTracker_Runnable m_RunnableTracking = null;
     private Thread m_TrackingThread = null;
+    private RobotGyro m_GyroProvider;
+    private float m_LastGyroReading;
 
     protected volatile double m_XDistanceFactor, m_YDistanceFactor, m_ZRotDistanceFactor;
     protected volatile int m_ThreadSleepTimeInMs = 20;
@@ -84,6 +89,7 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
         this.m_XDistanceFactor = oldDistanceFactor.X;
         this.m_YDistanceFactor = oldDistanceFactor.Y;
         this.m_ZRotDistanceFactor = oldDistanceFactor.getRotationZ();
+        this.setGyroProvider(oldTracker.m_GyroProvider);
         this.__setupRunnableTracking();
     }
 
@@ -123,9 +129,10 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
     }
 
     protected void drive_MoveThroughRobotAxisOffset(RobotPose2D robotAxisValues) {
-        RobotPose2D tempField = this.fieldAxisFromRobotAxis(robotAxisValues);
-        this.setCurrentPosition(tempField);
-        this.offsetRelative_RobotAxis(robotAxisValues);
+        synchronized (super.m_CurrentPos) {
+            RobotPose2D tempField = XYPlaneCalculations.getAbsolutePosition(super.m_CurrentPos,robotAxisValues);
+            super.m_CurrentPos = tempField;
+        }
     }
 
     protected void __trackLoopMoved(RobotVector2D velocity, RobotPose2D deltaRobotAxis){
@@ -152,5 +159,48 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
     }
     public boolean isRunning(){
         return this.m_RunnableTracking.isRunning();
+    }
+    @Override
+    public float getHeading() {
+        RobotPose2D currentPose = this.getCurrentPosition();
+        return (float) currentPose.getRotationZ();
+    }
+
+    @Override
+    public HeadingRotationPositiveOrientation getHeadingRotationPositiveOrientation() {
+        return HeadingRotationPositiveOrientation.CounterClockwise;
+    }
+
+    public RobotGyro getGyroProvider(){
+        return this.m_GyroProvider;
+    }
+
+    public void setGyroProvider(RobotGyro provider){
+        this.m_GyroProvider = provider;
+        if(provider != null) {
+            this.updateGyroProvider();
+            this.m_LastGyroReading = this.m_GyroProvider.getHeading();
+        }
+    }
+
+    protected void updateGyroProvider(){
+        if(this.m_GyroProvider != null && this.m_GyroProvider instanceof RobotNonBlockingDevice){
+            ((RobotNonBlockingDevice) this.m_GyroProvider).updateStatus();
+        }
+    }
+
+    protected double getDeltaAng(double supposedDeltaAng){
+        if(this.m_GyroProvider == null){
+            return supposedDeltaAng;
+        }else{
+            this.updateGyroProvider();
+            float newAng = this.m_GyroProvider.getHeading();
+            float deltaAngGyro = XYPlaneCalculations.normalizeDeg(newAng - this.m_LastGyroReading);
+            if(this.m_GyroProvider.getHeadingRotationPositiveOrientation() == HeadingRotationPositiveOrientation.Clockwise){
+                deltaAngGyro = -deltaAngGyro;
+            }
+            this.m_LastGyroReading = newAng;
+            return deltaAngGyro;
+        }
     }
 }

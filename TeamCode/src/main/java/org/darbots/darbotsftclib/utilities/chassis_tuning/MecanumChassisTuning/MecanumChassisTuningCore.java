@@ -87,13 +87,6 @@ public class MecanumChassisTuningCore extends RobotCore {
             currentPosLine.addData("Y",currentPos.Y);
             currentPosLine.addData("RotZ",currentPos.getRotationZ());
         }
-        {
-            RobotPose2D currentOffset = this.m_Chassis.getPositionTracker().getRelativeOffset();
-            Telemetry.Line currentPosLine = telemetry.addLine("Current Offset");
-            currentPosLine.addData("X",currentOffset.X);
-            currentPosLine.addData("Y",currentOffset.Y);
-            currentPosLine.addData("RotZ",currentOffset.getRotationZ());
-        }
     }
 
     @Override

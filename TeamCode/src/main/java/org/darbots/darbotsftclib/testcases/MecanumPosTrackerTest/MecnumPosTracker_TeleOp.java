@@ -27,10 +27,6 @@ public class MecnumPosTracker_TeleOp extends DarbotsBasicOpMode<TestMecanumCore>
     public void RunThisOpMode() {
         while(this.opModeIsActive()){
             this.m_Core.updateStatus();
-            if(gamepad1.x){
-                this.m_Core.getChassis().getPositionTracker().resetRelativeOffset();
-            }
-            telemetry.addData("Note","to reset offset Position, simply press x on gamepad 1");
             this.m_Core.updateTelemetry();
             telemetry.update();
         }

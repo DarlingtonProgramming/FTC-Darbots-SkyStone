@@ -46,11 +46,6 @@ public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanum
         while(this.opModeIsActive()){
             this.m_Core.updateStatus();
 
-            if(gamepad1.x){
-                this.m_Core.getChassis().getPositionTracker().resetRelativeOffset();
-            }
-            telemetry.addData("Note","to reset offset Position, simply press x on gamepad 1");
-
             if(!this.m_Core.getChassis().isBusy()){
                 if(Math.abs(gamepad1.left_stick_x) > 0.15 || Math.abs(gamepad1.left_stick_y) > 0.15){
                     double mappedX = -gamepad1.left_stick_y;

@@ -85,18 +85,11 @@ public class TestMecanumCore extends RobotCore {
         Telemetry globalTele = GlobalUtil.getTelemetry();
         if(globalTele != null){
             RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
-            RobotPose2D offsetPos = this.m_PosTracker.getRelativeOffset();
             {
                 Telemetry.Line positionLine = globalTele.addLine("Current Position");
                 positionLine.addData("X", currentPos.X);
                 positionLine.addData("Y", currentPos.Y);
                 positionLine.addData("RotZ", currentPos.getRotationZ());
-            }
-            {
-                Telemetry.Line offsetPositionLine = globalTele.addLine("Current Offset");
-                offsetPositionLine.addData("X", offsetPos.X);
-                offsetPositionLine.addData("Y", offsetPos.Y);
-                offsetPositionLine.addData("RotZ", offsetPos.getRotationZ());
             }
             {
                 if (this.getChassis() != null && this.getChassis().isBusy()) {

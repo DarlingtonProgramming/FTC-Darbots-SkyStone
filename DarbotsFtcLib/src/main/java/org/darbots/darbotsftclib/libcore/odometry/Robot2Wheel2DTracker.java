@@ -85,6 +85,8 @@ public abstract class Robot2Wheel2DTracker extends RobotActive2DPositionTracker 
             deltaAngMoved = -deltaAngMoved;
         }
 
+        //deltaAngMoved = getDeltaAng(deltaAngMoved);
+
 
         double deltaXMoved = deltaDriveCM - deltaAngMoved * c_DRIVEENCODER_CM_PER_DEG;
         double deltaYMoved = deltaStrafeCM - deltaAngMoved * c_STRAFEENCODER_CM_PER_DEG;

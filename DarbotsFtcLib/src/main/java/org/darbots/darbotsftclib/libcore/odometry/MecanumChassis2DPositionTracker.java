@@ -90,6 +90,7 @@ public class MecanumChassis2DPositionTracker extends RobotActive2DPositionTracke
         double deltaYMoved = chassisSpeed.Y * secondsSinceLastLoop;
         double deltaAngMoved = chassisSpeed.getRotationZ() * secondsSinceLastLoop;
 
+        deltaAngMoved = getDeltaAng(deltaAngMoved);
 
         __trackLoopMoved(
                 chassisSpeed,
