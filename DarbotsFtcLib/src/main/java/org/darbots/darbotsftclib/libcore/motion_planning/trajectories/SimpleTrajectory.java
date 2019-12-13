@@ -16,14 +16,14 @@ public class SimpleTrajectory implements RobotTrajectory {
     public SimpleTrajectory(RobotPath path, MotionProfile profile, double resolution){
         this.m_Path = path;
         this.m_MotionProfile = profile;
-        this.m_MotionSegments = new ArrayList<>();
+        this.m_MotionSegments = new ArrayList<TrajectoryMotionSegment>();
         this.m_Resolution = resolution;
     }
 
     public SimpleTrajectory(SimpleTrajectory oldTrajectory){
         this.m_Path = oldTrajectory.m_Path;
         this.m_MotionProfile = oldTrajectory.m_MotionProfile;
-        this.m_MotionSegments = new ArrayList<>(oldTrajectory.m_MotionSegments);
+        this.m_MotionSegments = new ArrayList<TrajectoryMotionSegment>(oldTrajectory.m_MotionSegments);
         this.m_Resolution = oldTrajectory.m_Resolution;
     }
 

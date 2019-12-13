@@ -157,7 +157,7 @@ public class XYPlaneCalculations {
     public static ArrayList<RobotPoint2D> verticleLineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, double fixedX){
         double x1 = fixedX - circleCenter.X;
         double ySquared = Math.pow(circleRadius,2) - Math.pow(x1,2);
-        ArrayList<RobotPoint2D> allPoints = new ArrayList<>();
+        ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
         if(ySquared < 0){
             return allPoints;
         }
@@ -177,7 +177,7 @@ public class XYPlaneCalculations {
     public static ArrayList<RobotPoint2D> horizontalLineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, double fixedY){
         double y1 = fixedY - circleCenter.Y;
         double xSquared = Math.pow(circleRadius,2) - Math.pow(y1,2);
-        ArrayList<RobotPoint2D> allPoints = new ArrayList<>();
+        ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
         if(xSquared < 0){
             return allPoints;
         }
@@ -207,7 +207,7 @@ public class XYPlaneCalculations {
         if(linePoint1.X == linePoint2.X || linePoint1.Y == linePoint2.Y){
             ArrayList<RobotPoint2D> resultArray = null;
             if(linePoint1.X == linePoint2.X && linePoint1.Y == linePoint2.Y){
-                resultArray = new ArrayList<>();
+                resultArray = new ArrayList<RobotPoint2D>();
                 if(isPointAtCircleEdge(circleCenter,circleRadius,linePoint1)){
                     resultArray.add(linePoint1);
                 }
@@ -216,7 +216,7 @@ public class XYPlaneCalculations {
             }else { //linePoint1.Y == linePoint2.Y
                 resultArray = horizontalLineCircleIntersections(circleCenter,circleRadius,linePoint1.Y);
             }
-            ArrayList<RobotPoint2D> allPoints = new ArrayList<>();
+            ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
             for(RobotPoint2D i : resultArray){
                 if(isInBoundingBox(i,boundingBoxMin,boundingBoxMax)){
                     allPoints.add(i);
@@ -234,7 +234,7 @@ public class XYPlaneCalculations {
         double quadraticC = ((Math.pow(m1,2) * Math.pow(x1,2))) - (2.0 * y1 * m1 * x1) + Math.pow(y1,2) - Math.pow(circleRadius,2);
         double quadraticDelta = Math.pow(quadraticB,2) - (4.0 * quadraticA * quadraticC);
 
-        ArrayList<RobotPoint2D> allPoints = new ArrayList<>();
+        ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
         if(quadraticDelta > 0) {
             double xRoot1 = (-quadraticB + Math.sqrt(quadraticDelta)) / (2.0 * quadraticA);
             double yRoot1 = m1 * (xRoot1 - x1) + y1;

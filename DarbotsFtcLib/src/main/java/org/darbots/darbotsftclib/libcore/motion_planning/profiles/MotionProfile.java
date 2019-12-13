@@ -9,12 +9,12 @@ public class MotionProfile {
     public double StartVelocity;
 
     public MotionProfile(double startVelocity){
-        this.m_MotionSegments = new ArrayList<>();
+        this.m_MotionSegments = new ArrayList<MotionProfileSegment>();
         this.StartVelocity = startVelocity;
     }
 
     public MotionProfile(MotionProfile oldProfile){
-        this.m_MotionSegments = new ArrayList<>();
+        this.m_MotionSegments = new ArrayList<MotionProfileSegment>();
         this.m_MotionSegments.addAll(oldProfile.getMotionSegments());
         this.StartVelocity = oldProfile.StartVelocity;
     }
@@ -138,7 +138,7 @@ public class MotionProfile {
 
     public MotionProfile reversed(){
         MotionState endState = this.getMotionStateAt(this.getTotalDuration());
-        ArrayList<MotionProfileSegment> newSegment = new ArrayList<>();
+        ArrayList<MotionProfileSegment> newSegment = new ArrayList<MotionProfileSegment>();
         for(MotionProfileSegment i : this.m_MotionSegments){
             newSegment.add(i.reversed());
         }
@@ -155,7 +155,7 @@ public class MotionProfile {
         boolean finalSegment = false;
         boolean startCounting = false;
         boolean firstSegment = false;
-        ArrayList<MotionProfileSegment> newProfileSegments = new ArrayList<>();
+        ArrayList<MotionProfileSegment> newProfileSegments = new ArrayList<MotionProfileSegment>();
         double newProfileStartSpeed = 0;
         MotionProfileSegment ProfileSegmentGettingCounted = null;
         for(MotionProfileSegment i : this.m_MotionSegments){
@@ -199,7 +199,7 @@ public class MotionProfile {
 
     public MotionProfile negative(){
 
-        ArrayList<MotionProfileSegment> newSegment = new ArrayList<>();
+        ArrayList<MotionProfileSegment> newSegment = new ArrayList<MotionProfileSegment>();
         for(MotionProfileSegment i : this.m_MotionSegments){
             newSegment.add(i.negative());
         }

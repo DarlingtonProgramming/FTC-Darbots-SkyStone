@@ -11,11 +11,11 @@ public class PathCombinations implements RobotPath {
     private ArrayList<RobotPath> m_Paths;
 
     public PathCombinations(){
-        this.m_Paths = new ArrayList<>();
+        this.m_Paths = new ArrayList<RobotPath>();
     }
 
     public PathCombinations(PathCombinations oldCombination){
-        this.m_Paths = new ArrayList<>();
+        this.m_Paths = new ArrayList<RobotPath>();
         this.m_Paths.addAll(oldCombination.m_Paths);
     }
 

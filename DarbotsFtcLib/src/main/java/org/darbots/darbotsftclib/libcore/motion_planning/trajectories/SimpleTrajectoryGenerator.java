@@ -3,7 +3,6 @@ package org.darbots.darbotsftclib.libcore.motion_planning.trajectories;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.debug.Assertions;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfile;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfileGenerator;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfileIterator;
