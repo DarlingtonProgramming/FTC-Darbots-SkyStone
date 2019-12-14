@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.ChassisPIDCalculator;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.pid_control.PIDCoefficients;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
@@ -373,9 +374,23 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
 
     public double calculateMaxLinearSpeedInCMPerSec() {
         if (this.m_Cache_MaxLinear == -1) {
-            this.m_Cache_MaxLinear = Math.sqrt(Math.pow(this.calculateMaxLinearXSpeedInCMPerSec() / 2.0, 2) + Math.pow(this.calculateMaxLinearYSpeedInCMPerSec() / 2.0, 2));
+            this.m_Cache_MaxLinear = calculateMaxLinearSpeedInCMPerSec(45);
         }
         return this.m_Cache_MaxLinear;
+    }
+    public double calculateMaxLinearSpeedInCMPerSec(double headingAng){
+        headingAng = XYPlaneCalculations.normalizeDeg(headingAng);
+        double deltaX, deltaY;
+        if(headingAng == 90 || headingAng == -90) {
+            return this.calculateMaxLinearYSpeedInCMPerSec();
+        }else if(headingAng == 0 || headingAng == -180){ //No 180 deg here because it is normalized to [-180, 180)
+            return this.calculateMaxLinearXSpeedInCMPerSec();
+        }else{
+            deltaX = 1;
+            deltaY = Math.tan(Math.toRadians(headingAng)) * deltaX;
+        }
+        RobotVector2D theoraticalMax = getTheoreticalMaximumMotionState(deltaX,deltaY,0);
+        return Math.hypot(theoraticalMax.X,theoraticalMax.Y);
     }
     public MotionSystemConstraints getMotionSystemConstraints(double maximumAcceleration, double maximumJerk, double maximumAngularAcceleration, double maximumAngularJerk){
         return new MotionSystemConstraints(this.calculateMaxLinearSpeedInCMPerSec(),maximumAcceleration,maximumJerk,this.calculateMaxAngularSpeedInDegPerSec(),maximumAngularAcceleration,maximumAngularJerk);

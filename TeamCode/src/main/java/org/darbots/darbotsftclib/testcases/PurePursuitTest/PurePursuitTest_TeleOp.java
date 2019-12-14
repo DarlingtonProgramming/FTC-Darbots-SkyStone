@@ -51,10 +51,10 @@ public class PurePursuitTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> 
 
     @Override
     public void RunThisOpMode() {
-        double ACCELERATION = this.CONST_MAX_ACCEL_NORMALIZED * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec();
-        double STARTSPEED = this.CONST_TEST_STARTSPEED_NORMALIZED * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec();
-        double CRUISESPEED = this.CONST_TEST_CRUISESPEED_NORMALIZED * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec();
-        double ENDSPEED = this.CONST_TEST_ENDSPEED_NORMALIZED * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec();
+        double ACCELERATION = this.CONST_MAX_ACCEL_NORMALIZED * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(this.CONST_TEST_PREFERRED_ANGLE);
+        double STARTSPEED = this.CONST_TEST_STARTSPEED_NORMALIZED * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(this.CONST_TEST_PREFERRED_ANGLE);
+        double CRUISESPEED = this.CONST_TEST_CRUISESPEED_NORMALIZED * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(this.CONST_TEST_PREFERRED_ANGLE);
+        double ENDSPEED = this.CONST_TEST_ENDSPEED_NORMALIZED * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(this.CONST_TEST_PREFERRED_ANGLE);
         double ANGLESPEED = this.CONST_TEST_ANGLESPEED_NORMALIZED * this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec();
 
         PurePursuitPathFollower pathFollower = new PurePursuitPathFollower(

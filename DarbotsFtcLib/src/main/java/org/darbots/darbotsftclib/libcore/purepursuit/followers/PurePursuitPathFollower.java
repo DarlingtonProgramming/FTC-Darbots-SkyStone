@@ -250,11 +250,10 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
             pursuitPoint = endPoint;
         }
         if(this.m_EndingStarted && timeForEnding >= timeToEnd){
+            //try to correct the pose using PID with a supposed velocity of 0
             this.setRobotSpeed(new RobotVector2D(0,0,0),new RobotPose2D(endPoint,currentOffset.getRotationZ()));
         }else {
-            double normalizedPursuitSpeed = pursuitSpeed / this.getMotionSystem().calculateMaxLinearSpeedInCMPerSec();
-            double normalizedAngularSpeed = this.m_AngleSpeed / this.getMotionSystem().calculateMaxAngularSpeedInDegPerSec();
-            this.gotoPosition(currentOffset, pursuitPoint, normalizedPursuitSpeed, normalizedAngularSpeed, m_PreferredAngle);
+            this.gotoPosition(currentOffset, pursuitPoint, pursuitSpeed, this.m_AngleSpeed, m_PreferredAngle);
             this.m_LastSpeed = pursuitSpeed;
         }
     }
@@ -325,7 +324,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         }
     }
 
-    protected void gotoPosition(RobotPose2D currentOffset, RobotPoint2D targetPoint, double normalizedLinearSpeed, double normalizedAngularSpeed, double preferredAngle){
+    protected void gotoPosition(RobotPose2D currentOffset, RobotPoint2D targetPoint, double pursuitLinearSpeed, double pursuitAngularSpeed, double preferredAngle){
         RobotPoint2D currentRobotAxisTarget = XYPlaneCalculations.getRelativePosition(currentOffset,targetPoint);
         double targetPointAngle = Math.toDegrees(Math.atan2(currentRobotAxisTarget.Y,currentRobotAxisTarget.X));
         double wantedAngleInCurrentRobotAxis = targetPointAngle + preferredAngle;
@@ -333,10 +332,12 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         this.updateSupposedPos(supposedPose);
 
         double XAndYSpeed = Math.abs(currentRobotAxisTarget.X) + Math.abs(currentRobotAxisTarget.Y);
-        double xSpeed = currentRobotAxisTarget.X / XAndYSpeed, ySpeed = currentRobotAxisTarget.Y / XAndYSpeed;
-        xSpeed *= normalizedLinearSpeed;
-        ySpeed *= normalizedLinearSpeed;
-        double angularSpeed = Range.clip(wantedAngleInCurrentRobotAxis / 30.0,-1.0,1.0) * normalizedAngularSpeed;
+        double xSpeed = currentRobotAxisTarget.X, ySpeed = currentRobotAxisTarget.Y;
+        double tempSpeed = Math.hypot(xSpeed,ySpeed);
+        double tempFactor = pursuitLinearSpeed / tempSpeed;
+        xSpeed *= tempFactor;
+        ySpeed *= tempFactor;
+        double angularSpeed = Range.clip(wantedAngleInCurrentRobotAxis / 30.0,-1.0,1.0) * pursuitAngularSpeed;
 
         double distanceToTarget = currentRobotAxisTarget.distanceTo(new RobotPoint2D(0,0));
         if(distanceToTarget < 5){
@@ -344,8 +345,9 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         }
 
         this.getMotionSystem().setRobotSpeed(
-                xSpeed * this.getMotionSystem().calculateMaxLinearXSpeedInCMPerSec(),
-                ySpeed * this.getMotionSystem().calculateMaxLinearYSpeedInCMPerSec(),
-                angularSpeed * this.getMotionSystem().calculateMaxAngularSpeedInDegPerSec());
+                xSpeed,
+                ySpeed,
+                angularSpeed
+        );
     }
 }

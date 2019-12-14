@@ -18,9 +18,18 @@ public class MotionProfileGenerator {
         }
     }
     public static MotionProfile generateMotionProfile(double maxVelocity, double maxAcceleration, double maxJerk, double PathTotalDistance, double startVelocity, double cruiseVelocity, double endVelocity){
+        return generateMotionProfile_JERKUNLIMITED(maxVelocity,maxAcceleration,PathTotalDistance,startVelocity,cruiseVelocity,endVelocity);
+
+        /*
+        if(PathTotalDistance < 0){
+            return generateMotionProfile(maxVelocity,maxAcceleration,maxJerk,-PathTotalDistance,startVelocity,cruiseVelocity,endVelocity).reversed();
+        }
         startVelocity = Math.abs(startVelocity);
         cruiseVelocity = Math.abs(cruiseVelocity);
         endVelocity = Math.abs(endVelocity);
+        maxVelocity = Math.abs(maxVelocity);
+        maxAcceleration = Math.abs(maxAcceleration);
+        maxJerk = Math.abs(maxJerk);
 
         MotionProfile accelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,maxJerk,0,0, startVelocity,cruiseVelocity);
         MotionProfile decelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,maxJerk,0,0, cruiseVelocity,endVelocity);
@@ -46,11 +55,7 @@ public class MotionProfileGenerator {
             double startEndVMin = Math.min(startVelocity,endVelocity);
             double startEndVMax = Math.max(startVelocity,endVelocity);
             if(cruiseVelocity >= startEndVMin && cruiseVelocity <= startEndVMax){
-                MotionProfile returnProfile = new MotionProfile(cruiseVelocity);
-                double cruiseTime = PathTotalDistance / cruiseVelocity;
-                MotionProfileSegment cruiseSegment = new MotionProfileSegment(0,0,cruiseTime);
-                returnProfile.addAtEnd(cruiseSegment);
-                return returnProfile;
+                return generateMotionProfileWithConstantVelocityAndDistance(cruiseVelocity,PathTotalDistance);
             }else{
                 //try to lower / rise cruise speed and see if we can achieve anything better than just cruise at cruise speed.
                 final double finalMaxAccel = maxAcceleration, finalMaxJerk = maxJerk;
@@ -78,11 +83,7 @@ public class MotionProfileGenerator {
                 double solverMaxCruise = cruiseVelocity < startEndVMin ? startEndVMin : cruiseVelocity;
                 double solvedCruiseSpeed = OrderedValueSolver.solve(valueProvider,PATH_DISTANCE_ERROR_MARGIN,solverMinCruise,solverMaxCruise,PathTotalDistance);
                 if(solvedCruiseSpeed == OrderedValueSolver.RESULT_NOSOLUTION){
-                    MotionProfile returnProfile = new MotionProfile(cruiseVelocity);
-                    double cruiseTime = PathTotalDistance / cruiseVelocity;
-                    MotionProfileSegment cruiseSegment = new MotionProfileSegment(0,0,cruiseTime);
-                    returnProfile.addAtEnd(cruiseSegment);
-                    return returnProfile;
+                    return generateMotionProfileWithConstantVelocityAndDistance(cruiseVelocity,PathTotalDistance);
                 }else{
                     MotionProfile newAccelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,maxJerk,0,0, startVelocity,solvedCruiseSpeed);
                     MotionProfile newDecelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,maxJerk,0,0, solvedCruiseSpeed,endVelocity);
@@ -93,12 +94,69 @@ public class MotionProfileGenerator {
                 }
             }
         }
+
+         */
+    }
+    public static MotionProfile generateMotionProfile_JERKUNLIMITED(double maxVelocity, double maxAcceleration, double PathTotalDistance, double startVelocity, double cruiseVelocity, double endVelocity){
+        if(PathTotalDistance < 0){
+            return generateMotionProfile_JERKUNLIMITED(maxVelocity,maxAcceleration,-PathTotalDistance,startVelocity,cruiseVelocity,endVelocity).reversed();
+        }
+        startVelocity = Math.abs(startVelocity);
+        cruiseVelocity = Math.abs(cruiseVelocity);
+        endVelocity = Math.abs(endVelocity);
+        maxVelocity = Math.abs(maxVelocity);
+        maxAcceleration = Math.abs(maxAcceleration);
+
+        MotionProfile accelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,0,0,0, startVelocity,cruiseVelocity);
+        MotionProfile decelerateProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,0,0,0, cruiseVelocity,endVelocity);
+        double accelerateTotalDuration = accelerateProfile.getTotalDuration();
+        double decelerateTotalDuration = decelerateProfile.getTotalDuration();
+        MotionState accelerateEndState = accelerateProfile.getMotionStateAt(accelerateTotalDuration);
+        MotionState decelerateEndState = decelerateProfile.getMotionStateAt(decelerateTotalDuration);
+        double accelerateAndDecelerateDistance = accelerateEndState.distance + decelerateEndState.distance;
+        if(accelerateAndDecelerateDistance < PathTotalDistance){
+            MotionProfile returnProfile = new MotionProfile(startVelocity);
+            double cruiseTime = (PathTotalDistance - accelerateAndDecelerateDistance) / cruiseVelocity;
+            MotionProfileSegment cruiseSegment = new MotionProfileSegment(0,0,cruiseTime);
+            returnProfile.addAtEnd(accelerateProfile);
+            returnProfile.addAtEnd(cruiseSegment);
+            returnProfile.addAtEnd(decelerateProfile);
+            return returnProfile;
+        }else if(Math.abs(accelerateAndDecelerateDistance - PathTotalDistance) <= PATH_DISTANCE_ERROR_MARGIN){
+            MotionProfile returnProfile = new MotionProfile(startVelocity);
+            returnProfile.addAtEnd(accelerateProfile);
+            returnProfile.addAtEnd(decelerateProfile);
+            return returnProfile;
+        }else {
+            double startEndVMin = Math.min(startVelocity, endVelocity);
+            double startEndVMax = Math.max(startVelocity, endVelocity);
+            if (cruiseVelocity >= startEndVMin && cruiseVelocity <= startEndVMax) {
+                return generateMotionProfileWithConstantVelocityAndDistance(cruiseVelocity,PathTotalDistance);
+            }else{
+                double QuadraticAccel = cruiseVelocity < startEndVMin ? -maxAcceleration : maxAcceleration;
+                double QuadraticRight = QuadraticAccel * PathTotalDistance + (Math.pow(startVelocity,2) / 2.0) + (Math.pow(endVelocity,2) / 2.0);
+                if(QuadraticRight < 0){
+                    return generateMotionProfileWithConstantVelocityAndDistance(cruiseVelocity,PathTotalDistance);
+                }
+                double newCruiseSpeed = Math.sqrt(QuadraticRight);
+                MotionProfile returnProfile = new MotionProfile(startVelocity);
+                MotionProfile newStartProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,0,0,0,startVelocity,newCruiseSpeed);
+                MotionProfile newEndProfile = generateMotionProfileFromOneSpeedToAnother(maxAcceleration,0,0,0,newCruiseSpeed,endVelocity);
+                returnProfile.addAtEnd(newStartProfile);
+                returnProfile.addAtEnd(newEndProfile);
+                return returnProfile;
+            }
+        }
     }
     public static MotionProfile generateMotionProfileWithConstantVelocity(double constantVelocity, double duration){
         MotionProfile returnProfile = new MotionProfile(constantVelocity);
         MotionProfileSegment segment = new MotionProfileSegment(0,0,duration);
         returnProfile.addAtEnd(segment);
         return returnProfile;
+    }
+    public static MotionProfile generateMotionProfileWithConstantVelocityAndDistance(double constantVelocity,double distance){
+        double timeRequired = distance / constantVelocity;
+        return generateMotionProfileWithConstantVelocity(constantVelocity,timeRequired);
     }
     public static MotionProfile generateMotionProfileFromOneSpeedToAnother(double maxAccel, double maxJerk, double startAcceleration, double endAcceleration, double startVelocity, double endVelocity){
         if(endVelocity < startVelocity){
