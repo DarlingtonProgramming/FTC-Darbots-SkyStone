@@ -11,6 +11,7 @@ import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 
 public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends LinearOpMode {
+    protected boolean FEATURE_EnableUSBCommandReadAfterDSStop = false;
     private ElapsedTime m_TimerSinceStart = null;
     private ElapsedTime m_TimerSinceInit = null;
     public abstract CoreType getRobotCore();
@@ -30,6 +31,9 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
             GlobalUtil.OpModeStarted();
             this.m_TimerSinceStart = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
             RunThisOpMode();
+        }
+        if(FEATURE_EnableUSBCommandReadAfterDSStop) {
+            Thread.interrupted(); //clear Interrupted Status to enable read from the hub.
         }
         GlobalUtil.addLog("DarbotsBasicOpMode","Status",new String_Log("OpMode stopping"), LogLevel.DEBUG);
 
