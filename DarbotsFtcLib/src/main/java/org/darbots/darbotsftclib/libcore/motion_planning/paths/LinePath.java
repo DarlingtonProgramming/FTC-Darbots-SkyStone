@@ -33,11 +33,6 @@ public class LinePath implements RobotPath {
     }
 
     @Override
-    public DarbotsDerivative getDerivativeYOverXAtDistance(double distance) {
-        return new DarbotsDerivative(this.targetX,this.targetY);
-    }
-
-    @Override
     public DarbotsDerivative getDerivativeYOverXBetweenDistance(double startDistance, double endDistance) {
         return new DarbotsDerivative(this.targetX,this.targetY);
     }

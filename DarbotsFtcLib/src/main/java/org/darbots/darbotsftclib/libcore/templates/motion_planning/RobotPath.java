@@ -6,6 +6,5 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Ro
 public interface RobotPath {
     double getTotalDistance();
     RobotPoint2D getPointAtDistance(double distance);
-    DarbotsDerivative getDerivativeYOverXAtDistance(double distance);
     DarbotsDerivative getDerivativeYOverXBetweenDistance(double startDistance, double endDistance);
 }

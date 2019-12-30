@@ -76,6 +76,15 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
         return this.opModeIsActive();
     }
 
+    public boolean waitForDrive_WithTelemetry(){
+        while(this.opModeIsActive() && this.getRobotCore().getChassis().isBusy()){
+            this.getRobotCore().updateStatus();
+            this.getRobotCore().updateTelemetry();
+            this.telemetry.update();
+        }
+        return this.opModeIsActive();
+    }
+
     public boolean delay(double seconds){
         ElapsedTime m_Time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         m_Time.reset();

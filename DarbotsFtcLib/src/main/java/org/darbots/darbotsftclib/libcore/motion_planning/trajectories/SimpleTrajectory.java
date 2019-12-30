@@ -8,33 +8,17 @@ import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotTrajecto
 import java.util.ArrayList;
 
 public class SimpleTrajectory implements RobotTrajectory {
-    private RobotPath m_Path;
-    private MotionProfile m_MotionProfile;
     private ArrayList<TrajectoryMotionSegment> m_MotionSegments;
     private double m_Resolution = 0;
 
-    public SimpleTrajectory(RobotPath path, MotionProfile profile, double resolution){
-        this.m_Path = path;
-        this.m_MotionProfile = profile;
+    public SimpleTrajectory(double resolution){
         this.m_MotionSegments = new ArrayList<TrajectoryMotionSegment>();
         this.m_Resolution = resolution;
     }
 
     public SimpleTrajectory(SimpleTrajectory oldTrajectory){
-        this.m_Path = oldTrajectory.m_Path;
-        this.m_MotionProfile = oldTrajectory.m_MotionProfile;
         this.m_MotionSegments = new ArrayList<TrajectoryMotionSegment>(oldTrajectory.m_MotionSegments);
         this.m_Resolution = oldTrajectory.m_Resolution;
-    }
-
-    @Override
-    public RobotPath getPath() {
-        return m_Path;
-    }
-
-    @Override
-    public MotionProfile getMotionProfile() {
-        return m_MotionProfile;
     }
 
     @Override
@@ -54,6 +38,14 @@ public class SimpleTrajectory implements RobotTrajectory {
 
     public ArrayList<TrajectoryMotionSegment> getMotionSegments(){
         return this.m_MotionSegments;
+    }
+
+    public double getTotalDuration(){
+        double durationCounter = 0;
+        for(TrajectoryMotionSegment i : this.m_MotionSegments){
+            durationCounter += i.duration;
+        }
+        return durationCounter;
     }
 
     public double getResolution(){

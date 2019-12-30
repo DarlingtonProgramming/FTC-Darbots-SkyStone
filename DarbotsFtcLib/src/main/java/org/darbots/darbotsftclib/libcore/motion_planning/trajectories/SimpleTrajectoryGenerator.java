@@ -15,7 +15,7 @@ public class SimpleTrajectoryGenerator {
         preferredAngle = XYPlaneCalculations.normalizeDeg(preferredAngle);
         resolutionInSeconds = Math.abs(resolutionInSeconds);
         MotionProfile generatedMotionProfile = MotionProfileGenerator.generatePathMotionProfile(constraints,pathToFollow,startSpeed,cruiseSpeed,endSpeed);
-        SimpleTrajectory TrajectoryResult = new SimpleTrajectory(pathToFollow,generatedMotionProfile,resolutionInSeconds);
+        SimpleTrajectory TrajectoryResult = new SimpleTrajectory(resolutionInSeconds);
 
         double totalDuration = generatedMotionProfile.getTotalDuration();
         double totalDistance = pathToFollow.getTotalDistance();

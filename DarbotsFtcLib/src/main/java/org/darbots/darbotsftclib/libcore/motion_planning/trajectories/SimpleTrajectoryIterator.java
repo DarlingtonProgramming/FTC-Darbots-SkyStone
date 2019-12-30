@@ -15,7 +15,7 @@ public class SimpleTrajectoryIterator implements RobotMotionProfilingIterator<Tr
         this.m_Trajectory = trajectory;
         this.m_CurrentDuration = 0;
         this.m_CurrentIndex = 0;
-        this.m_TotalDuration = trajectory.getMotionProfile().getTotalDuration();
+        this.m_TotalDuration = trajectory.getTotalDuration();
         this.m_CurrentState = this.getStateAt(0);
     }
 

@@ -15,7 +15,7 @@ public class PurePursuitTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> 
     public static final double CONST_MAX_ACCEL_NORMALIZED = 0.2;
     public static final double CONST_TEST_STARTSPEED_NORMALIZED = 0.2;
     public static final double CONST_TEST_CRUISESPEED_NORMALIZED = 0.8;
-    public static final double CONST_TEST_ENDSPEED_NORMALIZED = 0.8;
+    public static final double CONST_TEST_ENDSPEED_NORMALIZED = 0.0;
     public static final double CONST_TEST_ANGLESPEED_NORMALIZED = 0.4;
     public static final double CONST_TEST_FOLLOW_RADIUS = 25;
     public static final double CONST_TEST_PREFERRED_ANGLE = 0;

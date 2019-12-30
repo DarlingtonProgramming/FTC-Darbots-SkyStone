@@ -54,6 +54,7 @@ public class PathCombinations implements RobotPath {
         }
     }
 
+    /*
     @Override
     public DarbotsDerivative getDerivativeYOverXAtDistance(double distance) {
         double distanceCounter = 0;
@@ -72,6 +73,7 @@ public class PathCombinations implements RobotPath {
             return null;
         }
     }
+    */
 
     @Override
     public DarbotsDerivative getDerivativeYOverXBetweenDistance(double startDistance, double endDistance) {
