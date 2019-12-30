@@ -5,9 +5,11 @@ import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotMotionPr
 import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
 import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotTrajectory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SimpleTrajectory implements RobotTrajectory {
+public class SimpleTrajectory implements RobotTrajectory, Serializable {
+    private static final long serialVersionUID = 1L;
     private ArrayList<TrajectoryMotionSegment> m_MotionSegments;
     private double m_Resolution = 0;
 

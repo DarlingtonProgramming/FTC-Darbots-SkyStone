@@ -2,7 +2,10 @@ package org.darbots.darbotsftclib.libcore.motion_planning.trajectories;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 
-public class TrajectoryMotionSegment {
+import java.io.Serializable;
+
+public class TrajectoryMotionSegment implements Serializable {
+    private static final long serialVersionUID = 1L ;
     public double xDisplacement;
     public double yDisplacement;
     public double xVelocity;
