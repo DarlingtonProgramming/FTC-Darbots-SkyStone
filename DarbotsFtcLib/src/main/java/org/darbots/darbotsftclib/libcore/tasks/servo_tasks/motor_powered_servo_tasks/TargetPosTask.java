@@ -80,11 +80,13 @@ public class TargetPosTask extends RobotServoUsingMotorTask {
             RobotServoUsingMotor_WithLimitSwitch mServo = (RobotServoUsingMotor_WithLimitSwitch) this.getServoUsingMotor();
             if(mServo.getMinSwitch() != null){
                 if(mServo.getMinSwitch().isPressed() && this.m_TargetPos <= this.getTaskStartPos()){
+                    this.getServoUsingMotor().adjustCurrentPosition(this.getServoUsingMotor().getMinPos());
                     this.endTask(false);
                 }
             }
             if(mServo.getMaxSwitch() != null){
                 if(mServo.getMaxSwitch().isPressed() && this.m_TargetPos >= this.getTaskStartPos()){
+                    this.getServoUsingMotor().adjustCurrentPosition(this.getServoUsingMotor().getMaxPos());
                     this.endTask(false);
                 }
             }
