@@ -7,7 +7,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Ro
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.utilities.chassis_tuning.MecanumChassisTuning.MecanumChassisTuningCore;
 
-@TeleOp(group = "DarbotsLib-Utilities", name = "MecanumChassisFactorTuning")
+@TeleOp(group = "4100", name = "SwanSilverChassisTuning")
 public class SwanSilverChassisTuning extends DarbotsBasicOpMode<SwanSilverCore> {
     private SwanSilverCore m_Core;
     private RobotPose2D relativeOffsetPose;
