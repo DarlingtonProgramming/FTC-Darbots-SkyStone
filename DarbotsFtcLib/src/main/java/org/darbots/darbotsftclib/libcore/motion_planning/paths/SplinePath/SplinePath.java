@@ -89,7 +89,7 @@ public class SplinePath implements RobotPath {
         }else if((sortedYPoints.get(0).equals(origin) || sortedYPoints.get(sortedYPoints.size() - 1).equals(origin)) && (!recurringYInPoints(sortedYPoints))){
             List<Double> x = new ArrayList<>();
             List<Double> y = new ArrayList<>();
-            for(RobotPoint2D i : sortedXPoints){
+            for(RobotPoint2D i : sortedYPoints){
                 x.add(i.Y);
                 y.add(i.X);
             }
@@ -151,7 +151,7 @@ public class SplinePath implements RobotPath {
         double yTarget;
         if(!reversedSpline) {
             while (xCounter < biggestX) {
-                xTarget = xCounter + this.m_PathIntegrationResolution;
+                xTarget = xCounter + deltaXEveryTime;
                 if (xTarget > biggestX) {
                     xTarget = biggestX;
                 }
@@ -163,7 +163,7 @@ public class SplinePath implements RobotPath {
             }
         }else{
             while (xCounter > smallestX) {
-                xTarget = xCounter + this.m_PathIntegrationResolution;
+                xTarget = xCounter + deltaXEveryTime;
                 if (xTarget < smallestX) {
                     xTarget = smallestX;
                 }

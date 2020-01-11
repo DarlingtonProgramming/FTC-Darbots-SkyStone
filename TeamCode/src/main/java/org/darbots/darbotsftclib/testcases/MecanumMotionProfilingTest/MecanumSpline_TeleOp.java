@@ -38,7 +38,8 @@ public class MecanumSpline_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> {
 
     public void initializeSplinePoints(){
         this.m_SplinePoints = new ArrayList<>();
-
+        this.m_SplinePoints.add(new RobotPoint2D(-60,-60));
+        this.m_SplinePoints.add(new RobotPoint2D(0,-120));
     }
 
     @Override

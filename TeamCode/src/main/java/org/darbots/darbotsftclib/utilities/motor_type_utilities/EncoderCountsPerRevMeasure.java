@@ -2,21 +2,18 @@ package org.darbots.darbotsftclib.utilities.motor_type_utilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
-import org.darbots.darbotsftclib.libcore.motortypes.AndyMark3637;
+import org.darbots.darbotsftclib.libcore.motortypes.encoders.USDigital_E4T_360;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp(group = "DarbotsLib-Utilities", name = "EncoderCountsPerRevMeasureUtility")
 public class EncoderCountsPerRevMeasure extends DarbotsBasicOpMode {
     public static final String motorConfigName = "motor";
-    public static final MotorType motorCountsPerRevProvider = new AndyMark3637();
+    public static final MotorType motorCountsPerRevProvider = new USDigital_E4T_360();
 
     private RobotMotorWithEncoder m_Motor;
 

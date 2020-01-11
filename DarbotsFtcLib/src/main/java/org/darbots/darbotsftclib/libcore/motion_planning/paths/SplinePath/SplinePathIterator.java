@@ -63,7 +63,7 @@ public class SplinePathIterator implements RobotPathIterator {
                 yCounter = newY;
             }
         }
-        boolean forwardDistance = distanceCounter < targetDistance;
+        boolean forwardDistance = distanceCounter <= targetDistance;
         double deltaXEveryTime = reversedSpline ? -this.m_Resolution : this.m_Resolution;
         if(!forwardDistance){
             deltaXEveryTime = -deltaXEveryTime;
@@ -91,16 +91,26 @@ public class SplinePathIterator implements RobotPathIterator {
                 targetDeltaDistance = Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
                 if(targetDeltaDistance + distanceCounter == targetDistance){
                     return returnStatus(targetX,targetY,targetDistance);
-                }else if(targetDeltaDistance + distanceCounter > targetDistance){
+                }else if(forwardDistance && distanceCounter + targetDeltaDistance > targetDistance){
                     double remainingHypo = targetDistance - distanceCounter;
                     double factor = remainingHypo / targetDeltaDistance;
+                    double factoredDeltaX = deltaX * factor;
+                    double factoredDeltaY = deltaY * factor;
+                    return returnStatus(xCounter + factoredDeltaX,yCounter + factoredDeltaY,targetDeltaDistance);
+                }else if((!forwardDistance) && distanceCounter - targetDeltaDistance < targetDistance){
+                    double remainingHypo = targetDistance - distanceCounter;
+                    double factor = -(remainingHypo / targetDeltaDistance);
                     double factoredDeltaX = deltaX * factor;
                     double factoredDeltaY = deltaY * factor;
                     return returnStatus(xCounter + factoredDeltaX,yCounter + factoredDeltaY,targetDeltaDistance);
                 }
                 xCounter = targetX;
                 yCounter = targetY;
-                distanceCounter += targetDeltaDistance;
+                if(forwardDistance) {
+                    distanceCounter += targetDeltaDistance;
+                }else{
+                    distanceCounter -= targetDeltaDistance;
+                }
                 if(targetX == extremeX){
                     throw new NoSuchElementException("Iterated through the whole spline, but did not find the point");
                 }
