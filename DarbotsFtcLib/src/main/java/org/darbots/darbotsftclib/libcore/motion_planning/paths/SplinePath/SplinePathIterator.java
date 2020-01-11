@@ -35,125 +35,103 @@ public class SplinePathIterator implements RobotPathIterator {
         if(deltaDistance == 0){
             return this.current();
         }
-        double targetDistance = this.m_CurrentStatus.currentDistance + deltaDistance;
-        if(targetDistance < 0 || targetDistance > this.m_TotalDistance){
-            throw new NoSuchElementException("Distance Out Of Bound");
-        }
-        boolean reversedSpline = this.m_Path.m_Spline.getMinX() != 0;
-        double distanceCounter = this.m_CurrentStatus.currentDistance;
-        boolean xSpline = this.m_Path.m_SplineType == SplinePath.SplineType.X_BASED_SPLINE;
-        double xCounter;
-        double yCounter;
+        //Retrieve Info
+        double iteratorTargetDistance = this.m_CurrentStatus.currentDistance + deltaDistance;
+        boolean isXSpline = this.m_Path.m_SplineType == SplinePath.SplineType.X_BASED_SPLINE;
+        boolean isReversedSpline = this.m_Path.m_Spline.getMinX() != 0;
+        double xOrigin = 0;
+        double xExtreme = isReversedSpline ? this.m_Path.m_Spline.getMinX() : this.m_Path.m_Spline.getMaxX();
 
-        if(xSpline){
-            xCounter = this.m_CurrentStatus.currentPoint.X;
-            yCounter = this.m_CurrentStatus.currentPoint.Y;
-        }else{
-            xCounter = this.m_CurrentStatus.currentPoint.Y;
-            yCounter = this.m_CurrentStatus.currentPoint.X;
-        }
+        //Convert current status to a start status based on X/Y Spline Type
+        RobotPathIteratorStatus iteratorStartStatus =
+                this.m_Path.m_SplineType == SplinePath.SplineType.X_BASED_SPLINE ?
+                        new RobotPathIteratorStatus(this.m_CurrentStatus) :
+                        new RobotPathIteratorStatus(
+                                this.m_CurrentStatus.currentDistance,
+                                new RobotPoint2D(
+                                        this.m_CurrentStatus.currentPoint.Y,
+                                        this.m_CurrentStatus.currentPoint.X
+                                )
+                        );
+        double xCounter = iteratorStartStatus.currentPoint.X;
+        double yAtCounter = iteratorStartStatus.currentPoint.Y;
+        double distanceCounter = iteratorStartStatus.currentDistance;
 
+        //Fallback xCounter, yAtCounter, distanceCounter to a checkpoint, where the xCounter is a multiple of the resolution.
         {
-            double currentXRemainder = xCounter % this.m_Resolution;
-            if(currentXRemainder != 0){
-                double newX = xCounter - currentXRemainder;
-                double newY = this.m_Path.m_Spline.interpolate(xCounter);
-                distanceCounter -= Math.sqrt(Math.pow(newY - yCounter,2) + Math.pow(newX - xCounter,2));
+            double distanceBetweenXAndXOrigin = xCounter - xOrigin;
+            double xRemainder = distanceBetweenXAndXOrigin % this.m_Resolution;
+            if(xRemainder != 0){
+                double newX = xCounter - xRemainder;
+                double newY = this.m_Path.m_Spline.interpolate(newX);
+                distanceCounter -= Math.sqrt(Math.pow(newY - yAtCounter,2) + Math.pow(newX - xCounter,2));
                 xCounter = newX;
-                yCounter = newY;
+                yAtCounter = newY;
             }
         }
-        boolean forwardDistance = distanceCounter <= targetDistance;
-        double deltaXEveryTime = reversedSpline ? -this.m_Resolution : this.m_Resolution;
-        if(!forwardDistance){
-            deltaXEveryTime = -deltaXEveryTime;
+
+        if(distanceCounter == iteratorTargetDistance){
+            return returnStatus(isXSpline,xCounter,yAtCounter,distanceCounter);
         }
-        double extremeX;
-        double targetX, targetY;
-        double deltaX, deltaY;
-        double targetDeltaDistance;
-        if(forwardDistance){
-            extremeX = reversedSpline ? this.m_Path.m_Spline.getMinX() : this.m_Path.m_Spline.getMaxX();
-            while(true){
+
+        boolean isForwardDistance = distanceCounter <= iteratorTargetDistance;
+
+        if(isForwardDistance){
+            double deltaXEveryTime = isReversedSpline ? -this.m_Resolution : this.m_Resolution;
+            double targetX, targetY;
+            double deltaX, deltaY, deltaTargetDistance;
+            while(xCounter != xExtreme){
                 targetX = xCounter + deltaXEveryTime;
-                if(reversedSpline){
-                    if(targetX < extremeX){
-                        targetX = extremeX;
-                    }
-                }else{
-                    if(targetX > extremeX){
-                        targetX = extremeX;
-                    }
+                if((isReversedSpline && targetX < xExtreme) || ((!isReversedSpline) && targetX > xExtreme)){
+                    targetX = xExtreme;
                 }
                 targetY = this.m_Path.m_Spline.interpolate(targetX);
                 deltaX = targetX - xCounter;
-                deltaY = targetY - yCounter;
-                targetDeltaDistance = Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
-                if(targetDeltaDistance + distanceCounter == targetDistance){
-                    return returnStatus(targetX,targetY,targetDistance);
-                }else if(forwardDistance && distanceCounter + targetDeltaDistance > targetDistance){
-                    double remainingHypo = targetDistance - distanceCounter;
-                    double factor = remainingHypo / targetDeltaDistance;
-                    double factoredDeltaX = deltaX * factor;
-                    double factoredDeltaY = deltaY * factor;
-                    return returnStatus(xCounter + factoredDeltaX,yCounter + factoredDeltaY,targetDeltaDistance);
-                }else if((!forwardDistance) && distanceCounter - targetDeltaDistance < targetDistance){
-                    double remainingHypo = targetDistance - distanceCounter;
-                    double factor = -(remainingHypo / targetDeltaDistance);
-                    double factoredDeltaX = deltaX * factor;
-                    double factoredDeltaY = deltaY * factor;
-                    return returnStatus(xCounter + factoredDeltaX,yCounter + factoredDeltaY,targetDeltaDistance);
+                deltaY = targetY - yAtCounter;
+                deltaTargetDistance = Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
+                if(distanceCounter + deltaTargetDistance >= iteratorTargetDistance) {
+                    double distRemaining = iteratorTargetDistance - distanceCounter;
+                    double tempFactor = distRemaining / deltaTargetDistance;
+                    double newDeltaX = tempFactor * deltaX;
+                    double newDeltaY = tempFactor * deltaY;
+                    return returnStatus(isXSpline, xCounter + newDeltaX, yAtCounter + newDeltaY, iteratorTargetDistance);
                 }
                 xCounter = targetX;
-                yCounter = targetY;
-                if(forwardDistance) {
-                    distanceCounter += targetDeltaDistance;
-                }else{
-                    distanceCounter -= targetDeltaDistance;
-                }
-                if(targetX == extremeX){
-                    throw new NoSuchElementException("Iterated through the whole spline, but did not find the point");
-                }
+                yAtCounter = targetY;
+                distanceCounter += deltaTargetDistance;
             }
-        }else{ //!forwardDistance
-            extremeX = reversedSpline ? this.m_Path.m_Spline.getMaxX() : this.m_Path.m_Spline.getMinX();
-            while(true){
+            throw new NoSuchElementException("Iterated through the whole spline, but did not find the point");
+        }else{ //!isForwardDistance
+            double deltaXEveryTime = isReversedSpline ? this.m_Resolution : -this.m_Resolution;
+            double targetX, targetY;
+            double deltaX, deltaY, deltaTargetDistance;
+            while(xCounter != xExtreme){
                 targetX = xCounter + deltaXEveryTime;
-                if(reversedSpline){
-                    if(targetX > extremeX){
-                        targetX = extremeX;
-                    }
-                }else{
-                    if(targetX < extremeX){
-                        targetX = extremeX;
-                    }
+                if((isReversedSpline && targetX > xExtreme) || ((!isReversedSpline) && targetX < xExtreme)){
+                    targetX = xExtreme;
                 }
                 targetY = this.m_Path.m_Spline.interpolate(targetX);
                 deltaX = targetX - xCounter;
-                deltaY = targetY - yCounter;
-                targetDeltaDistance = -Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
-                if(targetDeltaDistance + distanceCounter == targetDistance){
-                    return returnStatus(targetX,targetY,targetDistance);
-                }else if(targetDeltaDistance + distanceCounter < targetDistance){
-                    double remainingHypo = targetDistance - distanceCounter;
-                    double factor = remainingHypo / targetDeltaDistance;
-                    double factoredDeltaX = deltaX * factor;
-                    double factoredDeltaY = deltaY * factor;
-                    return returnStatus(xCounter + factoredDeltaX,yCounter + factoredDeltaY,targetDeltaDistance);
+                deltaY = targetY - yAtCounter;
+                deltaTargetDistance = -Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
+                if(distanceCounter + deltaTargetDistance <= iteratorTargetDistance) {
+                    double distRemaining = iteratorTargetDistance - distanceCounter; //neagtive
+                    double tempFactor = distRemaining / deltaTargetDistance;
+                    double newDeltaX = tempFactor * deltaX;
+                    double newDeltaY = tempFactor * deltaY;
+                    return returnStatus(isXSpline, xCounter + newDeltaX, yAtCounter + newDeltaY, iteratorTargetDistance);
                 }
+                
                 xCounter = targetX;
-                yCounter = targetY;
-                distanceCounter += targetDeltaDistance;
-                if(targetX == extremeX){
-                    throw new NoSuchElementException("Iterated through the whole spline, but did not find the point");
-                }
+                yAtCounter = targetY;
+                distanceCounter += deltaTargetDistance;
             }
+            throw new NoSuchElementException("Iterated through the whole spline, but did not find the point");
         }
     }
 
-    private RobotPathIteratorStatus returnStatus(double xCounter, double yCounter, double distanceCounter){
-        boolean xSpline = this.m_Path.m_SplineType == SplinePath.SplineType.X_BASED_SPLINE;
-        if(xSpline){
+    private RobotPathIteratorStatus returnStatus(boolean isXSpline, double xCounter, double yCounter, double distanceCounter){
+        if(isXSpline){
             this.m_CurrentStatus.currentPoint.X = xCounter;
             this.m_CurrentStatus.currentPoint.Y = yCounter;
         }else{
