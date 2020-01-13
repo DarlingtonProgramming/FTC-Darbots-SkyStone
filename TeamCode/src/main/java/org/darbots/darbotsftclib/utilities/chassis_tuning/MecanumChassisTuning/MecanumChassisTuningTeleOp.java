@@ -78,7 +78,7 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
         }
         double endXOffset = this.getRelativeOffset().X;
         telemetry.addData("Info","End of X factor tuning");
-        telemetry.addData("X Factor","Actual Distance Pushed / " + endXOffset);
+        telemetry.addData("X Factor","" + endXOffset + " / Actual Distance Pushed");
         telemetry.addData("Info", "Press X to continue");
         telemetry.update();
         if(!waitForPadX()){
@@ -104,7 +104,7 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
         }
         double endYOffset = this.getRelativeOffset().Y;
         telemetry.addData("Info","End of Y factor tuning");
-        telemetry.addData("Y Factor","Actual Distance Pushed / " + endYOffset);
+        telemetry.addData("Y Factor","" + endYOffset + " / Actual Distance Pushed");
         telemetry.addData("Info","Press X on gamepad to continue");
         telemetry.update();
         if(!waitForPadX()){
@@ -130,7 +130,7 @@ public class MecanumChassisTuningTeleOp extends DarbotsBasicOpMode<MecanumChassi
         }
         double endZRot = this.getRelativeOffset().getRotationZ();
         telemetry.addData("Info","End of Z Rot factor tuning");
-        telemetry.addData("Z Rot Factor","Actual Deg Pushed / " + endZRot);
+        telemetry.addData("Z Rot Factor","" + endZRot + " / Actual Deg Pushed");
         telemetry.addData("Info","Congrats, Tuning is done!");
         telemetry.update();
         while(this.opModeIsActive()){
