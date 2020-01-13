@@ -65,6 +65,5 @@ public class FTCMemory {
             initializeMemoryMap();
         }
         memoryMap.put(key,value);
-        saveMemoryMapToFile();
     }
 }

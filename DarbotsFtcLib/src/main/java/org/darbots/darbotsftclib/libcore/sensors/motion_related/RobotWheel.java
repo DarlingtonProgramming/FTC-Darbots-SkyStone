@@ -27,8 +27,9 @@ package org.darbots.darbotsftclib.libcore.sensors.motion_related;
 
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.templates.PositionIndicator;
 
-public class RobotWheel {
+public class RobotWheel implements PositionIndicator {
     private double m_Radius;
     private RobotPose2D m_OnRobotPosition;
 
@@ -36,6 +37,7 @@ public class RobotWheel {
         this.m_OnRobotPosition = OnRobotPosition;
         this.m_Radius = radius;
     }
+    @Override
     public RobotPose2D getOnRobotPosition(){
         return this.m_OnRobotPosition;
     }

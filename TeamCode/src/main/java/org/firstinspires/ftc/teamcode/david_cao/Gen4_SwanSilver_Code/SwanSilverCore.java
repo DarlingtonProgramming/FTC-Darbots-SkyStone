@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
+import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCMemory;
 import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark3637;
 import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series1150RPMMotor;
@@ -33,6 +34,17 @@ public class SwanSilverCore extends RobotCore {
     public SwanSilverCore(HardwareMap hardwareMap, String logFileName, int ThreadPriority) {
         super(logFileName, hardwareMap, ThreadPriority);
         __initHardware(hardwareMap);
+    }
+
+    public void readPosition(){
+        RobotPose2D readPosition = FTCMemory.getSetting("SwanSilverPosition",this.getChassis().getPositionTracker().getCurrentPosition());
+        if(readPosition != null) {
+            this.m_PosTracker.setCurrentPosition(readPosition);
+        }
+    }
+
+    public void savePosition(){
+        FTCMemory.setSetting("SwanSilverPosition",this.getChassis().getPositionTracker().getCurrentPosition());
     }
 
     protected void __initHardware(HardwareMap map){

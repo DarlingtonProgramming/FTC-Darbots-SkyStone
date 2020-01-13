@@ -1,8 +1,10 @@
 package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class RobotPoint2D {
+public class RobotPoint2D implements Serializable {
+    private static final long serialVersionUID = 1L;
     public static class XComparator implements Comparator<RobotPoint2D>{
         @Override
         public int compare(RobotPoint2D o1, RobotPoint2D o2) {

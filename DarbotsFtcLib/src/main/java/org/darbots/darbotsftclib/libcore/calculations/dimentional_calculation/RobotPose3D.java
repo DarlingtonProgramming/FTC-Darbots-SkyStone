@@ -26,7 +26,10 @@ SOFTWARE.
 package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 
 
-public class RobotPose3D {
+import java.io.Serializable;
+
+public class RobotPose3D implements Serializable {
+    private static final long serialVersionUID = 1L;
     public double X;
     public double Y;
     public double Z;
