@@ -8,13 +8,12 @@ import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
-public class OmniChassis2DPositionTracker extends RobotActive2DPositionTracker implements RobotGyro {
+public class OmniChassis2DPositionTracker extends RobotActive2DPositionTracker {
     private int m_LastLTEncoderCount, m_LastRTEncoderCount, m_LastLBEncoderCount, m_LastRBEncoderCount;
     private double c_LT_COUNTS_PER_DEG, c_RT_COUNTS_PER_DEG, c_LB_COUNTS_PER_DEG, c_RB_COUNTS_PER_DEG;
     private RobotMotor m_LTMotor, m_RTMotor, m_LBMotor, m_RBMotor;
 
     private OmniDrivetrain m_MotionSystem;
-    private volatile double m_HeadingAngle = 0.0;
 
     public OmniChassis2DPositionTracker(RobotPose2D initialPosition, OmniDrivetrain driveTrain) {
         super(initialPosition);
@@ -24,22 +23,6 @@ public class OmniChassis2DPositionTracker extends RobotActive2DPositionTracker i
     public OmniChassis2DPositionTracker(OmniChassis2DPositionTracker oldTracker) {
         super(oldTracker);
         this.m_MotionSystem = oldTracker.m_MotionSystem;
-        this.m_HeadingAngle = oldTracker.m_HeadingAngle;
-    }
-
-    @Override
-    public float getHeading() {
-        return (float) this.m_HeadingAngle;
-    }
-
-    @Override
-    public HeadingRotationPositiveOrientation getHeadingRotationPositiveOrientation() {
-        return HeadingRotationPositiveOrientation.CounterClockwise;
-    }
-
-    private void offsetHeading(double offsetAngle){
-        this.m_HeadingAngle = XYPlaneCalculations.normalizeDeg(this.m_HeadingAngle + offsetAngle);
-        return;
     }
 
     @Override
@@ -99,8 +82,6 @@ public class OmniChassis2DPositionTracker extends RobotActive2DPositionTracker i
                     deltaAngMoved
                 )
         );
-
-        offsetHeading(deltaAngMoved * OmniChassis2DPositionTracker.this.m_ZRotDistanceFactor);
 
         m_LastLTEncoderCount = newLTCount;
         m_LastRTEncoderCount = newRTCount;

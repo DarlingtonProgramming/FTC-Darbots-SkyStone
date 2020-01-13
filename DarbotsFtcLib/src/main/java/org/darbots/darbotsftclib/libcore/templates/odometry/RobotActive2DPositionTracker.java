@@ -138,8 +138,12 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
     protected void __trackLoopMoved(RobotVector2D velocity, RobotPose2D deltaRobotAxis){
         RobotVector2D fixedVelocity = new RobotVector2D(velocity.X / this.m_XDistanceFactor,velocity.Y / this.m_YDistanceFactor,velocity.getRotationZ() / this.m_ZRotDistanceFactor);
         RobotPose2D fixedDeltaRobotAxis = new RobotPose2D(deltaRobotAxis.X / this.m_XDistanceFactor, deltaRobotAxis.Y / this.m_YDistanceFactor, deltaRobotAxis.getRotationZ() / this.m_ZRotDistanceFactor);
-        this.setCurrentVelocityVector(fixedVelocity);
-        this.drive_MoveThroughRobotAxisOffset(fixedDeltaRobotAxis);
+        this.__trackLoopMovedRaw(fixedVelocity,fixedDeltaRobotAxis);
+    }
+
+    protected void __trackLoopMovedRaw(RobotVector2D velocity, RobotPose2D deltaRobotAxis){
+        this.setCurrentVelocityVector(velocity);
+        this.drive_MoveThroughRobotAxisOffset(deltaRobotAxis);
     }
 
     protected abstract void __trackStart();
