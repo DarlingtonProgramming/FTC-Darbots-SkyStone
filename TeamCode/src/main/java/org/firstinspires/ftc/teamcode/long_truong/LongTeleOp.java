@@ -29,13 +29,14 @@
 
 package org.firstinspires.ftc.teamcode.long_truong;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="Long TeleOp", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class LongTeleOp extends LinearOpMode {
     HardwareLongBot robot = new HardwareLongBot();
 

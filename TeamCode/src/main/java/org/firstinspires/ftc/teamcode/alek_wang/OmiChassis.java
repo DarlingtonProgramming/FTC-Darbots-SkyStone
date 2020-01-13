@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.alek_wang;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="HUB_OmniChassis", group="Wang")
+@Disabled
 public class OmiChassis extends LinearOpMode {
     private DcMotor lf,lb = null;
     private DcMotor rf,rb = null;
