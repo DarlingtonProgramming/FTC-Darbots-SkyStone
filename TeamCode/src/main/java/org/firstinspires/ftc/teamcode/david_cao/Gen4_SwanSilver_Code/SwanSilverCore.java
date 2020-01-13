@@ -21,10 +21,6 @@ import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class SwanSilverCore extends RobotCore {
-    public static final double[] WheelPosition = {28.1/2,36.5/2};
-    public static final MotorType ChassisMotorType = MotorTypeUtil.applyGearRatio(new GoBilda5202Series1150RPMMotor(),2);
-    public static final double WheelRadius = 5;
-    public static final double XFactor = 1.0, YFactor = 1.0, RotZFactor = 1.0;
 
     private MecanumDrivetrain m_Chassis;
     private MecanumChassis2DPositionTracker m_PosTracker;
@@ -48,21 +44,23 @@ public class SwanSilverCore extends RobotCore {
         m_LeftBottomDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         m_RightTopDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         m_RightBottomDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        RobotWheel m_LeftTopWheel = new RobotWheel(new RobotPose2D(WheelPosition[0],WheelPosition[1],45),WheelRadius);
-        RobotWheel m_RightTopWheel = new RobotWheel(new RobotPose2D(WheelPosition[0],-WheelPosition[1],-45),WheelRadius);
-        RobotWheel m_LeftBottomWheel = new RobotWheel(new RobotPose2D(WheelPosition[0],-WheelPosition[1],135),WheelRadius);
-        RobotWheel m_RightBottomWheel = new RobotWheel(new RobotPose2D(-WheelPosition[0],-WheelPosition[1],-135),WheelRadius);
-        RobotMotion LTMotion = new RobotMotion(new RobotMotorWithEncoder(m_LeftTopDC,ChassisMotorType),m_LeftTopWheel);
-        RobotMotion LBMotion = new RobotMotion(new RobotMotorWithEncoder(m_LeftBottomDC,ChassisMotorType),m_LeftBottomWheel);
-        RobotMotion RTMotion = new RobotMotion(new RobotMotorWithEncoder(m_RightTopDC,ChassisMotorType),m_RightTopWheel);
-        RobotMotion RBMotion = new RobotMotion(new RobotMotorWithEncoder(m_RightBottomDC,ChassisMotorType),m_RightBottomWheel);
+        RobotWheel m_LeftTopWheel = new RobotWheel(new RobotPose2D(SwanSilverSettings.CHASSIS_LENGTH / 2,SwanSilverSettings.CHASSIS_WIDTH / 2,45),SwanSilverSettings.CHASSIS_WHEEL_RADIUS);
+        RobotWheel m_RightTopWheel = new RobotWheel(new RobotPose2D(SwanSilverSettings.CHASSIS_LENGTH / 2,-SwanSilverSettings.CHASSIS_WIDTH / 2,-45),SwanSilverSettings.CHASSIS_WHEEL_RADIUS);
+        RobotWheel m_LeftBottomWheel = new RobotWheel(new RobotPose2D(SwanSilverSettings.CHASSIS_LENGTH / 2,-SwanSilverSettings.CHASSIS_WIDTH / 2,135),SwanSilverSettings.CHASSIS_WHEEL_RADIUS);
+        RobotWheel m_RightBottomWheel = new RobotWheel(new RobotPose2D(-SwanSilverSettings.CHASSIS_LENGTH / 2,-SwanSilverSettings.CHASSIS_WIDTH / 2,-135),SwanSilverSettings.CHASSIS_WHEEL_RADIUS);
+        RobotMotion LTMotion = new RobotMotion(new RobotMotorWithEncoder(m_LeftTopDC,SwanSilverSettings.CHASSIS_MOTOR_TYPE),m_LeftTopWheel);
+        RobotMotion LBMotion = new RobotMotion(new RobotMotorWithEncoder(m_LeftBottomDC,SwanSilverSettings.CHASSIS_MOTOR_TYPE),m_LeftBottomWheel);
+        RobotMotion RTMotion = new RobotMotion(new RobotMotorWithEncoder(m_RightTopDC,SwanSilverSettings.CHASSIS_MOTOR_TYPE),m_RightTopWheel);
+        RobotMotion RBMotion = new RobotMotion(new RobotMotorWithEncoder(m_RightBottomDC,SwanSilverSettings.CHASSIS_MOTOR_TYPE),m_RightBottomWheel);
 
         this.m_Chassis = new MecanumDrivetrain(null,LTMotion,RTMotion,LBMotion,RBMotion);
-        this.m_Chassis.setLinearXMotionDistanceFactor(XFactor);
-        this.m_Chassis.setLinearYMotionDistanceFactor(YFactor);
-        this.m_Chassis.setRotationalMotionDistanceFactor(RotZFactor);
+        this.m_Chassis.setLinearXMotionDistanceFactor(SwanSilverSettings.CHASSIS_LINEAR_FACTORS.X);
+        this.m_Chassis.setLinearYMotionDistanceFactor(SwanSilverSettings.CHASSIS_LINEAR_FACTORS.Y);
+        this.m_Chassis.setRotationalMotionDistanceFactor(SwanSilverSettings.CHASSIS_LINEAR_FACTORS.getRotationZ());
+
         this.m_PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),this.m_Chassis);
-        this.m_PosTracker.setDistanceFactors(new RobotVector2D(XFactor,YFactor,RotZFactor));
+        this.m_PosTracker.setDistanceFactors(SwanSilverSettings.CHASSIS_LINEAR_FACTORS);
+
         this.m_Chassis.setPositionTracker(this.m_PosTracker);
         this.m_PosTracker.start();
     }
