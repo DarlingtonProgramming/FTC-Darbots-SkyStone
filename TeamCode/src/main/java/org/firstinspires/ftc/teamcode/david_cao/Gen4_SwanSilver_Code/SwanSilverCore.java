@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.david_cao.Gen4_SwanSilver_Code;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
@@ -52,6 +53,7 @@ public class SwanSilverCore extends RobotCore {
         DcMotor m_LeftBottomDC = map.dcMotor.get("LB");
         DcMotor m_RightTopDC = map.dcMotor.get("RF");
         DcMotor m_RightBottomDC = map.dcMotor.get("RB");
+
         m_LeftTopDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         m_LeftBottomDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         m_RightTopDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

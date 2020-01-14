@@ -37,6 +37,7 @@ public class SwanSilverChassisTuning extends DarbotsBasicOpMode<SwanSilverCore> 
     }
 
     public boolean waitForPadX(){
+        sleep(500);
         while(!(this.gamepad1.x)){
             if(this.isStopRequested()){
                 return false;
