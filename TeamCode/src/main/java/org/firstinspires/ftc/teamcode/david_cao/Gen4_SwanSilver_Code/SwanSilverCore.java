@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen4_SwanSilver_Code;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
@@ -13,9 +14,12 @@ import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series1150RPMMoto
 import org.darbots.darbotsftclib.libcore.motortypes.MotorTypeUtil;
 import org.darbots.darbotsftclib.libcore.odometry.MecanumChassis2DPositionTracker;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
+import org.darbots.darbotsftclib.libcore.runtime.SensorUtil;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
+import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorController;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
+import org.darbots.darbotsftclib.libcore.sensors.servos.motor_powered_servos.RobotServoUsingMotor;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
@@ -26,6 +30,9 @@ public class SwanSilverCore extends RobotCore {
 
     private MecanumDrivetrain m_Chassis;
     private MecanumChassis2DPositionTracker m_PosTracker;
+    public RobotServoUsingMotor Slide;
+    private Servo m_Grabber;
+    public Servo GrabberMover;
 
     public SwanSilverCore(HardwareMap hardwareMap, String logFileName) {
         super(logFileName, hardwareMap);
@@ -77,6 +84,17 @@ public class SwanSilverCore extends RobotCore {
 
         this.m_Chassis.setPositionTracker(this.m_PosTracker);
         this.m_PosTracker.start();
+
+        DcMotor linearSlideDCMotor = map.dcMotor.get("motorLinearSlide");
+        RobotMotorWithEncoder linearSlideMotor = new RobotMotorWithEncoder(linearSlideDCMotor,SwanSilverSettings.LINEAR_SLIDE_MOTORTYPE);
+        RobotMotorController linearSlideMotorController = new RobotMotorController(linearSlideMotor,SwanSilverSettings.LINEAR_SLIDE_TIMEOUT,SwanSilverSettings.LINEAR_SLIDE_TIMEOUT_FACTOR);
+
+        this.Slide = new RobotServoUsingMotor(linearSlideMotorController,SwanSilverSettings.LINEAR_SLIDE_INIT,SwanSilverSettings.LINEAR_SLIDE_MIN,SwanSilverSettings.LINEAR_SLIDE_MAX);
+        this.m_Grabber = map.servo.get("servoGrabber");
+        SensorUtil.setServoPulseWidth(this.m_Grabber,SwanSilverSettings.GRABBER_SERVO_TYPE);
+        this.GrabberMover = map.servo.get("servoGrabberMover");
+        SensorUtil.setServoPulseWidth(this.GrabberMover,SwanSilverSettings.GRABBERMOVER_SERVO_TYPE);
+        this.GrabberMover.scaleRange(SwanSilverSettings.GRABBERMOVER_MIN,SwanSilverSettings.GRABBERMOVER_MAX);
     }
 
     @Override
@@ -136,6 +154,7 @@ public class SwanSilverCore extends RobotCore {
     @Override
     protected void __updateStatus() {
         this.m_Chassis.updateStatus();
+        this.Slide.updateStatus();
         if(this.getGyro() != null && this.getGyro() instanceof RobotNonBlockingDevice){
             ((RobotNonBlockingDevice) this.getGyro()).updateStatus();
         }
