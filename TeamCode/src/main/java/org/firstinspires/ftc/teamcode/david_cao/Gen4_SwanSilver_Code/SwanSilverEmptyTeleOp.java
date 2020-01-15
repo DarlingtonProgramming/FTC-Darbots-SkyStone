@@ -67,7 +67,6 @@ public class SwanSilverEmptyTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
                     TargetPosSpeedCtlTask newTask = new TargetPosSpeedCtlTask(null,SwanSilverSettings.LINEAR_SLIDE_MAX,targetY);
                     this.m_Core.Slide.replaceTask(newTask);
                 }
-
             }else{ //targetY < 0
                 if(currentSpecificTask != null && currentSpecificTask.getTargetPos() == SwanSilverSettings.LINEAR_SLIDE_MIN){
                     currentSpecificTask.setPower(-targetY);
