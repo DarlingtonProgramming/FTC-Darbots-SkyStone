@@ -45,6 +45,9 @@ public class FTCFileIO {
     public static void writeBitmapFile(File file, Bitmap content, int quality ,Bitmap.CompressFormat CompressFormat){
         FileOutputStream stream = null;
         try{
+            if(!file.isFile()){
+                file.createNewFile();
+            }
             stream = new FileOutputStream(file);
             content.compress(CompressFormat,quality,stream);
         }catch(Exception e){
