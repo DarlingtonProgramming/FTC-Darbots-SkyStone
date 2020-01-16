@@ -33,6 +33,7 @@ public class SwanSilverCore extends RobotCore {
     public RobotServoUsingMotor Slide;
     private Servo m_Grabber;
     public Servo GrabberMover;
+    private Servo m_FoundationGrabberL, m_FoundationGrabberR;
 
     public SwanSilverCore(HardwareMap hardwareMap, String logFileName) {
         super(logFileName, hardwareMap);
@@ -95,6 +96,11 @@ public class SwanSilverCore extends RobotCore {
         this.GrabberMover = map.servo.get("servoGrabberMover");
         SensorUtil.setServoPulseWidth(this.GrabberMover,SwanSilverSettings.GRABBERMOVER_SERVO_TYPE);
         this.GrabberMover.scaleRange(SwanSilverSettings.GRABBERMOVER_MIN,SwanSilverSettings.GRABBERMOVER_MAX);
+
+        this.m_FoundationGrabberL = map.servo.get("servoFoundationGrabberL");
+        this.m_FoundationGrabberR = map.servo.get("servoFoundationGrabberR");
+        SensorUtil.setServoPulseWidth(this.m_FoundationGrabberL,SwanSilverSettings.FOUNDATION_GRABBER_TYPE);
+        SensorUtil.setServoPulseWidth(this.m_FoundationGrabberR,SwanSilverSettings.FOUNDATION_GRABBER_TYPE);
     }
 
     @Override

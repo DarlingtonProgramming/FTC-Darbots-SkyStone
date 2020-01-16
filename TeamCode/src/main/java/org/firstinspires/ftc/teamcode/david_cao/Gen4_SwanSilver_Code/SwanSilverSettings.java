@@ -58,5 +58,12 @@ public class SwanSilverSettings {
     public static ServoType GRABBER_SERVO_TYPE = new HS625MG();
     public static double GRABBERMOVER_MIN = 0.14, GRABBERMOVER_MAX = 0.65;
     public static ServoType GRABBERMOVER_SERVO_TYPE = new HS785HB();
+
+    public static ServoType FOUNDATION_GRABBER_TYPE = null;
+    public static double FOUNDATION_GRABBER_OFFSET = 0.1;
+    public static double FOUNDATION_GRABBER_L_GRAB = (1.0 - FOUNDATION_GRABBER_OFFSET);
+    public static double FOUNDATION_GRABBER_L_RELEASED = 0.0;
+    public static double FOUNDATION_GRABBER_R_GRAB = (0.0 + FOUNDATION_GRABBER_OFFSET);
+    public static double FOUNDATION_GRABBER_R_RELEASED = 1.0;
     //========== End of On Robot Component Settings ==========
 }
