@@ -75,12 +75,12 @@ public class SwanSilverCore extends RobotCore {
         RobotMotion RBMotion = new RobotMotion(new RobotMotorWithEncoder(m_RightBottomDC,SwanSilverSettings.CHASSIS_MOTOR_TYPE),m_RightBottomWheel);
 
         this.m_Chassis = new MecanumDrivetrain(null,LTMotion,RTMotion,LBMotion,RBMotion);
-        this.m_Chassis.setLinearXMotionDistanceFactor(SwanSilverSettings.CHASSIS_LINEAR_FACTORS.X);
-        this.m_Chassis.setLinearYMotionDistanceFactor(SwanSilverSettings.CHASSIS_LINEAR_FACTORS.Y);
-        this.m_Chassis.setRotationalMotionDistanceFactor(SwanSilverSettings.CHASSIS_LINEAR_FACTORS.getRotationZ());
+        this.m_Chassis.setLinearXMotionDistanceFactor(SwanSilverSettings.CHASSIS_FACTORS.X);
+        this.m_Chassis.setLinearYMotionDistanceFactor(SwanSilverSettings.CHASSIS_FACTORS.Y);
+        this.m_Chassis.setRotationalMotionDistanceFactor(SwanSilverSettings.CHASSIS_FACTORS.getRotationZ());
 
         this.m_PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),this.m_Chassis);
-        this.m_PosTracker.setDistanceFactors(SwanSilverSettings.CHASSIS_LINEAR_FACTORS);
+        this.m_PosTracker.setDistanceFactors(SwanSilverSettings.CHASSIS_FACTORS);
 
         this.m_Chassis.setPositionTracker(this.m_PosTracker);
         this.m_PosTracker.start();
@@ -95,6 +95,7 @@ public class SwanSilverCore extends RobotCore {
         this.GrabberMover = map.servo.get("servoGrabberMover");
         SensorUtil.setServoPulseWidth(this.GrabberMover,SwanSilverSettings.GRABBERMOVER_SERVO_TYPE);
         this.GrabberMover.scaleRange(SwanSilverSettings.GRABBERMOVER_MIN,SwanSilverSettings.GRABBERMOVER_MAX);
+        this.GrabberMover.setPosition(0.5);
     }
 
     @Override
@@ -144,6 +145,10 @@ public class SwanSilverCore extends RobotCore {
                 }
             }
         }
+        {
+            Telemetry.Line slideLine = globalTele.addLine();
+            slideLine.addData("Linear Slide","" + this.Slide.getCurrentPosition() + " (" + this.Slide.getCurrentPercent() + "%)");
+        }
     }
 
     @Override
@@ -157,6 +162,14 @@ public class SwanSilverCore extends RobotCore {
         this.Slide.updateStatus();
         if(this.getGyro() != null && this.getGyro() instanceof RobotNonBlockingDevice){
             ((RobotNonBlockingDevice) this.getGyro()).updateStatus();
+        }
+    }
+
+    public void setGrabberToGrab(boolean isGrabbing){
+        if(isGrabbing){
+            this.m_Grabber.setPosition(SwanSilverSettings.GRABBER_GRAB);
+        }else{
+            this.m_Grabber.setPosition(SwanSilverSettings.GRABBER_NOTGRAB);
         }
     }
 }

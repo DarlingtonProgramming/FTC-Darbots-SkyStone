@@ -24,10 +24,10 @@ public class SwanSilverSettings {
     public static double CHASSIS_WHEEL_RADIUS = 5.08; //4 INCH DIAMETER
     public static double CHASSIS_LENGTH = 33.6; //14 GOBILDA BIG HOLES. 14*24mm
     public static double CHASSIS_WIDTH = 33.0;
-    public static RobotVector2D CHASSIS_LINEAR_FACTORS = new RobotVector2D(
+    public static RobotVector2D CHASSIS_FACTORS = new RobotVector2D(
             1.0,
-            1.0,
-            165.54 / 180.0
+            27.568 / 30.0,
+            175.847 / 180.0
     );
     //========== End of Chassis Settings ==========
 
@@ -46,6 +46,11 @@ public class SwanSilverSettings {
     public static boolean ODOMETRY_ENCODER1_REVERSED = false;
     public static boolean ODOMETRY_ENCODER2_REVERSED = false;
     public static double ODOMETRY_WHEEL_RADIUS = 1.9; //38mm RobotShop Wheel
+    public static RobotVector2D ODOMETRY_FACTORS = new RobotVector2D(
+            1.0,
+            1.0,
+            1.0
+    );
     //========== End of Position Tracker Settings ==========
 
     //========== On Robot Component Settings ==========

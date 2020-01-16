@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.david_cao.Gen4_SwanSilver_Code;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -8,6 +9,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XY
 import org.darbots.darbotsftclib.utilities.chassis_tuning.MecanumChassisTuning.MecanumChassisTuningCore;
 
 @TeleOp(group = "4100", name = "SwanSilverChassisTuning")
+@Disabled
 public class SwanSilverChassisTuning extends DarbotsBasicOpMode<SwanSilverCore> {
     private SwanSilverCore m_Core;
     private RobotPose2D relativeOffsetPose;
