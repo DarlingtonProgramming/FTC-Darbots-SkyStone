@@ -5,7 +5,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Ro
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 
-public abstract class SkyStoneAutoBase extends DarbotsBasicOpMode<SwanSilverCore> {
+public abstract class SwanSilverAutoBase extends DarbotsBasicOpMode<SwanSilverCore> {
     private SwanSilverCore m_Core;
     public boolean pointMirrored = false;
 
