@@ -7,8 +7,8 @@ import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.RobotMotionSystemTe
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosSpeedCtlTask;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.motor_powered_servos.RobotServoUsingMotorTask;
 
-@TeleOp(group = "4100", name = "4100TeleOpEmpty")
-public class SwanSilverEmptyTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
+@TeleOp(group = "4100", name = "4100Gen4-TeleOp")
+public class SwanSilverTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
     private SwanSilverCore m_Core;
     private RobotMotionSystemTeleOpTask driveTask;
     @Override
@@ -18,7 +18,7 @@ public class SwanSilverEmptyTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
 
     @Override
     public void hardwareInitialize() {
-        this.m_Core = new SwanSilverCore(this.hardwareMap,"SwanSilverEmptyTeleOp.log");
+        this.m_Core = new SwanSilverCore(this.hardwareMap,"SwanSilverTeleOp.log");
         driveTask = new RobotMotionSystemTeleOpTask();
         this.m_Core.getChassis().addTask(driveTask);
     }
@@ -61,17 +61,17 @@ public class SwanSilverEmptyTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
             RobotServoUsingMotorTask currentTask = this.m_Core.Slide.getCurrentTask();
             TargetPosSpeedCtlTask currentSpecificTask = currentTask == null || currentTask instanceof TargetPosSpeedCtlTask ? null : (TargetPosSpeedCtlTask) currentTask;
             if(targetY > 0){
-                if(currentSpecificTask != null && currentSpecificTask.getTargetPos() == SwanSilverSettings.LINEAR_SLIDE_MAX){
+                if(currentSpecificTask != null && currentSpecificTask.getTargetPos() == this.m_Core.Slide.getMaxPos()){
                     currentSpecificTask.setPower(targetY);
                 }else{
-                    TargetPosSpeedCtlTask newTask = new TargetPosSpeedCtlTask(null,SwanSilverSettings.LINEAR_SLIDE_MAX,targetY);
+                    TargetPosSpeedCtlTask newTask = new TargetPosSpeedCtlTask(null,this.m_Core.Slide.getMaxPos(),targetY);
                     this.m_Core.Slide.replaceTask(newTask);
                 }
             }else{ //targetY < 0
-                if(currentSpecificTask != null && currentSpecificTask.getTargetPos() == SwanSilverSettings.LINEAR_SLIDE_MIN){
+                if(currentSpecificTask != null && currentSpecificTask.getTargetPos() == this.m_Core.Slide.getMinPos()){
                     currentSpecificTask.setPower(-targetY);
                 }else{
-                    TargetPosSpeedCtlTask newTask = new TargetPosSpeedCtlTask(null,SwanSilverSettings.LINEAR_SLIDE_MIN,-targetY);
+                    TargetPosSpeedCtlTask newTask = new TargetPosSpeedCtlTask(null,this.m_Core.Slide.getMinPos(),-targetY);
                     this.m_Core.Slide.replaceTask(newTask);
                 }
             }
