@@ -21,6 +21,7 @@ public class SwanSilverTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
         this.m_Core = new SwanSilverCore(this.hardwareMap,"SwanSilverTeleOp.log");
         driveTask = new RobotMotionSystemTeleOpTask();
         this.m_Core.getChassis().addTask(driveTask);
+        this.m_Core.GrabberMover.adjustLastPosition(SwanSilverSettings.GRABBERMOVER_MEDIUM);
     }
 
     @Override
@@ -32,7 +33,10 @@ public class SwanSilverTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
     public void RunThisOpMode() {
         while(this.opModeIsActive()){
             driveControl();
+            foundationGraberControl();
             slideControl();
+            grabberControl();
+            grabberMoverControl();
 
             this.m_Core.updateStatus();
             this.m_Core.updateTelemetry();
@@ -52,6 +56,14 @@ public class SwanSilverTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
             driveTask.xSpeedNormalized = 0;
             driveTask.ySpeedNormalized = 0;
             driveTask.zRotSpeedNormalized = 0;
+        }
+    }
+
+    protected void foundationGraberControl(){
+        if(gamepad1.right_bumper){
+            this.m_Core.setFoundationGrabberToGrab(true);
+        }else{
+            this.m_Core.setFoundationGrabberToGrab(false);
         }
     }
 
@@ -77,6 +89,24 @@ public class SwanSilverTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
             }
         }else if(this.m_Core.Slide.isBusy()){
             this.m_Core.Slide.deleteAllTasks();
+        }
+    }
+    protected void grabberControl(){
+        if(this.gamepad2.right_bumper){
+            this.m_Core.setGrabberToGrab(true);
+        }else{
+            this.m_Core.setGrabberToGrab(false);
+        }
+    }
+    protected void grabberMoverControl(){
+        if(Math.abs(this.gamepad2.right_stick_x) >= SwanSilverSettings.CONTROL_STICK_THRESHOLD){
+            if(this.gamepad2.right_stick_x > 0) {
+                this.m_Core.GrabberMover.setTargetPosition(SwanSilverSettings.GRABBERMOVER_MAX,this.gamepad2.right_stick_x);
+            }else{
+                this.m_Core.GrabberMover.setTargetPosition(SwanSilverSettings.GRABBERMOVER_MIN,-this.gamepad2.right_stick_x);
+            }
+        }else{
+            this.m_Core.GrabberMover.stop();
         }
     }
 }

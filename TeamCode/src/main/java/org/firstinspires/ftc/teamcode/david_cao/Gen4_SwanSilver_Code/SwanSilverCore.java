@@ -19,6 +19,7 @@ import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorController;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
+import org.darbots.darbotsftclib.libcore.sensors.servos.TimeControlledServo;
 import org.darbots.darbotsftclib.libcore.sensors.servos.motor_powered_servos.RobotServoUsingMotor;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
@@ -32,7 +33,7 @@ public class SwanSilverCore extends RobotCore {
     private MecanumChassis2DPositionTracker m_PosTracker;
     public RobotServoUsingMotor Slide;
     private Servo m_Grabber;
-    public Servo GrabberMover;
+    public TimeControlledServo GrabberMover;
     private Servo m_FoundationGrabberL, m_FoundationGrabberR;
 
     public SwanSilverCore(HardwareMap hardwareMap, String logFileName) {
@@ -54,6 +55,27 @@ public class SwanSilverCore extends RobotCore {
 
     public void savePosition(){
         FTCMemory.setSetting("SwanSilverPosition",this.getChassis().getPositionTracker().getCurrentPosition());
+        FTCMemory.saveMemoryMapToFile();
+    }
+
+    public void saveSlidePosition(){
+        FTCMemory.setSetting("SwanSilverSlidePos",this.Slide.getCurrentPosition());
+        FTCMemory.saveMemoryMapToFile();
+    }
+
+    public void readSlidePosition(){
+        Double readPosition = FTCMemory.getSetting("SwanSilverSlidePos",this.Slide.getCurrentPosition());
+        this.Slide.adjustCurrentPosition(readPosition);
+    }
+
+    public void readAll(){
+        this.readPosition();
+        this.readSlidePosition();
+    }
+
+    public void saveAll(){
+        this.savePosition();
+        this.saveSlidePosition();
     }
 
     protected void __initHardware(HardwareMap map){
@@ -93,10 +115,9 @@ public class SwanSilverCore extends RobotCore {
         this.Slide = new RobotServoUsingMotor(linearSlideMotorController,SwanSilverSettings.LINEAR_SLIDE_INIT,SwanSilverSettings.LINEAR_SLIDE_MIN,SwanSilverSettings.LINEAR_SLIDE_MAX);
         this.m_Grabber = map.servo.get("servoGrabber");
         SensorUtil.setServoPulseWidth(this.m_Grabber,SwanSilverSettings.GRABBER_SERVO_TYPE);
-        this.GrabberMover = map.servo.get("servoGrabberMover");
-        SensorUtil.setServoPulseWidth(this.GrabberMover,SwanSilverSettings.GRABBERMOVER_SERVO_TYPE);
-        this.GrabberMover.scaleRange(SwanSilverSettings.GRABBERMOVER_MIN,SwanSilverSettings.GRABBERMOVER_MAX);
-        this.GrabberMover.setPosition(0.5);
+        Servo GrabberMoverServo = map.servo.get("servoGrabberMover");
+        SensorUtil.setServoPulseWidth(GrabberMoverServo,SwanSilverSettings.GRABBERMOVER_SERVO_TYPE);
+        this.GrabberMover = new TimeControlledServo(GrabberMoverServo,SwanSilverSettings.GRABBERMOVER_SERVO_TYPE,SwanSilverSettings.GRABBERMOVER_MIN,false);
 
         this.m_FoundationGrabberL = map.servo.get("servoFoundationGrabberL");
         this.m_FoundationGrabberR = map.servo.get("servoFoundationGrabberR");
@@ -166,6 +187,7 @@ public class SwanSilverCore extends RobotCore {
     protected void __updateStatus() {
         this.m_Chassis.updateStatus();
         this.Slide.updateStatus();
+        this.GrabberMover.updateStatus();
         if(this.getGyro() != null && this.getGyro() instanceof RobotNonBlockingDevice){
             ((RobotNonBlockingDevice) this.getGyro()).updateStatus();
         }
@@ -176,6 +198,16 @@ public class SwanSilverCore extends RobotCore {
             this.m_Grabber.setPosition(SwanSilverSettings.GRABBER_GRAB);
         }else{
             this.m_Grabber.setPosition(SwanSilverSettings.GRABBER_NOTGRAB);
+        }
+    }
+
+    public void setFoundationGrabberToGrab(boolean isGrabbing){
+        if(isGrabbing){
+            this.m_FoundationGrabberL.setPosition(SwanSilverSettings.FOUNDATION_GRABBER_L_GRAB);
+            this.m_FoundationGrabberR.setPosition(SwanSilverSettings.FOUNDATION_GRABBER_R_GRAB);
+        }else{
+            this.m_FoundationGrabberL.setPosition(SwanSilverSettings.FOUNDATION_GRABBER_L_RELEASED);
+            this.m_FoundationGrabberR.setPosition(SwanSilverSettings.FOUNDATION_GRABBER_R_RELEASED);
         }
     }
 }

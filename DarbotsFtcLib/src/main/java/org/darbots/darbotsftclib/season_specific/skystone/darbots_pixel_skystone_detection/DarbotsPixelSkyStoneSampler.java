@@ -8,7 +8,7 @@ import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotCamera;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneType;
 
 public class DarbotsPixelSkyStoneSampler {
-    public static final float BRIGHTNESS_SKYSTONE = 0.2f;
+    public static final float BRIGHTNESS_SKYSTONE = 0.35f;
     public static final float HUE_MIN_STONE = 45.0f;
     public static final float HUE_MAX_STONE = 75.0f;
 
@@ -23,11 +23,11 @@ public class DarbotsPixelSkyStoneSampler {
         int trial = 0;
         Bitmap frame = null;
         while(frame == null){
-            frame = this.m_Camera.getFrame();
             trial++;
             if(trial > 3){
                 return SkyStoneType.UNKNOWN;
             }
+            frame = this.m_Camera.getFrame();
         }
         int countedColor = FTCImageUtility.countScaledAverageColor(frame,originalImageWidth,originalImageHeight,originalImageStartX,originalImageStartY,originalImageEndX,originalImageEndY);
         float[] countedHSV = new float[3];

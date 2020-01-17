@@ -42,14 +42,14 @@ public class FTCFileIO {
         ReadWriteFile.writeFile(file,content);
     }
 
-    public static void writeBitmapFile(File file, Bitmap content, int quality ,Bitmap.CompressFormat CompressFormat){
+    public static void writeBitmapFile(File file, Bitmap content, int qualityPct ,Bitmap.CompressFormat CompressFormat){
         FileOutputStream stream = null;
         try{
             if(!file.isFile()){
                 file.createNewFile();
             }
             stream = new FileOutputStream(file);
-            content.compress(CompressFormat,quality,stream);
+            content.compress(CompressFormat,qualityPct,stream);
         }catch(Exception e){
 
         }finally{
@@ -69,6 +69,17 @@ public class FTCFileIO {
     }
     public static File getFirstFolderFile(String filename){
         return new File(AppUtil.FIRST_FOLDER,filename);
+    }
+    public static File getSnapshotFolder(){
+        File firstFolder = getFirstFolder();
+        File snapshotFolder = new File(firstFolder,"Snapshots");
+        if(!snapshotFolder.isDirectory()){
+            snapshotFolder.mkdirs();
+        }
+        return snapshotFolder;
+    }
+    public static File getSnapshotFolderFile(String filename){
+        return new File(getSnapshotFolder(),filename);
     }
     public static File getFirstFolder(){
         return AppUtil.FIRST_FOLDER;

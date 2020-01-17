@@ -44,6 +44,10 @@ public class TimeControlledServo implements RobotNonBlockingDevice {
         this.m_TaskTime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     }
 
+    public void adjustLastPosition(double lastPosition){
+        this.m_LastPosition = lastPosition;
+    }
+
     public Servo getServo(){
         return this.m_Servo;
     }

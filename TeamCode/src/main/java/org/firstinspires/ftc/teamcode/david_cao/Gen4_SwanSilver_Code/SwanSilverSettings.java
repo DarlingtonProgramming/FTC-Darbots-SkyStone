@@ -7,6 +7,7 @@ import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series435RPMMotor
 import org.darbots.darbotsftclib.libcore.motortypes.MotorTypeUtil;
 import org.darbots.darbotsftclib.libcore.motortypes.encoders.USDigital_E4T_360;
 import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS625MG;
+import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS755MG;
 import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS785HB;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
@@ -59,12 +60,12 @@ public class SwanSilverSettings {
     public static double LINEAR_SLIDE_TIMEOUT_FACTOR = 2.0;
     public static double LINEAR_SLIDE_MIN = 0.0, LINEAR_SLIDE_MAX = 1000.0, LINEAR_SLIDE_INIT = 0.0;
 
-    public static double GRABBER_GRAB = 0, GRABBER_NOTGRAB = 1.0;
+    public static double GRABBER_GRAB = 0, GRABBER_NOTGRAB = 0.7;
     public static ServoType GRABBER_SERVO_TYPE = new HS625MG();
-    public static double GRABBERMOVER_MIN = 0.14, GRABBERMOVER_MAX = 0.65;
+    public static double GRABBERMOVER_MIN = 0.14, GRABBERMOVER_MAX = 0.65, GRABBERMOVER_MEDIUM = (GRABBERMOVER_MIN + GRABBERMOVER_MAX) / 2.0;
     public static ServoType GRABBERMOVER_SERVO_TYPE = new HS785HB();
 
-    public static ServoType FOUNDATION_GRABBER_TYPE = null;
+    public static ServoType FOUNDATION_GRABBER_TYPE = new HS755MG();
     public static double FOUNDATION_GRABBER_OFFSET = 0.1;
     public static double FOUNDATION_GRABBER_L_GRAB = (1.0 - FOUNDATION_GRABBER_OFFSET);
     public static double FOUNDATION_GRABBER_L_RELEASED = 0.0;
