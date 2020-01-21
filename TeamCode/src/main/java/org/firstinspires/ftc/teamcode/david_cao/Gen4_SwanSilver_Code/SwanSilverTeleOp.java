@@ -45,7 +45,7 @@ public class SwanSilverTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
     }
 
     protected void driveControl(){
-        if(Math.abs(gamepad1.left_stick_x) >= SwanSilverSettings.CONTROL_DRIVE_THRESEHOLD || Math.abs(gamepad1.left_stick_y) >= SwanSilverSettings.CONTROL_DRIVE_THRESEHOLD || Math.abs(gamepad1.right_stick_x) >= SwanSilverSettings.CONTROL_DRIVE_THRESEHOLD){
+        if(Math.abs(gamepad1.left_stick_x) >= SwanSilverSettings.CONTROL_STICK_THRESHOLD || Math.abs(gamepad1.left_stick_y) >= SwanSilverSettings.CONTROL_STICK_THRESHOLD || Math.abs(gamepad1.right_stick_x) >= SwanSilverSettings.CONTROL_STICK_THRESHOLD){
             double xControl = -gamepad1.left_stick_y;
             double yControl = -gamepad1.left_stick_x;
             double rotControl = -gamepad1.right_stick_x;

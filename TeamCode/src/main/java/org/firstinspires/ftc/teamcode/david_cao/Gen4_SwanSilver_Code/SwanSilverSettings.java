@@ -14,7 +14,6 @@ import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 
 public class SwanSilverSettings {
 
-    public static double CONTROL_DRIVE_THRESEHOLD = 0.2;
     public static double CONTROL_STICK_THRESHOLD = 0.2;
 
     //========== Chassis Settings ==========
@@ -60,7 +59,7 @@ public class SwanSilverSettings {
     public static double LINEAR_SLIDE_TIMEOUT_FACTOR = 2.0;
     public static double LINEAR_SLIDE_MIN = 0.0, LINEAR_SLIDE_MAX = 1000.0, LINEAR_SLIDE_INIT = 0.0;
 
-    public static double GRABBER_GRAB = 0, GRABBER_NOTGRAB = 0.7;
+    public static double GRABBER_GRAB = 0, GRABBER_NOTGRAB = 1.0;
     public static ServoType GRABBER_SERVO_TYPE = new HS625MG();
     public static double GRABBERMOVER_MIN = 0.14, GRABBERMOVER_MAX = 0.65, GRABBERMOVER_MEDIUM = (GRABBERMOVER_MIN + GRABBERMOVER_MAX) / 2.0;
     public static ServoType GRABBERMOVER_SERVO_TYPE = new HS785HB();
