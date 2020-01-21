@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.david_cao.Gen4_SwanSilver_Code;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -8,6 +9,7 @@ import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_t
 import org.darbots.darbotsftclib.libcore.templates.servo_related.motor_powered_servos.RobotServoUsingMotorTask;
 
 @TeleOp(group = "4100", name = "4100Gen4-TeleOp")
+@Disabled
 public class SwanSilverTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
     private SwanSilverCore m_Core;
     private RobotMotionSystemTeleOpTask driveTask;
@@ -72,7 +74,7 @@ public class SwanSilverTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
             double targetY = -gamepad2.left_stick_y;
             RobotServoUsingMotorTask currentTask = this.m_Core.Slide.getCurrentTask();
             TargetPosSpeedCtlTask currentSpecificTask = currentTask == null || !(currentTask instanceof TargetPosSpeedCtlTask) ? null : (TargetPosSpeedCtlTask) currentTask;
-            double slideSpeed = Math.abs(targetY * SwanSilverSettings.CONTROL_SLIDE_MAXSPEED);
+            double slideSpeed = Math.abs(SwanSilverSettings.CONTROL_SLIDE_MAXSPEED);
             if(targetY > 0){
                 if(currentSpecificTask != null && currentSpecificTask.getTargetPos() == this.m_Core.Slide.getMaxPos()){
                     currentSpecificTask.setPower(slideSpeed);

@@ -15,7 +15,7 @@ import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 public class SwanSilverSettings {
 
     public static double CONTROL_STICK_THRESHOLD = 0.2;
-    public static double CONTROL_SLIDE_MAXSPEED = 0.6;
+    public static double CONTROL_SLIDE_MAXSPEED = 1.0;
     public static double CONTROL_CHASSIS_MAXSPEED_NORMALIZED = 0.6;
 
     //========== Chassis Settings ==========
@@ -69,8 +69,8 @@ public class SwanSilverSettings {
     public static ServoType FOUNDATION_GRABBER_TYPE = new HS755MG();
     public static double FOUNDATION_GRABBER_OFFSET = 0.1;
     public static double FOUNDATION_GRABBER_L_GRAB = (1.0 - FOUNDATION_GRABBER_OFFSET);
-    public static double FOUNDATION_GRABBER_L_RELEASED = 0.0;
+    public static double FOUNDATION_GRABBER_L_RELEASED = (0+FOUNDATION_GRABBER_L_GRAB) / 2.0;
     public static double FOUNDATION_GRABBER_R_GRAB = (0.0 + FOUNDATION_GRABBER_OFFSET);
-    public static double FOUNDATION_GRABBER_R_RELEASED = 1.0;
+    public static double FOUNDATION_GRABBER_R_RELEASED = (1.0 + FOUNDATION_GRABBER_R_GRAB) / 2.0;
     //========== End of On Robot Component Settings ==========
 }

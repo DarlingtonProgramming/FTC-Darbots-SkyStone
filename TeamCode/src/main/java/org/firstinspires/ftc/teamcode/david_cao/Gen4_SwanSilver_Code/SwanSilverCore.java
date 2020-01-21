@@ -84,10 +84,10 @@ public class SwanSilverCore extends RobotCore {
         DcMotor m_RightTopDC = map.dcMotor.get("RF");
         DcMotor m_RightBottomDC = map.dcMotor.get("RB");
 
-        m_LeftTopDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        m_LeftBottomDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        m_RightTopDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        m_RightBottomDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        m_LeftTopDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m_LeftBottomDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m_RightTopDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        m_RightBottomDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RobotWheel m_LeftTopWheel = new RobotWheel(new RobotPose2D(SwanSilverSettings.CHASSIS_LENGTH / 2,SwanSilverSettings.CHASSIS_WIDTH / 2,45),SwanSilverSettings.CHASSIS_WHEEL_RADIUS);
         RobotWheel m_RightTopWheel = new RobotWheel(new RobotPose2D(SwanSilverSettings.CHASSIS_LENGTH / 2,-SwanSilverSettings.CHASSIS_WIDTH / 2,-45),SwanSilverSettings.CHASSIS_WHEEL_RADIUS);
         RobotWheel m_LeftBottomWheel = new RobotWheel(new RobotPose2D(SwanSilverSettings.CHASSIS_LENGTH / 2,-SwanSilverSettings.CHASSIS_WIDTH / 2,135),SwanSilverSettings.CHASSIS_WHEEL_RADIUS);
@@ -117,7 +117,7 @@ public class SwanSilverCore extends RobotCore {
         SensorUtil.setServoPulseWidth(this.m_Grabber,SwanSilverSettings.GRABBER_SERVO_TYPE);
         Servo GrabberMoverServo = map.servo.get("servoGrabberMover");
         SensorUtil.setServoPulseWidth(GrabberMoverServo,SwanSilverSettings.GRABBERMOVER_SERVO_TYPE);
-        this.GrabberMover = new TimeControlledServo(GrabberMoverServo,SwanSilverSettings.GRABBERMOVER_SERVO_TYPE,SwanSilverSettings.GRABBERMOVER_MIN,false);
+        this.GrabberMover = new TimeControlledServo(GrabberMoverServo,SwanSilverSettings.GRABBERMOVER_SERVO_TYPE,SwanSilverSettings.GRABBERMOVER_MEDIUM,true);
 
         this.m_FoundationGrabberL = map.servo.get("servoFoundationGrabberL");
         this.m_FoundationGrabberR = map.servo.get("servoFoundationGrabberR");
