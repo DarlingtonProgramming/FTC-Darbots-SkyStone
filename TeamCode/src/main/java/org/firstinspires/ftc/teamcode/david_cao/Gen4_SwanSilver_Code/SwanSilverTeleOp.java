@@ -49,9 +49,9 @@ public class SwanSilverTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
             double xControl = -gamepad1.left_stick_y;
             double yControl = -gamepad1.left_stick_x;
             double rotControl = -gamepad1.right_stick_x;
-            driveTask.xSpeedNormalized = xControl;
-            driveTask.ySpeedNormalized = yControl;
-            driveTask.zRotSpeedNormalized = rotControl;
+            driveTask.xSpeedNormalized = xControl * SwanSilverSettings.CONTROL_CHASSIS_MAXSPEED_NORMALIZED;
+            driveTask.ySpeedNormalized = yControl * SwanSilverSettings.CONTROL_CHASSIS_MAXSPEED_NORMALIZED;
+            driveTask.zRotSpeedNormalized = rotControl * SwanSilverSettings.CONTROL_CHASSIS_MAXSPEED_NORMALIZED;
         }else{
             driveTask.xSpeedNormalized = 0;
             driveTask.ySpeedNormalized = 0;

@@ -16,6 +16,7 @@ public class SwanSilverSettings {
 
     public static double CONTROL_STICK_THRESHOLD = 0.2;
     public static double CONTROL_SLIDE_MAXSPEED = 0.6;
+    public static double CONTROL_CHASSIS_MAXSPEED_NORMALIZED = 0.6;
 
     //========== Chassis Settings ==========
     public static MotorType CHASSIS_MOTOR_TYPE = MotorTypeUtil.applyGearRatio(
