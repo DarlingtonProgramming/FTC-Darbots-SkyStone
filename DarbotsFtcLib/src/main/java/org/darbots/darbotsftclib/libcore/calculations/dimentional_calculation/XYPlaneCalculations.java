@@ -2,12 +2,15 @@ package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 
 import android.support.annotation.Nullable;
 
+import com.qualcomm.robotcore.robot.Robot;
+
 import java.util.ArrayList;
 
 public class XYPlaneCalculations {
     public static final double CONST_180_OVER_PI = 180.0 / Math.PI;
     public static final double CONST_PI_OVER_180 = Math.PI / 180;
     public static final double[] ORIGIN_POINT_ARRAY = {0,0};
+    public static final RobotPoint2D ORIGIN_POINT = new RobotPoint2D(0,0);
     public static final double VERY_SMALL = 0.00001;
 
     public static double[] rotatePointAroundFixedPoint_Deg(double[] point, double[] fixedPoint, double counterClockwiseAng) {
@@ -20,6 +23,14 @@ public class XYPlaneCalculations {
         double[] result = {newX + fixedPoint[0], newY + fixedPoint[1]};
         return result;
     }
+
+    public static RobotPoint2D rotatePointAroundFixedPoint_Deg(RobotPoint2D point, RobotPoint2D fixedPoint, double CCWAng){
+        double[] pointArr = {point.X,point.Y};
+        double[] fixedPointArr = {fixedPoint.X, fixedPoint.Y};
+        double[] rotatedAng = rotatePointAroundFixedPoint_Deg(pointArr,fixedPointArr,CCWAng);
+        return new RobotPoint2D(rotatedAng[0],rotatedAng[1]);
+    }
+
     public static double[] rotatePointAroundFixedPoint_Rad(double[] point, double[] fixedPoint, double counterClockwiseAng){
         double relativeY = point[1] - fixedPoint[1], relativeX = point[0] - fixedPoint[0];
         double deltaAng = counterClockwiseAng;
@@ -29,6 +40,13 @@ public class XYPlaneCalculations {
         double newY = relativeX * sinDeltaAng + relativeY * cosDeltaAng;
         double[] result = {newX + fixedPoint[0], newY + fixedPoint[1]};
         return result;
+    }
+
+    public static RobotPoint2D rotatePointAroundFixedPoint_Rad(RobotPoint2D point, RobotPoint2D fixedPoint, double CCWAng){
+        double[] pointArr = {point.X,point.Y};
+        double[] fixedPointArr = {fixedPoint.X, fixedPoint.Y};
+        double[] rotatedAng = rotatePointAroundFixedPoint_Rad(pointArr,fixedPointArr,CCWAng);
+        return new RobotPoint2D(rotatedAng[0],rotatedAng[1]);
     }
 
     public static RobotPoint2D getRelativePosition(RobotPose2D PerspectiveOrigin, RobotPoint2D Target){

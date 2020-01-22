@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.ColorInt;
 
 import org.darbots.darbotsftclib.libcore.calculations.algebraic_calculation.AlgebraicCalculations;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 
 public class FTCImageUtility {
     @ColorInt
@@ -51,5 +52,14 @@ public class FTCImageUtility {
         int sampleStartY = AlgebraicCalculations.map(originalStartY,0,originalHeight,0,sampleHeight);
         int sampleEndY = AlgebraicCalculations.map(originalEndY,0,originalHeight,0,sampleHeight);
         return countAverageColor(scaledBitmap,sampleStartX,sampleStartY,sampleEndX,sampleEndY);
+    }
+
+    public static RobotPoint2D[] getStartPointAndEndPoint(RobotPoint2D point1, RobotPoint2D point2){
+        double minX = Math.min(point1.X, point2.X), maxX = Math.max(point1.X, point2.X);
+        double minY = Math.min(point1.Y, point2.Y), maxY = Math.max(point2.Y, point2.Y);
+        RobotPoint2D[] returnVal = new RobotPoint2D[2];
+        returnVal[0] = new RobotPoint2D(minX,minY);
+        returnVal[1] = new RobotPoint2D(maxX,maxY);
+        return returnVal;
     }
 }
