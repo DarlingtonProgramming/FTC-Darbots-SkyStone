@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
+import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCMemory;
 import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark3637;
 import org.darbots.darbotsftclib.libcore.odometry.MecanumChassis2DPositionTracker;
@@ -91,7 +92,7 @@ public class LindelCore extends RobotCore {
 
         Servo GrabberRotServo = map.servo.get("servoGrabberRot");
         SensorUtil.setServoPulseWidth(GrabberRotServo,LindelSettings.GRABBERROT_SERVO_TYPE);
-        this.m_GrabberRot = new TimeControlledServo(GrabberRotServo, LindelSettings.GRABBERROT_SERVO_TYPE, LindelSettings.GRABBERROT_IN,true);
+        this.m_GrabberRot = new TimeControlledServo(GrabberRotServo, LindelSettings.GRABBERROT_SERVO_TYPE, LindelSettings.GRABBERROT_IN,false);
 
 
         RobotMotor LinearSlideMotor = new RobotMotorWithEncoder(map.dcMotor.get("motorLinearSlide"), LindelSettings.LINEAR_SLIDE_MOTORTYPE);
@@ -118,6 +119,50 @@ public class LindelCore extends RobotCore {
         this.setDragServoToDrag(false);
         this.setAutonomousDragStoneServoLeftToDrag(false);
         this.setAutonomousDragStoneServoRightToDrag(false);
+    }
+
+    public void readAll(){
+        this.readPosition();
+        this.readSlidePosition();
+        this.readGrabberRotPosition();
+    }
+
+    public void saveAll(){
+        this.savePosition();
+        this.saveSlidePosition();
+        this.saveGrabberRotPosition();
+    }
+
+    public void readPosition(){
+        RobotPose2D readPosition = FTCMemory.getSetting("LindelSlidePosition",this.getChassis().getPositionTracker().getCurrentPosition());
+        if(readPosition != null) {
+            this.m_PosTracker.setCurrentPosition(readPosition);
+        }
+    }
+
+    public void savePosition(){
+        FTCMemory.setSetting("LindelPosition",this.getChassis().getPositionTracker().getCurrentPosition());
+        FTCMemory.saveMemoryMapToFile();
+    }
+
+    public void saveSlidePosition(){
+        FTCMemory.setSetting("LindelSlidePosition",this.getLinearSlide().getCurrentPosition());
+        FTCMemory.saveMemoryMapToFile();
+    }
+
+    public void readSlidePosition(){
+        Double readPosition = FTCMemory.getSetting("LindelSlidePosition",this.getLinearSlide().getCurrentPosition());
+        this.getLinearSlide().adjustCurrentPosition(readPosition);
+    }
+
+    public void saveGrabberRotPosition(){
+        FTCMemory.setSetting("LindelGrabberRotPosition", this.m_GrabberRot.getCurrentPosition());
+        FTCMemory.saveMemoryMapToFile();
+    }
+
+    public void readGrabberRotPosition(){
+        Double readPosition = FTCMemory.getSetting("LindelGrabberRotPosition", this.m_GrabberRot.getCurrentPosition());
+        this.m_GrabberRot.adjustLastPosition(readPosition);
     }
 
     public void setAutonomousDragStoneServoLeftToDrag(boolean toDrag){
@@ -231,8 +276,8 @@ public class LindelCore extends RobotCore {
     public void updateTelemetry() {
         Telemetry globalTele = GlobalUtil.getTelemetry();
         if(globalTele != null){
-            RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
             {
+                RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
                 Telemetry.Line positionLine = globalTele.addLine("Current Position");
                 positionLine.addData("X", currentPos.X);
                 positionLine.addData("Y", currentPos.Y);
@@ -246,6 +291,15 @@ public class LindelCore extends RobotCore {
                     lastSupposedPoseLine.addData("Y",lastSupposedPose.Y);
                     lastSupposedPoseLine.addData("RotZ",lastSupposedPose.getRotationZ());
                 }
+            }
+            {
+                RobotVector2D currentVelocity = this.m_PosTracker.getCurrentVelocityVector();
+                Telemetry.Line velocityLine = globalTele.addLine("Current Velocity");
+                double velocity = Math.sqrt(Math.pow(currentVelocity.X,2) + Math.pow(currentVelocity.Y,2));
+                velocityLine.addData("Linear",velocity);
+                velocityLine.addData("X",currentVelocity.X);
+                velocityLine.addData("Y",currentVelocity.Y);
+                velocityLine.addData("RotZ",currentVelocity.getRotationZ());
             }
             {
                 if(this.getChassis() != null && this.getChassis().isBusy()){

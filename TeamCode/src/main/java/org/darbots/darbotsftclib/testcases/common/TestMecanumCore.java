@@ -84,8 +84,8 @@ public class TestMecanumCore extends RobotCore {
     public void updateTelemetry() {
         Telemetry globalTele = GlobalUtil.getTelemetry();
         if(globalTele != null){
-            RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
             {
+                RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
                 Telemetry.Line positionLine = globalTele.addLine("Current Position");
                 positionLine.addData("X", currentPos.X);
                 positionLine.addData("Y", currentPos.Y);

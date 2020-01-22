@@ -48,7 +48,7 @@ public class LindelSettings {
     public static MotorType LINEAR_SLIDE_MOTORTYPE = new AndyMark2964();
     public static boolean LINEAR_SLIDE_TIMEOUT = true;
     public static double LINEAR_SLIDE_TIMEOUT_FACTOR = 1.5;
-    public static double LINEAR_SLIDE_MIN = -1000.0, LINEAR_SLIDE_MAX = 1000.0, LINEAR_SLIDE_INIT = 0.0;
+    public static double LINEAR_SLIDE_MIN = -1000.0, LINEAR_SLIDE_MAX = 1000.0, LINEAR_SLIDE_INIT = 0.0, LINEAR_SLIDE_SAFE = 0.5;
 
     public static double GRABBER_GRAB = 0.1, GRABBER_NOTGRAB = 0.25;
     public static ServoType GRABBER_SERVO_TYPE = new HS755HB();
@@ -58,9 +58,9 @@ public class LindelSettings {
     public static ServoType FOUNDATION_GRABBER_TYPE = new HS485HB();
     public static double FOUNDATION_GRABBER_OFFSET = 0.0;
     public static double FOUNDATION_GRABBER_L_GRAB = (1.0 - FOUNDATION_GRABBER_OFFSET);
-    public static double FOUNDATION_GRABBER_L_RELEASED = 0.2;
+    public static double FOUNDATION_GRABBER_L_RELEASED = 0.1;
     public static double FOUNDATION_GRABBER_R_GRAB = (0.0 + FOUNDATION_GRABBER_OFFSET);
-    public static double FOUNDATION_GRABBER_R_RELEASED = 0.8;
+    public static double FOUNDATION_GRABBER_R_RELEASED = 0.9;
 
     public static ServoType STONE_ORIENT_SERVO_TYPE = new HS755HB();
     public static double STONE_ORIENT_ZEROPOS = 0.55;

@@ -144,8 +144,8 @@ public class SwanSilverCore extends RobotCore {
     public void updateTelemetry() {
         Telemetry globalTele = GlobalUtil.getTelemetry();
         if(globalTele != null){
-            RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
             {
+                RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
                 Telemetry.Line positionLine = globalTele.addLine("Current Position");
                 positionLine.addData("X", currentPos.X);
                 positionLine.addData("Y", currentPos.Y);
@@ -159,6 +159,15 @@ public class SwanSilverCore extends RobotCore {
                     lastSupposedPoseLine.addData("Y",lastSupposedPose.Y);
                     lastSupposedPoseLine.addData("RotZ",lastSupposedPose.getRotationZ());
                 }
+            }
+            {
+                RobotVector2D currentVelocity = this.m_PosTracker.getCurrentVelocityVector();
+                Telemetry.Line velocityLine = globalTele.addLine("Current Velocity");
+                double velocity = Math.sqrt(Math.pow(currentVelocity.X,2) + Math.pow(currentVelocity.Y,2));
+                velocityLine.addData("Linear",velocity);
+                velocityLine.addData("X",currentVelocity.X);
+                velocityLine.addData("Y",currentVelocity.Y);
+                velocityLine.addData("RotZ",currentVelocity.getRotationZ());
             }
             {
                 if(this.getChassis() != null && this.getChassis().isBusy()){

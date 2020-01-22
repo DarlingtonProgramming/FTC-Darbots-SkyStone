@@ -39,6 +39,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
             @Override
             protected void __stopCombo() {
                 m_Core.setOrientServoToOrient(false);
+                time = null;
             }
 
             @Override
@@ -62,12 +63,13 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
             @Override
             protected void __stopCombo() {
                 m_Core.setCapStoneServoToDeposit(false);
+                time = null;
             }
 
             @Override
             public void updateStatus() {
                 if(this.isBusy()){
-                    if(time.milliseconds() >= 1000){
+                    if(time.milliseconds() >= 800){
                         m_Core.setCapStoneServoToDeposit(false);
                         this.stopCombo();
                     }
@@ -139,7 +141,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
             double targetY = -gamepad2.left_stick_y;
             RobotServoUsingMotorTask currentTask = this.m_Core.getLinearSlide().getCurrentTask();
             TargetPosSpeedCtlTask currentSpecificTask = currentTask == null || !(currentTask instanceof TargetPosSpeedCtlTask) ? null : (TargetPosSpeedCtlTask) currentTask;
-            double slideSpeed = Math.abs(LindelSettings.CONTROL_SLIDE_MAXSPEED);
+            double slideSpeed = Math.max(Math.abs(targetY), 0.5) * LindelSettings.CONTROL_SLIDE_MAXSPEED;
             if(targetY > 0){
                 if(currentSpecificTask != null && currentSpecificTask.getTargetPos() == this.m_Core.getLinearSlide().getMaxPos()){
                     currentSpecificTask.setPower(slideSpeed);

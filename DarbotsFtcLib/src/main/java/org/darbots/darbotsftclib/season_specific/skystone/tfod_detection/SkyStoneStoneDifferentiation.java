@@ -2,6 +2,7 @@ package org.darbots.darbotsftclib.season_specific.skystone.tfod_detection;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.darbots.darbotsftclib.game_specific.AllianceType;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.image_processing.FTCImageUtility;
@@ -163,7 +164,7 @@ public class SkyStoneStoneDifferentiation {
         }
     }
 
-    public SkyStonePosition Sample_Standard_Three_Stone(boolean blueSide, double cameraRotation){
+    public SkyStonePosition Sample_Standard_Three_Stone(AllianceType alliance, double cameraRotation){
         int result = 0; //0 = unknown, otherwise it is the # of stone from the left, starting from 1.
         ArrayList<RecognitionResult> recognitionResults = this.getUpdatedRecognitions();
         if(recognitionResults == null || recognitionResults.size() != 3){
@@ -203,7 +204,7 @@ public class SkyStoneStoneDifferentiation {
         }else { //skystonePosition.X >= stonePositions.get(0).X && skystonePosition.X >= stonePositions.get(1).X
             result = 3;
         }
-        if(blueSide){
+        if(alliance == AllianceType.BLUE){
             switch(result){
                 case 1:
                     return SkyStonePosition.NEXT_TO_BRIDGE;
@@ -214,7 +215,7 @@ public class SkyStoneStoneDifferentiation {
                 default:
                     return SkyStonePosition.UNKNOWN;
             }
-        }else { //!blueSide, redSide
+        }else { //alliance == AllianceType.RED
             switch(result){
                 case 1:
                     return SkyStonePosition.NEXT_TO_WALL;
@@ -228,7 +229,7 @@ public class SkyStoneStoneDifferentiation {
         }
     }
 
-    public SkyStonePosition Sample_Middle_Line(boolean blueSide, double cameraRotation){
+    public SkyStonePosition Sample_Middle_Line(AllianceType allianceType, double cameraRotation){
         int result = 0; //0 = unknown, otherwise it is the # of stone from the left, starting from 1.
         ArrayList<RecognitionResult> recognitionResults = this.getUpdatedRecognitions();
         if(recognitionResults == null || recognitionResults.size() != 3){
@@ -277,7 +278,7 @@ public class SkyStoneStoneDifferentiation {
         }else { //skystonePosition.X >= imageMidPoint.X && skystonePosition.X >= imageMidPoint.X
             result = 3;
         }
-        if(blueSide){
+        if(allianceType == AllianceType.BLUE){
             switch(result){
                 case 1:
                     return SkyStonePosition.NEXT_TO_BRIDGE;

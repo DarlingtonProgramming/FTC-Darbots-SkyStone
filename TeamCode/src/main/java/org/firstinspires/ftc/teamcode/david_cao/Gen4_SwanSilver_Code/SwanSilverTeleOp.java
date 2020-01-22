@@ -74,7 +74,7 @@ public class SwanSilverTeleOp extends DarbotsBasicOpMode<SwanSilverCore> {
             double targetY = -gamepad2.left_stick_y;
             RobotServoUsingMotorTask currentTask = this.m_Core.Slide.getCurrentTask();
             TargetPosSpeedCtlTask currentSpecificTask = currentTask == null || !(currentTask instanceof TargetPosSpeedCtlTask) ? null : (TargetPosSpeedCtlTask) currentTask;
-            double slideSpeed = Math.abs(SwanSilverSettings.CONTROL_SLIDE_MAXSPEED);
+            double slideSpeed = Math.max(Math.abs(targetY), 0.5) * SwanSilverSettings.CONTROL_SLIDE_MAXSPEED;
             if(targetY > 0){
                 if(currentSpecificTask != null && currentSpecificTask.getTargetPos() == this.m_Core.Slide.getMaxPos()){
                     currentSpecificTask.setPower(slideSpeed);
