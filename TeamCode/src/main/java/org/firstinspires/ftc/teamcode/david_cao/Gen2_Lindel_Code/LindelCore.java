@@ -316,6 +316,12 @@ public class LindelCore extends RobotCore {
                     }
                 }
             }
+            {
+                Telemetry.Line linearSlideLine = globalTele.addLine("Linear Slide");
+                linearSlideLine.addData("Position",this.getLinearSlide().getCurrentPosition());
+                linearSlideLine.addData("Percent",this.getLinearSlide().getCurrentPercent());
+                linearSlideLine.addData("Min/Max","[" + this.getLinearSlide().getMinPos() + "," + this.getLinearSlide().getMaxPos() + "]");
+            }
         }
     }
 
