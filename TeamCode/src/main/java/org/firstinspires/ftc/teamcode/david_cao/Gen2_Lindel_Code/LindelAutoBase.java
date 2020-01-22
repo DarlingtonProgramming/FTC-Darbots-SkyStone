@@ -63,7 +63,7 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
 
     @Override
     public void hardwareDestroy() {
-
+        this.m_Core.saveAll();
     }
 
     public void startSuckStones(){
