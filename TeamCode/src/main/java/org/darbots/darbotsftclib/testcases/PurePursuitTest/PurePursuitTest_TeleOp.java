@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.testcases.PurePursuitTest;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -11,6 +12,7 @@ import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 import java.util.ArrayList;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "MecanumPurePursuitTest")
+@Disabled
 public class PurePursuitTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> {
     public static final double CONST_MAX_ACCEL_NORMALIZED = 0.2;
     public static final double CONST_TEST_STARTSPEED_NORMALIZED = 0.2;

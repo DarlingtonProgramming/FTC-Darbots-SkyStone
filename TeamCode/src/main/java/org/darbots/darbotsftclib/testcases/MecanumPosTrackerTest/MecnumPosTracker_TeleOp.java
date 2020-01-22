@@ -1,11 +1,13 @@
 package org.darbots.darbotsftclib.testcases.MecanumPosTrackerTest;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "MecanumPosTrackerTest")
+@Disabled
 public class MecnumPosTracker_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> {
     private TestMecanumCore m_Core;
     @Override

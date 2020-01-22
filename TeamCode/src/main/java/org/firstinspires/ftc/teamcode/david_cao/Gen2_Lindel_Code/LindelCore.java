@@ -116,7 +116,8 @@ public class LindelCore extends RobotCore {
 
         this.setCapStoneServoToDeposit(false);
         this.setOrientServoToOrient(false);
-        this.setDragServoToDrag(false);
+        this.m_DragServoL.setPosition(LindelSettings.FOUNDATION_GRABBER_L_INIT);
+        this.m_DragServoR.setPosition(LindelSettings.FOUNDATION_GRABBER_R_INIT);
         this.setAutonomousDragStoneServoLeftToDrag(false);
         this.setAutonomousDragStoneServoRightToDrag(false);
     }
@@ -207,6 +208,10 @@ public class LindelCore extends RobotCore {
             this.m_DragServoL.setPosition(LindelSettings.FOUNDATION_GRABBER_L_RELEASED);
             this.m_DragServoR.setPosition(LindelSettings.FOUNDATION_GRABBER_R_RELEASED);
         }
+    }
+    public void setDragServoToInit(){
+        this.m_DragServoL.setPosition(LindelSettings.FOUNDATION_GRABBER_L_INIT);
+        this.m_DragServoR.setPosition(LindelSettings.FOUNDATION_GRABBER_R_INIT);
     }
 
     public void setGrabberServoToGrab(boolean grab){

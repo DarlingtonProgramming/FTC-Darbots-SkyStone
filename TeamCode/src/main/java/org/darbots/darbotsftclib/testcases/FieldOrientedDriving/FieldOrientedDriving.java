@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.testcases.FieldOrientedDriving;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -12,6 +13,7 @@ import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "FieldOrientedDrivingTest")
+@Disabled
 public class FieldOrientedDriving extends DarbotsBasicOpMode<TestMecanumCore> {
     private TestMecanumCore m_Core;
 

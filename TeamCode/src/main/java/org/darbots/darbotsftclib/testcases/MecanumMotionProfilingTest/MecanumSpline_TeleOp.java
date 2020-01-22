@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.testcases.MecanumMotionProfilingTest;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.InvalidPropertiesFormatException;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "MecanumSplineTest")
+@Disabled
 public class MecanumSpline_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> {
     public static final double CONST_TEST_STARTSPEED_NORMALIZED = 0;
     public static final double CONST_TEST_CRUISESPEED_NORMALIZED = 0.7;

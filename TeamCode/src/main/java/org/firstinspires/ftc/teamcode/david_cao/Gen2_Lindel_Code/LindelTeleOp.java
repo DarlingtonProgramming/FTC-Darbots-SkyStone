@@ -86,7 +86,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
 
     @Override
     public void RunThisOpMode() {
-        waitForStart();
+        this.m_Core.setDragServoToDrag(false);
         while(this.opModeIsActive()) {
             driveControl();
             foundationGraberControl();
@@ -187,7 +187,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
             keepSucking = true;
         }else{
             if(keepSucking){
-                this.m_Core.setIntakeSystemStatus(LindelCore.IntakeSystemStatus.SUCK,gamepad1.right_trigger * LindelSettings.INTAKEMOTOR_SPEED);
+                this.m_Core.setIntakeSystemStatus(LindelCore.IntakeSystemStatus.SUCK,LindelSettings.INTAKEMOTOR_SPEED);
             }else {
                 this.m_Core.setIntakeSystemStatus(LindelCore.IntakeSystemStatus.STOP,0);
             }

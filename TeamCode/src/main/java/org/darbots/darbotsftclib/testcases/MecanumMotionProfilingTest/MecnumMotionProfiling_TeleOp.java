@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.testcases.MecanumMotionProfilingTest;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -15,6 +16,7 @@ import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 import java.util.InvalidPropertiesFormatException;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "MecanumMotionProfilingTest")
+@Disabled
 public class MecnumMotionProfiling_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> {
     public static final double CONST_TEST_DISTANCE = 30;
     public static final double CONST_TEST_STARTSPEED_NORMALIZED = 0;

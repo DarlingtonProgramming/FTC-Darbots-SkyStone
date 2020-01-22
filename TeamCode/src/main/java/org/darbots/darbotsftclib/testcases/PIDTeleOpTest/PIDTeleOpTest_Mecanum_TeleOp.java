@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.testcases.PIDTeleOpTest;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -8,6 +9,7 @@ import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.RobotMotionSystemTe
 import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "PIDTeleOpTest")
+@Disabled
 public class PIDTeleOpTest_Mecanum_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> {
     private TestMecanumCore m_Core;
 

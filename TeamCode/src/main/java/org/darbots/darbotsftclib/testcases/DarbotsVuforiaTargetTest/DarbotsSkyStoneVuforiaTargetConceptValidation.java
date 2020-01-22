@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.testcases.DarbotsVuforiaTargetTest;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "DifferentialStone-LibTest")
+@Disabled
 public class DarbotsSkyStoneVuforiaTargetConceptValidation extends DarbotsBasicOpMode {
     DarbotsSkyStoneNavigation_TestDifferenciation Detector;
     @Override

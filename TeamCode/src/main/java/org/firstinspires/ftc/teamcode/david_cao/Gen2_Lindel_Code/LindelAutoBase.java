@@ -111,6 +111,8 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
                         m_Core.setGrabberServoToGrab(true);
                         m_Core.getLinearSlide().replaceTask(new TargetPosTask(null,LindelSettings.LINEAR_SLIDE_INIT,1.0));
                     }
+                }else{
+                    this.stopCombo();
                 }
             }
         };
