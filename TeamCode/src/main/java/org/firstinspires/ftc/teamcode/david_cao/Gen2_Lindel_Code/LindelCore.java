@@ -180,6 +180,10 @@ public class LindelCore extends RobotCore {
         }
     }
 
+    public TimeControlledServo getGrabberRotServo(){
+        return this.m_GrabberRot;
+    }
+
     public void setCapStoneServoToDeposit(boolean toDeposit){
         if(toDeposit){
             this.m_CapStoneServo.setPosition(LindelSettings.CAPSTONESERVO_DEPOSITPOS);

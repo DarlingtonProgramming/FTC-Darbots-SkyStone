@@ -6,6 +6,8 @@ import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosSpeedCtlTask;
+import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
 import org.darbots.darbotsftclib.libcore.templates.DarbotsComboKey;
 import org.firstinspires.ftc.teamcode.david_cao.Gen4_SwanSilver_Code.SwanSilverCore;
 
@@ -15,6 +17,7 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
     private LindelCore m_Core;
     public boolean pointMirrored = false;
     public DarbotsComboKey stopSuckStonesCombo;
+    public DarbotsComboKey dropStoneToFoundationCombo;
 
     @Override
     public LindelCore getRobotCore() {
@@ -59,6 +62,58 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
                 }
             }
         };
+        this.dropStoneToFoundationCombo = new DarbotsComboKey() {
+            ElapsedTime time;
+            int stage;
+            @Override
+            protected void __startCombo() {
+                time = new ElapsedTime();
+                stage = 0;
+                m_Core.setGrabberServoToGrab(true);
+                m_Core.getLinearSlide().replaceTask(new TargetPosTask(null,LindelSettings.LINEAR_SLIDE_SAFE,1.0));
+            }
+
+            @Override
+            protected void __stopCombo() {
+                time = null;
+            }
+
+            @Override
+            public void updateStatus() {
+                if(!this.isBusy()){
+                    return;
+                }
+                double ms = time.milliseconds();
+                if(stage == 0){
+                    if(!m_Core.getLinearSlide().isBusy()){
+                        stage = 1;
+                        m_Core.setGrabberRotServoToOutside(true,1);
+                    }
+                }else if(stage == 1){
+                    if(!m_Core.getGrabberRotServo().isBusy()){
+                        stage = 2;
+                        m_Core.getLinearSlide().replaceTask(new TargetPosTask(null,m_Core.getLinearSlide().getMinPos(),1.0));
+                    }
+                }else if(stage == 2){
+                    if(!m_Core.getLinearSlide().isBusy()){
+                        stage = 3;
+                        m_Core.setGrabberServoToGrab(false);
+                        m_Core.getLinearSlide().replaceTask(new TargetPosTask(null,LindelSettings.LINEAR_SLIDE_SAFE,1.0));
+                    }
+                }else if(stage == 3){
+                    if(!m_Core.getLinearSlide().isBusy()){
+                        stage = 4;
+                        m_Core.setGrabberRotServoToOutside(false,1.0);
+                    }
+                }else if(stage == 4){
+                    if(!m_Core.getGrabberRotServo().isBusy()){
+                        stage = 5;
+                        m_Core.setGrabberServoToGrab(true);
+                        m_Core.getLinearSlide().replaceTask(new TargetPosTask(null,LindelSettings.LINEAR_SLIDE_INIT,1.0));
+                    }
+                }
+            }
+        };
     }
 
     @Override
@@ -74,6 +129,12 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
     public void stopSuckStones(){
         if(!stopSuckStonesCombo.isBusy()){
             stopSuckStonesCombo.startCombo();
+        }
+    }
+
+    public void depositStoneToFoundation(){
+        if(!dropStoneToFoundationCombo.isBusy()) {
+            this.dropStoneToFoundationCombo.startCombo();
         }
     }
 
@@ -109,6 +170,7 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
 
     public void updateStatus(){
         this.stopSuckStonesCombo.updateStatus();
+        this.dropStoneToFoundationCombo.updateStatus();
         this.m_Core.updateStatus();
     }
 
