@@ -33,6 +33,9 @@ public class UNIVERSAL_AutoElevatorCombo extends LindelComboKeyBase {
 
     @Override
     public void updateStatus() {
+        if(!this.isBusy()){
+            return;
+        }
         if(stage == 0){
             if(!this.getRobotCore().getLinearSlide().isBusy()){
                 stage = 1;

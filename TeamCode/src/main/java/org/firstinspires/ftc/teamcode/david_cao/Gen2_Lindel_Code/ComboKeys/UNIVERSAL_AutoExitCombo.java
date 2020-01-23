@@ -29,6 +29,7 @@ public class UNIVERSAL_AutoExitCombo extends LindelComboKeyBase {
         stage = 0;
         originalTask = this.getRobotCore().getChassis().getCurrentTask();
         this.getRobotCore().getChassis().deleteAllTasks();
+
         this.targetSpeed = this.targetChassisSpeed_Normalized * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec();
         this.targetConstraint = this.getRobotCore().getChassis().getMotionSystemConstraints(this.targetChassisMaximumAccel_Normalized * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0,0,0);
         double currentLinearSlidePos = this.getRobotCore().getLinearSlide().getCurrentPosition();
@@ -47,10 +48,15 @@ public class UNIVERSAL_AutoExitCombo extends LindelComboKeyBase {
 
     @Override
     public void updateStatus() {
+        if(!this.isBusy()){
+            return;
+        }
         if(stage == 0){
             if(!this.getRobotCore().getLinearSlide().isBusy()){
                 stage = 1;
                 this.getRobotCore().setGrabberServoToGrab(false);
+                MovementUtil.drivetrain_constraints = this.targetConstraint;
+                MovementUtil.resolution = 0.02;
                 this.getRobotCore().getChassis().replaceTask(MovementUtil.getGoToPointTask(SkyStoneCoordinates.STONE_LENGTH,0,0,this.targetSpeed,0,0));
             }
         }else if(stage == 1){

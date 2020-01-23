@@ -49,7 +49,7 @@ public class LindelSettings {
     public static MotorType LINEAR_SLIDE_MOTORTYPE = new AndyMark2964();
     public static boolean LINEAR_SLIDE_TIMEOUT = true;
     public static double LINEAR_SLIDE_TIMEOUT_FACTOR = 1.5;
-    public static double LINEAR_SLIDE_MIN = -0.375, LINEAR_SLIDE_MAX = 6.15, LINEAR_SLIDE_INIT = 0.0, LINEAR_SLIDE_SAFE = 0.81;
+    public static double LINEAR_SLIDE_MIN = -0.375, LINEAR_SLIDE_MAX = 6.15, LINEAR_SLIDE_INIT = 0.0, LINEAR_SLIDE_SAFE = 1.58;
 
     public static double GRABBER_GRAB = 0.1, GRABBER_NOTGRAB = 0.25;
     public static ServoType GRABBER_SERVO_TYPE = new HS755HB();
@@ -59,10 +59,10 @@ public class LindelSettings {
     public static ServoType FOUNDATION_GRABBER_TYPE = new HS485HB();
     public static double FOUNDATION_GRABBER_OFFSET = 0.0;
     public static double FOUNDATION_GRABBER_L_GRAB = (1.0 - FOUNDATION_GRABBER_OFFSET);
-    public static double FOUNDATION_GRABBER_L_RELEASED = 0.75;
+    public static double FOUNDATION_GRABBER_L_RELEASED = 0.1; //0.75
     public static double FOUNDATION_GRABBER_L_INIT = 0.1;
     public static double FOUNDATION_GRABBER_R_GRAB = (0.0 + FOUNDATION_GRABBER_OFFSET);
-    public static double FOUNDATION_GRABBER_R_RELEASED = 0.25;
+    public static double FOUNDATION_GRABBER_R_RELEASED = 0.9; //0.25
     public static double FOUNDATION_GRABBER_R_INIT = 0.9;
 
     public static ServoType STONE_ORIENT_SERVO_TYPE = new HS755HB();
@@ -87,8 +87,8 @@ public class LindelSettings {
     public static double CONTROL_STICK_THRESHOLD = 0.2;
     public static double CONTROL_SLIDE_MAXSPEED = 1.0;
     public static double CONTROL_CHASSIS_MAXSPEED_NORMALIZED = 1.0;
-    public static double CONTROL_STONE_HEIGHT_SLIDE = 1.0;
-    public static double CONTROL_STONE_PROMINENCE_HEIGHT_SLIDE = 1.0;
+    public static double CONTROL_STONE_HEIGHT_SLIDE = 1.09464;
+    public static double CONTROL_STONE_PROMINENCE_HEIGHT_SLIDE = 0.36429;
     public static double CONTROL_COMBO_STONE_INITILAL_HEIGHT = LINEAR_SLIDE_MIN - CONTROL_STONE_HEIGHT_SLIDE;
     public static double CONTROL_COMBO_MAXIMUM_SPEED_NORMALIZED = 1.0;
     public static double CONTROL_COMBO_MAXIMUM_ACCEL_NORMALIZED = 0.2;

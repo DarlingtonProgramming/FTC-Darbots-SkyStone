@@ -173,7 +173,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
     }
 
     protected void grabberRotControl(){
-        if(gamepad1.right_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD || gamepad1.left_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD) {
+        if(gamepad2.right_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD || gamepad2.left_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD) {
             if(elevatorUpCombo.isBusy()){
                 elevatorUpCombo.stopCombo();
             }
@@ -184,7 +184,11 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
                 stackUpCombo.stopCombo();
             }
             if (gamepad2.right_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD) {
-                this.m_Core.setGrabberRotServoToOutside(true, 1.0);
+                if(!capstoneOn) {
+                    this.m_Core.setGrabberRotServoToOutside(true, 1.0);
+                }else{
+                    this.m_Core.setGrabberRotServoToOutside(true, 0.5);
+                }
             } else if (gamepad2.left_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD) {
                 this.m_Core.setGrabberRotServoToOutside(false, 1.0);
             }
@@ -197,7 +201,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
             keepSucking = true;
         }else if(gamepad1.left_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD){
             this.m_Core.setIntakeSystemStatus(LindelCore.IntakeSystemStatus.VOMIT,gamepad1.left_trigger * LindelSettings.INTAKEMOTOR_SPEED);
-            keepSucking = true;
+            keepSucking = false;
         }else{
             if(keepSucking){
                 this.m_Core.setIntakeSystemStatus(LindelCore.IntakeSystemStatus.SUCK,LindelSettings.INTAKEMOTOR_SPEED);
@@ -249,7 +253,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
     }
 
     protected void ElevatorDownControl(){
-        if(gamepad2.dpad_left && (!elevatorDownCombo.isBusy())){
+        if(gamepad2.y && (!elevatorDownCombo.isBusy())){
             if(elevatorUpCombo.isBusy()){
                 elevatorUpCombo.stopCombo();
             }
@@ -264,7 +268,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
     }
 
     protected void StackUpControl(){
-        if(gamepad2.dpad_left && (!stackUpCombo.isBusy())){
+        if(gamepad2.dpad_down && (!stackUpCombo.isBusy())){
             if(elevatorDownCombo.isBusy()){
                 elevatorDownCombo.stopCombo();
             }

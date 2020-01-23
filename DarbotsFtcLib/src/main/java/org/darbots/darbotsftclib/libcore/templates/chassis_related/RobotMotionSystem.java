@@ -220,7 +220,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
             return;
         }
         RobotMotionSystemTask currentTask = this.m_TaskLists.get(0);
-        this.m_TaskLists.get(0).stopTask();
+        currentTask.stopTask();
         this.m_TaskLists.clear();
         this.__stopMotion();
     }
