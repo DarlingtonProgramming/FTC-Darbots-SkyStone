@@ -239,9 +239,11 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
             }
             elevatorUpCombo.targetGrabberRotSpeed = this.capstoneOn ? 0.5 : 1.0;
             elevatorUpCombo.targetSlideSpeed = LindelSettings.CONTROL_SLIDE_MAXSPEED;
-            lastStonePosition += LindelSettings.CONTROL_STONE_HEIGHT_SLIDE;
-            lastStonePosition = Range.clip(lastStonePosition,LindelSettings.LINEAR_SLIDE_MIN,LindelSettings.LINEAR_SLIDE_MAX);
-            elevatorUpCombo.targetPosition = lastStonePosition;
+            double newStonePosition = lastStonePosition + LindelSettings.CONTROL_STONE_HEIGHT_SLIDE;
+            if(lastStonePosition >= this.m_Core.getLinearSlide().getMinPos() && lastStonePosition <= this.m_Core.getLinearSlide().getMaxPos()) {
+                newStonePosition = Range.clip(newStonePosition, this.m_Core.getLinearSlide().getMinPos(), this.m_Core.getLinearSlide().getMaxPos());
+            }
+            elevatorUpCombo.targetPosition = newStonePosition;
             elevatorUpCombo.startCombo();
         }
     }
@@ -256,6 +258,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
             }
             elevatorDownCombo.targetGrabberRotSpeed = 1.0;
             elevatorDownCombo.targetSlideSpeed = LindelSettings.CONTROL_SLIDE_MAXSPEED;
+            lastStonePosition = this.m_Core.getLinearSlide().getCurrentPosition();
             elevatorDownCombo.startCombo();
         }
     }
