@@ -18,10 +18,6 @@ import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 
 public class LindelSettings {
 
-    public static double CONTROL_STICK_THRESHOLD = 0.2;
-    public static double CONTROL_SLIDE_MAXSPEED = 1.0;
-    public static double CONTROL_CHASSIS_MAXSPEED_NORMALIZED = 1.0;
-
     //========== Physical Settings ==========
     public static double PHYSICAL_WIDTH = 43.8;
     public static double PHYSICAL_WIDTH_BORDER = 45.5;
@@ -87,4 +83,13 @@ public class LindelSettings {
     public static final double CAPSTONESERVO_DEPOSITPOS = 0.0;
     public static final ServoType CAPSTONESERVO_SERVO_TYPE = new HS485HB();
     //========== End of On Robot Component Settings ==========
+
+    public static double CONTROL_STICK_THRESHOLD = 0.2;
+    public static double CONTROL_SLIDE_MAXSPEED = 1.0;
+    public static double CONTROL_CHASSIS_MAXSPEED_NORMALIZED = 1.0;
+    public static double CONTROL_STONE_HEIGHT_SLIDE = 1.0;
+    public static double CONTROL_STONE_PROMINENCE_HEIGHT_SLIDE = 1.0;
+    public static double CONTROL_COMBO_STONE_INITILAL_HEIGHT = LINEAR_SLIDE_MIN - CONTROL_STONE_HEIGHT_SLIDE;
+    public static double CONTROL_COMBO_MAXIMUM_SPEED_NORMALIZED = 1.0;
+    public static double CONTROL_COMBO_MAXIMUM_ACCEL_NORMALIZED = 0.2;
 }

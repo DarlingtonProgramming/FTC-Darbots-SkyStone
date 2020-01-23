@@ -2,21 +2,32 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.RobotMotionSystemTeleOpTask;
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosSpeedCtlTask;
 import org.darbots.darbotsftclib.libcore.templates.DarbotsComboKey;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.motor_powered_servos.RobotServoUsingMotorTask;
+import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.ComboKeys.UNIVERSAL_AutoElevatorCombo;
+import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.ComboKeys.UNIVERSAL_AutoExitCombo;
+import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.ComboKeys.UNIVERSAL_BringElevatorDownCombo;
+import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.ComboKeys.UNIVERSAL_CapstoneCombo;
+import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.ComboKeys.UNIVERSAL_StoneOrientCombo;
 
 @TeleOp(group = "4100", name = "LindelTeleOp-Gen2.1")
 public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
     private LindelCore m_Core;
+    private double lastStonePosition = LindelSettings.CONTROL_COMBO_STONE_INITILAL_HEIGHT;
     public double SpeedFactor = 1.0;
     private boolean keepSucking = true;
+    private boolean capstoneOn = false;
     private RobotMotionSystemTeleOpTask driveTask = null;
     private DarbotsComboKey stoneOrientCombo;
     private DarbotsComboKey capstoneCombo;
+    private UNIVERSAL_AutoElevatorCombo elevatorUpCombo;
+    private UNIVERSAL_BringElevatorDownCombo elevatorDownCombo;
+    private UNIVERSAL_AutoExitCombo stackUpCombo;
 
     @Override
     public LindelCore getRobotCore() {
@@ -28,54 +39,13 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
         this.m_Core = new LindelCore(this.hardwareMap,"LindelGen2.1-TeleOp.log");
         driveTask = new RobotMotionSystemTeleOpTask();
         this.m_Core.getChassis().replaceTask(driveTask);
-        stoneOrientCombo = new DarbotsComboKey() {
-            ElapsedTime time;
-            @Override
-            protected void __startCombo() {
-                time = new ElapsedTime();
-                m_Core.setOrientServoToOrient(true);
-            }
-
-            @Override
-            protected void __stopCombo() {
-                m_Core.setOrientServoToOrient(false);
-                time = null;
-            }
-
-            @Override
-            public void updateStatus() {
-                if(this.isBusy()) {
-                    if (time.milliseconds() >= 500) {
-                        m_Core.setOrientServoToOrient(false);
-                        this.stopCombo();
-                    }
-                }
-            }
-        };
-        capstoneCombo = new DarbotsComboKey() {
-            ElapsedTime time;
-            @Override
-            protected void __startCombo() {
-                m_Core.setCapStoneServoToDeposit(true);
-                time = new ElapsedTime();
-            }
-
-            @Override
-            protected void __stopCombo() {
-                m_Core.setCapStoneServoToDeposit(false);
-                time = null;
-            }
-
-            @Override
-            public void updateStatus() {
-                if(this.isBusy()){
-                    if(time.milliseconds() >= 800){
-                        m_Core.setCapStoneServoToDeposit(false);
-                        this.stopCombo();
-                    }
-                }
-            }
-        };
+        stoneOrientCombo = new UNIVERSAL_StoneOrientCombo(this.m_Core);
+        capstoneCombo = new UNIVERSAL_CapstoneCombo(this.m_Core);
+        lastStonePosition = LindelSettings.CONTROL_COMBO_STONE_INITILAL_HEIGHT;
+        elevatorUpCombo = new UNIVERSAL_AutoElevatorCombo(this.m_Core);
+        elevatorDownCombo = new UNIVERSAL_BringElevatorDownCombo(this.m_Core);
+        stackUpCombo = new UNIVERSAL_AutoExitCombo(this.m_Core);
+        capstoneOn = false;
     }
 
     @Override
@@ -86,7 +56,8 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
 
     @Override
     public void RunThisOpMode() {
-        this.m_Core.setDragServoToDrag(false);
+        this.getRobotCore().readAll();
+        this.getRobotCore().setDragServoToDrag(false);
         while(this.opModeIsActive()) {
             driveControl();
             foundationGraberControl();
@@ -96,24 +67,33 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
             intakeControl();
             capstoneControl();
             orientServoControl();
-            this.m_Core.updateStatus();
-            this.m_Core.updateTelemetry();
-            if(this.capstoneCombo.isBusy()){
-                this.capstoneCombo.updateStatus();
-            }
-            if(this.stoneOrientCombo.isBusy()){
-                this.stoneOrientCombo.updateStatus();
-            }
+            ElevatorUpControl();
+            ElevatorDownControl();
+            StackUpControl();
+
+            this.updateStatus();
+
+            this.getRobotCore().updateTelemetry();
             telemetry.update();
         }
     }
 
     protected void driveControl(){
+        boolean driveActivated = false;
         if(Math.abs(gamepad1.left_stick_x) >= LindelSettings.CONTROL_STICK_THRESHOLD || Math.abs(gamepad1.left_stick_y) >= LindelSettings.CONTROL_STICK_THRESHOLD || Math.abs(gamepad1.right_stick_x) >= LindelSettings.CONTROL_STICK_THRESHOLD){
+            if(this.stackUpCombo.isBusy()){
+                this.stackUpCombo.stopCombo();
+            }
+            driveActivated = true;
+        }else{
+            driveActivated = false;
+        }
+
+        if(driveActivated) {
             double xControl = -gamepad1.left_stick_y;
             double yControl = -gamepad1.left_stick_x;
             double rotControl = -gamepad1.right_stick_x;
-            if(gamepad1.left_bumper){
+            if (gamepad1.left_bumper) {
                 xControl *= 0.25;
                 yControl *= 0.25;
                 rotControl *= 0.25;
@@ -138,6 +118,15 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
 
     protected void slideControl(){
         if(Math.abs(gamepad2.left_stick_y) >= LindelSettings.CONTROL_STICK_THRESHOLD){
+            if(this.stackUpCombo.isBusy()){
+                this.stackUpCombo.stopCombo();
+            }
+            if(this.elevatorUpCombo.isBusy()){
+                this.elevatorUpCombo.stopCombo();
+            }
+            if(this.elevatorDownCombo.isBusy()){
+                this.elevatorDownCombo.stopCombo();
+            }
             double targetY = -gamepad2.left_stick_y;
             RobotServoUsingMotorTask currentTask = this.m_Core.getLinearSlide().getCurrentTask();
             TargetPosSpeedCtlTask currentSpecificTask = currentTask == null || !(currentTask instanceof TargetPosSpeedCtlTask) ? null : (TargetPosSpeedCtlTask) currentTask;
@@ -158,23 +147,47 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
                 }
             }
         }else if(this.m_Core.getLinearSlide().isBusy()){
-            this.m_Core.getLinearSlide().deleteAllTasks();
+            if(!(this.stackUpCombo.isBusy() || this.elevatorUpCombo.isBusy() || this.elevatorDownCombo.isBusy())){
+                this.m_Core.getLinearSlide().deleteAllTasks();
+            }
         }
     }
 
     protected void grabberControl(){
-        if(gamepad2.right_bumper){
+        if (gamepad2.right_bumper) {
+            if(this.stoneOrientCombo.isBusy()){
+                this.stoneOrientCombo.stopCombo();
+            }
+            if(this.elevatorUpCombo.isBusy()){
+                this.elevatorUpCombo.stopCombo();
+            }
+            if(this.stackUpCombo.isBusy()){
+                this.stackUpCombo.stopCombo();
+            }
             this.m_Core.setGrabberServoToGrab(false);
-        }else{
-            this.m_Core.setGrabberServoToGrab(true);
+        } else {
+            if(!(stoneOrientCombo.isBusy() || elevatorUpCombo.isBusy() || stackUpCombo.isBusy())){
+                this.m_Core.setGrabberServoToGrab(true);
+            }
         }
     }
 
     protected void grabberRotControl(){
-        if(gamepad2.right_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD){
-            this.m_Core.setGrabberRotServoToOutside(true,1.0);
-        }else if(gamepad2.left_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD){
-            this.m_Core.setGrabberRotServoToOutside(false,1.0);
+        if(gamepad1.right_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD || gamepad1.left_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD) {
+            if(elevatorUpCombo.isBusy()){
+                elevatorUpCombo.stopCombo();
+            }
+            if(elevatorDownCombo.isBusy()){
+                elevatorDownCombo.stopCombo();
+            }
+            if(stackUpCombo.isBusy()){
+                stackUpCombo.stopCombo();
+            }
+            if (gamepad2.right_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD) {
+                this.m_Core.setGrabberRotServoToOutside(true, 1.0);
+            } else if (gamepad2.left_trigger >= LindelSettings.CONTROL_STICK_THRESHOLD) {
+                this.m_Core.setGrabberRotServoToOutside(false, 1.0);
+            }
         }
     }
 
@@ -197,12 +210,81 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
     protected void capstoneControl(){
         if(gamepad2.x && (!capstoneCombo.isBusy())){
             this.capstoneCombo.startCombo();
+            this.capstoneOn = true;
         }
     }
 
     protected void orientServoControl(){
         if(gamepad2.a && (!stoneOrientCombo.isBusy())){
+            if(elevatorUpCombo.isBusy()){
+                elevatorUpCombo.stopCombo();
+            }
+            if(stackUpCombo.isBusy()){
+                stackUpCombo.stopCombo();
+            }
             this.stoneOrientCombo.startCombo();
         }
+    }
+
+    protected void ElevatorUpControl(){
+        if(gamepad2.dpad_up && (!elevatorUpCombo.isBusy())){
+            if(elevatorDownCombo.isBusy()){
+                elevatorDownCombo.stopCombo();
+            }
+            if(stackUpCombo.isBusy()){
+                stackUpCombo.stopCombo();
+            }
+            if(stoneOrientCombo.isBusy()){
+                stoneOrientCombo.stopCombo();
+            }
+            elevatorUpCombo.targetGrabberRotSpeed = this.capstoneOn ? 0.5 : 1.0;
+            elevatorUpCombo.targetSlideSpeed = LindelSettings.CONTROL_SLIDE_MAXSPEED;
+            lastStonePosition += LindelSettings.CONTROL_STONE_HEIGHT_SLIDE;
+            lastStonePosition = Range.clip(lastStonePosition,LindelSettings.LINEAR_SLIDE_MIN,LindelSettings.LINEAR_SLIDE_MAX);
+            elevatorUpCombo.targetPosition = lastStonePosition;
+            elevatorUpCombo.startCombo();
+        }
+    }
+
+    protected void ElevatorDownControl(){
+        if(gamepad2.dpad_left && (!elevatorDownCombo.isBusy())){
+            if(elevatorUpCombo.isBusy()){
+                elevatorUpCombo.stopCombo();
+            }
+            if(stackUpCombo.isBusy()){
+                stackUpCombo.stopCombo();
+            }
+            elevatorDownCombo.targetGrabberRotSpeed = 1.0;
+            elevatorDownCombo.targetSlideSpeed = LindelSettings.CONTROL_SLIDE_MAXSPEED;
+            elevatorDownCombo.startCombo();
+        }
+    }
+
+    protected void StackUpControl(){
+        if(gamepad2.dpad_left && (!stackUpCombo.isBusy())){
+            if(elevatorDownCombo.isBusy()){
+                elevatorDownCombo.stopCombo();
+            }
+            if(elevatorUpCombo.isBusy()){
+                elevatorUpCombo.stopCombo();
+            }
+            if(stoneOrientCombo.isBusy()){
+                stoneOrientCombo.stopCombo();
+            }
+            stackUpCombo.targetSlideSpeed = LindelSettings.CONTROL_SLIDE_MAXSPEED;
+            stackUpCombo.targetChassisSpeed_Normalized = LindelSettings.CONTROL_COMBO_MAXIMUM_SPEED_NORMALIZED;
+            stackUpCombo.targetChassisMaximumAccel_Normalized = LindelSettings.CONTROL_COMBO_MAXIMUM_ACCEL_NORMALIZED;
+            stackUpCombo.startCombo();
+        }
+    }
+
+    public void updateStatus(){
+        this.capstoneCombo.updateStatus();
+        this.stoneOrientCombo.updateStatus();
+        this.elevatorUpCombo.updateStatus();
+        this.elevatorDownCombo.updateStatus();
+        this.stackUpCombo.updateStatus();
+
+        this.m_Core.updateStatus();
     }
 }

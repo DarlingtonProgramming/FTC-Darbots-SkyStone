@@ -164,6 +164,7 @@ public class LindelCore extends RobotCore {
     public void readGrabberRotPosition(){
         Double readPosition = FTCMemory.getSetting("LindelGrabberRotPosition", this.m_GrabberRot.getCurrentPosition());
         this.m_GrabberRot.adjustLastPosition(readPosition);
+        this.m_GrabberRot.getServo().setPosition(readPosition);
     }
 
     public void setAutonomousDragStoneServoLeftToDrag(boolean toDrag){
