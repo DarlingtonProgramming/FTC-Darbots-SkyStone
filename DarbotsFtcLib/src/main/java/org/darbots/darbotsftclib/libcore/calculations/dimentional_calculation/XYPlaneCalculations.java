@@ -322,4 +322,26 @@ public class XYPlaneCalculations {
             return null;
         }
     }
+
+    public RobotPoint2D[] getRobotExtremeBoundingBox(double distMidToFront, double distMidToBack, double distMidToLeft, double distMidToRight){
+        RobotPoint2D[] result = new RobotPoint2D[4];
+        RobotPoint2D LT = new RobotPoint2D(distMidToFront,distMidToLeft);
+        RobotPoint2D RT = new RobotPoint2D(distMidToFront,-distMidToRight);
+        RobotPoint2D LB = new RobotPoint2D(-distMidToBack,distMidToLeft);
+        RobotPoint2D RB = new RobotPoint2D(-distMidToBack,-distMidToRight);
+        result[0] = LT;
+        result[1] = RT;
+        result[2] = LB;
+        result[3] = RB;
+        return result;
+    }
+
+    public RobotPose2D fixFieldPosition(RobotPose2D fieldPosition, RobotPoint2D[] robotBondingBox){
+        RobotPoint2D[] boundingBoxExtreme = new RobotPoint2D[robotBondingBox.length];
+        RobotPose2D fixedFieldPosition = new RobotPose2D(fieldPosition);
+        for(int i=0; i<robotBondingBox.length; i++){
+            boundingBoxExtreme[i] = getRelativePosition(fieldPosition,robotBondingBox[i]);
+        }
+        
+    }
 }

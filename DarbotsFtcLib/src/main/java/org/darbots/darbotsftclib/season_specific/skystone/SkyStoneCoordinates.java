@@ -2,22 +2,46 @@ package org.darbots.darbotsftclib.season_specific.skystone;
 
 import org.darbots.darbotsftclib.game_specific.AllianceType;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitWayPoint;
 
 import java.util.ArrayList;
 
 public class SkyStoneCoordinates {
+    public static double FIELD_SIZE_Y = 365.76; //12 ft
+    public static double FIELD_SIZE_X = 365.76; //12 ft
+
+    public static RobotPoint2D BLUE_LOADING_ZONE_FIELD_EXTREME_POINT = new RobotPoint2D(
+            -FIELD_SIZE_X / 2,
+            FIELD_SIZE_Y / 2
+    );
+
+    public static RobotPoint2D BLUE_BUILDING_ZONE_FIELD_EXTREME_POINT = new RobotPoint2D(
+            FIELD_SIZE_X / 2,
+            FIELD_SIZE_Y / 2
+    );
+
+    public static RobotPoint2D RED_LOADING_ZONE_FIELD_EXTREME_POINT = new RobotPoint2D(
+            -FIELD_SIZE_X / 2,
+            -FIELD_SIZE_Y / 2
+    );
+
+    public static RobotPoint2D RED_BUILDING_ZONE_FIELD_EXTREME_POINT = new RobotPoint2D(
+            FIELD_SIZE_X / 2,
+            -FIELD_SIZE_Y / 2
+    );
+
     public static double STONE_WIDTH = 10.16; //4 Inch
     public static double STONE_LENGTH = 20.32; //8 Inch
     public static double STONE_HEIGHT = 10.16; //4 Inch, with 1 Inch Prominence
     public static RobotPoint2D STONE_AUDIENCE_BLUE = new RobotPoint2D(
             -182.88,
-            53.0
+            57.79
     );
     public static RobotPoint2D STONE_AUDIENCE_RED = new RobotPoint2D(
             -182.88,
-            -53.0
+            -57.79
     );
     public static RobotPoint2D BRIDGE_PARK_BLUE_WALL = new RobotPoint2D(
             0,
@@ -36,7 +60,20 @@ public class SkyStoneCoordinates {
             -91
     );
 
-    public static RobotPoint2D getStonePosition(AllianceType alliance, int stoneNumberFromBridge){
+    public static double FOUNDATION_WIDTH = 46.99;
+    public static double FOUNDATION_LENGTH = 87.63;
+    public static double FOUNDATION_HEIGHT = 5.72;
+    public static RobotPoint2D FOUNDATION_BLUE = new RobotPoint2D(
+            128.91,
+            39.37
+    );
+
+    public static RobotPoint2D FOUNDATION_RED = new RobotPoint2D(
+            128.91,
+            -39.37
+    );
+
+   public static RobotPoint2D getStonePosition(AllianceType alliance, int stoneNumberFromBridge){
         RobotPoint2D sixthStonePosition = null;
         if(alliance == AllianceType.BLUE){
             sixthStonePosition = new RobotPoint2D(STONE_AUDIENCE_BLUE.X + (STONE_LENGTH / 2.0), STONE_AUDIENCE_BLUE.Y);
