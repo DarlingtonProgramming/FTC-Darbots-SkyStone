@@ -57,7 +57,7 @@ public class UNIVERSAL_AutoExitCombo extends LindelComboKeyBase {
                 this.getRobotCore().setGrabberServoToGrab(false);
                 MovementUtil.drivetrain_constraints = this.targetConstraint;
                 MovementUtil.resolution = 0.02;
-                this.getRobotCore().getChassis().replaceTask(MovementUtil.getGoToPointTask(SkyStoneCoordinates.STONE_LENGTH,0,0,this.targetSpeed,0,0));
+                this.getRobotCore().getChassis().replaceTask(MovementUtil.getGoToPointTask(LindelSettings.CONTROL_COMBO_EXIT_FORWARD_DIST,0,0,this.targetSpeed,0,0));
             }
         }else if(stage == 1){
             if(!this.getRobotCore().getChassis().isBusy()){

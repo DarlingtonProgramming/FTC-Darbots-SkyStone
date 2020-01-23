@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.david_cao.testcases;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -11,6 +12,7 @@ import org.darbots.darbotsftclib.season_specific.skystone.navigation.SkyStoneNav
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "StoneDetection-LibTest")
+@Disabled
 public class ConceptDarbotsStoneDetection extends DarbotsBasicOpMode {
     private SkyStoneNavigation m_Nav;
 

@@ -10,6 +10,7 @@ public class LindelTeleOp_NoMemory extends LindelTeleOp {
         while(this.opModeIsActive()) {
             driveControl();
             foundationGraberControl();
+            resetSlideControl();
             slideControl();
             grabberControl();
             grabberRotControl();

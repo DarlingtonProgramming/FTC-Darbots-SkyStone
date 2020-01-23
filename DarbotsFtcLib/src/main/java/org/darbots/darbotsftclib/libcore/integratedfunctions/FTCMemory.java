@@ -54,7 +54,8 @@ public class FTCMemory {
             return defaultValue;
         }else{
             try {
-                return (T) objRetrieved;
+                T result = (T) objRetrieved;
+                return result;
             }catch(ClassCastException e){
                 return defaultValue;
             }

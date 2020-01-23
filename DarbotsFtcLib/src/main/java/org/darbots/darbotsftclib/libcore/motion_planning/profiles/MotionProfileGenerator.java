@@ -8,14 +8,17 @@ import org.darbots.darbotsftclib.libcore.templates.motion_planning.RobotPath;
 public class MotionProfileGenerator {
     public static final double PATH_DISTANCE_ERROR_MARGIN = 0.01;
     public static MotionProfile generatePathMotionProfile(MotionSystemConstraints constraints, RobotPath Path, double startVelocity, double cruiseVelocity, double endVelocity){
-        return generateMotionProfile(constraints.maximumLinearSpeed,constraints.maximumLinearAcceleration,constraints.maximumLinearJerk,Path.getTotalDistance(),startVelocity,cruiseVelocity,endVelocity);
+        MotionProfile generatedProfile = generateMotionProfile(constraints.maximumLinearSpeed,constraints.maximumLinearAcceleration,constraints.maximumLinearJerk,Path.getTotalDistance(),startVelocity,cruiseVelocity,endVelocity);
+        return generatedProfile;
     }
     public static MotionProfile generateAngularMotionProfile(MotionSystemConstraints constraints, double degToTurn, double startVelocity, double cruiseVelocity, double endVelocity){
+        MotionProfile generatedProfile;
         if(degToTurn < 0){
-            return generateMotionProfile(constraints.maximumAngularSpeed,constraints.maximumAngularAcceleration,constraints.maximumAngularJerk,-degToTurn,startVelocity,cruiseVelocity,endVelocity).negative();
+            generatedProfile = generateMotionProfile(constraints.maximumAngularSpeed,constraints.maximumAngularAcceleration,constraints.maximumAngularJerk,-degToTurn,startVelocity,cruiseVelocity,endVelocity).negative();
         }else{
-            return generateMotionProfile(constraints.maximumAngularSpeed,constraints.maximumAngularAcceleration,constraints.maximumAngularJerk,degToTurn,startVelocity,cruiseVelocity,endVelocity);
+            generatedProfile = generateMotionProfile(constraints.maximumAngularSpeed,constraints.maximumAngularAcceleration,constraints.maximumAngularJerk,degToTurn,startVelocity,cruiseVelocity,endVelocity);
         }
+        return generatedProfile;
     }
     public static MotionProfile generateMotionProfile(double maxVelocity, double maxAcceleration, double maxJerk, double PathTotalDistance, double startVelocity, double cruiseVelocity, double endVelocity){
         return generateMotionProfile_JERKUNLIMITED(maxVelocity,maxAcceleration,PathTotalDistance,startVelocity,cruiseVelocity,endVelocity);

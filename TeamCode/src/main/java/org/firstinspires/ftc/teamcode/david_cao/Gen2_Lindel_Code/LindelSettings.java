@@ -15,6 +15,7 @@ import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS755MG;
 import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS785HB;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
+import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 
 public class LindelSettings {
 
@@ -92,4 +93,5 @@ public class LindelSettings {
     public static double CONTROL_COMBO_STONE_INITILAL_HEIGHT = LINEAR_SLIDE_MIN - CONTROL_STONE_HEIGHT_SLIDE;
     public static double CONTROL_COMBO_MAXIMUM_SPEED_NORMALIZED = 1.0;
     public static double CONTROL_COMBO_MAXIMUM_ACCEL_NORMALIZED = 0.2;
+    public static double CONTROL_COMBO_EXIT_FORWARD_DIST = SkyStoneCoordinates.STONE_LENGTH * 1.5;
 }

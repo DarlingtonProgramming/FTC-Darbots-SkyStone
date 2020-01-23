@@ -75,8 +75,8 @@ public class SimpleTrajectoryGenerator {
                     pieceApproximateEndXYSpeed[1],
                     pieceApproximateXAcceleration,
                     pieceApproximateYAcceleration,
-                    secondsToGo,
-                    preferredAngle
+                    preferredAngle,
+                    secondsToGo
             );
             TrajectoryResult.getMotionSegments().add(currentSegment);
 

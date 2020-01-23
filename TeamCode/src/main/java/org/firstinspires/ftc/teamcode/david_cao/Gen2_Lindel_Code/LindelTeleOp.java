@@ -52,6 +52,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
     public void hardwareDestroy() {
         this.stoneOrientCombo = null;
         this.capstoneCombo = null;
+        this.m_Core.saveAll();
     }
 
     @Override
@@ -61,6 +62,7 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
         while(this.opModeIsActive()) {
             driveControl();
             foundationGraberControl();
+            resetSlideControl();
             slideControl();
             grabberControl();
             grabberRotControl();
@@ -285,6 +287,26 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
         }
     }
 
+    protected void resetSlideControl(){
+        if(gamepad2.right_stick_button){
+            if(this.stackUpCombo.isBusy()){
+                this.stackUpCombo.stopCombo();
+            }
+            if(this.elevatorUpCombo.isBusy()){
+                this.elevatorUpCombo.stopCombo();
+            }
+            if(this.elevatorDownCombo.isBusy()){
+                this.elevatorDownCombo.stopCombo();
+            }
+            double currentPos = this.m_Core.getLinearSlide().getCurrentPosition();
+            lastStonePosition -= currentPos;
+            if(this.m_Core.getLinearSlide().isBusy()){
+                this.m_Core.getLinearSlide().deleteAllTasks();
+            }
+            this.m_Core.getLinearSlide().adjustCurrentPosition(0);
+        }
+    }
+
     public void updateStatus(){
         this.capstoneCombo.updateStatus();
         this.stoneOrientCombo.updateStatus();
@@ -294,4 +316,6 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
 
         this.m_Core.updateStatus();
     }
+
+
 }
