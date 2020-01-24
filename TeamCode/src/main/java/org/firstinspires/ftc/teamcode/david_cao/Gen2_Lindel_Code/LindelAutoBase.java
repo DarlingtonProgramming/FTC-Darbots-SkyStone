@@ -104,7 +104,6 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
     public boolean waitForDrive(){
         while(this.opModeIsActive() && this.getRobotCore().getChassis().isBusy()){
             this.updateStatus();
-            this.telemetry.update();
         }
         return this.opModeIsActive();
     }
@@ -113,9 +112,16 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
     public boolean waitForDrive_WithTelemetry(){
         while(this.opModeIsActive() && this.getRobotCore().getChassis().isBusy()){
             this.updateStatus();
-            this.getRobotCore().updateTelemetry();
+            updateTelemetry();
             this.telemetry.update();
         }
         return this.opModeIsActive();
     }
+
+    public void updateTelemetry(){
+        this.getRobotCore().updateTelemetry();
+        __updateTelemetry();
+    }
+
+    public abstract void __updateTelemetry();
 }
