@@ -169,6 +169,17 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_PIDCalculator.rotZPIDCoefficients = RotationalPID;
     }
 
+    public double getPreferredAngle(double preferredWorldAngle){
+        double currentWorldAngle = 0;
+        if(this.getLastTaskFinishFieldPos() != null && (!Double.isNaN(this.getLastTaskFinishFieldPos().getRotationZ()))){
+            currentWorldAngle = this.getLastTaskFinishFieldPos().getRotationZ();
+        }else{
+            currentWorldAngle = this.getPositionTracker().getCurrentPosition().getRotationZ();
+        }
+        double preferredAngle = XYPlaneCalculations.normalizeDeg(preferredWorldAngle - currentWorldAngle);
+        return preferredAngle;
+    }
+
     public Robot2DPositionTracker getPositionTracker(){
         return this.m_PosTracker;
     }

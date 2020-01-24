@@ -325,7 +325,7 @@ public class XYPlaneCalculations {
         }
     }
 
-    public RobotPoint2D[] getRobotExtremeBoundingBox(double distMidToFront, double distMidToBack, double distMidToLeft, double distMidToRight){
+    public static RobotPoint2D[] getRobotExtremeBoundingBox(double distMidToFront, double distMidToBack, double distMidToLeft, double distMidToRight){
         RobotPoint2D[] result = new RobotPoint2D[4];
         RobotPoint2D LT = new RobotPoint2D(distMidToFront,distMidToLeft);
         RobotPoint2D RT = new RobotPoint2D(distMidToFront,-distMidToRight);
@@ -338,7 +338,7 @@ public class XYPlaneCalculations {
         return result;
     }
 
-    public RobotPose2D fixFieldPosition(RobotPose2D fieldPosition, RobotPoint2D[] robotBondingBox){
+    public static RobotPose2D fixFieldPosition(RobotPose2D fieldPosition, RobotPoint2D[] robotBondingBox){
         RobotPoint2D[] boundingBoxExtreme = new RobotPoint2D[robotBondingBox.length];
         RobotPose2D fixedFieldPosition = new RobotPose2D(fieldPosition);
         for(int i=0; i<robotBondingBox.length; i++){

@@ -117,4 +117,44 @@ public class SkyStoneCoordinates {
         returnList.add(thirdPoint);
         return returnList;
     }
+
+    public static ArrayList<RobotPoint2D> getPurePursuitWayPointsExitWorldAxis(AllianceType alliance, int stoneNumberFromBridge, double robotLength, double robotWidth, ParkPosition parkPosition){
+        double halfRobotLength = robotLength / 2.0;
+        double halfRobotWidth = robotWidth / 2.0;
+
+        double deltaY = STONE_WIDTH / 2 + halfRobotWidth + 10;
+        if(alliance == AllianceType.RED){
+            deltaY = -deltaY;
+        }
+
+        RobotPoint2D stonePos = getStonePosition(alliance,stoneNumberFromBridge);
+        RobotPoint2D parkPos = getParkPosition(alliance,parkPosition);
+
+        RobotPoint2D firstPoint = new RobotPoint2D(stonePos.X,stonePos.Y + deltaY);
+        firstPoint = XYPlaneCalculations.fixFieldPosition(new RobotPose2D(firstPoint,0),XYPlaneCalculations.getRobotExtremeBoundingBox(halfRobotLength,halfRobotLength,halfRobotWidth,halfRobotWidth)).toPoint2D();
+
+        RobotPoint2D secondPoint = new RobotPoint2D(parkPos.X + robotWidth,parkPos.Y);
+        ArrayList<RobotPoint2D> returnList = new ArrayList<>();
+        returnList.add(firstPoint);
+        returnList.add(secondPoint);
+        return returnList;
+    }
+
+    public static RobotPoint2D getParkPosition(AllianceType alliance, ParkPosition parkPosition){
+        RobotPoint2D parkPos = null;
+        if(alliance == AllianceType.RED){
+            if(parkPosition == ParkPosition.NEXT_TO_NEUTRAL_BRIDGE){
+                parkPos = BRIDGE_PARK_RED_MIDDLE_BRIDGE;
+            }else{
+                parkPos = BRIDGE_PARK_RED_WALL;
+            }
+        }else{
+            if(parkPosition == ParkPosition.NEXT_TO_NEUTRAL_BRIDGE){
+                parkPos = BRIDGE_PARK_BLUE_MIDDLE_BRIDGE;
+            }else{
+                parkPos = BRIDGE_PARK_BLUE_WALL;
+            }
+        }
+        return parkPos;
+    }
 }

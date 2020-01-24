@@ -43,15 +43,31 @@ public class FTCImageUtility {
         int colorVal = Color.argb(avgAlpha,avgRed,avgGreen,avgBlue);
         return colorVal;
     }
+
+    public static Bitmap getScaledImage(Bitmap image, int newWidth, int newHeight){
+        return Bitmap.createScaledBitmap(image,newWidth,newHeight,true);
+    }
+
     @ColorInt
     public static int countShrinkedScaledAverageColor(Bitmap image, int sampleWidth, int sampleHeight, int originalWidth, int originalHeight, int originalStartX, int originalStartY, int originalEndX, int originalEndY){
         //rescale the bitmap
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(image,sampleWidth,sampleHeight,true);
+        Bitmap scaledBitmap = getScaledImage(image,sampleWidth,sampleHeight);
         int sampleStartX = AlgebraicCalculations.map(originalStartX,0,originalWidth,0,sampleWidth);
         int sampleEndX = AlgebraicCalculations.map(originalEndX,0,originalWidth,0,sampleWidth);
         int sampleStartY = AlgebraicCalculations.map(originalStartY,0,originalHeight,0,sampleHeight);
         int sampleEndY = AlgebraicCalculations.map(originalEndY,0,originalHeight,0,sampleHeight);
         return countAverageColor(scaledBitmap,sampleStartX,sampleStartY,sampleEndX,sampleEndY);
+    }
+
+    @ColorInt
+    public static int countShrinkedScaledAverageColor(Bitmap scaledImage, int originalWidth, int originalHeight, int originalStartX, int originalStartY, int originalEndX, int originalEndY){
+        int sampleWidth = scaledImage.getWidth();
+        int sampleHeight = scaledImage.getHeight();
+        int sampleStartX = AlgebraicCalculations.map(originalStartX,0,originalWidth,0,sampleWidth);
+        int sampleEndX = AlgebraicCalculations.map(originalEndX,0,originalWidth,0,sampleWidth);
+        int sampleStartY = AlgebraicCalculations.map(originalStartY,0,originalHeight,0,sampleHeight);
+        int sampleEndY = AlgebraicCalculations.map(originalEndY,0,originalHeight,0,sampleHeight);
+        return countAverageColor(scaledImage,sampleStartX,sampleStartY,sampleEndX,sampleEndY);
     }
 
     public static RobotPoint2D[] getStartPointAndEndPoint(RobotPoint2D point1, RobotPoint2D point2){

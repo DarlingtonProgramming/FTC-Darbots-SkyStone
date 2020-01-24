@@ -80,6 +80,7 @@ public class LindelCore extends RobotCore {
         this.m_Chassis.setRotationalMotionDistanceFactor(LindelSettings.CHASSIS_FACTORS.getRotationZ());
         this.PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),this.m_Chassis);
         this.PosTracker.setDistanceFactors(new RobotVector2D(LindelSettings.ODOMETRY_FACTORS.X,LindelSettings.ODOMETRY_FACTORS.Y,LindelSettings.ODOMETRY_FACTORS.getRotationZ()));
+        this.PosTracker.setGyroProvider(this.getGyro());
         this.m_Chassis.setPositionTracker(this.PosTracker);
         this.PosTracker.start();
 
