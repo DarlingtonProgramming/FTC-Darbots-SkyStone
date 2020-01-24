@@ -44,7 +44,7 @@ public class LindelCore extends RobotCore {
     private Servo m_CapStoneServo;
 
     private MecanumDrivetrain m_Chassis;
-    private MecanumChassis2DPositionTracker m_PosTracker;
+    public MecanumChassis2DPositionTracker PosTracker;
 
     public LindelCore(HardwareMap hardwareMap, String logFileName) {
         super(logFileName, hardwareMap);
@@ -78,10 +78,10 @@ public class LindelCore extends RobotCore {
         this.m_Chassis.setLinearXMotionDistanceFactor(LindelSettings.CHASSIS_FACTORS.X);
         this.m_Chassis.setLinearYMotionDistanceFactor(LindelSettings.CHASSIS_FACTORS.Y);
         this.m_Chassis.setRotationalMotionDistanceFactor(LindelSettings.CHASSIS_FACTORS.getRotationZ());
-        this.m_PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),this.m_Chassis);
-        this.m_PosTracker.setDistanceFactors(new RobotVector2D(LindelSettings.ODOMETRY_FACTORS.X,LindelSettings.ODOMETRY_FACTORS.Y,LindelSettings.ODOMETRY_FACTORS.getRotationZ()));
-        this.m_Chassis.setPositionTracker(this.m_PosTracker);
-        this.m_PosTracker.start();
+        this.PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),this.m_Chassis);
+        this.PosTracker.setDistanceFactors(new RobotVector2D(LindelSettings.ODOMETRY_FACTORS.X,LindelSettings.ODOMETRY_FACTORS.Y,LindelSettings.ODOMETRY_FACTORS.getRotationZ()));
+        this.m_Chassis.setPositionTracker(this.PosTracker);
+        this.PosTracker.start();
 
         this.m_DragServoL = map.servo.get("servoDragLeft");
         SensorUtil.setServoPulseWidth(this.m_DragServoL,LindelSettings.FOUNDATION_GRABBER_TYPE);
@@ -135,9 +135,10 @@ public class LindelCore extends RobotCore {
     }
 
     public void readPosition(){
-        RobotPose2D readPosition = FTCMemory.getSetting("LindelSlidePosition",this.getChassis().getPositionTracker().getCurrentPosition());
-        if(readPosition != null) {
-            this.m_PosTracker.setCurrentPosition(readPosition);
+        Object readPosition = FTCMemory.getSetting("LindelPosition",this.getChassis().getPositionTracker().getCurrentPosition());
+
+        if(readPosition != null && readPosition instanceof RobotPose2D) {
+            this.PosTracker.setCurrentPosition((RobotPose2D) readPosition);
         }
     }
 
@@ -287,7 +288,7 @@ public class LindelCore extends RobotCore {
         Telemetry globalTele = GlobalUtil.getTelemetry();
         if(globalTele != null){
             {
-                RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
+                RobotPose2D currentPos = this.PosTracker.getCurrentPosition();
                 Telemetry.Line positionLine = globalTele.addLine("Current Position");
                 positionLine.addData("X", currentPos.X);
                 positionLine.addData("Y", currentPos.Y);
@@ -303,7 +304,7 @@ public class LindelCore extends RobotCore {
                 }
             }
             {
-                RobotVector2D currentVelocity = this.m_PosTracker.getCurrentVelocityVector();
+                RobotVector2D currentVelocity = this.PosTracker.getCurrentVelocityVector();
                 Telemetry.Line velocityLine = globalTele.addLine("Current Velocity");
                 double velocity = Math.sqrt(Math.pow(currentVelocity.X,2) + Math.pow(currentVelocity.Y,2));
                 velocityLine.addData("Linear",velocity);

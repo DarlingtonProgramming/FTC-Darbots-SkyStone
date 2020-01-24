@@ -88,10 +88,18 @@ public class LindelSettings {
     public static double CONTROL_STICK_THRESHOLD = 0.2;
     public static double CONTROL_SLIDE_MAXSPEED = 1.0;
     public static double CONTROL_CHASSIS_MAXSPEED_NORMALIZED = 1.0;
-    public static double CONTROL_STONE_HEIGHT_SLIDE = 1.09464;
-    public static double CONTROL_STONE_PROMINENCE_HEIGHT_SLIDE = 0.36429;
+    public static double CONTROL_STONE_HEIGHT_SLIDE = 1.09464 + 0.8;
+    public static double CONTROL_STONE_PROMINENCE_HEIGHT_SLIDE = 0.3;
     public static double CONTROL_COMBO_STONE_INITILAL_HEIGHT = LINEAR_SLIDE_MIN - CONTROL_STONE_HEIGHT_SLIDE;
     public static double CONTROL_COMBO_MAXIMUM_SPEED_NORMALIZED = 1.0;
     public static double CONTROL_COMBO_MAXIMUM_ACCEL_NORMALIZED = 0.2;
     public static double CONTROL_COMBO_EXIT_FORWARD_DIST = SkyStoneCoordinates.STONE_LENGTH * 1.5;
+
+    public static double AUTO_MAX_SPEED_NORMALIZED = 1.0;
+    public static double AUTO_MAX_ACCEL_NORMALIZED = 0.2;
+    public static double AUTO_MAX_ANGULAR_NORMALIZED = 1.0;
+    public static double AUTO_MAX_ANGULAR_ACCEL_NORMALIZED = 0.2;
+
+    public static double AUTO_SAMPLE_MIN_CONFIDENCE = 0.6;
+    public static boolean AUTO_SAMPLE_LIGHT = true;
 }

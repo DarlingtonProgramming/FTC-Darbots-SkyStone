@@ -4,6 +4,8 @@ import android.support.annotation.Nullable;
 
 import com.qualcomm.robotcore.robot.Robot;
 
+import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
+
 import java.util.ArrayList;
 
 public class XYPlaneCalculations {
@@ -342,6 +344,31 @@ public class XYPlaneCalculations {
         for(int i=0; i<robotBondingBox.length; i++){
             boundingBoxExtreme[i] = getRelativePosition(fieldPosition,robotBondingBox[i]);
         }
-        
+        for(int i=0; i<boundingBoxExtreme.length;i++){
+            RobotPoint2D currentPoint = boundingBoxExtreme[i];
+            double deltaX = 0, deltaY = 0;
+            if(currentPoint.X < -SkyStoneCoordinates.FIELD_SIZE_X / 2){
+                deltaX = (-SkyStoneCoordinates.FIELD_SIZE_X / 2) - currentPoint.X;
+            }else if(currentPoint.X > SkyStoneCoordinates.FIELD_SIZE_X / 2){
+                deltaX = -(currentPoint.X - SkyStoneCoordinates.FIELD_SIZE_X / 2);
+            }
+            if(currentPoint.Y < -SkyStoneCoordinates.FIELD_SIZE_Y / 2){
+                deltaY = (-SkyStoneCoordinates.FIELD_SIZE_Y / 2) - currentPoint.Y;
+            }else if(currentPoint.Y > SkyStoneCoordinates.FIELD_SIZE_Y / 2){
+                deltaY = -(currentPoint.Y - SkyStoneCoordinates.FIELD_SIZE_Y / 2);
+            }
+            deltaPointArray(boundingBoxExtreme,deltaX,deltaY);
+            fixedFieldPosition.X += deltaX;
+            fixedFieldPosition.Y += deltaY;
+        }
+        return fixedFieldPosition;
+    }
+    private static RobotPoint2D[] deltaPointArray(RobotPoint2D[] array, double x, double y){
+        for(int i=0; i<array.length;i++){
+            RobotPoint2D currentPoint = array[i];
+            currentPoint.X += x;
+            currentPoint.Y += y;
+        }
+        return array;
     }
 }

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.RobotMotionSystemTeleOpTask;
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosSpeedCtlTask;
+import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
 import org.darbots.darbotsftclib.libcore.templates.DarbotsComboKey;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.motor_powered_servos.RobotServoUsingMotorTask;
 import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.ComboKeys.UNIVERSAL_AutoElevatorCombo;
@@ -131,20 +132,20 @@ public class LindelTeleOp extends DarbotsBasicOpMode<LindelCore> {
             }
             double targetY = -gamepad2.left_stick_y;
             RobotServoUsingMotorTask currentTask = this.m_Core.getLinearSlide().getCurrentTask();
-            TargetPosSpeedCtlTask currentSpecificTask = currentTask == null || !(currentTask instanceof TargetPosSpeedCtlTask) ? null : (TargetPosSpeedCtlTask) currentTask;
+            TargetPosTask currentSpecificTask = currentTask == null || !(currentTask instanceof TargetPosTask) ? null : (TargetPosTask) currentTask;
             double slideSpeed = Math.max(Math.abs(targetY), 0.5) * LindelSettings.CONTROL_SLIDE_MAXSPEED;
             if(targetY > 0){
                 if(currentSpecificTask != null && currentSpecificTask.getTargetPos() == this.m_Core.getLinearSlide().getMaxPos()){
                     currentSpecificTask.setPower(slideSpeed);
                 }else{
-                    TargetPosSpeedCtlTask newTask = new TargetPosSpeedCtlTask(null,this.m_Core.getLinearSlide().getMaxPos(),slideSpeed);
+                    TargetPosTask newTask = new TargetPosTask(null,this.m_Core.getLinearSlide().getMaxPos(),slideSpeed);
                     this.m_Core.getLinearSlide().replaceTask(newTask);
                 }
             }else{ //targetY < 0
                 if(currentSpecificTask != null && currentSpecificTask.getTargetPos() == this.m_Core.getLinearSlide().getMinPos()){
                     currentSpecificTask.setPower(slideSpeed);
                 }else{
-                    TargetPosSpeedCtlTask newTask = new TargetPosSpeedCtlTask(null,this.m_Core.getLinearSlide().getMinPos(),slideSpeed);
+                    TargetPosTask newTask = new TargetPosTask(null,this.m_Core.getLinearSlide().getMinPos(),slideSpeed);
                     this.m_Core.getLinearSlide().replaceTask(newTask);
                 }
             }

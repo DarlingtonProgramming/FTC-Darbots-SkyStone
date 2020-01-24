@@ -39,9 +39,11 @@ public class UNIVERSAL_AutoElevatorCombo extends LindelComboKeyBase {
         if(stage == 0){
             if(!this.getRobotCore().getLinearSlide().isBusy()){
                 stage = 1;
-                this.getRobotCore().setGrabberRotServoToOutside(true,this.targetGrabberRotSpeed);
+
                 if(this.targetPosition >= LindelSettings.LINEAR_SLIDE_SAFE){
                     this.getRobotCore().getLinearSlide().replaceTask(new TargetPosTask(null,this.targetPosition,this.targetSlideSpeed));
+                }else{
+                    this.getRobotCore().setGrabberRotServoToOutside(true,this.targetGrabberRotSpeed);
                 }
             }
         }else if(stage == 1){
@@ -50,12 +52,17 @@ public class UNIVERSAL_AutoElevatorCombo extends LindelComboKeyBase {
                     this.getRobotCore().getLinearSlide().replaceTask(new TargetPosTask(null, this.targetPosition, this.targetSlideSpeed));
                     stage = 2;
                 }else{
+                    this.getRobotCore().setGrabberRotServoToOutside(true,this.targetGrabberRotSpeed);
                     stage = 3;
                 }
             }
-        }else if(stage == 2){
-            if(!this.getRobotCore().getLinearSlide().isBusy()){
-                stage = 3;
+        }else if(stage == 2) {
+            if (!this.getRobotCore().getLinearSlide().isBusy()) {
+                stage = 4;
+            }
+        }else if(stage == 3){
+            if(!this.getRobotCore().getGrabberRotServo().isBusy()){
+                stage = 4;
             }
         }else{
             this.stopCombo();

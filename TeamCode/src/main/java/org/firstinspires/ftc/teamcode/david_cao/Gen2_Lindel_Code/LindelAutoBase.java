@@ -4,7 +4,9 @@ import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.runtime.MovementUtil;
 import org.darbots.darbotsftclib.libcore.templates.DarbotsComboKey;
+import org.darbots.darbotsftclib.libcore.templates.chassis_related.MotionSystemConstraints;
 import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.ComboKeys.AUTO_DropStoneToFoundationCombo;
 import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.ComboKeys.AUTO_StopSuckStonesCombo;
 
@@ -13,6 +15,9 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
     public boolean pointMirrored = false;
     public DarbotsComboKey stopSuckStonesCombo;
     public DarbotsComboKey dropStoneToFoundationCombo;
+    public MotionSystemConstraints constraints;
+    public double maxAutoSpeed;
+    public double maxAutoAngularSpeed;
 
     @Override
     public LindelCore getRobotCore() {
@@ -24,12 +29,23 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
         this.m_Core = new LindelCore(this.hardwareMap,"LindelAutonomous.log");
         this.stopSuckStonesCombo = new AUTO_StopSuckStonesCombo(this.m_Core);
         this.dropStoneToFoundationCombo = new AUTO_DropStoneToFoundationCombo(this.m_Core);
+        constraints = this.getRobotCore().getChassis().getMotionSystemConstraints(LindelSettings.AUTO_MAX_ACCEL_NORMALIZED * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0,LindelSettings.AUTO_MAX_ANGULAR_ACCEL_NORMALIZED * this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec(),0);
+        maxAutoSpeed = this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec() * LindelSettings.AUTO_MAX_SPEED_NORMALIZED;
+        maxAutoAngularSpeed = this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec() * LindelSettings.AUTO_MAX_ANGULAR_NORMALIZED;
+        MovementUtil.drivetrain_constraints = constraints;
+        MovementUtil.resolution = 0.02;
+        __init();
     }
+
+    public abstract void __init();
 
     @Override
     public void hardwareDestroy() {
         this.m_Core.saveAll();
+        __destroy();
     }
+
+    public abstract void __destroy();
 
     public void startSuckStones(){
         this.m_Core.setGrabberServoToGrab(false);

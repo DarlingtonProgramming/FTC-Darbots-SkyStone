@@ -31,4 +31,13 @@ public class LindelAutoActionTest extends LindelAutoBase {
     }
 
 
+    @Override
+    public void __init() {
+
+    }
+
+    @Override
+    public void __destroy() {
+
+    }
 }
