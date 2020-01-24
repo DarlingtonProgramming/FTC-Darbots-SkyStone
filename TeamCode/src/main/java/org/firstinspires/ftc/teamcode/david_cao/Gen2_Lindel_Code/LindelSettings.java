@@ -24,6 +24,7 @@ public class LindelSettings {
     public static double PHYSICAL_WIDTH_BORDER = 45.5;
     public static double LENGTH_FROM_CENTER_TO_BACK = 19.13;
     public static double LENGTH_FROM_CENTER_TO_FRONT = 45.72-19.13;
+    public static double PHYSICAL_LENGTH = 45.72;
     //========== End of Physical Settings ==========
 
     //========== Chassis Settings ==========
@@ -33,8 +34,8 @@ public class LindelSettings {
     public static double CHASSIS_WIDTH = 36.5;
     public static RobotVector2D CHASSIS_FACTORS = new RobotVector2D(
             1.0,
-            1.0,
-            1.0
+            35.676 / 40,
+            171.66 / 180
     );
     //========== End of Chassis Settings ==========
 
@@ -99,7 +100,8 @@ public class LindelSettings {
     public static double AUTO_MAX_ACCEL_NORMALIZED = 0.2;
     public static double AUTO_MAX_ANGULAR_NORMALIZED = 1.0;
     public static double AUTO_MAX_ANGULAR_ACCEL_NORMALIZED = 0.2;
+    public static double AUTO_PURE_PURSUIT_ANGLE_SPEED_NORMALIZED = 0.4;
+    public static double AUTO_PURE_PURSUIT_RADIUS = 50;
 
-    public static double AUTO_SAMPLE_MIN_CONFIDENCE = 0.6;
-    public static boolean AUTO_SAMPLE_LIGHT = true;
+    public static boolean AUTO_SAMPLE_LIGHT = false;
 }

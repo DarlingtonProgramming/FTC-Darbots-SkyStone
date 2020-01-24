@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.libcore.runtime;
 
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCFileIO;
 import org.darbots.darbotsftclib.libcore.motion_planning.followers.TrajectoryFollower;
@@ -62,7 +63,7 @@ public class MovementUtil {
         }
         return new TrajectoryFollower(linearTrajectory);
     }
-    public static FixedTurnAngleTask getTurnToWorldAngTask(double worldAng, double speed, double startAngularV, double cruiseAngularV, double endAngularV, boolean forceDirection, boolean forceDirectionCCW){
+    public static FixedTurnAngleTask getTurnToWorldAngTask(double worldAng, double startAngularV, double cruiseAngularV, double endAngularV, boolean forceDirection, boolean forceDirectionCCW){
         if(GlobalRegister.runningOpMode == null || GlobalRegister.runningOpMode.getRobotCore() == null || GlobalRegister.runningOpMode.getRobotCore().getChassis() == null || GlobalRegister.runningOpMode.getRobotCore().getChassis().getPositionTracker() == null){
             return null;
         }
@@ -71,6 +72,12 @@ public class MovementUtil {
         }
         worldAng = XYPlaneCalculations.normalizeDeg(worldAng);
         double currentWorldAng = GlobalRegister.runningOpMode.getRobotCore().getChassis().getPositionTracker().getCurrentPosition().getRotationZ();
+
+        RobotPose2D lastTaskFinishPos = GlobalRegister.runningOpMode.getRobotCore().getChassis().getLastTaskFinishFieldPos();
+        if(lastTaskFinishPos != null && !Double.isNaN(lastTaskFinishPos.getRotationZ())){
+            currentWorldAng = lastTaskFinishPos.getRotationZ();
+        }
+
         double deltaAng = worldAng - currentWorldAng;
         double actualSmallAng = XYPlaneCalculations.normalizeDeg(deltaAng);
         double CCWAng, CWAng;
