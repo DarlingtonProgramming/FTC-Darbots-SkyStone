@@ -41,9 +41,9 @@ import java.util.ArrayList;
 
 //distanceFactor = wantedDistance / actualDistance
 public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
-    public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(8,0,0.5);
-    public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(8,0,0.5);
-    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(8,0,0.5);
+    public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(2,0,1.5);
+    public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(2,0,1.5);
+    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(2,0,1.5);
 
     private ArrayList<RobotMotionSystemTask> m_TaskLists;
     private Robot2DPositionTracker m_PosTracker;
@@ -331,6 +331,19 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         }
         this.__setRobotSpeed(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
         return new RobotVector2D(XSpeedInCMPerSec,YSpeedInCMPerSec,ZRotSpeedInDegPerSec);
+    }
+    public abstract void __setNormalizedRobotSpeed(double XSpeed, double YSpeed, double ZRotSpeed);
+
+    public RobotVector2D setNormalizedRobotSpeed(double XSpeed, double YSpeed, double ZRotSpeed){
+        double newXSpeed = XSpeed * this.getLinearXMotionDistanceFactor();
+        double newYSpeed = YSpeed * this.getLinearYMotionDistanceFactor();
+        double newRotSpeed = ZRotSpeed * this.getRotationalMotionDistanceFactor();
+        double biggestSpeed = Math.abs(newXSpeed) + Math.abs(newYSpeed) + Math.abs(newRotSpeed);
+        newXSpeed /= biggestSpeed;
+        newYSpeed /= biggestSpeed;
+        newRotSpeed /= biggestSpeed;
+        this.__setNormalizedRobotSpeed(newXSpeed,newYSpeed, newRotSpeed);
+        return new RobotVector2D(newXSpeed,newYSpeed,newRotSpeed);
     }
     public double[] calculateWheelAngularSpeeds(double RobotXSpeedInCMPerSec, double RobotYSpeedInCMPerSec, double RobotZRotSpeedInDegPerSec){
         return calculateRawWheelAngularSpeeds(RobotXSpeedInCMPerSec * this.getLinearXMotionDistanceFactor(), RobotYSpeedInCMPerSec * this.getLinearYMotionDistanceFactor(), RobotZRotSpeedInDegPerSec * this.getRotationalMotionDistanceFactor());

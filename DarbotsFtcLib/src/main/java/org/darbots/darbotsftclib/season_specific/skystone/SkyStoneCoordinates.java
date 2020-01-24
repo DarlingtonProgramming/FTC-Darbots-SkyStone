@@ -92,8 +92,8 @@ public class SkyStoneCoordinates {
         if(alliance == AllianceType.RED){
             deltaY = -deltaY;
         }
-        double deltaX = STONE_LENGTH / 2 + halfRobotLength;
-        double lastDeltaX = halfRobotLength - STONE_LENGTH / 2;
+        double deltaX = STONE_LENGTH / 2 + halfRobotLength + 10;
+        double lastDeltaX = -(halfRobotLength - STONE_LENGTH / 2);
 
         RobotPoint2D stonePos = getStonePosition(alliance,stoneNumberFromBridge);
         if(currentPosition.X > stonePos.X){
@@ -101,8 +101,8 @@ public class SkyStoneCoordinates {
             //all deltaX should be positive, no change here
         }else{
             //robot is more towards the audience
-            //all deltaX should be negative, unless the number of the stone is 5, 6 (cannot extend further).
-            if(stoneNumberFromBridge < 5){
+            //all deltaX should be negative, unless the number of the stone is 4, 5, 6 (cannot extend further).
+            if(stoneNumberFromBridge < 4){
                 deltaX = -deltaX;
                 lastDeltaX = -lastDeltaX;
             }
@@ -156,5 +156,39 @@ public class SkyStoneCoordinates {
             }
         }
         return parkPos;
+    }
+
+    public static ArrayList<RobotPoint2D> getLinearApproachableSampleWorldAxis(AllianceType alliance, int stoneNumberFromBridge, double robotLength, double robotWidth, RobotPoint2D currentPosition){
+        double halfRobotLength = robotLength / 2.0;
+        double halfRobotWidth = robotWidth / 2.0;
+
+        double deltaY = STONE_WIDTH / 2 + halfRobotWidth;
+        if(alliance == AllianceType.RED){
+            deltaY = -deltaY;
+        }
+        double deltaX = STONE_LENGTH / 2 + halfRobotLength + 10;
+        double lastDeltaX = -(halfRobotLength - STONE_LENGTH / 2);
+
+        RobotPoint2D stonePos = getStonePosition(alliance,stoneNumberFromBridge);
+        if(currentPosition.X > stonePos.X){
+            //robot is more towards the bridge.
+            //all deltaX should be positive, no change here
+        }else{
+            //robot is more towards the audience
+            //all deltaX should be negative, unless the number of the stone is 4, 5, 6 (cannot extend further).
+            if(stoneNumberFromBridge < 4){
+                deltaX = -deltaX;
+                lastDeltaX = -lastDeltaX;
+            }
+        }
+
+        RobotPoint2D firstPoint = new RobotPoint2D(stonePos.X + deltaX,stonePos.Y + deltaY);
+        RobotPoint2D secondPoint = new RobotPoint2D(stonePos.X + deltaX,stonePos.Y);
+        RobotPoint2D thirdPoint = new RobotPoint2D(stonePos.X + lastDeltaX, stonePos.Y);
+        ArrayList<RobotPoint2D> returnList = new ArrayList<>();
+        returnList.add(firstPoint);
+        returnList.add(secondPoint);
+        returnList.add(thirdPoint);
+        return returnList;
     }
 }

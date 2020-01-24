@@ -272,22 +272,20 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         {
             PurePursuitWayPoint followPoint = new PurePursuitWayPoint(0, 0);
             boolean foundPoint = false;
-            double closestAngle = 10000000;
+            double closestAngleRad = 10000000;
             for (int i = m_LastFollowedSegment; i < this.m_PathToFollow.size() - 1; i++) {
                 PurePursuitWayPoint startPoint = this.m_PathToFollow.get(i);
                 PurePursuitWayPoint endPoint = this.m_PathToFollow.get(i + 1);
-                RobotPoint2D endPointInRobotAxis = XYPlaneCalculations.getRelativePosition(currentOffset,endPoint);
-                double endAng = Math.toDegrees(Math.atan2(endPointInRobotAxis.Y,endPointInRobotAxis.X));
-                endAng += preferredAngle;
+                RobotPoint2D endPointInOriginalRobotAxis = new RobotPoint2D(endPoint.X - currentOffset.X,endPoint.Y - currentOffset.Y);
+                double endAngRad = Math.atan2(endPointInOriginalRobotAxis.Y,endPointInOriginalRobotAxis.X);
 
                 ArrayList<RobotPoint2D> intersections = XYPlaneCalculations.lineSegmentCircleIntersections(currentOffset.toPoint2D(), this.m_FollowRadius, startPoint, endPoint);
                 for (RobotPoint2D thisIntersection : intersections) {
-                    RobotPoint2D currentRobotAxisTarget = XYPlaneCalculations.getRelativePosition(currentOffset, thisIntersection);
-                    double targetPointAngle = Math.toDegrees(Math.atan2(currentRobotAxisTarget.Y, currentRobotAxisTarget.X));
-                    double wantedAngleInCurrentRobotAxis = targetPointAngle + preferredAngle;
-                    double deltaAng = XYPlaneCalculations.normalizeDeg(wantedAngleInCurrentRobotAxis - endAng);
-                    if (Math.abs(closestAngle) > Math.abs(deltaAng)) {
-                        closestAngle = deltaAng;
+                    RobotPoint2D OriginalRobotAxisTarget = new RobotPoint2D(thisIntersection.X - currentOffset.X, thisIntersection.Y - currentOffset.Y);
+                    double targetPointAngleRad = Math.atan2(OriginalRobotAxisTarget.Y, OriginalRobotAxisTarget.X);
+                    double deltaAngRad = XYPlaneCalculations.normalizeRad(targetPointAngleRad - endAngRad);
+                    if (closestAngleRad > Math.abs(deltaAngRad)) {
+                        closestAngleRad = Math.abs(deltaAngRad);
                         followPoint.setValues(thisIntersection);
                         this.m_LastFollowedSegment = i;
                         foundPoint = true;

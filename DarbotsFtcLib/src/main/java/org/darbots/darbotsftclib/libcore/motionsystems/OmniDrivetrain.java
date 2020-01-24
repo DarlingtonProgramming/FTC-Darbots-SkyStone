@@ -1,5 +1,7 @@
 package org.darbots.darbotsftclib.libcore.motionsystems;
 
+import com.qualcomm.robotcore.util.Range;
+
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
@@ -90,6 +92,18 @@ public class OmniDrivetrain extends RobotMotionSystem {
         this.m_RTMotor.setPower(normalizedWheelSpeeds[1]);
         this.m_LBMotor.setPower(normalizedWheelSpeeds[2]);
         this.m_RBMotor.setPower(normalizedWheelSpeeds[3]);
+    }
+
+    @Override
+    public void __setNormalizedRobotSpeed(double XSpeed, double YSpeed, double ZRotSpeed) {
+        double LTSpeed = Range.clip(- XSpeed + YSpeed + ZRotSpeed,-1.0,1.0);
+        double RTSpeed = Range.clip(XSpeed + YSpeed + ZRotSpeed,-1.0,1.0);
+        double LBSpeed = Range.clip(- XSpeed - YSpeed + ZRotSpeed,-1.0,1.0);
+        double RBSpeed = Range.clip(XSpeed - YSpeed + ZRotSpeed,-1.0,1.0);
+        this.m_LTMotor.setPower(LTSpeed);
+        this.m_RTMotor.setPower(RTSpeed);
+        this.m_LBMotor.setPower(LBSpeed);
+        this.m_RBMotor.setPower(RBSpeed);
     }
 
     @Override

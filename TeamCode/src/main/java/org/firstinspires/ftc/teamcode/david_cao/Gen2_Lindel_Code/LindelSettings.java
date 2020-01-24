@@ -29,20 +29,20 @@ public class LindelSettings {
 
     //========== Chassis Settings ==========
     public static MotorType CHASSIS_MOTOR_TYPE = new AndyMark3637();
-    public static double CHASSIS_WHEEL_RADIUS = 5.08; //4 INCH DIAMETER
+    public static double CHASSIS_WHEEL_RADIUS = 5.0; //4 INCH DIAMETER
     public static double CHASSIS_LENGTH = 28.1;
     public static double CHASSIS_WIDTH = 36.5;
     public static RobotVector2D CHASSIS_FACTORS = new RobotVector2D(
-            1.0,
-            35.676 / 40,
+            40 / 39.5,
+            40 / 35.676,
             171.66 / 180
     );
     //========== End of Chassis Settings ==========
 
     //========== Position Tracker Settings ==========
     public static RobotVector2D ODOMETRY_FACTORS = new RobotVector2D(
-            1.0,
-            35.676 / 40,
+            40 / 39.5,
+            40 / 35.676,
             171.66 / 180
     );
     //========== End of Position Tracker Settings ==========
@@ -100,8 +100,8 @@ public class LindelSettings {
     public static double AUTO_MAX_ACCEL_NORMALIZED = 0.2;
     public static double AUTO_MAX_ANGULAR_NORMALIZED = 1.0;
     public static double AUTO_MAX_ANGULAR_ACCEL_NORMALIZED = 0.2;
-    public static double AUTO_PURE_PURSUIT_ANGLE_SPEED_NORMALIZED = 0.4;
-    public static double AUTO_PURE_PURSUIT_RADIUS = 50;
+    public static double AUTO_PURE_PURSUIT_ANGLE_SPEED_NORMALIZED = 0.45;
+    public static double AUTO_PURE_PURSUIT_RADIUS = 20;
 
     public static boolean AUTO_SAMPLE_LIGHT = false;
 }

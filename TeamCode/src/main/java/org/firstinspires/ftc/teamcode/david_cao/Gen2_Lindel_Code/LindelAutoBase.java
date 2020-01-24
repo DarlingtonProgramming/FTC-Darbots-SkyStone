@@ -37,9 +37,10 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
         constraints = this.getRobotCore().getChassis().getMotionSystemConstraints(LindelSettings.AUTO_MAX_ACCEL_NORMALIZED * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0,LindelSettings.AUTO_MAX_ANGULAR_ACCEL_NORMALIZED * this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec(),0);
         maxAutoSpeed = this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec() * LindelSettings.AUTO_MAX_SPEED_NORMALIZED;
         maxAutoAngularSpeed = this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec() * LindelSettings.AUTO_MAX_ANGULAR_NORMALIZED;
-        purePursuitAngSpeed = this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec() * LindelSettings.AUTO_PURE_PURSUIT_ANGLE_SPEED_NORMALIZED;
+        purePursuitAngSpeed = LindelSettings.AUTO_PURE_PURSUIT_ANGLE_SPEED_NORMALIZED * this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec();
         MovementUtil.drivetrain_constraints = constraints;
         MovementUtil.resolution = 0.02;
+        this.m_Core.getGrabberRotServo().getServo().setPosition(this.m_Core.getGrabberRotServo().getCurrentPosition());
         __init();
     }
 
@@ -55,7 +56,7 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
 
     public void startSuckStones(){
         this.m_Core.setGrabberServoToGrab(false);
-        this.m_Core.setIntakeSystemStatus(LindelCore.IntakeSystemStatus.SUCK,0.4);
+        this.m_Core.setIntakeSystemStatus(LindelCore.IntakeSystemStatus.SUCK,0.8);
     }
 
     public void stopSuckStones(){
@@ -74,8 +75,8 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
         return purePursuitContainer;
     }
 
-    public PurePursuitPathFollower getFollower(ArrayList<PurePursuitWayPoint> pursuitPoints, double followRadius){
-        return new PurePursuitPathFollower(pursuitPoints,this.constraints.maximumLinearAcceleration,0,this.maxAutoSpeed,0,this.purePursuitAngSpeed,followRadius,0);
+    public PurePursuitPathFollower getFollower(ArrayList<PurePursuitWayPoint> pursuitPoints, double followRadius, double normalizedSpeed){
+        return new PurePursuitPathFollower(pursuitPoints,this.constraints.maximumLinearAcceleration,0,normalizedSpeed * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0,this.purePursuitAngSpeed,followRadius,0);
     }
 
     public void depositStoneToFoundation(){
@@ -124,6 +125,13 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
     public boolean waitForDrive(){
         while(this.opModeIsActive() && this.getRobotCore().getChassis().isBusy()){
             this.updateStatus();
+        }
+        return this.opModeIsActive();
+    }
+
+    public boolean waitForDrive_ChassisOnly(){
+        while(this.opModeIsActive() && this.getRobotCore().getChassis().isBusy()){
+            this.getRobotCore().getChassis().updateStatus();
         }
         return this.opModeIsActive();
     }

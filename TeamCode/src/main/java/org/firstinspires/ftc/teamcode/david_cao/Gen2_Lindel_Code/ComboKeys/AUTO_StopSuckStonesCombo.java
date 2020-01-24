@@ -11,7 +11,7 @@ public class AUTO_StopSuckStonesCombo extends LindelComboKeyBase {
 
     @Override
     protected void ___startCombo() {
-        this.getRobotCore().setIntakeSystemStatus(LindelCore.IntakeSystemStatus.VOMIT,0.3);
+        this.getRobotCore().setIntakeSystemStatus(LindelCore.IntakeSystemStatus.VOMIT,0.8);
         this.getRobotCore().setGrabberServoToGrab(false);
     }
 
@@ -28,12 +28,12 @@ public class AUTO_StopSuckStonesCombo extends LindelComboKeyBase {
             return;
         }
         double ms = this.getMilliSecondsSinceComboStart();
-        if (ms >= 200 && ms < 500) {
-            this.getRobotCore().setIntakeSystemStatus(LindelCore.IntakeSystemStatus.SUCK, 0.4);
-        } else if (ms >= 500 && ms < 1000) {
+        if (ms >= 400 && ms < 800) {
+            this.getRobotCore().setIntakeSystemStatus(LindelCore.IntakeSystemStatus.SUCK, 0.8);
+        } else if (ms >= 800 && ms < 1300) {
             this.getRobotCore().setIntakeSystemStatus(LindelCore.IntakeSystemStatus.STOP, 0);
             this.getRobotCore().setOrientServoToOrient(true);
-        } else if (ms >= 1000) {
+        } else if (ms >= 1300) {
             this.getRobotCore().setOrientServoToOrient(false);
             this.getRobotCore().setGrabberServoToGrab(true);
             this.stopCombo();

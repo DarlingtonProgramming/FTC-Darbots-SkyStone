@@ -12,6 +12,7 @@ import org.darbots.darbotsftclib.libcore.purepursuit.followers.PurePursuitPathFo
 import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitWayPoint;
 import org.darbots.darbotsftclib.libcore.runtime.MovementUtil;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
+import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.FixedXDistanceTask;
 import org.darbots.darbotsftclib.season_specific.skystone.ParkPosition;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStonePosition;
@@ -38,7 +39,7 @@ public class LindelRedLoadingZoneAuto extends LindelAutoBase {
     );
     public static final RobotPose2D FOUNDATION_EXIT_POSE = new RobotPose2D(
             SkyStoneCoordinates.FOUNDATION_RED.X - SkyStoneCoordinates.FOUNDATION_LENGTH / 2.0 - (LindelSettings.PHYSICAL_WIDTH / 2.0 - 10),
-            FOUNDATION_FINISH_POSE.Y,
+            FOUNDATION_FINISH_POSE.Y + 10,
             -90
     );
 
@@ -79,29 +80,36 @@ public class LindelRedLoadingZoneAuto extends LindelAutoBase {
             firstStoneNumber = 3;
         }
 
+        this.updateTelemetry();
+        telemetry.update();
+
         //Retrieve First Stone WayPoints
         {
             RobotPose2D currentRobotPosition = this.getRobotCore().PosTracker.getCurrentPosition();
-            ArrayList<RobotPoint2D> firstStoneWayPointsRaw = SkyStoneCoordinates.getPurePursuitWayPointsWorldAxis(ALLIANCE, firstStoneNumber, LindelSettings.PHYSICAL_LENGTH, LindelSettings.PHYSICAL_WIDTH, currentRobotPosition.toPoint2D());
-            PurePursuitPathFollower firstStoneFollower = this.getFollower(this.transferWorldPointsToPurePursuitPoints(firstStoneWayPointsRaw, currentRobotPosition), LindelSettings.AUTO_PURE_PURSUIT_RADIUS);
-
+            ArrayList<RobotPoint2D> firstStoneXYPosition = SkyStoneCoordinates.getPurePursuitWayPointsWorldAxis(ALLIANCE, firstStoneNumber, LindelSettings.PHYSICAL_LENGTH, LindelSettings.PHYSICAL_WIDTH, currentRobotPosition.toPoint2D());
             //start Driving and take in stones
             this.startSuckStones();
-            this.getRobotCore().getChassis().replaceTask(firstStoneFollower);
-            if (!this.waitForDrive()) {
+            this.getRobotCore().getChassis().replaceTask(this.getFollower(this.transferWorldPointsToPurePursuitPoints(firstStoneXYPosition,currentRobotPosition),LindelSettings.AUTO_PURE_PURSUIT_RADIUS,0.5));
+            if (!this.waitForDrive_WithTelemetry()) {
                 return;
             }
         }
 
         //stop taking in stones and start driving under bridge
         {
-            RobotPose2D currentRobotPosition = this.getRobotCore().PosTracker.getCurrentPosition();
+            RobotPose2D currentRobotPosition;
             this.stopSuckStones();
             ArrayList<RobotPoint2D> firstStoneExitWayPointsRaw = SkyStoneCoordinates.getPurePursuitWayPointsExitWorldAxis(ALLIANCE, firstStoneNumber, LindelSettings.PHYSICAL_LENGTH, LindelSettings.PHYSICAL_WIDTH, PARK_POSITION);
-            PurePursuitPathFollower firstStoneExitFollower = this.getFollower(this.transferWorldPointsToPurePursuitPoints(firstStoneExitWayPointsRaw,currentRobotPosition),LindelSettings.AUTO_PURE_PURSUIT_RADIUS);
-            this.getRobotCore().getChassis().replaceTask(firstStoneExitFollower);
-            if(!this.waitForDrive()){
-                return;
+            firstStoneExitWayPointsRaw.get(0).Y -= 15;
+            firstStoneExitWayPointsRaw.get(1).Y -= 15;
+            for(RobotPoint2D i : firstStoneExitWayPointsRaw){
+                currentRobotPosition = this.getRobotCore().PosTracker.getCurrentPosition();;
+                double preferredAngle = this.getRobotCore().getChassis().getPreferredAngle(0);
+                RobotPose2D target = XYPlaneCalculations.getRelativePosition(currentRobotPosition,new RobotPose2D(i,preferredAngle));
+                this.getRobotCore().getChassis().replaceTask(MovementUtil.getGoToPointTask(target.X,target.Y,0,0.2 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0.2 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),preferredAngle));
+                if(!this.waitForDrive_WithTelemetry()){
+                    return;
+                }
             }
         }
 
@@ -109,15 +117,19 @@ public class LindelRedLoadingZoneAuto extends LindelAutoBase {
         {
             RobotPose2D currentRobotPosition = this.getRobotCore().PosTracker.getCurrentPosition();
             double preferredAngle = this.getRobotCore().getChassis().getPreferredAngle(FOUNDATION_POSE.getRotationZ());
-            RobotPoint2D foundationPositionRobotAxis = XYPlaneCalculations.getRelativePosition(currentRobotPosition,FOUNDATION_POSE.toPoint2D());
-            TrajectoryFollower follower = MovementUtil.getGoToPointTask(foundationPositionRobotAxis.X,foundationPositionRobotAxis.Y,0,this.maxAutoSpeed,0,preferredAngle);
-            this.getRobotCore().getChassis().replaceTask(follower);
-            if(!this.waitForDrive()){
+            RobotPoint2D foundationPosition1RobotAxis = XYPlaneCalculations.getRelativePosition(currentRobotPosition,new RobotPoint2D(FOUNDATION_POSE.X,currentRobotPosition.Y));
+            TrajectoryFollower pos1follower = MovementUtil.getGoToPointTask(foundationPosition1RobotAxis.X,foundationPosition1RobotAxis.Y,0.2 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0,preferredAngle);
+            this.getRobotCore().getChassis().replaceTask(pos1follower);
+            if(!this.waitForDrive_WithTelemetry()){
                 return;
             }
-            //fix angle of robot after the previous job.
-            this.getRobotCore().getChassis().replaceTask(MovementUtil.getTurnToWorldAngTask(FOUNDATION_POSE.getRotationZ(),0,this.maxAutoAngularSpeed,0,false,false));
-            if(!this.waitForDrive()){
+
+            currentRobotPosition = this.getRobotCore().PosTracker.getCurrentPosition();
+            preferredAngle = this.getRobotCore().getChassis().getPreferredAngle(FOUNDATION_POSE.getRotationZ());
+            RobotPoint2D foundationPosition2RobotAxis = XYPlaneCalculations.getRelativePosition(currentRobotPosition,FOUNDATION_POSE.toPoint2D());
+            TrajectoryFollower pos2follower = MovementUtil.getGoToPointTask(foundationPosition2RobotAxis.X,foundationPosition2RobotAxis.Y,0,0.5 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0,preferredAngle);
+            this.getRobotCore().getChassis().replaceTask(pos2follower);
+            if(!this.waitForDrive_WithTelemetry()){
                 return;
             }
         }
@@ -127,13 +139,17 @@ public class LindelRedLoadingZoneAuto extends LindelAutoBase {
             RobotPose2D currentRobotPosition = this.getRobotCore().PosTracker.getCurrentPosition();
             double preferredAngle = this.getRobotCore().getChassis().getPreferredAngle(FOUNDATION_FINISH_POSE.getRotationZ());
             RobotPoint2D foundationFinishRobotAxis = XYPlaneCalculations.getRelativePosition(currentRobotPosition,FOUNDATION_FINISH_POSE.toPoint2D());
-            TrajectoryFollower follower = MovementUtil.getGoToPointTask(foundationFinishRobotAxis.X,foundationFinishRobotAxis.Y,0,this.maxAutoSpeed,0,preferredAngle);
+            TrajectoryFollower follower = MovementUtil.getGoToPointTask(foundationFinishRobotAxis.X + 70,foundationFinishRobotAxis.Y,0,0.3 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0,preferredAngle);
             this.getRobotCore().setDragServoToDrag(true);
             this.depositStoneToFoundation();
             this.getRobotCore().getChassis().replaceTask(follower);
-            if(!this.waitForDrive()){
+            if(!this.waitForDrive_WithTelemetry()){
                 return;
             }
+            this.getRobotCore().setDragServoToDrag(false);
+            currentRobotPosition = this.getRobotCore().PosTracker.getCurrentPosition();
+            currentRobotPosition.Y = FOUNDATION_FINISH_POSE.Y;
+            this.getRobotCore().PosTracker.setCurrentPosition(currentRobotPosition);
             while(this.dropStoneToFoundationCombo.isBusy() && this.opModeIsActive()){
                 this.updateStatus();
             }
@@ -141,13 +157,12 @@ public class LindelRedLoadingZoneAuto extends LindelAutoBase {
 
         //exit Foundation
         {
+
             RobotPose2D currentRobotPosition = this.getRobotCore().PosTracker.getCurrentPosition();
             double preferredAngle = this.getRobotCore().getChassis().getPreferredAngle(FOUNDATION_EXIT_POSE.getRotationZ());
-            RobotPoint2D foundationExitRobotAxis = XYPlaneCalculations.getRelativePosition(currentRobotPosition,FOUNDATION_EXIT_POSE.toPoint2D());
-            TrajectoryFollower follower = MovementUtil.getGoToPointTask(foundationExitRobotAxis.X,foundationExitRobotAxis.Y,0,this.maxAutoSpeed,0,preferredAngle);
-            this.getRobotCore().setDragServoToDrag(false);
-            this.getRobotCore().getChassis().replaceTask(follower);
-            if(!this.waitForDrive()){
+
+            this.getRobotCore().getChassis().replaceTask(MovementUtil.getGoToPointTask(-6,-120,0,0.5*this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0,0));
+            if(!this.waitForDrive_WithTelemetry()){
                 return;
             }
         }
@@ -168,5 +183,10 @@ public class LindelRedLoadingZoneAuto extends LindelAutoBase {
     @Override
     public void __destroy() {
         RobotOnPhoneCamera.setFlashlightEnabled(false);
+    }
+
+    @Override
+    public void __updateTelemetry() {
+        telemetry.addData("Sample Result",m_SampleResult.name());
     }
 }

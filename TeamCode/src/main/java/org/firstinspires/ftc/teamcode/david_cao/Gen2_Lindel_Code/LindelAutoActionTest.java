@@ -40,4 +40,9 @@ public class LindelAutoActionTest extends LindelAutoBase {
     public void __destroy() {
 
     }
+
+    @Override
+    public void __updateTelemetry() {
+
+    }
 }
