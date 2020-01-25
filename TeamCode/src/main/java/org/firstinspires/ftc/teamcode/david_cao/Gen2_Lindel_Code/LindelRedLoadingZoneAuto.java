@@ -43,7 +43,7 @@ public class LindelRedLoadingZoneAuto extends LindelAutoBase {
     protected DarbotsPixelSkyStoneSampler m_Sampler;
     protected RobotOnPhoneCamera m_Camera;
     protected SkyStonePosition m_SampleResult;
-    protected TrajectoryFollower[] m_EndingFollowers = new TrajectoryFollower[3];
+    protected TrajectoryFollower[] m_EndingFollowers = new TrajectoryFollower[4];
     protected TrajectoryFollower[] m_GotoFoundationFirstTrajctoty = new TrajectoryFollower[2];
     protected TrajectoryFollower[] m_GotoFoundationTrajectory = new TrajectoryFollower[2];
 
@@ -141,7 +141,22 @@ public class LindelRedLoadingZoneAuto extends LindelAutoBase {
             if(firstStoneNumber == 1){
                 firstStoneXYPosition.get(0).X += 5;
                 firstStoneXYPosition.get(1).X += 5;
+            }else if(firstStoneNumber == 2){
+                firstStoneXYPosition.get(0).X += 2;
+                firstStoneXYPosition.get(0).Y += 3;
+                firstStoneXYPosition.get(1).X += 2;
+                firstStoneXYPosition.get(1).Y += 3;
+            }else{
+                this.getRobotCore().getChassis().replaceTask(MovementUtil.getGoToPointTask(10,35,0.3 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0.3 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0.2 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),0));
+                if(!waitForDrive()){
+                    return;
+                }
+                firstStoneXYPosition.get(0).X -= 10;
+                firstStoneXYPosition.get(1).X -= 10;
+                firstStoneXYPosition.get(1).Y += 5;
+                firstStoneXYPosition.get(2).Y += 5;
             }
+
             RobotPose2D currentPosition = this.getRobotCore().getChassis().getCurrentPosition();
             this.startSuckStones();
             this.getRobotCore().getChassis().replaceTask(this.getFollower(this.transferWorldPointsToPurePursuitPoints(firstStoneXYPosition,currentPosition),LindelSettings.AUTO_PURE_PURSUIT_RADIUS,0.55));
@@ -237,9 +252,10 @@ public class LindelRedLoadingZoneAuto extends LindelAutoBase {
         initPose.X += 119.38 - LindelSettings.PHYSICAL_WIDTH / 2;
         initPose.Y += LindelSettings.LENGTH_FROM_CENTER_TO_BACK;
         this.getRobotCore().PosTracker.setCurrentPosition(initPose);
-        this.m_EndingFollowers[0] = MovementUtil.getGoToPointTask(0,-90,0.2 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.4 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.4 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
-        this.m_EndingFollowers[1] = MovementUtil.getGoToPointTask(-50,0,0.4 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.3 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
-        this.m_EndingFollowers[2] = MovementUtil.getGoToPointTask(-15,-50,0.3 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0,0);
+        this.m_EndingFollowers[0] = MovementUtil.getGoToPointTask(0,-80,0.2 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
+        this.m_EndingFollowers[1] = MovementUtil.getGoToPointTask(-50,0,0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
+        this.m_EndingFollowers[2] = MovementUtil.getGoToPointTask(0,40,0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.3 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
+        this.m_EndingFollowers[3] = MovementUtil.getGoToPointTask(-5,-60,0.3 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0,0);
 
 
         ArrayList<RobotPoint2D> exitPoint = SkyStoneCoordinates.getPurePursuitWayPointsExitWorldAxis(ALLIANCE,1,LindelSettings.PHYSICAL_LENGTH,LindelSettings.PHYSICAL_WIDTH,ParkPosition.NEXT_TO_NEUTRAL_BRIDGE);

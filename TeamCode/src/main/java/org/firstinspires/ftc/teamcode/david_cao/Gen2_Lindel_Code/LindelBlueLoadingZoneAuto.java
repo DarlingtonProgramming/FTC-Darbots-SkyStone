@@ -250,8 +250,8 @@ public class LindelBlueLoadingZoneAuto extends LindelAutoBase {
         this.getRobotCore().PosTracker.setCurrentPosition(initPose);
         this.m_EndingFollowers[0] = MovementUtil.getGoToPointTask(0,80,0.2 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
         this.m_EndingFollowers[1] = MovementUtil.getGoToPointTask(-50,0,0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
-        this.m_EndingFollowers[2] = MovementUtil.getGoToPointTask(0,-30,0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.3 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
-        this.m_EndingFollowers[3] = MovementUtil.getGoToPointTask(-15,70,0.3 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0,0);
+        this.m_EndingFollowers[2] = MovementUtil.getGoToPointTask(0,-40,0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.3 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
+        this.m_EndingFollowers[3] = MovementUtil.getGoToPointTask(-15,60,0.3 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0,0);
 
 
         ArrayList<RobotPoint2D> exitPoint = SkyStoneCoordinates.getPurePursuitWayPointsExitWorldAxis(ALLIANCE,1,LindelSettings.PHYSICAL_LENGTH,LindelSettings.PHYSICAL_WIDTH,ParkPosition.NEXT_TO_NEUTRAL_BRIDGE);
