@@ -28,8 +28,8 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
     private boolean m_EndingStarted;
     private double m_FollowRadius;
     private int m_LastFollowedSegment = 0;
-    private double m_ErrorRange = 1;
-    private double m_ErrorDuration = 2;
+    private double m_ErrorRange = 3;
+    private double m_ErrorDuration = 1;
     private double m_PreferredAngle = 0;
 
     public PurePursuitPathFollower(ArrayList<PurePursuitWayPoint> wayPoints, double maximumAcceleration, double startSpeed, double cruiseSpeed, double endSpeed, double angleSpeed, double followRadius, double preferredAngle){

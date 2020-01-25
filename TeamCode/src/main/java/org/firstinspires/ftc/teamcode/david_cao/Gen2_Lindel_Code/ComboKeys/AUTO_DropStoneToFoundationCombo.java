@@ -56,7 +56,7 @@ public class AUTO_DropStoneToFoundationCombo extends LindelComboKeyBase {
             if(!this.getRobotCore().getGrabberRotServo().isBusy()){
                 stage = 5;
                 this.getRobotCore().setGrabberServoToGrab(true);
-                this.getRobotCore().getLinearSlide().replaceTask(new TargetPosTask(null,LindelSettings.LINEAR_SLIDE_INIT,1.0));
+                this.getRobotCore().getLinearSlide().replaceTask(new TargetPosTask(null,LindelSettings.LINEAR_SLIDE_INIT - 0.4,1.0));
             }
         }else{
             this.stopCombo();

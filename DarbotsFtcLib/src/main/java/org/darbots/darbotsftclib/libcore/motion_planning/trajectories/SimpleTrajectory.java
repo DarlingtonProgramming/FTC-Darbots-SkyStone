@@ -44,9 +44,8 @@ public class SimpleTrajectory implements RobotTrajectory, Serializable {
 
     public double getTotalDuration(){
         double durationCounter = 0;
-        for(TrajectoryMotionSegment i : this.m_MotionSegments){
-            durationCounter += i.duration;
-        }
+        durationCounter += this.m_Resolution * (this.m_MotionSegments.size() - 1);
+        durationCounter += this.m_MotionSegments.get(this.m_MotionSegments.size() - 1).duration;
         return durationCounter;
     }
 

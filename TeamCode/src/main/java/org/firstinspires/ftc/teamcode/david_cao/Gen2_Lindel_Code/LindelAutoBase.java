@@ -56,7 +56,7 @@ public abstract class LindelAutoBase extends DarbotsBasicOpMode<LindelCore> {
 
     public void startSuckStones(){
         this.m_Core.setGrabberServoToGrab(false);
-        this.m_Core.setIntakeSystemStatus(LindelCore.IntakeSystemStatus.SUCK,0.8);
+        this.m_Core.setIntakeSystemStatus(LindelCore.IntakeSystemStatus.SUCK,1.0);
     }
 
     public void stopSuckStones(){

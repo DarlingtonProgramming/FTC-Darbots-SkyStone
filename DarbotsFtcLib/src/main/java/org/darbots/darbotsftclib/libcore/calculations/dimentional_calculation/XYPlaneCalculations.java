@@ -135,19 +135,23 @@ public class XYPlaneCalculations {
     }
 
     public static double normalizeRad(double Rad) {
-        double tempRad = Rad % (Math.PI * 2);
-        if(tempRad >= Math.PI){
-            tempRad -= (Math.PI) * 2;
+        while(Rad >= Math.PI){
+            Rad -= (Math.PI * 2);
         }
-        return tempRad;
+        while(Rad < -Math.PI){
+            Rad += (Math.PI) * 2;
+        }
+        return Rad;
     }
 
     public static float normalizeRad(float Rad){
-        float tempRad = (float) (Rad % (Math.PI * 2));
-        if(tempRad >= Math.PI){
-            tempRad -= (Math.PI) * 2;
+        while(Rad >= Math.PI){
+            Rad -= (Math.PI) * 2;
         }
-        return tempRad;
+        while(Rad < -Math.PI){
+            Rad += (Math.PI) * 2;
+        }
+        return Rad;
     }
 
     public static double normalizeDeg(double Deg) {

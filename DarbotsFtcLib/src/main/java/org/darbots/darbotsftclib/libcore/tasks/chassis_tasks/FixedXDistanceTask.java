@@ -96,7 +96,8 @@ public class FixedXDistanceTask extends RobotMotionSystemTask {
 
         double yError = 0 - currentOffset.Y;
         double angleError = XYPlaneCalculations.normalizeDeg(preferredAngle - currentOffset.getRotationZ());
-        RobotVector2D errorCorection = this.getErrorCorrectionVelocityVector(currentOffset,0,yError,angleError);
+        RobotVector2D errorCorrection = this.getErrorCorrectionVelocityVector(currentOffset,0,yError,angleError);
+
         double xTravelled = currentOffset.X;
         if(distance >= 0 && Math.abs(xTravelled) >= Math.abs(distance)){
             this.stopTask();
@@ -110,20 +111,17 @@ public class FixedXDistanceTask extends RobotMotionSystemTask {
         if(progress < slowDownFactor){
             normalizedXSpeed = (normalizedSpeed - startSpeed) * progress + startSpeed;
         }else if(progress > (1.0-slowDownFactor)){
-            normalizedXSpeed = (endSpeed - normalizedSpeed) * (1.0-progress) + normalizedSpeed;
+            normalizedXSpeed = (endSpeed - normalizedSpeed) * (progress - (1.0 - slowDownFactor)) + normalizedSpeed;
         }else{
             normalizedXSpeed = normalizedSpeed;
         }
-        if(this.distance < 0){
-            normalizedXSpeed = -normalizedXSpeed;
-        }
         double temporarySpeed = Math.sqrt(Math.pow(currentTarget.X,2) + Math.pow(currentTarget.Y,2));
-        double temporaryScale = normalizedXSpeed * temporarySpeed;
+        double temporaryScale = Math.abs(normalizedXSpeed * temporarySpeed);
         double scaledX = currentTarget.X * temporaryScale;
         double scaledY = currentTarget.Y * temporaryScale;
-        RobotPoint2D errorCorrectionRaw = errorCorection.toPoint2D();
+        RobotPoint2D errorCorrectionRaw = errorCorrection.toPoint2D();
         RobotPoint2D errorCorrectionVal = XYPlaneCalculations.getRelativePosition(new RobotPose2D(0,0,currentOffset.getRotationZ()),errorCorrectionRaw);
-        this.getMotionSystem().setRobotSpeed(errorCorrectionVal.X + scaledX * this.getMotionSystem().calculateMaxLinearXSpeedInCMPerSec(),errorCorrectionVal.Y + scaledY * this.getMotionSystem().calculateMaxLinearYSpeedInCMPerSec(),errorCorection.getRotationZ());
+        this.getMotionSystem().setRobotSpeed(errorCorrectionVal.X + scaledX * this.getMotionSystem().calculateMaxLinearXSpeedInCMPerSec(),errorCorrectionVal.Y + scaledY * this.getMotionSystem().calculateMaxLinearYSpeedInCMPerSec(),errorCorrection.getRotationZ());
     }
 
     @Override

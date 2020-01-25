@@ -36,7 +36,7 @@ public class MovementUtil {
             savedFile = null;
         }else{
             isSavedFile = true;
-            savedFileName = GlobalRegister.runningOpMode.getRobotCore().getClass().getSimpleName() + ".linear." + ((int) Math.round(X)) + "." + ((int) Math.round(Y)) + "." + ((float) startSpeed) + "." + ((float) cruiseSpeed) + "." + ((float) endSpeed) + ((int) Math.round(preferredAng)) + ".trajectoryFile";
+            savedFileName = GlobalRegister.runningOpMode.getRobotCore().getClass().getSimpleName() + ".linear." + ((int) Math.round(X)) + "." + ((int) Math.round(Y)) + "." + ((float) startSpeed) + "-" + ((float) cruiseSpeed) + "-" + ((float) endSpeed) + "[" + ((int) Math.round(preferredAng)) + "]" + ".trajectoryFile";
             savedFile = getTrajectoryFile(savedFileName);
             if(!savedFile.exists()){
                 isSavedFile = false;

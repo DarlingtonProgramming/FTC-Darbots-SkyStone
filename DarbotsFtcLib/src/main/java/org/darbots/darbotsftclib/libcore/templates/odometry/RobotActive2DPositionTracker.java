@@ -64,6 +64,7 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
     private Thread m_TrackingThread = null;
     private RobotGyro m_GyroProvider;
     private float m_LastGyroReading;
+    private float m_GyroReadingAtZero;
 
     protected volatile double m_XDistanceFactor, m_YDistanceFactor, m_ZRotDistanceFactor;
     protected volatile int m_ThreadSleepTimeInMs = 20;
@@ -184,6 +185,8 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
         if(provider != null) {
             this.updateGyroProvider();
             this.m_LastGyroReading = this.m_GyroProvider.getHeading();
+            RobotPose2D currentPosition = super.getCurrentPosition();
+            this.m_GyroReadingAtZero = this.m_LastGyroReading - ((float) currentPosition.getRotationZ());
         }
     }
 
@@ -205,6 +208,28 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
             }
             this.m_LastGyroReading = newAng;
             return deltaAngGyro;
+        }
+    }
+
+    public RobotPose2D getCurrentPosition(){
+        RobotPose2D currentPose = super.getCurrentPosition();
+        if(this.m_GyroProvider != null){
+            double currentGyroReading = this.m_GyroProvider.getHeading();
+            double deltaAng = currentGyroReading - this.m_GyroReadingAtZero;
+            if(this.m_GyroProvider.getHeadingRotationPositiveOrientation() == HeadingRotationPositiveOrientation.Clockwise){
+                deltaAng = -deltaAng;
+            }
+            currentPose.setRotationZ(XYPlaneCalculations.normalizeDeg(deltaAng));
+        }
+        return currentPose;
+    }
+
+    public void setCurrentPosition(RobotPose2D currentPosition){
+        super.setCurrentPosition(currentPosition);
+        if(this.m_GyroProvider != null) {
+            this.updateGyroProvider();
+            this.m_LastGyroReading = this.m_GyroProvider.getHeading();
+            this.m_GyroReadingAtZero = this.m_LastGyroReading - ((float) currentPosition.getRotationZ());
         }
     }
 }

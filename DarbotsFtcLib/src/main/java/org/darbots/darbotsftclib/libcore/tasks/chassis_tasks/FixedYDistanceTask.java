@@ -14,8 +14,8 @@ public class FixedYDistanceTask extends RobotMotionSystemTask {
     private double normalizedSpeed;
     private double preferredAngle;
 
-    public FixedYDistanceTask(double XDistance, double SlowDownFactor, double StartSpeed, double CruiseSpeed, double EndSpeed, double PreferredAngle){
-        this.setDistance(XDistance);
+    public FixedYDistanceTask(double YDistance, double SlowDownFactor, double StartSpeed, double CruiseSpeed, double EndSpeed, double PreferredAngle){
+        this.setDistance(YDistance);
         this.setSlowDownFactor(SlowDownFactor);
         this.setStartSpeed(StartSpeed);
         this.setCruiseSpeed(CruiseSpeed);
@@ -96,7 +96,7 @@ public class FixedYDistanceTask extends RobotMotionSystemTask {
 
         double xError = 0 - currentOffset.X;
         double angleError = XYPlaneCalculations.normalizeDeg(preferredAngle - currentOffset.getRotationZ());
-        RobotVector2D errorCorection = this.getErrorCorrectionVelocityVector(currentOffset,xError,0,angleError);
+        RobotVector2D errorCorrection = this.getErrorCorrectionVelocityVector(currentOffset,xError,0,angleError);
         double yTravelled = currentOffset.Y;
         if(distance >= 0 && Math.abs(yTravelled) >= Math.abs(distance)){
             this.stopTask();
@@ -110,20 +110,17 @@ public class FixedYDistanceTask extends RobotMotionSystemTask {
         if(progress < slowDownFactor){
             normalizedYSpeed = (normalizedSpeed - startSpeed) * progress + startSpeed;
         }else if(progress > (1.0-slowDownFactor)){
-            normalizedYSpeed = (endSpeed - normalizedSpeed) * (1.0-progress) + normalizedSpeed;
+            normalizedYSpeed = (endSpeed - normalizedSpeed) * (progress - (1.0 - slowDownFactor)) + normalizedSpeed;
         }else{
             normalizedYSpeed = normalizedSpeed;
         }
-        if(this.distance < 0){
-            normalizedYSpeed = -normalizedYSpeed;
-        }
         double temporarySpeed = Math.sqrt(Math.pow(currentTarget.X,2) + Math.pow(currentTarget.Y,2));
-        double temporaryScale = normalizedYSpeed * temporarySpeed;
+        double temporaryScale = Math.abs(normalizedYSpeed * temporarySpeed);
         double scaledX = currentTarget.X * temporaryScale;
         double scaledY = currentTarget.Y * temporaryScale;
-        RobotPoint2D errorCorrectionRaw = errorCorection.toPoint2D();
+        RobotPoint2D errorCorrectionRaw = errorCorrection.toPoint2D();
         RobotPoint2D errorCorrectionVal = XYPlaneCalculations.getRelativePosition(new RobotPose2D(0,0,currentOffset.getRotationZ()),errorCorrectionRaw);
-        this.getMotionSystem().setRobotSpeed(errorCorrectionVal.X + scaledX * this.getMotionSystem().calculateMaxLinearXSpeedInCMPerSec(),errorCorrectionVal.Y + scaledY * this.getMotionSystem().calculateMaxLinearYSpeedInCMPerSec(),errorCorection.getRotationZ());
+        this.getMotionSystem().setRobotSpeed(errorCorrectionVal.X + scaledX * this.getMotionSystem().calculateMaxLinearXSpeedInCMPerSec(),errorCorrectionVal.Y + scaledY * this.getMotionSystem().calculateMaxLinearYSpeedInCMPerSec(),errorCorrection.getRotationZ());
     }
 
     @Override

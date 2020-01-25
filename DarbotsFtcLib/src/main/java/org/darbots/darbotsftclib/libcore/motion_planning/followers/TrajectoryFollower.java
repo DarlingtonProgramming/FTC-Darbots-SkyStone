@@ -53,7 +53,7 @@ public class TrajectoryFollower extends RobotMotionSystemTask {
     @Override
     protected void __updateStatus() {
         double currentTime = this.getSecondsSinceTaskStart();
-        if(currentTime > this.m_TotalDuration){
+        if(currentTime >= this.m_TotalDuration){
             this.stopTask();
             return;
         }

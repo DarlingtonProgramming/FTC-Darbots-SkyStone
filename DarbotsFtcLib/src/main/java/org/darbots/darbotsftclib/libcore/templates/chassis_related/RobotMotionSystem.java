@@ -43,7 +43,7 @@ import java.util.ArrayList;
 public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(2,0,1.5);
     public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(2,0,1.5);
-    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(2,0,1.5);
+    public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(3,0,0.2);
 
     private ArrayList<RobotMotionSystemTask> m_TaskLists;
     private Robot2DPositionTracker m_PosTracker;
@@ -418,5 +418,12 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     }
     public MotionSystemConstraints getMotionSystemConstraints(double maximumAcceleration, double maximumJerk, double maximumAngularAcceleration, double maximumAngularJerk){
         return new MotionSystemConstraints(this.calculateMaxLinearSpeedInCMPerSec(),maximumAcceleration,maximumJerk,this.calculateMaxAngularSpeedInDegPerSec(),maximumAngularAcceleration,maximumAngularJerk);
+    }
+    public RobotPose2D getCurrentPosition(){
+        if(this.m_LastTaskFinishFieldPos != null){
+            return this.m_LastTaskFinishFieldPos;
+        }else{
+            return this.getPositionTracker().getCurrentPosition();
+        }
     }
 }
