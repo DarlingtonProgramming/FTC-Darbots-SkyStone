@@ -252,7 +252,7 @@ public class LindelRedLoadingZoneAuto extends LindelAutoBase {
         initPose.X += 119.38 - LindelSettings.PHYSICAL_WIDTH / 2;
         initPose.Y += LindelSettings.LENGTH_FROM_CENTER_TO_BACK;
         this.getRobotCore().PosTracker.setCurrentPosition(initPose);
-        this.m_EndingFollowers[0] = MovementUtil.getGoToPointTask(0,-80,0.2 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
+        this.m_EndingFollowers[0] = MovementUtil.getGoToPointTask(0,-70,0.2 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
         this.m_EndingFollowers[1] = MovementUtil.getGoToPointTask(-50,0,0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
         this.m_EndingFollowers[2] = MovementUtil.getGoToPointTask(0,40,0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.3 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0);
         this.m_EndingFollowers[3] = MovementUtil.getGoToPointTask(-5,-60,0.3 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0.5 * this.getRobotCore().getChassis().calculateMaxLinearXSpeedInCMPerSec(),0,0);

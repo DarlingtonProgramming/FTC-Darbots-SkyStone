@@ -165,11 +165,11 @@ public class LindelBlueLoadingZoneAuto extends LindelAutoBase {
             this.stopSuckStones();
             ArrayList<RobotPoint2D> firstStoneExitWayPointsRaw = SkyStoneCoordinates.getPurePursuitWayPointsExitWorldAxis(ALLIANCE, firstStoneNumber, LindelSettings.PHYSICAL_LENGTH, LindelSettings.PHYSICAL_WIDTH, PARK_POSITION);
             if (firstStoneNumber == 2 || firstStoneNumber == 3) {
-                firstStoneExitWayPointsRaw.get(0).Y += 10;
-                firstStoneExitWayPointsRaw.get(1).Y += 10;
-            } else{
                 firstStoneExitWayPointsRaw.get(0).Y += 5;
                 firstStoneExitWayPointsRaw.get(1).Y += 5;
+            } else{
+                firstStoneExitWayPointsRaw.get(0).Y += 0;
+                firstStoneExitWayPointsRaw.get(1).Y += 0;
             }
             for(RobotPoint2D i : firstStoneExitWayPointsRaw){
                 currentRobotPosition = this.getRobotCore().getChassis().getCurrentPosition();
