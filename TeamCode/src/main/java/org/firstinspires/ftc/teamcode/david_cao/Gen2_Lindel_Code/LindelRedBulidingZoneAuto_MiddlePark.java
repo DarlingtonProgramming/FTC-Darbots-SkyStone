@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.runtime.MovementUtil;
+import org.darbots.darbotsftclib.libcore.runtime.MovementUtil;
 
 @Autonomous(group = "4100", name = "Lindel-Red-BuildingZone-ParkMiddle")
 public class LindelRedBulidingZoneAuto_MiddlePark extends LindelAutoBase {

@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.RobotVector2D;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.AndyMark2964;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.AndyMark3637;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.servotypes.HS485HB;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.servotypes.HS755HB;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.servotypes.HS755MG;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.motor_related.MotorType;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.servo_related.ServoType;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
+import org.darbots.darbotsftclib.libcore.motortypes.AndyMark2964;
+import org.darbots.darbotsftclib.libcore.motortypes.AndyMark3637;
+import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS485HB;
+import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS755HB;
+import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS755MG;
+import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
+import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 
 public class LindelSettings {

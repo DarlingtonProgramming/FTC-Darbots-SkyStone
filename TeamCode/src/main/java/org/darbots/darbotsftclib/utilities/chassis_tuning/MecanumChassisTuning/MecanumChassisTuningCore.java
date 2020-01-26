@@ -3,17 +3,17 @@ package org.darbots.darbotsftclib.utilities.chassis_tuning.MecanumChassisTuning;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.RobotPose2D;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motionsystems.MecanumDrivetrain;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.AndyMark3637;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.odometry.MecanumChassis2DPositionTracker;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.runtime.GlobalRegister;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.sensors.motion_related.RobotMotion;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.sensors.motion_related.RobotWheel;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.sensors.motors.RobotMotorWithEncoder;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.RobotCore;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.chassis_related.RobotMotionSystem;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.motor_related.MotorType;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
+import org.darbots.darbotsftclib.libcore.motortypes.AndyMark3637;
+import org.darbots.darbotsftclib.libcore.odometry.MecanumChassis2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
+import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
+import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
+import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
+import org.darbots.darbotsftclib.libcore.templates.RobotCore;
+import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
+import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumChassisTuningCore extends RobotCore {

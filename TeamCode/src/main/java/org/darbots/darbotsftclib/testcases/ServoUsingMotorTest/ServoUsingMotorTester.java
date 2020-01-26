@@ -3,9 +3,9 @@ package org.darbots.darbotsftclib.testcases.ServoUsingMotorTest;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.OpModes.DarbotsBasicOpMode;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosSpeedCtlTask;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
+import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
+import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosSpeedCtlTask;
+import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
 
 @TeleOp(group = "DarbotsLib-TestCases",name="ServoUsingMotorTester")
 @Disabled

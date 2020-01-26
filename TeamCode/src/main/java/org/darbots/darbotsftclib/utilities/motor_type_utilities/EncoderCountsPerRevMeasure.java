@@ -3,12 +3,12 @@ package org.darbots.darbotsftclib.utilities.motor_type_utilities;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.OpModes.DarbotsBasicOpMode;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.GoBilda5202Series1150RPMMotor;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.sensors.motors.RobotMotorWithEncoder;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.RobotCore;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.motor_related.MotorType;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.motor_related.RobotMotor;
+import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
+import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series1150RPMMotor;
+import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
+import org.darbots.darbotsftclib.libcore.templates.RobotCore;
+import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
+import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
 
 @TeleOp(group = "DarbotsLib-Utilities", name = "EncoderCountsPerRevMeasureUtility")
 public class EncoderCountsPerRevMeasure extends DarbotsBasicOpMode {

@@ -3,8 +3,8 @@ package org.darbots.darbotsftclib.testcases.MecanumChassisTest;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.OpModes.DarbotsBasicOpMode;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.tasks.chassis_tasks.RobotMotionSystemTeleOpTask;
+import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
+import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.RobotMotionSystemTeleOpTask;
 import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 
 @TeleOp(group = "DarbotsLib-TestCases", name = "MecanumChassisControllerTest")

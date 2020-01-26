@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.david_cao.Gen4_SwanSilver_Code;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.RobotPose2D;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.RobotVector2D;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.GoBilda5202Series1150RPMMotor;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.GoBilda5202Series435RPMMotor;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.MotorTypeUtil;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.encoders.USDigital_E4T_360;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.servotypes.HS625MG;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.servotypes.HS755MG;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.servotypes.HS785HB;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.motor_related.MotorType;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.servo_related.ServoType;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
+import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series1150RPMMotor;
+import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series435RPMMotor;
+import org.darbots.darbotsftclib.libcore.motortypes.MotorTypeUtil;
+import org.darbots.darbotsftclib.libcore.motortypes.encoders.USDigital_E4T_360;
+import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS625MG;
+import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS755MG;
+import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS785HB;
+import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
+import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 
 public class SwanSilverSettings {
 

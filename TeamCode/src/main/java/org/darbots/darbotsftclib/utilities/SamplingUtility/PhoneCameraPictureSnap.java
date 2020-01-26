@@ -5,8 +5,8 @@ import android.graphics.Bitmap;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.integratedfunctions.FTCFileIO;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.sensors.cameras.RobotOnPhoneCamera;
+import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCFileIO;
+import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 @TeleOp(group = "DarbotsLib-Utilities", name = "PhoneCameraPictureSnapUtility")

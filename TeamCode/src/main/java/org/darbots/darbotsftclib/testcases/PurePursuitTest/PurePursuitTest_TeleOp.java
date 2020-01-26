@@ -3,10 +3,10 @@ package org.darbots.darbotsftclib.testcases.PurePursuitTest;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.OpModes.DarbotsBasicOpMode;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.purepursuit.followers.PurePursuitPathFollower;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.purepursuit.utils.PurePursuitWayPoint;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.odometry.RobotActive2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
+import org.darbots.darbotsftclib.libcore.purepursuit.followers.PurePursuitPathFollower;
+import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitWayPoint;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;
 import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 
 import java.util.ArrayList;

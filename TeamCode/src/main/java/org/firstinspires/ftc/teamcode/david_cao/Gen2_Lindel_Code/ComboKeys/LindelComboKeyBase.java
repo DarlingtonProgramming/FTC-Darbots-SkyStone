@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.ComboKeys;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.DarbotsComboKey;
+import org.darbots.darbotsftclib.libcore.templates.DarbotsComboKey;
 import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.LindelCore;
 
 public abstract class LindelComboKeyBase extends DarbotsComboKey

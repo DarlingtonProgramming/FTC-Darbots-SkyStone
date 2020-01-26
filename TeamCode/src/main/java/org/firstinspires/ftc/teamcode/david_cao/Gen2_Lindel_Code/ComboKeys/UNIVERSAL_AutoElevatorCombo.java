@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.ComboKeys;
 
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosSpeedCtlTask;
-import org.darbots.darbotsftclib.libcore_4_5_0Pre.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
+import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosSpeedCtlTask;
+import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
 import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.LindelCore;
 import org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code.LindelSettings;
 
