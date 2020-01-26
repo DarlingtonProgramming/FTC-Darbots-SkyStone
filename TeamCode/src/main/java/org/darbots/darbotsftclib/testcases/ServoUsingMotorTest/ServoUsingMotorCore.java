@@ -3,15 +3,13 @@ package org.darbots.darbotsftclib.testcases.ServoUsingMotorTest;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.darbots.darbotsftclib.libcore.motortypes.AndyMark2964;
-import org.darbots.darbotsftclib.libcore.motortypes.RevHDHex20Motor;
-import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorController;
-import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
-import org.darbots.darbotsftclib.libcore.sensors.servos.motor_powered_servos.RobotServoUsingMotor;
-import org.darbots.darbotsftclib.libcore.templates.RobotCore;
-import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
-import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
-import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.motortypes.AndyMark2964;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.sensors.motors.RobotMotorController;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.sensors.motors.RobotMotorWithEncoder;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.sensors.servos.motor_powered_servos.RobotServoUsingMotor;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.RobotCore;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.chassis_related.RobotMotionSystem;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.motor_related.MotorType;
 
 public class ServoUsingMotorCore extends RobotCore {
     private static final MotorType SERVO_MOTOR_TYPE = new AndyMark2964();

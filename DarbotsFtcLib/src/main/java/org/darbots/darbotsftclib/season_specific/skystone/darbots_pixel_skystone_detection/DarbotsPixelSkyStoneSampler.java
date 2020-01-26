@@ -3,8 +3,8 @@ package org.darbots.darbotsftclib.season_specific.skystone.darbots_pixel_skyston
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
-import org.darbots.darbotsftclib.libcore.integratedfunctions.image_processing.FTCImageUtility;
-import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotCamera;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.integratedfunctions.image_processing.FTCImageUtility;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.other_sensors.RobotCamera;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStonePosition;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneType;
 

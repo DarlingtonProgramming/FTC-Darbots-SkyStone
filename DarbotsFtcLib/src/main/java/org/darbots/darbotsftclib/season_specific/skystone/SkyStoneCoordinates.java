@@ -1,10 +1,9 @@
 package org.darbots.darbotsftclib.season_specific.skystone;
 
 import org.darbots.darbotsftclib.game_specific.AllianceType;
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitWayPoint;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.RobotPoint2D;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.XYPlaneCalculations;
 
 import java.util.ArrayList;
 

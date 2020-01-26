@@ -3,12 +3,11 @@ package org.darbots.darbotsftclib.season_specific.skystone.tfod_detection;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.darbots.darbotsftclib.game_specific.AllianceType;
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.integratedfunctions.image_processing.FTCImageUtility;
-import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotCamera;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.RobotPoint2D;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.integratedfunctions.image_processing.FTCImageUtility;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.other_sensors.RobotCamera;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStonePosition;
-import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneType;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;

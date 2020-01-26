@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen2_Lindel_Code;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.darbots.darbotsftclib.game_specific.AllianceType;
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
-import org.darbots.darbotsftclib.libcore.runtime.MovementUtil;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.RobotPoint2D;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.runtime.MovementUtil;
 import org.darbots.darbotsftclib.season_specific.skystone.ParkPosition;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 

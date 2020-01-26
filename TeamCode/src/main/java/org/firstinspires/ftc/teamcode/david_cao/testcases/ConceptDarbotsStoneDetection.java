@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.david_cao.testcases;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose3D;
-import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
-import org.darbots.darbotsftclib.libcore.templates.RobotCore;
-import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotCamera;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.OpModes.DarbotsBasicOpMode;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.calculations.dimentional_calculation.RobotPose3D;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.sensors.cameras.RobotOnPhoneCamera;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.RobotCore;
+import org.darbots.darbotsftclib.libcore_4_5_0Pre.templates.other_sensors.RobotCamera;
 import org.darbots.darbotsftclib.season_specific.skystone.navigation.SkyStoneNavigation;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
