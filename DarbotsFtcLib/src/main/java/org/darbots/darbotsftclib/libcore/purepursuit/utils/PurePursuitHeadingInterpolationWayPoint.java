@@ -27,7 +27,7 @@ public class PurePursuitHeadingInterpolationWayPoint extends PurePursuitWayPoint
         this.m_Heading = point.m_Heading;
         this.m_AllowedHeadingError = point.m_AllowedHeadingError;
     }
-    public PurePursuitHeadingInterpolationWayPoint(RobotPoint2D point, double Heading){
+    public PurePursuitHeadingInterpolationWayPoint(PurePursuitWayPoint point, double Heading){
         super(point);
         this.setDesiredHeading(Heading);
     }

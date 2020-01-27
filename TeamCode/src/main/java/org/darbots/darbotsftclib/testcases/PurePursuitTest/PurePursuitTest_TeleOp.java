@@ -16,6 +16,8 @@ import java.util.ArrayList;
 public class PurePursuitTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> {
     public static final double CONST_TEST_CRUISESPEED_NORMALIZED = 0.5;
     public static final double CONST_TEST_ANGLESPEED_NORMALIZED = 0.4;
+    public static final double CONST_TEST_STARTSPEED_NORMALIZED = 0.1;
+    public static final double CONST_TEST_ENDSPEED_NORMALIZED = 0.1;
     public static final double CONST_TEST_FOLLOW_RADIUS = 25;
     public static final double CONST_TEST_PREFERRED_ANGLE = 0;
 
@@ -29,9 +31,9 @@ public class PurePursuitTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> 
 
     public void initializeWaypoints(){
         this.m_Waypoints = new ArrayList<>();
-        this.m_Waypoints.add(new PurePursuitWayPoint(120,0));
-        this.m_Waypoints.add(new PurePursuitWayPoint(120,-120));
-        this.m_Waypoints.add(new PurePursuitWayPoint(240,0));
+        this.m_Waypoints.add(new PurePursuitWayPoint(120,0,CONST_TEST_FOLLOW_RADIUS,CONST_TEST_CRUISESPEED_NORMALIZED));
+        this.m_Waypoints.add(new PurePursuitWayPoint(120,-120,CONST_TEST_FOLLOW_RADIUS,CONST_TEST_CRUISESPEED_NORMALIZED));
+        this.m_Waypoints.add(new PurePursuitWayPoint(240,0,CONST_TEST_FOLLOW_RADIUS,CONST_TEST_ENDSPEED_NORMALIZED));
     }
 
     @Override
@@ -51,6 +53,7 @@ public class PurePursuitTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> 
     public void RunThisOpMode() {
         PurePursuitPathFollower pathFollower = new PurePursuitPathFollower(
                 this.m_Waypoints,
+                this.CONST_TEST_STARTSPEED_NORMALIZED,
                 this.CONST_TEST_CRUISESPEED_NORMALIZED,
                 this.CONST_TEST_ANGLESPEED_NORMALIZED,
                 this.CONST_TEST_PREFERRED_ANGLE

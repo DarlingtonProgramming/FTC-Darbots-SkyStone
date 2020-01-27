@@ -22,28 +22,33 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
     public static class FollowInformation{
         public PurePursuitWayPoint purePursuitWayPoint;
         public RobotPoint2D pursuitPoint;
+        public double normalizedFollowSpeed;
 
-        public FollowInformation(PurePursuitWayPoint wayPoint, RobotPoint2D followPoint){
+        public FollowInformation(PurePursuitWayPoint wayPoint, RobotPoint2D followPoint, double normalizedFollowSpeed){
             this.pursuitPoint = followPoint;
             this.purePursuitWayPoint = wayPoint;
+            this.normalizedFollowSpeed = Math.abs(normalizedFollowSpeed);
         }
         public FollowInformation(FollowInformation oldInfo){
             this.pursuitPoint = oldInfo.pursuitPoint;
             this.purePursuitWayPoint = oldInfo.purePursuitWayPoint;
+            this.normalizedFollowSpeed = oldInfo.normalizedFollowSpeed;
         }
     }
 
-    private ArrayList<PurePursuitWayPoint> m_Path;
-    private int m_PathCursor;
-    private double m_EndingPositionErrorRange = 3.0;
-    private double m_FollowSpeedNormalized;
-    private double m_AngleSpeedNormalized;
-    private double m_PreferredAngle;
+    protected ArrayList<PurePursuitWayPoint> m_Path;
+    protected int m_PathCursor;
+    protected double m_EndingPositionErrorRange = 3.0;
+    protected double m_FollowSpeedNormalized;
+    protected double m_AngleSpeedNormalized;
+    protected double m_PreferredAngle;
+    protected double m_FollowStartSpeedNormalized;
 
-    public PurePursuitPathFollower(ArrayList<PurePursuitWayPoint> path, double normalizedFollowSpeed, double normalizedAngleSpeed, double preferredAngle){
+    public PurePursuitPathFollower(ArrayList<PurePursuitWayPoint> path, double normalizedStartSpeed, double normalizedFollowSpeed, double normalizedAngleSpeed, double preferredAngle){
         this.m_Path = new ArrayList<>();
         this.m_Path.addAll(path);
         this.setFollowSpeed(normalizedFollowSpeed);
+        this.setStartSpeed(normalizedStartSpeed);
         this.setAngleSpeed(normalizedAngleSpeed);
         this.setPreferredAngle(preferredAngle);
     }
@@ -56,6 +61,15 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         this.m_AngleSpeedNormalized = oldFollower.m_AngleSpeedNormalized;
         this.m_PreferredAngle = oldFollower.m_PreferredAngle;
         this.m_EndingPositionErrorRange = oldFollower.m_EndingPositionErrorRange;
+        this.m_FollowStartSpeedNormalized = oldFollower.m_FollowStartSpeedNormalized;
+    }
+
+    public double getStartSpeed(){
+        return this.m_FollowStartSpeedNormalized;
+    }
+
+    public void setStartSpeed(double normalizedStartSpeed){
+        this.m_FollowStartSpeedNormalized = Math.abs(normalizedStartSpeed);
     }
 
     public double getEndingPositionErrorRange(){
@@ -106,6 +120,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
     @Override
     protected void __updateStatus() {
+
         RobotPose2D currentOffset = this.getRelativePositionOffsetSinceStart();
         FollowInformation followInfo = this.getFollowInformation(currentOffset);
         if(followInfo == null){
@@ -182,12 +197,43 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         PurePursuitWayPoint target = this.m_Path.get(this.m_PathCursor + 1);
         boolean lastSegment = this.m_PathCursor + 1 == this.m_Path.size() - 1;
 
+        //Calculate Follow Speed
+        double currentSegmentEndSpeed = target.getEndFollowNormalizedSpeed();
+        if(currentSegmentEndSpeed == 0){
+            currentSegmentEndSpeed = this.getFollowSpeed();
+        }
+        double currentSegmentStartSpeed = 0;
+        double distSegmentStartEnd = 0;
+        if(this.m_PathCursor < 0){
+            currentSegmentStartSpeed = this.getStartSpeed();
+            distSegmentStartEnd = target.distanceTo(XYPlaneCalculations.ORIGIN_POINT);
+        }else{
+            PurePursuitWayPoint targetStart = this.m_Path.get(this.m_PathCursor);
+            distSegmentStartEnd = target.distanceTo(targetStart);
+            currentSegmentStartSpeed = targetStart.getEndFollowNormalizedSpeed() == 0 ? this.getFollowSpeed() : targetStart.getEndFollowNormalizedSpeed();
+        }
+
+        double followSpeed;
+        if(currentSegmentEndSpeed != currentSegmentStartSpeed) {
+            double distToEndPoint = currentOffset.toPoint2D().distanceTo(target);
+            double progress = (distSegmentStartEnd - distToEndPoint) / distSegmentStartEnd;
+            if (progress >= 0) {
+                progress = Math.sqrt(progress);
+            } else {
+                progress = -Math.sqrt(-progress);
+            }
+            followSpeed = currentSegmentStartSpeed * progress + currentSegmentEndSpeed * (1.0 - progress);
+        }else{
+            followSpeed = currentSegmentStartSpeed;
+        }
+        //End Calculating Follow Speed
+
         if (lastSegment && currentOffset.toPoint2D().distanceTo(target) < target.getFollowDistance()) {
-            return new FollowInformation(target,target);
+            return new FollowInformation(target,target,followSpeed);
         } else if (target instanceof PurePursuitHeadingInterpolationWayPoint) {
-            return new FollowInformation(target,target);
+            return new FollowInformation(target,target,followSpeed);
         } else {
-            return new FollowInformation(target,getCurrentSegmentFollowPoint(currentOffset,target));
+            return new FollowInformation(target,getCurrentSegmentFollowPoint(currentOffset,target),followSpeed);
         }
     }
 
