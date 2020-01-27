@@ -74,7 +74,7 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         this.m_IsWorking = true;
 
         this.m_LastSupposedPose = new RobotPose2D(0,0,0);
-        this.m_TaskActualStartFieldPos = this.m_MotionSystem.getPositionTracker().getCurrentPosition();
+        this.m_TaskActualStartFieldPos = this.m_MotionSystem.getCurrentPosition();
         this.m_TaskSupposedStartFieldPos = this.m_MotionSystem.getLastTaskFinishFieldPos();
         if(this.m_TaskSupposedStartFieldPos == null){
             this.m_TaskSupposedStartFieldPos = new RobotPose2D(this.m_TaskActualStartFieldPos);
@@ -103,7 +103,7 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
             supposedFinishRelativeOffset = null;
         }
         RobotPose2D RelativePosMoved = this.getRelativePositionOffsetSinceStart();
-        RobotPose2D CurrentFieldPos = this.m_MotionSystem.getPositionTracker().getCurrentPosition();
+        RobotPose2D CurrentFieldPos = this.m_MotionSystem.getCurrentPosition();
 
         if(supposedFinishRelativeOffset != null) {
             if (Double.isNaN(supposedFinishRelativeOffset.X) || Double.isInfinite(supposedFinishRelativeOffset.X)) {
@@ -162,14 +162,22 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
     protected RobotPose2D getRelativePositionOffsetRawSinceStart(){
         return XYPlaneCalculations.getRelativePosition(
                 this.m_TaskActualStartFieldPos,
-                this.getMotionSystem().getPositionTracker().getCurrentPosition()
+                this.getMotionSystem().getCurrentPosition()
         );
     }
     protected RobotPose2D getRelativePositionOffsetSinceStart(){
         return XYPlaneCalculations.getRelativePosition(
                 this.m_TaskSupposedStartFieldPos,
-                this.getMotionSystem().getPositionTracker().getCurrentPosition()
+                this.getMotionSystem().getCurrentPosition()
         );
+    }
+
+    protected RobotPose2D getActualWorldTaskStartPose(){
+        return this.m_TaskActualStartFieldPos;
+    }
+
+    protected RobotPose2D getSupposedWorldTaskStartPose(){
+        return this.m_TaskSupposedStartFieldPos;
     }
 
     public RobotVector2D getErrorCorrectionVelocityVector(RobotPose2D currentOffset, double errorX, double errorY, double errorRotZ){
