@@ -204,7 +204,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         if(this.getLastTaskFinishFieldPos() != null && (!Double.isNaN(this.getLastTaskFinishFieldPos().getRotationZ()))){
             currentWorldAngle = this.getLastTaskFinishFieldPos().getRotationZ();
         }else{
-            currentWorldAngle = this.getPositionTracker().getCurrentPosition().getRotationZ();
+            currentWorldAngle = this.getCurrentPosition().getRotationZ();
         }
         double preferredAngle = XYPlaneCalculations.normalizeDeg(preferredWorldAngle - currentWorldAngle);
         return preferredAngle;

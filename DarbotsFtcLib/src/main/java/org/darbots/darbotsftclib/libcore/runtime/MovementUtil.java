@@ -71,7 +71,7 @@ public class MovementUtil {
             return null;
         }
         worldAng = XYPlaneCalculations.normalizeDeg(worldAng);
-        double currentWorldAng = GlobalRegister.runningOpMode.getRobotCore().getChassis().getPositionTracker().getCurrentPosition().getRotationZ();
+        double currentWorldAng = GlobalRegister.runningOpMode.getRobotCore().getChassis().getCurrentPosition().getRotationZ();
 
         RobotPose2D lastTaskFinishPos = GlobalRegister.runningOpMode.getRobotCore().getChassis().getLastTaskFinishFieldPos();
         if(lastTaskFinishPos != null && !Double.isNaN(lastTaskFinishPos.getRotationZ())){
