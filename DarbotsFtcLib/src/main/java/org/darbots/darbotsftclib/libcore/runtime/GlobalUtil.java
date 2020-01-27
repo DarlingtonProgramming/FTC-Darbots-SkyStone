@@ -1,5 +1,7 @@
 package org.darbots.darbotsftclib.libcore.runtime;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCFileIO;
@@ -80,6 +82,33 @@ public class GlobalUtil {
     public static void OpModeEnded(){
         if(GlobalRegister.currentLog != null){
             GlobalRegister.currentLog.endOpMode();
+        }
+    }
+
+    public static void updateBulkRead(){
+        if(GlobalRegister.allExtensionHubs == null){
+            return;
+        }
+        for(LynxModule i : GlobalRegister.allExtensionHubs){
+            i.clearBulkCache();
+        }
+    }
+
+    public static void setDataUpdateMethod(LynxModule.BulkCachingMode Mode){
+        if(GlobalRegister.allExtensionHubs == null){
+            return;
+        }
+        for(LynxModule i : GlobalRegister.allExtensionHubs){
+            i.setBulkCachingMode(Mode);
+        }
+    }
+
+    public static void addTelmetryLine(Telemetry telemetry, TelemetryPacket telemetryPacket, String title, String value){
+        if(telemetry != null){
+            telemetry.addData(title,value);
+        }
+        if(telemetryPacket != null){
+            telemetryPacket.addLine(title + ": " + value);
         }
     }
 }

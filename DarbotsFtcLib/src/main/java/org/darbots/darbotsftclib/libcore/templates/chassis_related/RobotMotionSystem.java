@@ -27,6 +27,10 @@ package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 
 import android.support.annotation.NonNull;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.qualcomm.robotcore.util.Range;
+
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
@@ -54,6 +58,11 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private RobotPose2D m_LastTaskFinishFieldPos;
     private ChassisPIDCalculator m_PIDCalculator;
     private double m_Cache_MaxLinearX, m_Cache_MaxLinearY, m_Cache_MaxZRot, m_Cache_MaxLinear;
+    private RobotPose2D m_Cache_WorldPosition = null;
+
+    private double m_DrawRobotHalfWidth = 9, m_DrawRobotHalfLength = 9;
+    private RobotPoint2D m_RobotFrontPoint = new RobotPoint2D(m_DrawRobotHalfLength / XYPlaneCalculations.INCH_PER_CM,0);
+    public String robotDrawColor = "#000066",pathDrawColor = "#0066ff", supposedPoseDrawColor = "#cccccc";
 
     public RobotMotionSystem(Robot2DPositionTracker PositionTracker){
         this.m_TaskLists = new ArrayList();
@@ -91,12 +100,34 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         this.m_Cache_MaxLinearX = MotionSystem.m_Cache_MaxLinearX;
         this.m_Cache_MaxLinearY = MotionSystem.m_Cache_MaxLinearY;
         this.m_Cache_MaxZRot = MotionSystem.m_Cache_MaxZRot;
+        this.m_Cache_WorldPosition = MotionSystem.m_Cache_WorldPosition;
 
         if(MotionSystem.m_PosTracker != null && MotionSystem.m_PosTracker instanceof RobotNonBlockingDevice){
             this.m_PosTrackerIsAsync = true;
         }else{
             this.m_PosTrackerIsAsync = false;
         }
+    }
+
+    public double getDrawRobotWidth(){
+        double widthInInch = this.m_DrawRobotHalfWidth * 2.0;
+        return (widthInInch / XYPlaneCalculations.INCH_PER_CM);
+    }
+
+    public void setDrawRobotWidth(double widthInCM){
+        double widthInInch = widthInCM * XYPlaneCalculations.INCH_PER_CM;
+        this.m_DrawRobotHalfWidth = widthInInch / 2.0;
+    }
+
+    public double getDrawRobotLength(){
+        double lengthInInch = this.m_DrawRobotHalfLength * 2.0;
+        return (lengthInInch / XYPlaneCalculations.INCH_PER_CM);
+    }
+
+    public void setDrawRobotLength(double lengthInCM){
+        double lengthInInch = lengthInCM * XYPlaneCalculations.INCH_PER_CM;
+        this.m_DrawRobotHalfLength = lengthInInch / 2.0;
+        m_RobotFrontPoint.X = lengthInCM / 2.0;
     }
 
     public ChassisPIDCalculator getPIDCalculator(){
@@ -199,6 +230,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     public void replaceTask(@NonNull RobotMotionSystemTask Task){
         if(!this.m_TaskLists.isEmpty()){
              if(this.m_TaskLists.get(0).isBusy())
+                 this.m_TaskLists.get(0).userIntentionalDelete = true;
                  this.m_TaskLists.get(0).stopTask();
         }
         this.m_TaskLists.clear();
@@ -211,6 +243,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
             this.__stopMotion();
             return;
         }
+        this.m_TaskLists.get(0).userIntentionalDelete = true;
         this.m_TaskLists.get(0).stopTask();
         this.m_TaskLists.remove(0);
         this.scheduleTasks();
@@ -230,6 +263,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
             return;
         }
         RobotMotionSystemTask currentTask = this.m_TaskLists.get(0);
+        currentTask.userIntentionalDelete = true;
         currentTask.stopTask();
         this.m_TaskLists.clear();
         this.__stopMotion();
@@ -269,9 +303,14 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
             NonBlockingTracker.updateStatus();
         }
         this.__updateMotorStatus();
+        this.clearPositionCache();
         if((!this.m_TaskLists.isEmpty())){
             this.m_TaskLists.get(0).updateStatus();
         }
+    }
+
+    public void clearPositionCache(){
+        this.m_Cache_WorldPosition = this.getPositionTracker().getCurrentPosition();
     }
 
     protected abstract void __updateMotorStatus();
@@ -337,10 +376,6 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         double newXSpeed = XSpeed * this.getLinearXMotionDistanceFactor();
         double newYSpeed = YSpeed * this.getLinearYMotionDistanceFactor();
         double newRotSpeed = ZRotSpeed * this.getRotationalMotionDistanceFactor();
-        double biggestSpeed = Math.abs(newXSpeed) + Math.abs(newYSpeed) + Math.abs(newRotSpeed);
-        newXSpeed /= biggestSpeed;
-        newYSpeed /= biggestSpeed;
-        newRotSpeed /= biggestSpeed;
         this.__setNormalizedRobotSpeed(newXSpeed,newYSpeed, newRotSpeed);
         return new RobotVector2D(newXSpeed,newYSpeed,newRotSpeed);
     }
@@ -419,10 +454,38 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         return new MotionSystemConstraints(this.calculateMaxLinearSpeedInCMPerSec(),maximumAcceleration,maximumJerk,this.calculateMaxAngularSpeedInDegPerSec(),maximumAngularAcceleration,maximumAngularJerk);
     }
     public RobotPose2D getCurrentPosition(){
-        if(this.m_LastTaskFinishFieldPos != null){
-            return this.m_LastTaskFinishFieldPos;
-        }else{
-            return this.getPositionTracker().getCurrentPosition();
+        if(this.m_Cache_WorldPosition == null){
+            this.clearPositionCache();
         }
+        return this.m_Cache_WorldPosition;
+    }
+
+    public void drawFieldOverlay(Canvas canvas){
+        canvas.setFill(this.pathDrawColor);
+        canvas.setStroke(this.robotDrawColor);
+        if(this.isBusy()){
+            this.m_TaskLists.get(0).drawPath(canvas);
+        }
+        RobotPose2D currentRobotPosition = this.getCurrentPosition();
+        RobotPoint2D[] robotAxisPoints = XYPlaneCalculations.getRobotExtremeBoundingBox(this.m_DrawRobotHalfLength,this.m_DrawRobotHalfLength,this.m_DrawRobotHalfWidth,this.m_DrawRobotHalfWidth);
+        RobotPoint2D tempRBPoint = robotAxisPoints[3];
+        robotAxisPoints[3] = robotAxisPoints[2];
+        robotAxisPoints[2] = tempRBPoint;
+        double[] currentRobotX = new double[4], currentRobotY = new double[4];
+        for(int i = 0; i < 4; i++){
+            RobotPoint2D transferredPoint = XYPlaneCalculations.getRelativePosition(currentRobotPosition,robotAxisPoints[i]);
+            transferredPoint.X *= XYPlaneCalculations.INCH_PER_CM;
+            transferredPoint.Y *= XYPlaneCalculations.INCH_PER_CM;
+            currentRobotX[i] = transferredPoint.X;
+            currentRobotY[i] = transferredPoint.Y;
+        }
+        RobotPoint2D robotFrontPoint =XYPlaneCalculations.getRelativePosition(currentRobotPosition,this.m_RobotFrontPoint);
+        RobotPoint2D currentRobotPositionInch = new RobotPoint2D(currentRobotPosition.X * XYPlaneCalculations.INCH_PER_CM, currentRobotPosition.Y * XYPlaneCalculations.INCH_PER_CM);
+        robotFrontPoint.X *= XYPlaneCalculations.INCH_PER_CM;
+        robotFrontPoint.Y *= XYPlaneCalculations.INCH_PER_CM;
+        canvas.setStroke(this.robotDrawColor);
+        canvas.setFill(this.robotDrawColor);
+        canvas.strokePolygon(currentRobotX,currentRobotY);
+        canvas.strokeLine(currentRobotPositionInch.X,currentRobotPositionInch.Y,robotFrontPoint.X,robotFrontPoint.Y);
     }
 }

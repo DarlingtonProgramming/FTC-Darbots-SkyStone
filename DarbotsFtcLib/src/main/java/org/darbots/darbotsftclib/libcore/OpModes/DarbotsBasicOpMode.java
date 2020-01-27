@@ -1,5 +1,8 @@
 package org.darbots.darbotsftclib.libcore.OpModes;
 
+import android.provider.Settings;
+
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -20,6 +23,7 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
     @Override
     public void runOpMode() throws InterruptedException {
         GlobalRegister.runningOpMode = this;
+        GlobalRegister.allExtensionHubs = hardwareMap.getAll(LynxModule.class);
         this.m_TimerSinceStart = null;
         this.m_TimerSinceInit = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         this.hardwareInitialize();
@@ -49,6 +53,7 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
         this.hardwareDestroy();
         GlobalRegister.runningOpMode = null;
         GlobalRegister.currentLog = null;
+        GlobalRegister.allExtensionHubs = null;
         this.m_TimerSinceStart = null;
         this.m_TimerSinceInit = null;
     }

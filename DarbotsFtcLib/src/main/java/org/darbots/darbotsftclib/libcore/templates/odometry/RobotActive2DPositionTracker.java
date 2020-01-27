@@ -6,6 +6,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Ro
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
+import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
@@ -20,7 +21,7 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
         public void run() {
             m_RunningFlag = true;
             m_Time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-
+            GlobalUtil.updateBulkRead();
             __trackStart();
 
             m_Time.reset();
@@ -35,6 +36,7 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
 
                 double time = m_Time.seconds();
                 m_Time.reset();
+                GlobalUtil.updateBulkRead();
                 __trackLoop(time);
                 if(GlobalRegister.runningOpMode != null && GlobalRegister.runningOpMode.isStopRequested()){
                     break;

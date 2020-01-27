@@ -1,5 +1,7 @@
 package org.darbots.darbotsftclib.libcore.tasks.chassis_tasks;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
+
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfile;
@@ -60,5 +62,10 @@ public class FixedTurnAngleTask extends RobotMotionSystemTask {
     @Override
     protected RobotPose2D __getSupposedTaskFinishPos() {
         return new RobotPose2D(0,0,angleToTurn);
+    }
+
+    @Override
+    public void drawPath(Canvas dashboardCanvas) {
+
     }
 }

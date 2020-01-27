@@ -2,9 +2,13 @@ package org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation;
 
 import android.support.annotation.Nullable;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class XYPlaneCalculations {
     public static final double CONST_180_OVER_PI = 180.0 / Math.PI;
@@ -12,6 +16,7 @@ public class XYPlaneCalculations {
     public static final double[] ORIGIN_POINT_ARRAY = {0,0};
     public static final RobotPoint2D ORIGIN_POINT = new RobotPoint2D(0,0);
     public static final double VERY_SMALL = 0.00001;
+    public static final double INCH_PER_CM = 0.393701;
 
     public static double[] rotatePointAroundFixedPoint_Deg(double[] point, double[] fixedPoint, double counterClockwiseAng) {
         double relativeY = point[1] - fixedPoint[1], relativeX = point[0] - fixedPoint[0];
@@ -133,23 +138,21 @@ public class XYPlaneCalculations {
     }
 
     public static double normalizeRad(double Rad) {
-        while(Rad >= Math.PI){
-            Rad -= (Math.PI * 2);
+        double PIT2 = Math.PI * 2;
+        double tempDeg = Rad % PIT2;
+        if(tempDeg >= Math.PI){
+            tempDeg -= PIT2;
         }
-        while(Rad < -Math.PI){
-            Rad += (Math.PI) * 2;
-        }
-        return Rad;
+        return tempDeg;
     }
 
     public static float normalizeRad(float Rad){
-        while(Rad >= Math.PI){
-            Rad -= (Math.PI) * 2;
+        double PIT2 = Math.PI * 2;
+        double tempDeg = Rad % PIT2;
+        if(tempDeg >= Math.PI){
+            tempDeg -= PIT2;
         }
-        while(Rad < -Math.PI){
-            Rad += (Math.PI) * 2;
-        }
-        return Rad;
+        return (float) tempDeg;
     }
 
     public static double normalizeDeg(double Deg) {
@@ -176,7 +179,7 @@ public class XYPlaneCalculations {
         }
     }
 
-    public static ArrayList<RobotPoint2D> verticleLineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, double fixedX){
+    public static ArrayList<RobotPoint2D> verticalLineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, double fixedX){
         double x1 = fixedX - circleCenter.X;
         double ySquared = Math.pow(circleRadius,2) - Math.pow(x1,2);
         ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
@@ -234,7 +237,7 @@ public class XYPlaneCalculations {
                     resultArray.add(linePoint1);
                 }
             }else if(linePoint1.X == linePoint2.X){
-                resultArray = verticleLineCircleIntersections(circleCenter,circleRadius,linePoint1.X);
+                resultArray = verticalLineCircleIntersections(circleCenter,circleRadius,linePoint1.X);
             }else { //linePoint1.Y == linePoint2.Y
                 resultArray = horizontalLineCircleIntersections(circleCenter,circleRadius,linePoint1.Y);
             }
@@ -286,6 +289,71 @@ public class XYPlaneCalculations {
         }
         return allPoints;
     }
+
+    public static ArrayList<RobotPoint2D> lineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, RobotPoint2D linePoint1, RobotPoint2D linePoint2){
+        if(linePoint1.X == linePoint2.X || linePoint1.Y == linePoint2.Y){
+            ArrayList<RobotPoint2D> resultArray = null;
+            if(linePoint1.X == linePoint2.X && linePoint1.Y == linePoint2.Y){
+                resultArray = new ArrayList<RobotPoint2D>();
+                if(isPointAtCircleEdge(circleCenter,circleRadius,linePoint1)){
+                    resultArray.add(linePoint1);
+                }
+            }else if(linePoint1.X == linePoint2.X){
+                resultArray = verticalLineCircleIntersections(circleCenter,circleRadius,linePoint1.X);
+            }else { //linePoint1.Y == linePoint2.Y
+                resultArray = horizontalLineCircleIntersections(circleCenter,circleRadius,linePoint1.Y);
+            }
+            return resultArray;
+        }
+
+        double x1 = linePoint1.X - circleCenter.X;
+        double y1 = linePoint1.Y - circleCenter.Y;
+
+        double m1 = (linePoint2.Y - linePoint1.Y) / (linePoint2.X - linePoint1.X);
+        double quadraticA = 1.0 + Math.pow(m1,2);
+        double quadraticB = (2.0 * m1 * y1) - (2.0 * Math.pow(m1,2) * x1);
+        double quadraticC = ((Math.pow(m1,2) * Math.pow(x1,2))) - (2.0 * y1 * m1 * x1) + Math.pow(y1,2) - Math.pow(circleRadius,2);
+        double quadraticDelta = Math.pow(quadraticB,2) - (4.0 * quadraticA * quadraticC);
+
+        ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
+        if(quadraticDelta > 0) {
+            double xRoot1 = (-quadraticB + Math.sqrt(quadraticDelta)) / (2.0 * quadraticA);
+            double yRoot1 = m1 * (xRoot1 - x1) + y1;
+            xRoot1 += circleCenter.X;
+            yRoot1 += circleCenter.Y;
+            RobotPoint2D root1 = new RobotPoint2D(xRoot1, yRoot1);
+            allPoints.add(root1);
+
+            double xRoot2 = (-quadraticB - Math.sqrt(quadraticDelta)) / (2.0 * quadraticA);
+            double yRoot2 = m1 * (xRoot2 - x1) + y1;
+            xRoot2 += circleCenter.X;
+            yRoot2 += circleCenter.Y;
+            RobotPoint2D root2 = new RobotPoint2D(xRoot2,yRoot2);
+            allPoints.add(root2);
+        }else if(quadraticDelta == 0){
+            double xRoot1 = (-quadraticB) / (2.0 * quadraticA);
+            double yRoot1 = m1 * (xRoot1 - x1) + y1;
+            xRoot1 += circleCenter.X;
+            yRoot1 += circleCenter.Y;
+            RobotPoint2D root1 = new RobotPoint2D(xRoot1, yRoot1);
+            allPoints.add(root1);
+        }
+        return allPoints;
+    }
+
+    public static RobotPoint2D getNearestPoint(List<RobotPoint2D> allPoints, RobotPoint2D point){
+        double smallestDistance = -1;
+        RobotPoint2D smallestPoint = null;
+        for(RobotPoint2D thisPoint : allPoints){
+            double currentDistance = thisPoint.distanceTo(point);
+            if(smallestPoint == null || currentDistance < smallestDistance){
+                smallestPoint = thisPoint;
+                smallestDistance = currentDistance;
+            }
+        }
+        return smallestPoint;
+    }
+
     public static boolean isInBoundingBox(RobotPoint2D point, RobotPoint2D minPoint, RobotPoint2D maxPoint){
         if(point.X >= minPoint.X && point.X <= maxPoint.X && point.Y >= minPoint.Y && point.Y <= maxPoint.Y){
             return true;
@@ -297,7 +365,7 @@ public class XYPlaneCalculations {
     @Nullable
     public static RobotPoint2D nearestPointOnLineSegment(RobotPoint2D point, RobotPoint2D linePoint1, RobotPoint2D linePoint2){
         if(linePoint1.X == linePoint2.X && linePoint1.Y == linePoint2.Y){
-            return null;
+            return linePoint1;
         }
         RobotPoint2D pointResult;
         if(linePoint1.Y == linePoint2.Y){
@@ -325,6 +393,27 @@ public class XYPlaneCalculations {
         }else{
             return null;
         }
+    }
+
+    @Nullable
+    public static RobotPoint2D nearestPointOnLine(RobotPoint2D point, RobotPoint2D linePoint1, RobotPoint2D linePoint2){
+        if(linePoint1.X == linePoint2.X && linePoint1.Y == linePoint2.Y){
+            return linePoint1;
+        }
+        RobotPoint2D pointResult;
+        if(linePoint1.Y == linePoint2.Y){
+            pointResult = new RobotPoint2D(point.X,linePoint1.Y);
+        }else if(linePoint1.X == linePoint2.X){
+            pointResult = new RobotPoint2D(linePoint1.X,point.Y);
+        }else{
+            double m = (linePoint2.Y - linePoint1.Y) / (linePoint2.X - linePoint1.X);
+            double b = linePoint1.Y - linePoint1.X * m;
+            double n = -1.0 / m;
+            double c = point.Y - point.X * n;
+            double nearestPointX = (c-b) / (m-n);
+            pointResult = new RobotPoint2D(nearestPointX,m * nearestPointX + b);
+        }
+        return pointResult;
     }
 
     public static RobotPoint2D[] getRobotExtremeBoundingBox(double distMidToFront, double distMidToBack, double distMidToLeft, double distMidToRight){

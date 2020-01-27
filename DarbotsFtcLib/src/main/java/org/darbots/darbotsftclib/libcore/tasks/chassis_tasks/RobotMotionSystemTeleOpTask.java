@@ -1,5 +1,7 @@
 package org.darbots.darbotsftclib.libcore.tasks.chassis_tasks;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
+
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystemTask;
 
@@ -47,5 +49,10 @@ public class RobotMotionSystemTeleOpTask extends RobotMotionSystemTask {
     @Override
     protected RobotPose2D __getSupposedTaskFinishPos() {
         return null;
+    }
+
+    @Override
+    public void drawPath(Canvas dashboardCanvas) {
+
     }
 }

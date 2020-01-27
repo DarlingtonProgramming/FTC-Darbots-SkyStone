@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.testcases.common;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -81,40 +82,6 @@ public class TestMecanumCore extends RobotCore {
     }
 
     @Override
-    public void updateTelemetry() {
-        Telemetry globalTele = GlobalUtil.getTelemetry();
-        if(globalTele != null){
-            {
-                RobotPose2D currentPos = this.m_PosTracker.getCurrentPosition();
-                Telemetry.Line positionLine = globalTele.addLine("Current Position");
-                positionLine.addData("X", currentPos.X);
-                positionLine.addData("Y", currentPos.Y);
-                positionLine.addData("RotZ", currentPos.getRotationZ());
-            }
-            {
-                if (this.getChassis() != null && this.getChassis().isBusy()) {
-                    RobotPose2D lastSupposedPose = this.getChassis().getCurrentTask().getLastSupposedPose();
-                    Telemetry.Line lastSupposedPoseLine = globalTele.addLine("Last Supposed Pose");
-                    lastSupposedPoseLine.addData("X",lastSupposedPose.X);
-                    lastSupposedPoseLine.addData("Y",lastSupposedPose.Y);
-                    lastSupposedPoseLine.addData("RotZ",lastSupposedPose.getRotationZ());
-                }
-            }
-            {
-                if(this.getChassis() != null && this.getChassis().isBusy()){
-                    RobotPose2D lastError = this.getChassis().getCurrentTask().getLastError();
-                    if(lastError != null){
-                        Telemetry.Line lastErrorLine = globalTele.addLine("Last Error");
-                        lastErrorLine.addData("X",lastError.X);
-                        lastErrorLine.addData("Y",lastError.Y);
-                        lastErrorLine.addData("RotZ",lastError.getRotationZ());
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
     public boolean isBusy() {
         return false;
     }
@@ -125,5 +92,10 @@ public class TestMecanumCore extends RobotCore {
         if(this.getGyro() != null && this.getGyro() instanceof RobotNonBlockingDevice){
             ((RobotNonBlockingDevice) this.getGyro()).updateStatus();
         }
+    }
+
+    @Override
+    public void __updateTelemetry(Telemetry telemetry, TelemetryPacket telemetryPacket) {
+
     }
 }

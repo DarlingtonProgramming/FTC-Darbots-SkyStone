@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.testcases.ServoUsingMotorTest;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -10,6 +11,7 @@ import org.darbots.darbotsftclib.libcore.sensors.servos.motor_powered_servos.Rob
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ServoUsingMotorCore extends RobotCore {
     private static final MotorType SERVO_MOTOR_TYPE = new AndyMark2964();
@@ -56,8 +58,8 @@ public class ServoUsingMotorCore extends RobotCore {
     }
 
     @Override
-    public void updateTelemetry() {
-        return;
+    public void __updateTelemetry(Telemetry telemetry, TelemetryPacket telemetryPacket) {
+
     }
 
     @Override

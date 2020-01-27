@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.utilities.chassis_tuning.MecanumChassisTuning;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -78,15 +79,8 @@ public class MecanumChassisTuningCore extends RobotCore {
     }
 
     @Override
-    public void updateTelemetry() {
-        Telemetry telemetry = GlobalRegister.runningOpMode.telemetry;
-        {
-            RobotPose2D currentPos = this.m_Chassis.getPositionTracker().getCurrentPosition();
-            Telemetry.Line currentPosLine = telemetry.addLine("Current Position");
-            currentPosLine.addData("X",currentPos.X);
-            currentPosLine.addData("Y",currentPos.Y);
-            currentPosLine.addData("RotZ",currentPos.getRotationZ());
-        }
+    public void __updateTelemetry(Telemetry telemetry, TelemetryPacket telemetryPacket) {
+
     }
 
     @Override

@@ -1,7 +1,13 @@
 package org.darbots.darbotsftclib.libcore.templates;
 
+import android.provider.Settings;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogFile;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
@@ -9,6 +15,9 @@ import org.darbots.darbotsftclib.libcore.sensors.gyros.BNO055Gyro;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.List;
 
 /**
  * This abstract class is used by the programmers to define components on iterations of robots
@@ -32,6 +41,8 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
         GlobalUtil.LowestLogLevel = LogLevel.INFO;
         m_Gyro = new BNO055Gyro(hardwareMap,"imu");
         this.m_UpdateStatusCount = 0;
+        GlobalRegister.allExtensionHubs = hardwareMap.getAll(LynxModule.class);
+        GlobalUtil.setDataUpdateMethod(LynxModule.BulkCachingMode.MANUAL);
     }
     public RobotCore(String logFileName, HardwareMap hardwareMap, int ThreadPriority){
         if(logFileName != null && (!logFileName.isEmpty())) {
@@ -48,6 +59,8 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
             GlobalRegister.currentLog.threadPriority = ThreadPriority;
         }
         this.m_UpdateStatusCount = 0;
+        GlobalRegister.allExtensionHubs = hardwareMap.getAll(LynxModule.class);
+        GlobalUtil.setDataUpdateMethod(LynxModule.BulkCachingMode.MANUAL);
     }
     public void stop(){
         this.__stop();
@@ -80,12 +93,35 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
     @Override
     public void updateStatus(){
         this.m_UpdateStatusCount++;
+        GlobalUtil.updateBulkRead();
         this.__updateStatus();
     }
     public long getUpdateStatusCount(){
         return this.m_UpdateStatusCount;
     }
-    public abstract void updateTelemetry();
+    public TelemetryPacket updateTelemetry(){
+        Telemetry telemetry = GlobalUtil.getTelemetry();
+        TelemetryPacket telemetryPacket = new TelemetryPacket();
+        if(this.getChassis() != null){
+            this.getChassis().drawFieldOverlay(telemetryPacket.fieldOverlay());
+            {
+                RobotPose2D currentPos = this.getChassis().getCurrentPosition();
+                GlobalUtil.addTelmetryLine(telemetry,telemetryPacket,"Current Pose","(" + currentPos.X + ", " + currentPos.Y + ", " + currentPos.getRotationZ() + ")");
+            }
+            {
+                RobotPose2D lastSupposedPose = this.getChassis().getCurrentTask().getLastSupposedPose();
+                GlobalUtil.addTelmetryLine(telemetry,telemetryPacket,"Last Supposed Pose","(" + lastSupposedPose.X + ", " + lastSupposedPose.Y + ", " + lastSupposedPose.getRotationZ() + ")");
+            }
+            {
+                RobotPose2D lastError = this.getChassis().getCurrentTask().getLastError();
+                GlobalUtil.addTelmetryLine(telemetry,telemetryPacket,"Last Error","(" + lastError.X + ", " + lastError.Y + ", " + lastError.getRotationZ() + ")");
+            }
+        }
+
+        __updateTelemetry(telemetry,telemetryPacket);
+        return telemetryPacket;
+    }
+    public abstract void __updateTelemetry(Telemetry telemetry, TelemetryPacket telemetryPacket);
     public RobotGyro getGyro(){
         return this.m_Gyro;
     }

@@ -1,24 +1,18 @@
 package org.darbots.darbotsftclib.libcore.purepursuit.followers;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfile;
-import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfileGenerator;
-import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionState;
 import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitHeadingInterpolationWayPoint;
 import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitWayPoint;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystemTask;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class PurePursuitPathFollower extends RobotMotionSystemTask {
+public class PurePursuitPathWorldAxisFollower extends RobotMotionSystemTask {
     public static class FollowInformation{
         public PurePursuitWayPoint purePursuitWayPoint;
         public RobotPoint2D pursuitPoint;
@@ -40,7 +34,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
     private double m_AngleSpeedNormalized;
     private double m_PreferredAngle;
 
-    public PurePursuitPathFollower(ArrayList<PurePursuitWayPoint> path, double normalizedFollowSpeed, double normalizedAngleSpeed, double preferredAngle){
+    public PurePursuitPathWorldAxisFollower(ArrayList<PurePursuitWayPoint> path, double normalizedFollowSpeed, double normalizedAngleSpeed, double preferredAngle){
         this.m_Path = new ArrayList<>();
         this.m_Path.addAll(path);
         this.setFollowSpeed(normalizedFollowSpeed);
@@ -48,7 +42,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         this.setPreferredAngle(preferredAngle);
     }
 
-    public PurePursuitPathFollower(PurePursuitPathFollower oldFollower){
+    public PurePursuitPathWorldAxisFollower(PurePursuitPathWorldAxisFollower oldFollower){
         super(oldFollower);
         this.m_Path = new ArrayList<>();
         this.m_Path.addAll(oldFollower.m_Path);
@@ -106,7 +100,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
     @Override
     protected void __updateStatus() {
-        RobotPose2D currentOffset = this.getRelativePositionOffsetSinceStart();
+        RobotPose2D currentOffset = this.getMotionSystem().getCurrentPosition();
         FollowInformation followInfo = this.getFollowInformation(currentOffset);
         if(followInfo == null){
             this.stopTask();

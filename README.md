@@ -12,11 +12,11 @@ To use this code, download / clone the entire project to your local computer.
 |Team Number|Current Status|Is playing|
 |-|-|-|
 |5100|Not playing this year|No|
-|4100|Second Match Nov. 9|Yes|
+|4100|Georgia State Championship Feb 21 - Feb 22|Yes|
 
 ## Library Status
 
-Current version: 4.5.0 Pre-Release   
+Current version: 4.5.1 Alpha   
 This library is currently the 4th iteration, and the documentations can be found in [docs.darbots.org](https://docs.darbots.org/) Repository of this organization    
 
 ## Questions

@@ -27,6 +27,7 @@ package org.darbots.darbotsftclib.libcore.templates.chassis_related;
 
 import android.support.annotation.NonNull;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
@@ -46,15 +47,18 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
     public RobotMotionSystemTaskCallBack TaskCallBack = null;
     protected RobotPose2D m_LastSupposedPose = null;
     protected RobotPose2D m_LastError = null;
+    public boolean userIntentionalDelete = false;
 
     public RobotMotionSystemTask(){
         this.m_IsWorking = false;
         this.m_TaskTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        this.userIntentionalDelete = false;
     }
     public RobotMotionSystemTask(@NonNull RobotMotionSystemTask Task) {
         this.m_MotionSystem = Task.m_MotionSystem;
         this.m_IsWorking = false;
         this.m_TaskTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        this.userIntentionalDelete = false;
     }
     public RobotMotionSystem getMotionSystem(){
         return this.m_MotionSystem;
@@ -92,7 +96,12 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
         this.m_IsWorking = false;
         this.__taskFinished();
 
-        RobotPose2D supposedFinishRelativeOffset = this.__getSupposedTaskFinishPos();
+        RobotPose2D supposedFinishRelativeOffset;
+        if(userIntentionalDelete){
+            supposedFinishRelativeOffset = this.__getSupposedTaskFinishPos();
+        }else{
+            supposedFinishRelativeOffset = null;
+        }
         RobotPose2D RelativePosMoved = this.getRelativePositionOffsetSinceStart();
         RobotPose2D CurrentFieldPos = this.m_MotionSystem.getPositionTracker().getCurrentPosition();
 
@@ -231,4 +240,6 @@ public abstract class RobotMotionSystemTask implements RobotNonBlockingDevice {
     public RobotPose2D getLastError(){
         return this.m_LastError;
     }
+
+    public abstract void drawPath(Canvas dashboardCanvas);
 }

@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.libcore.motion_planning.followers;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
@@ -88,5 +89,10 @@ public class TrajectoryFollower extends RobotMotionSystemTask {
         }else{
             return new RobotPose2D(endMotionState.xDisplacement,endMotionState.yDisplacement,Double.NaN);
         }
+    }
+
+    @Override
+    public void drawPath(Canvas dashboardCanvas) {
+
     }
 }
