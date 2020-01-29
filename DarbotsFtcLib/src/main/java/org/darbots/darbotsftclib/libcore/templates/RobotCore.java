@@ -28,7 +28,7 @@ import java.util.List;
  */
 public abstract class RobotCore implements RobotNonBlockingDevice {
     private RobotLogFile m_Logger;
-    private RobotGyro m_Gyro;
+    private BNO055Gyro m_Gyro;
     private long m_UpdateStatusCount = 0;
     public RobotCore(String logFileName, HardwareMap hardwareMap){
         if(logFileName != null && (!logFileName.isEmpty())) {
@@ -94,6 +94,7 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
     public void updateStatus(){
         this.m_UpdateStatusCount++;
         GlobalUtil.updateBulkRead();
+        this.m_Gyro.updateStatus();
         this.__updateStatus();
     }
     public long getUpdateStatusCount(){

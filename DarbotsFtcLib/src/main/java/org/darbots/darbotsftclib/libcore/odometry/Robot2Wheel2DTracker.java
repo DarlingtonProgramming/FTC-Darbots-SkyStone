@@ -4,10 +4,13 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Ro
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
-import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.templates.odometry.OdometryMethod;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
+
+import java.util.Vector;
 
 
-public abstract class Robot2Wheel2DTracker extends RobotActive2DPositionTracker {
+public abstract class Robot2Wheel2DTracker extends OdometryMethod {
     private int m_LastEncoder1Count = 0;
     private int m_LastEncoder2Count = 0;
     private float m_LastGyroReading = 0.0f;
@@ -24,8 +27,8 @@ public abstract class Robot2Wheel2DTracker extends RobotActive2DPositionTracker 
     private MotorType m_Encoder1MotorType, m_Encoder2MotorType;
     private RobotWheel m_Encoder1Wheel, m_Encoder2Wheel;
 
-    public Robot2Wheel2DTracker(RobotPose2D initialPosition, boolean Encoder1Reversed, MotorType Encoder1MotorType, RobotWheel Encoder1Wheel, boolean Encoder2Reversed, MotorType Encoder2MotorType, RobotWheel Encoder2Wheel) {
-        super(initialPosition);
+    public Robot2Wheel2DTracker(boolean Encoder1Reversed, MotorType Encoder1MotorType, RobotWheel Encoder1Wheel, boolean Encoder2Reversed, MotorType Encoder2MotorType, RobotWheel Encoder2Wheel) {
+        super();
         this.m_Encoder1Reversed = Encoder1Reversed;
         this.m_Encoder1MotorType = Encoder1MotorType;
         this.m_Encoder1Wheel = Encoder1Wheel;
@@ -52,7 +55,7 @@ public abstract class Robot2Wheel2DTracker extends RobotActive2DPositionTracker 
     protected abstract boolean isGyroCounterClockwisePositive();
 
     @Override
-    protected void __trackStart() {
+    public void __trackStart() {
         c_ENCODER1_COUNTS_PER_CM = m_Encoder1MotorType.getCountsPerRev() / m_Encoder1Wheel.getCircumference();
         c_ENCODER2_COUNTS_PER_CM = m_Encoder2MotorType.getCountsPerRev() / m_Encoder2Wheel.getCircumference();
 
@@ -89,7 +92,7 @@ public abstract class Robot2Wheel2DTracker extends RobotActive2DPositionTracker 
     }
 
     @Override
-    protected void __trackLoop(double secondsSinceLastLoop) {
+    public void __trackLoop(double secondsSinceLastLoop) {
         this.updateData();
         int newEncoder1Count = this.getEncoder1Count();
         int newEncoder2Count = this.getEncoder2Count();
@@ -117,8 +120,8 @@ public abstract class Robot2Wheel2DTracker extends RobotActive2DPositionTracker 
         double deltaXMoved = c_TRANSFORMATION_MATRIX[0][0] * deltaEncoder1AxialCM + c_TRANSFORMATION_MATRIX[1][0] * deltaEncoder2AxialCM;
         double deltaYMoved = c_TRANSFORMATION_MATRIX[0][1] * deltaEncoder1AxialCM + c_TRANSFORMATION_MATRIX[1][1] * deltaEncoder2AxialCM;
 
-        deltaXMoved /= Robot2Wheel2DTracker.this.m_XDistanceFactor;
-        deltaYMoved /= Robot2Wheel2DTracker.this.m_YDistanceFactor;
+        deltaXMoved /= this.getPositionTracker().getXDistanceFactor();
+        deltaYMoved /= this.getPositionTracker().getYDistanceFactor();
 
         RobotPose2D currentVelocityVector = new RobotPose2D(
                 deltaXMoved / secondsSinceLastLoop,
@@ -126,7 +129,7 @@ public abstract class Robot2Wheel2DTracker extends RobotActive2DPositionTracker 
                 deltaAngMoved / secondsSinceLastLoop
         );
 
-        __trackLoopMovedRaw(
+        this.getPositionTracker().__trackLoopMovedRaw(
                 currentVelocityVector,
                 new RobotPose2D(
                     deltaXMoved,

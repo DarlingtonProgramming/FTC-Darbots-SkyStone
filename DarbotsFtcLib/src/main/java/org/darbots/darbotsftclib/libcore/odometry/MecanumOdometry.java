@@ -4,27 +4,28 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Ro
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
-import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.templates.odometry.OdometryMethod;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
 
-public class MecanumChassis2DPositionTracker extends RobotActive2DPositionTracker{
+public class MecanumOdometry extends OdometryMethod {
     private int m_LastLTEncoderCount, m_LastRTEncoderCount, m_LastLBEncoderCount, m_LastRBEncoderCount;
     private double c_LT_COUNTS_PER_DEG, c_RT_COUNTS_PER_DEG, c_LB_COUNTS_PER_DEG, c_RB_COUNTS_PER_DEG;
     private RobotMotor m_LTMotor, m_RTMotor, m_LBMotor, m_RBMotor;
 
     private MecanumDrivetrain m_MotionSystem;
 
-    public MecanumChassis2DPositionTracker(RobotPose2D initialPosition, MecanumDrivetrain driveTrain) {
-        super(initialPosition);
+    public MecanumOdometry(MecanumDrivetrain driveTrain) {
+        super();
         this.m_MotionSystem = driveTrain;
     }
 
-    public MecanumChassis2DPositionTracker(MecanumChassis2DPositionTracker oldTracker) {
+    public MecanumOdometry(MecanumOdometry oldTracker) {
         super(oldTracker);
         this.m_MotionSystem = oldTracker.m_MotionSystem;
     }
 
     @Override
-    protected void __trackStart() {
+    public void __trackStart() {
         m_LTMotor = m_MotionSystem.getLTMotion().getMotor();
         m_RTMotor = m_MotionSystem.getRTMotion().getMotor();
         m_LBMotor = m_MotionSystem.getLBMotion().getMotor();
@@ -42,7 +43,7 @@ public class MecanumChassis2DPositionTracker extends RobotActive2DPositionTracke
     }
 
     @Override
-    protected void __trackLoop(double secondsSinceLastLoop) {
+    public void __trackLoop(double secondsSinceLastLoop) {
         int newLTCount = m_LTMotor.getCurrentCount();
         int newRTCount = m_RTMotor.getCurrentCount();
         int newLBCount = m_LBMotor.getCurrentCount();
@@ -71,9 +72,9 @@ public class MecanumChassis2DPositionTracker extends RobotActive2DPositionTracke
         double deltaYMoved = chassisSpeed.Y * secondsSinceLastLoop;
         double deltaAngMoved = chassisSpeed.getRotationZ() * secondsSinceLastLoop;
 
-        deltaAngMoved = getDeltaAng(deltaAngMoved);
+        deltaAngMoved = this.getPositionTracker().__getDeltaAng(deltaAngMoved);
 
-        __trackLoopMoved(
+        this.getPositionTracker().__trackLoopMoved(
                 chassisSpeed,
                 new RobotPose2D(
                     deltaXMoved,

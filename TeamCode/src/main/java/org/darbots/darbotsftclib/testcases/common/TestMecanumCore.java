@@ -8,8 +8,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Ro
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark3637;
-import org.darbots.darbotsftclib.libcore.odometry.MecanumChassis2DPositionTracker;
-import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
+import org.darbots.darbotsftclib.libcore.odometry.MecanumOdometry;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
@@ -26,7 +25,7 @@ public class TestMecanumCore extends RobotCore {
     public static final double XFactor = 1.0, YFactor = 1.09, RotZFactor = 1.070395;
 
     private MecanumDrivetrain m_Chassis;
-    private MecanumChassis2DPositionTracker m_PosTracker;
+    private MecanumOdometry m_PosTracker;
 
     public TestMecanumCore(HardwareMap hardwareMap, String logFileName) {
         super(logFileName, hardwareMap);
@@ -60,7 +59,7 @@ public class TestMecanumCore extends RobotCore {
         this.m_Chassis.setLinearXMotionDistanceFactor(XFactor);
         this.m_Chassis.setLinearYMotionDistanceFactor(YFactor);
         this.m_Chassis.setRotationalMotionDistanceFactor(RotZFactor);
-        this.m_PosTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),this.m_Chassis);
+        this.m_PosTracker = new MecanumOdometry(new RobotPose2D(0,0,0),this.m_Chassis);
         this.m_PosTracker.setDistanceFactors(new RobotVector2D(XFactor,YFactor,RotZFactor));
         this.m_Chassis.setPositionTracker(this.m_PosTracker);
         this.m_PosTracker.start();

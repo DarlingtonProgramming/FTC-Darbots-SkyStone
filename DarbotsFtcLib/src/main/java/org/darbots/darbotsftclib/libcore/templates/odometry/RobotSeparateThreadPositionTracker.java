@@ -11,7 +11,7 @@ import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
 //Factor = trackedDistance / actualDistance
-public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPositionTracker implements RobotGyro {
+public class RobotSeparateThreadPositionTracker extends RobotSynchronized2DPositionTracker implements RobotGyro, CustomizableOdometry {
     private class RobotActive2DPositionTracker_Runnable implements Runnable{
         private volatile boolean m_RunningCommand = false;
         private volatile boolean m_RunningFlag = false;
@@ -29,7 +29,7 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
 
             while(this.m_RunningCommand){
                 try{
-                    Thread.sleep(RobotActive2DPositionTracker.this.m_ThreadSleepTimeInMs);
+                    Thread.sleep(RobotSeparateThreadPositionTracker.this.m_ThreadSleepTimeInMs);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
@@ -63,13 +63,14 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
     }
     private RobotActive2DPositionTracker_Runnable m_RunnableTracking = null;
     private Thread m_TrackingThread = null;
-    private RobotGyro m_GyroProvider;
+    private RobotGyro m_GyroProvider = null;
     private float m_LastGyroReading;
     private float m_GyroReadingAtZero;
+    private OdometryMethod m_Method;
 
     protected volatile double m_XDistanceFactor, m_YDistanceFactor, m_ZRotDistanceFactor;
     protected volatile int m_ThreadSleepTimeInMs = 20;
-    public RobotActive2DPositionTracker(RobotPose2D initialPosition) {
+    public RobotSeparateThreadPositionTracker(OdometryMethod odometryMethod, RobotPose2D initialPosition) {
         super(initialPosition);
         this.m_XDistanceFactor = 1;
         this.m_YDistanceFactor = 1;
@@ -77,30 +78,36 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
         this.__setupRunnableTracking();
     }
 
-    public RobotActive2DPositionTracker(Robot2DPositionTracker oldTracker) {
-        super(oldTracker);
-        this.m_XDistanceFactor = 1;
-        this.m_YDistanceFactor = 1;
-        this.m_ZRotDistanceFactor = 1;
-        this.__setupRunnableTracking();
-    }
-
-    public RobotActive2DPositionTracker(RobotActive2DPositionTracker oldTracker){
+    public RobotSeparateThreadPositionTracker(RobotSeparateThreadPositionTracker oldTracker){
         super(oldTracker);
         RobotVector2D oldDistanceFactor = oldTracker.getDistanceFactors();
         this.m_XDistanceFactor = oldDistanceFactor.X;
         this.m_YDistanceFactor = oldDistanceFactor.Y;
         this.m_ZRotDistanceFactor = oldDistanceFactor.getRotationZ();
         this.setGyroProvider(oldTracker.m_GyroProvider);
+        this.m_Method = oldTracker.m_Method;
         this.__setupRunnableTracking();
     }
 
     protected void __setupRunnableTracking(){
+        this.m_Method.setPositionTracker(this);
         this.m_RunnableTracking = new RobotActive2DPositionTracker_Runnable();
     }
 
     public RobotVector2D getDistanceFactors(){
         return new RobotVector2D(this.m_XDistanceFactor,this.m_YDistanceFactor,this.m_ZRotDistanceFactor);
+    }
+
+    public double getXDistanceFactor(){
+        return this.m_XDistanceFactor;
+    }
+
+    public double getYDistanceFactor(){
+        return this.m_YDistanceFactor;
+    }
+
+    public double getRotZDistanceFactor(){
+        return this.m_ZRotDistanceFactor;
     }
 
     /**
@@ -137,19 +144,25 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
         }
     }
 
-    protected void __trackLoopMoved(RobotVector2D velocity, RobotPose2D deltaRobotAxis){
+    @Override
+    public void __trackLoopMoved(RobotVector2D velocity, RobotPose2D deltaRobotAxis){
         RobotVector2D fixedVelocity = new RobotVector2D(velocity.X / this.m_XDistanceFactor,velocity.Y / this.m_YDistanceFactor,velocity.getRotationZ() / this.m_ZRotDistanceFactor);
         RobotPose2D fixedDeltaRobotAxis = new RobotPose2D(deltaRobotAxis.X / this.m_XDistanceFactor, deltaRobotAxis.Y / this.m_YDistanceFactor, deltaRobotAxis.getRotationZ() / this.m_ZRotDistanceFactor);
         this.__trackLoopMovedRaw(fixedVelocity,fixedDeltaRobotAxis);
     }
 
-    protected void __trackLoopMovedRaw(RobotVector2D velocity, RobotPose2D deltaRobotAxis){
+    @Override
+    public void __trackLoopMovedRaw(RobotVector2D velocity, RobotPose2D deltaRobotAxis){
         this.setCurrentVelocityVector(velocity);
         this.drive_MoveThroughRobotAxisOffset(deltaRobotAxis);
     }
 
-    protected abstract void __trackStart();
-    protected abstract void __trackLoop(double secondsSinceLastLoop);
+    protected void __trackStart(){
+        this.m_Method.__trackStart();
+    }
+    protected void __trackLoop(double secondsSinceLastLoop){
+        this.m_Method.__trackLoop(secondsSinceLastLoop);
+    }
 
     @Override
     public void stop(){
@@ -197,7 +210,8 @@ public abstract class RobotActive2DPositionTracker extends RobotSynchronized2DPo
         }
     }
 
-    protected double getDeltaAng(double supposedDeltaAng){
+    @Override
+    public double __getDeltaAng(double supposedDeltaAng){
         if(this.m_GyroProvider == null){
             return supposedDeltaAng;
         }else{

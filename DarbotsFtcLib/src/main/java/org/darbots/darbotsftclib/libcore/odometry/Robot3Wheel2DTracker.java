@@ -4,16 +4,16 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Ro
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
-import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.templates.odometry.OdometryMethod;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 
 /**
  * Standard 3 Wheel Tracker
  * The three tracking wheels are installed at the left, front and right side of the robot
  */
-public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker implements RobotGyro {
+public abstract class Robot3Wheel2DTracker extends OdometryMethod {
     private int m_LastLeftEncoderCount, m_LastMidEncoderCount, m_LastRightEncoderCount;
-    private volatile double m_HeadingAngle = 0.0;
     private double c_LEFTENCODER_COUNTS_PER_CM, c_MIDENCODER_COUNTS_PER_CM, c_RIGHTENCODER_COUNTS_PER_CM;
     private double c_MIDENCODER_CM_PER_DEG, c_LEFTENCODER_CM_PER_DEG, c_RIGHTENCODER_CM_PER_DEG;
 
@@ -25,8 +25,7 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
     private MotorType m_LeftEncoderMotorType, m_MidEncoderMotorType, m_RightEncoderMotorType;
     private RobotWheel m_LeftEncoderWheel, m_MidEncoderWheel, m_RightEncoderWheel;
 
-    public Robot3Wheel2DTracker(RobotPose2D initialPosition, boolean LeftEncoderReversed, MotorType LeftEncoderMotorType, RobotWheel LeftEncoderWheel, boolean MidEncoderReversed, MotorType MidEncoderMotorType, RobotWheel MidEncoderWheel, boolean RightEncoderReversed, MotorType RightEncoderMotorType, RobotWheel RightEncoderWheel) {
-        super(initialPosition);
+    public Robot3Wheel2DTracker(boolean LeftEncoderReversed, MotorType LeftEncoderMotorType, RobotWheel LeftEncoderWheel, boolean MidEncoderReversed, MotorType MidEncoderMotorType, RobotWheel MidEncoderWheel, boolean RightEncoderReversed, MotorType RightEncoderMotorType, RobotWheel RightEncoderWheel) {
         this.m_LeftEncoderReversed = LeftEncoderReversed;
         this.m_LeftEncoderMotorType = LeftEncoderMotorType;
         this.m_LeftEncoderWheel = LeftEncoderWheel;
@@ -58,7 +57,7 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
     protected abstract int getRightEncoderCount();
 
     @Override
-    protected void __trackStart() {
+    public void __trackStart() {
         c_LEFTENCODER_COUNTS_PER_CM = m_LeftEncoderMotorType.getCountsPerRev() / m_LeftEncoderWheel.getCircumference();
         c_MIDENCODER_COUNTS_PER_CM = m_MidEncoderMotorType.getCountsPerRev() / m_MidEncoderWheel.getCircumference();
         c_RIGHTENCODER_COUNTS_PER_CM = m_RightEncoderMotorType.getCountsPerRev() / m_RightEncoderWheel.getCircumference();
@@ -73,13 +72,8 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
         m_LastRightEncoderCount = this.getRightEncoderCount();
     }
 
-    private void offsetHeading(double offsetAngle){
-        this.m_HeadingAngle = XYPlaneCalculations.normalizeDeg(this.m_HeadingAngle + offsetAngle);
-        return;
-    }
-
     @Override
-    protected void __trackLoop(double secondsSinceLastLoop) {
+    public void __trackLoop(double secondsSinceLastLoop) {
         this.updateData();
         int newMidCount = this.getMidEncoderCount();
         int newLeftCount = this.getLeftEncoderCount();
@@ -105,11 +99,12 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
         double deltaXMoved = (-(deltaLeftCM - deltaAngMoved * c_LEFTENCODER_CM_PER_DEG) + (deltaRightCM - deltaAngMoved * c_RIGHTENCODER_CM_PER_DEG)) / 2.0;
         double deltaYMoved = deltaMidCM - deltaAngMoved * c_MIDENCODER_CM_PER_DEG;
 
+        deltaAngMoved /= this.getPositionTracker().getRotZDistanceFactor();
         deltaAngMoved = XYPlaneCalculations.normalizeDeg(deltaAngMoved);
-        deltaAngMoved = getDeltaAng(deltaAngMoved);
+        deltaAngMoved = this.getPositionTracker().__getDeltaAng(deltaAngMoved);
 
-        deltaXMoved /= this.m_XDistanceFactor;
-        deltaYMoved /= this.m_YDistanceFactor;
+        deltaXMoved /= this.getPositionTracker().getXDistanceFactor();
+        deltaYMoved /= this.getPositionTracker().getYDistanceFactor();
 
         RobotPose2D currentVelocityVector = new RobotPose2D(
                 deltaXMoved / secondsSinceLastLoop,
@@ -117,7 +112,7 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
                 deltaAngMoved / secondsSinceLastLoop
         );
 
-        __trackLoopMoved(currentVelocityVector,
+        this.getPositionTracker().__trackLoopMoved(currentVelocityVector,
                 new RobotPose2D(
                     deltaXMoved,
                     deltaYMoved,
@@ -125,20 +120,8 @@ public abstract class Robot3Wheel2DTracker extends RobotActive2DPositionTracker 
                 )
         );
 
-        this.offsetHeading(deltaAngMoved * Robot3Wheel2DTracker.this.m_ZRotDistanceFactor);
-
         m_LastMidEncoderCount = newMidCount;
         m_LastLeftEncoderCount = newLeftCount;
         m_LastRightEncoderCount = newRightCount;
-    }
-
-    @Override
-    public float getHeading() {
-        return (float) this.m_HeadingAngle;
-    }
-
-    @Override
-    public HeadingRotationPositiveOrientation getHeadingRotationPositiveOrientation() {
-        return HeadingRotationPositiveOrientation.CounterClockwise;
     }
 }

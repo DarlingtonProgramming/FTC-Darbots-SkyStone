@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.purepursuit.followers.PurePursuitPathFollower;
 import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitWayPoint;
-import org.darbots.darbotsftclib.libcore.templates.odometry.RobotActive2DPositionTracker;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
 import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class PurePursuitTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> 
     @Override
     public void hardwareInitialize() {
         this.m_Core = new TestMecanumCore(this.hardwareMap,"MecanumMotionProfilingTest.log");
-        ((RobotActive2DPositionTracker) this.m_Core.getChassis().getPositionTracker()).setGyroProvider(this.m_Core.getGyro());
+        ((RobotSeparateThreadPositionTracker) this.m_Core.getChassis().getPositionTracker()).setGyroProvider(this.m_Core.getGyro());
 
         this.initializeWaypoints();
     }

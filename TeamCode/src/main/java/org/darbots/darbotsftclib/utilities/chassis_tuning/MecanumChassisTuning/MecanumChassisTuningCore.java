@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
 import org.darbots.darbotsftclib.libcore.motortypes.AndyMark3637;
-import org.darbots.darbotsftclib.libcore.odometry.MecanumChassis2DPositionTracker;
-import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
+import org.darbots.darbotsftclib.libcore.odometry.MecanumOdometry;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
@@ -53,7 +52,7 @@ public class MecanumChassisTuningCore extends RobotCore {
         RobotMotion RBMotion = new RobotMotion(new RobotMotorWithEncoder(m_RightBottomDC,ChassisMotorType),m_RightBottomWheel);
 
         this.m_Chassis = new MecanumDrivetrain(null,LTMotion,RTMotion,LBMotion,RBMotion);
-        MecanumChassis2DPositionTracker posTracker = new MecanumChassis2DPositionTracker(new RobotPose2D(0,0,0),this.m_Chassis);
+        MecanumOdometry posTracker = new MecanumOdometry(new RobotPose2D(0,0,0),this.m_Chassis);
         this.m_Chassis.setPositionTracker(posTracker);
         posTracker.start();
     }
