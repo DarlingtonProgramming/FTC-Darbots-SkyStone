@@ -16,6 +16,7 @@ import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TestMecanumCore extends RobotCore {
@@ -25,7 +26,7 @@ public class TestMecanumCore extends RobotCore {
     public static final double XFactor = 1.0, YFactor = 1.09, RotZFactor = 1.070395;
 
     private MecanumDrivetrain m_Chassis;
-    private MecanumOdometry m_PosTracker;
+    private RobotSeparateThreadPositionTracker m_PosTracker;
 
     public TestMecanumCore(HardwareMap hardwareMap, String logFileName) {
         super(logFileName, hardwareMap);
@@ -59,7 +60,7 @@ public class TestMecanumCore extends RobotCore {
         this.m_Chassis.setLinearXMotionDistanceFactor(XFactor);
         this.m_Chassis.setLinearYMotionDistanceFactor(YFactor);
         this.m_Chassis.setRotationalMotionDistanceFactor(RotZFactor);
-        this.m_PosTracker = new MecanumOdometry(new RobotPose2D(0,0,0),this.m_Chassis);
+        this.m_PosTracker = new RobotSeparateThreadPositionTracker(new MecanumOdometry(this.m_Chassis), new RobotPose2D(0,0,0));
         this.m_PosTracker.setDistanceFactors(new RobotVector2D(XFactor,YFactor,RotZFactor));
         this.m_Chassis.setPositionTracker(this.m_PosTracker);
         this.m_PosTracker.start();

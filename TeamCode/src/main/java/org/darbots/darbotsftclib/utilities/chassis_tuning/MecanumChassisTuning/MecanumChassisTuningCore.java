@@ -14,6 +14,7 @@ import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumChassisTuningCore extends RobotCore {
@@ -52,7 +53,7 @@ public class MecanumChassisTuningCore extends RobotCore {
         RobotMotion RBMotion = new RobotMotion(new RobotMotorWithEncoder(m_RightBottomDC,ChassisMotorType),m_RightBottomWheel);
 
         this.m_Chassis = new MecanumDrivetrain(null,LTMotion,RTMotion,LBMotion,RBMotion);
-        MecanumOdometry posTracker = new MecanumOdometry(new RobotPose2D(0,0,0),this.m_Chassis);
+        RobotSeparateThreadPositionTracker posTracker = new RobotSeparateThreadPositionTracker(new MecanumOdometry(this.m_Chassis),new RobotPose2D(0,0,0));
         this.m_Chassis.setPositionTracker(posTracker);
         posTracker.start();
     }
