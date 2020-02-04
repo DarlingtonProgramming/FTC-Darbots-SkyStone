@@ -30,7 +30,10 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
     private RobotLogFile m_Logger;
     private BNO055Gyro m_Gyro;
     private long m_UpdateStatusCount = 0;
+    HardwareMap m_HardwareMap;
     public RobotCore(String logFileName, HardwareMap hardwareMap){
+        m_HardwareMap = hardwareMap;
+        GlobalRegister.currentRobotCore = this;
         if(logFileName != null && (!logFileName.isEmpty())) {
             m_Logger = new RobotLogFile(logFileName);
             GlobalRegister.currentLog = m_Logger.addNewRunLog();
@@ -45,6 +48,8 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
         GlobalUtil.setDataUpdateMethod(LynxModule.BulkCachingMode.MANUAL);
     }
     public RobotCore(String logFileName, HardwareMap hardwareMap, int ThreadPriority){
+        m_HardwareMap = hardwareMap;
+        GlobalRegister.currentRobotCore = this;
         if(logFileName != null && (!logFileName.isEmpty())) {
             m_Logger = new RobotLogFile(logFileName);
             GlobalRegister.currentLog = m_Logger.addNewRunLog();
@@ -71,6 +76,7 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
         if(GlobalRegister.runningOpMode != null){
             GlobalUtil.addLog(this.getClass().getSimpleName(),"UpdateStatus Frequency",this.m_UpdateStatusCount / GlobalRegister.runningOpMode.getSecondsSinceOpModeStarted(),LogLevel.INFO);
         }
+        GlobalRegister.currentRobotCore = null;
     }
     protected abstract void __stop();
     protected abstract void __terminate();
@@ -125,5 +131,8 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
     public abstract void __updateTelemetry(Telemetry telemetry, TelemetryPacket telemetryPacket);
     public RobotGyro getGyro(){
         return this.m_Gyro;
+    }
+    public HardwareMap getHardwareMap(){
+        return this.m_HardwareMap;
     }
 }
