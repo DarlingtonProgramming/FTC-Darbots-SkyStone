@@ -11,6 +11,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XY
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfile;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfileGenerator;
 import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionState;
+import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitEndPoint;
 import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitHeadingInterpolationWayPoint;
 import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitWayPoint;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystemTask;
@@ -38,7 +39,6 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
     protected ArrayList<PurePursuitWayPoint> m_Path;
     protected int m_PathCursor;
-    protected double m_EndingPositionErrorRange = 3.0;
     protected double m_FollowSpeedNormalized;
     protected double m_AngleSpeedNormalized;
     protected double m_PreferredAngle;
@@ -60,7 +60,6 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         this.m_FollowSpeedNormalized = oldFollower.m_FollowSpeedNormalized;
         this.m_AngleSpeedNormalized = oldFollower.m_AngleSpeedNormalized;
         this.m_PreferredAngle = oldFollower.m_PreferredAngle;
-        this.m_EndingPositionErrorRange = oldFollower.m_EndingPositionErrorRange;
         this.m_FollowStartSpeedNormalized = oldFollower.m_FollowStartSpeedNormalized;
     }
 
@@ -70,14 +69,6 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
     public void setStartSpeed(double normalizedStartSpeed){
         this.m_FollowStartSpeedNormalized = Math.abs(normalizedStartSpeed);
-    }
-
-    public double getEndingPositionErrorRange(){
-        return this.m_EndingPositionErrorRange;
-    }
-
-    public void setEndingPositionErrorRange(double endingPositionErrorRange){
-        this.m_EndingPositionErrorRange = Math.abs(endingPositionErrorRange);
     }
 
     public double getFollowSpeed(){
@@ -162,17 +153,16 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         // Check whether we should advance to the next piece of the curve
         boolean jumpToNextSegment;
         do {
-            boolean lastSegment = this.m_PathCursor + 1 == this.m_Path.size() - 1;
             jumpToNextSegment = false;
             PurePursuitWayPoint target = this.m_Path.get(this.m_PathCursor + 1);
 
-            if (lastSegment) {
-                if (currentOffset.toPoint2D().distanceTo(target) <= this.m_EndingPositionErrorRange) {
+            if (target instanceof PurePursuitEndPoint) {
+                PurePursuitEndPoint targetEnd = (PurePursuitEndPoint) target;
+                if (currentOffset.toPoint2D().distanceTo(target) <= targetEnd.getEndErrorToleranceDistance()) {
                     jumpToNextSegment = true;
                 }
-                if(target instanceof PurePursuitHeadingInterpolationWayPoint) {
-                    PurePursuitHeadingInterpolationWayPoint ptTarget = (PurePursuitHeadingInterpolationWayPoint) target;
-                    if (!(Math.abs(XYPlaneCalculations.normalizeDeg(currentOffset.getRotationZ() - ptTarget.getDesiredHeading())) <= ptTarget.getAllowedHeadingError())) {
+                if(targetEnd.headingInterpolationEnabled) {
+                    if (!(Math.abs(XYPlaneCalculations.normalizeDeg(currentOffset.getRotationZ() - targetEnd.getDesiredHeading())) <= targetEnd.getAllowedHeadingError())) {
                         jumpToNextSegment = false;
                     }
                 }
@@ -195,7 +185,6 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         if (this.m_PathCursor >= this.m_Path.size() - 1) {return null;}
 
         PurePursuitWayPoint target = this.m_Path.get(this.m_PathCursor + 1);
-        boolean lastSegment = this.m_PathCursor + 1 == this.m_Path.size() - 1;
 
         //Calculate Follow Speed
         double currentSegmentEndSpeed = target.getEndFollowNormalizedSpeed();
@@ -228,7 +217,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         }
         //End Calculating Follow Speed
 
-        if (lastSegment && currentOffset.toPoint2D().distanceTo(target) < target.getFollowDistance()) {
+        if (target instanceof PurePursuitEndPoint && currentOffset.toPoint2D().distanceTo(target) < target.getFollowDistance()) {
             return new FollowInformation(target,target,followSpeed);
         } else if (target instanceof PurePursuitHeadingInterpolationWayPoint) {
             return new FollowInformation(target,target,followSpeed);

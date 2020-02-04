@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.purepursuit.followers.PurePursuitPathFollower;
+import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitEndPoint;
 import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitWayPoint;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
 import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
@@ -33,7 +34,7 @@ public class PurePursuitTest_TeleOp extends DarbotsBasicOpMode<TestMecanumCore> 
         this.m_Waypoints = new ArrayList<>();
         this.m_Waypoints.add(new PurePursuitWayPoint(120,0,CONST_TEST_FOLLOW_RADIUS,CONST_TEST_CRUISESPEED_NORMALIZED));
         this.m_Waypoints.add(new PurePursuitWayPoint(120,-120,CONST_TEST_FOLLOW_RADIUS,CONST_TEST_CRUISESPEED_NORMALIZED));
-        this.m_Waypoints.add(new PurePursuitWayPoint(240,0,CONST_TEST_FOLLOW_RADIUS,CONST_TEST_ENDSPEED_NORMALIZED));
+        this.m_Waypoints.add(new PurePursuitEndPoint(240,0,CONST_TEST_FOLLOW_RADIUS,CONST_TEST_ENDSPEED_NORMALIZED,false,0));
     }
 
     @Override
