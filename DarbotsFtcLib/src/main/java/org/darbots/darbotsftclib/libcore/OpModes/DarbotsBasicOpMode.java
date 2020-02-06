@@ -2,6 +2,8 @@ package org.darbots.darbotsftclib.libcore.OpModes;
 
 import android.provider.Settings;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,6 +15,7 @@ import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 
 public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends LinearOpMode {
+    public static final int CONST_TELMETRY_PACKET_CYCLE_TIME = 4;
     protected boolean FEATURE_EnableUSBCommandReadAfterDSStop = false;
     private ElapsedTime m_TimerSinceStart = null;
     private ElapsedTime m_TimerSinceInit = null;
@@ -20,6 +23,9 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
     public abstract void hardwareInitialize();
     public abstract void hardwareDestroy();
     public abstract void RunThisOpMode();
+    public TelemetryPacket updateTelemetry(){
+        return this.getRobotCore().updateTelemetry();
+    }
     @Override
     public void runOpMode() throws InterruptedException {
         GlobalRegister.runningOpMode = this;
@@ -81,10 +87,18 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
     }
 
     public boolean waitForDrive_WithTelemetry(){
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        int i=0;
         while(this.opModeIsActive() && this.getRobotCore().getChassis().isBusy()){
             this.getRobotCore().updateStatus();
-            this.getRobotCore().updateTelemetry();
-            this.telemetry.update();
+            if(i>=CONST_TELMETRY_PACKET_CYCLE_TIME) {
+                TelemetryPacket packet = this.updateTelemetry();
+                dashboard.sendTelemetryPacket(packet);
+                this.telemetry.update();
+                i = 0;
+            }else{
+                i++;
+            }
         }
         return this.opModeIsActive();
     }

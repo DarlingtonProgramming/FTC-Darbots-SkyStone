@@ -1,14 +1,18 @@
 package org.darbots.darbotsftclib.utilities.motor_type_utilities;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series1150RPMMotor;
+import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp(group = "DarbotsLib-Utilities", name = "EncoderCountsPerRevMeasureUtility")
 public class EncoderCountsPerRevMeasure extends DarbotsBasicOpMode {
@@ -39,14 +43,17 @@ public class EncoderCountsPerRevMeasure extends DarbotsBasicOpMode {
     @Override
     public void RunThisOpMode() {
         while(this.opModeIsActive()){
-            this.updateTelemetry();
+            TelemetryPacket packet = this.updateTelemetry();
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+            telemetry.update();
         }
     }
 
-    public void updateTelemetry(){
-        telemetry.addData("Current Revolution",m_Motor.getCurrentCount() / motorCountsPerRevProvider.getCountsPerRev());
-        telemetry.addData("CPR",motorCountsPerRevProvider.getCountsPerRev());
-        telemetry.addData("Info","Please rotate the motor manually and read the number of revolutions it went through to tune it.");
-        telemetry.update();
+    public TelemetryPacket updateTelemetry(){
+        TelemetryPacket packet = new TelemetryPacket();
+        GlobalUtil.addTelmetryLine(this.telemetry,packet,"Current Revolution","" + m_Motor.getCurrentCount() / motorCountsPerRevProvider.getCountsPerRev());
+        GlobalUtil.addTelmetryLine(this.telemetry,packet,"CPR","" + motorCountsPerRevProvider.getCountsPerRev());
+        GlobalUtil.addTelmetryLine(this.telemetry,packet,"Info","Please rotate the motor manually and read the number of revolutions it went through to tune it.");
+        return packet;
     }
 }
