@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.purepursuit.followers.PurePursuitPathFollower;
-import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitEndPoint;
-import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitWayPoint;
+import org.darbots.darbotsftclib.libcore.purepursuit.waypoints.PurePursuitEndPoint;
+import org.darbots.darbotsftclib.libcore.purepursuit.waypoints.PurePursuitWayPoint;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
 import org.darbots.darbotsftclib.testcases.common.TestMecanumCore;
 

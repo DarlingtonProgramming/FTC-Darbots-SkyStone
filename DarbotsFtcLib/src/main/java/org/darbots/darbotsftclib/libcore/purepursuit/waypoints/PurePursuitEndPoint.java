@@ -1,4 +1,4 @@
-package org.darbots.darbotsftclib.libcore.purepursuit.utils;
+package org.darbots.darbotsftclib.libcore.purepursuit.waypoints;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;

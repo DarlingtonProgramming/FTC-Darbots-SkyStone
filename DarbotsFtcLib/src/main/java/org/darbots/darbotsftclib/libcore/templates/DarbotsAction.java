@@ -5,30 +5,39 @@ import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 /**
  * This class is used for programmers to
  */
-public abstract class DarbotsComboKey implements RobotNonBlockingDevice {
+public abstract class DarbotsAction implements RobotNonBlockingDevice {
     private boolean m_Busy = false;
+    private boolean m_Finished = false;
 
-    public DarbotsComboKey(){
+    public DarbotsAction(){
         this.m_Busy = false;
+        this.m_Finished = false;
     }
-    public DarbotsComboKey(DarbotsComboKey combo){
+    public DarbotsAction(DarbotsAction action){
         this.m_Busy = false;
+        this.m_Finished = false;
     }
 
-    public void startCombo(){
+    public void startAction(){
         if(this.m_Busy){
             return;
         }
         this.m_Busy = true;
-        this.__startCombo();
+        this.m_Finished = false;
+        this.__startAction();
     }
 
-    public void stopCombo(){
+    public boolean isActionFinished(){
+        return this.m_Finished;
+    }
+
+    public void stopAction(){
         if(!this.m_Busy){
             return;
         }
         this.m_Busy = false;
-        this.__stopCombo();
+        this.m_Finished = true;
+        this.__stopAction();
     }
 
     @Override
@@ -48,6 +57,6 @@ public abstract class DarbotsComboKey implements RobotNonBlockingDevice {
         }
     }
 
-    protected abstract void __startCombo();
-    protected abstract void __stopCombo();
+    protected abstract void __startAction();
+    protected abstract void __stopAction();
 }

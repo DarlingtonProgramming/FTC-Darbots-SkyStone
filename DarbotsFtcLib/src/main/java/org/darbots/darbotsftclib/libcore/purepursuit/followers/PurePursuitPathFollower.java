@@ -1,22 +1,17 @@
 package org.darbots.darbotsftclib.libcore.purepursuit.followers;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfile;
-import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionProfileGenerator;
-import org.darbots.darbotsftclib.libcore.motion_planning.profiles.MotionState;
-import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitEndPoint;
-import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitHeadingInterpolationWayPoint;
-import org.darbots.darbotsftclib.libcore.purepursuit.utils.PurePursuitWayPoint;
+import org.darbots.darbotsftclib.libcore.purepursuit.waypoints.PurePursuitEndPoint;
+import org.darbots.darbotsftclib.libcore.purepursuit.waypoints.PurePursuitHeadingInterpolationWayPoint;
+import org.darbots.darbotsftclib.libcore.purepursuit.waypoints.PurePursuitWayPoint;
+import org.darbots.darbotsftclib.libcore.templates.DarbotsAction;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystemTask;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class PurePursuitPathFollower extends RobotMotionSystemTask {
@@ -111,12 +106,19 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
     @Override
     protected void __updateStatus() {
-
         RobotPose2D currentOffset = this.getRelativePositionOffsetSinceStart();
         FollowInformation followInfo = this.getFollowInformation(currentOffset);
         if(followInfo == null){
             this.stopTask();
             return;
+        }
+        if(followInfo.purePursuitWayPoint.SegmentBeginAction != null){
+            if(!followInfo.purePursuitWayPoint.SegmentBeginAction.isActionFinished() && !followInfo.purePursuitWayPoint.SegmentBeginAction.isBusy()){
+                followInfo.purePursuitWayPoint.SegmentBeginAction.startAction();
+            }
+            if(followInfo.purePursuitWayPoint.SegmentBeginAction.isBusy()){
+                followInfo.purePursuitWayPoint.SegmentBeginAction.updateStatus();
+            }
         }
         this.gotoPoint(currentOffset,followInfo.purePursuitWayPoint,followInfo.pursuitPoint,this.m_FollowSpeedNormalized,this.m_AngleSpeedNormalized,this.m_PreferredAngle);
     }
@@ -151,14 +153,16 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
     public FollowInformation getFollowInformation(RobotPose2D currentOffset){
 
         // Check whether we should advance to the next piece of the curve
-        boolean jumpToNextSegment;
+        boolean jumpToNextSegment = false;
+        double distToTarget;
         do {
             jumpToNextSegment = false;
             PurePursuitWayPoint target = this.m_Path.get(this.m_PathCursor + 1);
-
+            DarbotsAction targetAction = target.SegmentBeginAction;
+            distToTarget = currentOffset.toPoint2D().distanceTo(target);
             if (target instanceof PurePursuitEndPoint) {
                 PurePursuitEndPoint targetEnd = (PurePursuitEndPoint) target;
-                if (currentOffset.toPoint2D().distanceTo(target) <= targetEnd.getEndErrorToleranceDistance()) {
+                if (distToTarget <= targetEnd.getEndErrorToleranceDistance()) {
                     jumpToNextSegment = true;
                 }
                 if(targetEnd.headingInterpolationEnabled) {
@@ -172,12 +176,30 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                     jumpToNextSegment = true;
                 }
             }else {
-                if (currentOffset.toPoint2D().distanceTo(target) <= target.getFollowDistance()) {
+                if (distToTarget <= target.getFollowDistance()) {
                     jumpToNextSegment = true;
                 }
             }
 
-
+            if(jumpToNextSegment && targetAction != null){
+                if(!targetAction.isActionFinished()){
+                    if(targetAction.isBusy()) {
+                        //the segment has been followed for at least one loop time, but the action isn't finished yet.
+                        if (target.interruptActionWhenSegmentFinished) {
+                            targetAction.stopAction();
+                        } else {
+                            jumpToNextSegment = false;
+                        }
+                    }else{
+                        //the segment is being jumped, we can force it to not jump and go to the segment.
+                        if (target.interruptActionWhenSegmentFinished) {
+                            //we do not have to execute the action because it is going to be interrupted in the end anyway.
+                        } else {
+                            jumpToNextSegment = false;
+                        }
+                    }
+                }
+            }
             if (jumpToNextSegment) {
                 this.m_PathCursor++;
             }
@@ -204,7 +226,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
         double followSpeed;
         if(currentSegmentEndSpeed != currentSegmentStartSpeed) {
-            double distToEndPoint = currentOffset.toPoint2D().distanceTo(target);
+            double distToEndPoint = distToTarget;
             double progress = (distSegmentStartEnd - distToEndPoint) / distSegmentStartEnd;
             if (progress >= 0) {
                 progress = Math.sqrt(progress);
@@ -217,7 +239,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         }
         //End Calculating Follow Speed
 
-        if (target instanceof PurePursuitEndPoint && currentOffset.toPoint2D().distanceTo(target) < target.getFollowDistance()) {
+        if (target instanceof PurePursuitEndPoint && distToTarget < target.getFollowDistance()) {
             return new FollowInformation(target,target,followSpeed);
         } else if (target instanceof PurePursuitHeadingInterpolationWayPoint) {
             return new FollowInformation(target,target,followSpeed);

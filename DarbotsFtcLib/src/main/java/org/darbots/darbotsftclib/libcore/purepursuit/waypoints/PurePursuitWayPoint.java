@@ -1,12 +1,15 @@
-package org.darbots.darbotsftclib.libcore.purepursuit.utils;
+package org.darbots.darbotsftclib.libcore.purepursuit.waypoints;
 
 import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
+import org.darbots.darbotsftclib.libcore.templates.DarbotsAction;
 
 public class PurePursuitWayPoint extends RobotPoint2D {
     private double m_FollowDistance = 20;
     private double m_EndFollowNormalizedSpeed = 0;
+    public DarbotsAction SegmentBeginAction = null;
+    public boolean interruptActionWhenSegmentFinished = false;
 
     public double getEndFollowNormalizedSpeed(){
         return this.m_EndFollowNormalizedSpeed;
@@ -36,5 +39,8 @@ public class PurePursuitWayPoint extends RobotPoint2D {
     public PurePursuitWayPoint(PurePursuitWayPoint point){
         super(point);
         this.m_FollowDistance = point.m_FollowDistance;
+        this.m_EndFollowNormalizedSpeed = point.m_EndFollowNormalizedSpeed;
+        this.SegmentBeginAction = point.SegmentBeginAction;
+        this.interruptActionWhenSegmentFinished = point.interruptActionWhenSegmentFinished;
     }
 }
