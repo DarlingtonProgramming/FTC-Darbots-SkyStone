@@ -203,7 +203,7 @@ public class MotionProfile {
         for(MotionProfileSegment i : this.m_MotionSegments){
             newSegment.add(i.negative());
         }
-        MotionProfile negativeProfile = new MotionProfile(this.StartVelocity);
+        MotionProfile negativeProfile = new MotionProfile(-this.StartVelocity);
         negativeProfile.getMotionSegments().addAll(newSegment);
         return negativeProfile;
     }

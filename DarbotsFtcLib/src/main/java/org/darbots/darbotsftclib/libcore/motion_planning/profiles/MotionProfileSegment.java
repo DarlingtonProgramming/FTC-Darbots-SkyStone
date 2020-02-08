@@ -36,7 +36,8 @@ public class MotionProfileSegment {
         return initialSpeed * duration + (this.acceleration * Math.pow(duration,2) / 2.0 + this.jerk * Math.pow(duration,3) / 6.0);
     }
     public MotionProfileSegment reversed(){
-        return new MotionProfileSegment(-acceleration,-jerk,m_Duration);
+        double endAccel = this.getAccelerationAt(this.getDuration());
+        return new MotionProfileSegment(endAccel,-jerk,m_Duration);
     }
     public MotionProfileSegment clipped(double startDuration, double endDuration){
         return new MotionProfileSegment(this.getAccelerationAt(startDuration),this.jerk,endDuration - startDuration);
