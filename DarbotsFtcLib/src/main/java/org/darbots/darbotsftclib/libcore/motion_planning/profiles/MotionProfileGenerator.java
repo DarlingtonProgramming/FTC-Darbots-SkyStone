@@ -100,7 +100,7 @@ public class MotionProfileGenerator {
     }
     public static MotionProfile generateMotionProfile_JERKUNLIMITED(double maxVelocity, double maxAcceleration, double PathTotalDistance, double startVelocity, double cruiseVelocity, double endVelocity){
         if(PathTotalDistance < 0){
-            return generateMotionProfile_JERKUNLIMITED(maxVelocity,maxAcceleration,-PathTotalDistance,startVelocity,cruiseVelocity,endVelocity).reversed();
+            return generateMotionProfile_JERKUNLIMITED(maxVelocity,maxAcceleration,-PathTotalDistance,startVelocity,cruiseVelocity,endVelocity).negative();
         }
         startVelocity = Math.abs(startVelocity);
         cruiseVelocity = Math.abs(cruiseVelocity);
