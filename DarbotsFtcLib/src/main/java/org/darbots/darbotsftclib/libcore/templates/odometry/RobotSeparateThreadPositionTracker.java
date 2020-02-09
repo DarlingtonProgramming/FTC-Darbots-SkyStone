@@ -194,6 +194,7 @@ public class RobotSeparateThreadPositionTracker extends RobotSynchronized2DPosit
         return this.m_GyroProvider;
     }
 
+    @Override
     public void setGyroProvider(RobotGyro provider){
         this.m_GyroProvider = provider;
         if(provider != null) {
@@ -204,7 +205,8 @@ public class RobotSeparateThreadPositionTracker extends RobotSynchronized2DPosit
         }
     }
 
-    protected void updateGyroProvider(){
+    @Override
+    public void updateGyroProvider(){
         if(this.m_GyroProvider != null && this.m_GyroProvider instanceof RobotNonBlockingDevice){
             ((RobotNonBlockingDevice) this.m_GyroProvider).updateStatus();
         }

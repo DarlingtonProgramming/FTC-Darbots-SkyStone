@@ -89,4 +89,16 @@ public class MecanumOdometry extends OdometryMethod {
         m_LastRBEncoderCount = newRBCount;
     }
 
+    @Override
+    public void __trackLoop_NoActualPositionShift(double secondsSinceLastLoop) {
+        int newLTCount = m_LTMotor.getCurrentCount();
+        int newRTCount = m_RTMotor.getCurrentCount();
+        int newLBCount = m_LBMotor.getCurrentCount();
+        int newRBCount = m_RBMotor.getCurrentCount();
+        m_LastLTEncoderCount = newLTCount;
+        m_LastRTEncoderCount = newRTCount;
+        m_LastLBEncoderCount = newLBCount;
+        m_LastRBEncoderCount = newRBCount;
+    }
+
 }

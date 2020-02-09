@@ -124,4 +124,13 @@ public abstract class Robot3Wheel2DTracker extends OdometryMethod {
         m_LastLeftEncoderCount = newLeftCount;
         m_LastRightEncoderCount = newRightCount;
     }
+    public void __trackLoop_NoActualPositionShift(double secondsSinceLastLoop){
+        this.updateData();
+        int newMidCount = this.getMidEncoderCount();
+        int newLeftCount = this.getLeftEncoderCount();
+        int newRightCount = this.getRightEncoderCount();
+        m_LastMidEncoderCount = newMidCount;
+        m_LastLeftEncoderCount = newLeftCount;
+        m_LastRightEncoderCount = newRightCount;
+    }
 }

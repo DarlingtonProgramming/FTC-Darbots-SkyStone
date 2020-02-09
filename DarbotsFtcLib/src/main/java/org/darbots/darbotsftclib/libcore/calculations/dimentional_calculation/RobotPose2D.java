@@ -56,4 +56,12 @@ public class RobotPose2D extends RobotVector2D {
     public void setRotationZ(double RotationZ){
         this.m_RotationZ = XYPlaneCalculations.normalizeDeg(RotationZ);
     }
+
+    public boolean equals(RobotPose2D Pose){
+        if(this.getRotationZ() == Pose.getRotationZ() && this.X == Pose.X && this.Y == Pose.Y){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

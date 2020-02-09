@@ -7,8 +7,10 @@ public interface Robot2DPositionTracker {
 
     RobotPose2D getInitialPos();
     RobotPose2D getCurrentPosition();
+    void setCurrentPosition(RobotPose2D currentPosition);
 
     RobotVector2D getCurrentVelocityVector();
+    void setCurrentVelocityVector(RobotVector2D velocityVector);
 
     void stop();
 

@@ -142,4 +142,14 @@ public abstract class Robot2Wheel2DTracker extends OdometryMethod {
         m_LastEncoder1Count = newEncoder1Count;
         m_LastGyroReading = newGyroReading;
     }
+
+    public void __trackLoop_NoActualPositionShift(double secondsSinceLastLoop){
+        this.updateData();
+        int newEncoder1Count = this.getEncoder1Count();
+        int newEncoder2Count = this.getEncoder2Count();
+        float newGyroReading = this.getGyroReading();
+        m_LastEncoder2Count = newEncoder2Count;
+        m_LastEncoder1Count = newEncoder1Count;
+        m_LastGyroReading = newGyroReading;
+    }
 }

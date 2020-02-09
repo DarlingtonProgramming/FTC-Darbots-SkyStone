@@ -10,6 +10,7 @@ public abstract class OdometryMethod {
     }
     public abstract void __trackStart();
     public abstract void __trackLoop(double secondsSinceLastLoop);
+    public abstract void __trackLoop_NoActualPositionShift(double secondsSinceLastLoop);
     public CustomizableOdometry getPositionTracker(){
         return this.m_OdometerContainer;
     }

@@ -124,6 +124,7 @@ public class RobotAsyncPositionTracker extends RobotBasic2DPositionTracker imple
         return;
     }
 
+    @Override
     public void setGyroProvider(RobotGyro provider){
         this.m_GyroProvider = provider;
         if(provider != null) {
@@ -134,7 +135,8 @@ public class RobotAsyncPositionTracker extends RobotBasic2DPositionTracker imple
         }
     }
 
-    protected void updateGyroProvider(){
+    @Override
+    public void updateGyroProvider(){
         if(this.m_GyroProvider != null && this.m_GyroProvider instanceof RobotNonBlockingDevice){
             ((RobotNonBlockingDevice) this.m_GyroProvider).updateStatus();
         }

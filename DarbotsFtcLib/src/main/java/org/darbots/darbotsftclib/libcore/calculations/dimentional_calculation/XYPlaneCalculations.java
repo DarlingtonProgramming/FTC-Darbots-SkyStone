@@ -163,12 +163,36 @@ public class XYPlaneCalculations {
         return tempDeg;
     }
 
+    public static double roundDegToSquare(double Deg){
+        if(Deg >= 135 && Deg < -135){
+            return -180;
+        }else if(Deg >= -135 && Deg < -45){
+            return -90;
+        }else if(Deg >= -45 && Deg < 45){
+            return 0;
+        }else{ //Deg >= 45 && Deg < 135
+            return 90;
+        }
+    }
+
     public static float normalizeDeg(float Deg) {
         float tempDeg = Deg % 360;
         if(tempDeg >= 180){
             tempDeg -= 360;
         }
         return tempDeg;
+    }
+
+    public static float roundDegToSquare(float Deg){
+        if(Deg >= 135.0f && Deg < -135.0f){
+            return -180.0f;
+        }else if(Deg >= -135.0f && Deg < -45.0f){
+            return -90.0f;
+        }else if(Deg >= -45.0f && Deg < 45.0f){
+            return 0.0f;
+        }else{ //Deg >= 45.0f && Deg < 135.0f
+            return 90.0f;
+        }
     }
 
     public static boolean isPointAtCircleEdge(RobotPoint2D circleCenter, double circleRadius, RobotPoint2D point){
