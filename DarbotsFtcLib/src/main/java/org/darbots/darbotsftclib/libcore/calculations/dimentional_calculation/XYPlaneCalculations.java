@@ -102,6 +102,12 @@ public class XYPlaneCalculations {
         return new RobotPose2D(movedTargetPoint[0],movedTargetPoint[1],absRotZ);
     }
 
+    public static RobotPose2D getAbsolutePosition(double robotRotationInDegOnField, RobotPoint2D relativeObjectOnBot, RobotPoint2D relativeObjectOnField){
+        robotRotationInDegOnField = XYPlaneCalculations.normalizeDeg(robotRotationInDegOnField);
+        RobotPoint2D relativeObjectOnBot_RotatedToField = rotatePointAroundFixedPoint_Deg(relativeObjectOnBot,XYPlaneCalculations.ORIGIN_POINT,robotRotationInDegOnField);
+        return new RobotPose2D(relativeObjectOnField.X - relativeObjectOnBot_RotatedToField.X, relativeObjectOnField.Y - relativeObjectOnBot.Y, robotRotationInDegOnField);
+    }
+
     public static RobotVector2D getRelativePosition(RobotVector2D PerspectiveOrigin, RobotVector2D Target){
         //First step - move the Perspective Origin to the Origin of the Axis.
         double[] targetPoint = {Target.X - PerspectiveOrigin.X,Target.Y - PerspectiveOrigin.Y};
