@@ -185,14 +185,16 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                 if(!targetAction.isActionFinished()){
                     if(targetAction.isBusy()) {
                         //the segment has been followed for at least one loop time, but the action isn't finished yet.
-                        if (target.interruptActionWhenSegmentFinished) {
-                            targetAction.stopAction();
+                        if (target.skipActionWhenSegmentFinished) {
+                            if(target.stopActionWhenSkipping) {
+                                targetAction.stopAction();
+                            }
                         } else {
                             jumpToNextSegment = false;
                         }
                     }else{
                         //the segment is being jumped, we can force it to not jump and go to the segment.
-                        if (target.interruptActionWhenSegmentFinished) {
+                        if (target.skipActionWhenSegmentFinished) {
                             //we do not have to execute the action because it is going to be interrupted in the end anyway.
                         } else {
                             jumpToNextSegment = false;
