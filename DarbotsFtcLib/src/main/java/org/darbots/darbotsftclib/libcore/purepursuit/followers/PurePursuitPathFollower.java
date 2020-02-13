@@ -132,6 +132,13 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
             double preferredAngleInOriginalRobotAxis = ((PurePursuitHeadingInterpolationWayPoint) pursuitWayPoint).getDesiredHeading();
             wantedAngleInCurrentRobotAxis = preferredAngleInOriginalRobotAxis - currentOffset.getRotationZ();
             wantedAngleInOriginalRobotAxis = preferredAngleInOriginalRobotAxis;
+        }else if(pursuitWayPoint instanceof PurePursuitEndPoint){
+            PurePursuitEndPoint endPoint = (PurePursuitEndPoint) pursuitWayPoint;
+            if(endPoint.headingInterpolationEnabled){
+                double preferredAngleInOriginalRobotAxis = endPoint.getDesiredHeading();
+                wantedAngleInCurrentRobotAxis = preferredAngleInOriginalRobotAxis - currentOffset.getRotationZ();
+                wantedAngleInOriginalRobotAxis = preferredAngleInOriginalRobotAxis;
+            }
         }
         RobotPose2D supposedPose = new RobotPose2D(pursuitPoint,wantedAngleInOriginalRobotAxis);
         this.updateSupposedPos(supposedPose);
@@ -174,6 +181,9 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                 PurePursuitHeadingInterpolationWayPoint ptTarget = (PurePursuitHeadingInterpolationWayPoint) target;
                 if ((Math.abs(XYPlaneCalculations.normalizeDeg(currentOffset.getRotationZ() - ptTarget.getDesiredHeading())) <= ptTarget.getAllowedHeadingError())) {
                     jumpToNextSegment = true;
+                }
+                if(distToTarget > target.getFollowDistance()){
+                    jumpToNextSegment = false;
                 }
             }else {
                 if (distToTarget <= target.getFollowDistance()) {
@@ -244,7 +254,11 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         if (target instanceof PurePursuitEndPoint && distToTarget < target.getFollowDistance()) {
             return new FollowInformation(target,target,followSpeed);
         } else if (target instanceof PurePursuitHeadingInterpolationWayPoint) {
-            return new FollowInformation(target,target,followSpeed);
+            if(distToTarget < target.getFollowDistance()) {
+                return new FollowInformation(target, target, followSpeed);
+            }else{
+                return new FollowInformation(target,getCurrentSegmentFollowPoint(currentOffset,target),followSpeed);
+            }
         } else {
             return new FollowInformation(target,getCurrentSegmentFollowPoint(currentOffset,target),followSpeed);
         }
