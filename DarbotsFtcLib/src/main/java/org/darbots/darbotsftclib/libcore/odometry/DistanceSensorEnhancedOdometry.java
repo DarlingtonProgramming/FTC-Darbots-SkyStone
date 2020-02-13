@@ -2,8 +2,6 @@ package org.darbots.darbotsftclib.libcore.odometry;
 
 import android.support.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
@@ -14,11 +12,21 @@ import org.darbots.darbotsftclib.libcore.templates.odometry.RobotAsyncPositionTr
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 
 public class DistanceSensorEnhancedOdometry extends OdometryMethod {
+    public static enum DistanceSensorOdometerSwitchType {
+        ONLY_X,
+        ONLY_Y,
+        BOTH_XY,
+        NONE
+    };
+    public static interface DistanceSensorOdometrySwitch{
+        DistanceSensorOdometerSwitchType getSwitchType(double currentX, double currentY);
+    }
     public DarbotsOnRobotSensor2D<DarbotsDistanceSensor> frontDistanceSensor, leftDistanceSensor, backDistanceSensor, rightDistanceSensor;
     private OdometryMethod m_OriginalOdometryMethod;
     private double m_AngleErrorMargin = 3;
     private double c_HalfFieldSizeX, c_HalfFieldSizeY;
-    public volatile boolean quadrant1Enabled = true, quadrant2Enabled = true, quadrant3Enabled = true, quadrant4Enabled = true;
+    public volatile DistanceSensorOdometerSwitchType overallSwitch = DistanceSensorOdometerSwitchType.BOTH_XY;
+    public DistanceSensorOdometrySwitch callableSwitch = null;
 
     public DistanceSensorEnhancedOdometry(@NonNull OdometryMethod originalOdometryMethod, DarbotsOnRobotSensor2D<DarbotsDistanceSensor> frontDistanceSensor, DarbotsOnRobotSensor2D<DarbotsDistanceSensor> leftDistanceSensor, DarbotsOnRobotSensor2D<DarbotsDistanceSensor> backDistanceSensor, DarbotsOnRobotSensor2D<DarbotsDistanceSensor> rightDistanceSensor){
         this.m_OriginalOdometryMethod = originalOdometryMethod;
@@ -35,13 +43,8 @@ public class DistanceSensorEnhancedOdometry extends OdometryMethod {
         this.backDistanceSensor = oldEnhancedOdometry.backDistanceSensor;
         this.rightDistanceSensor = oldEnhancedOdometry.rightDistanceSensor;
         this.m_AngleErrorMargin = oldEnhancedOdometry.m_AngleErrorMargin;
-    }
-
-    public void setAllQuadrantEnabled(boolean enabled){
-        quadrant1Enabled = enabled;
-        quadrant2Enabled = enabled;
-        quadrant3Enabled = enabled;
-        quadrant4Enabled = enabled;
+        this.overallSwitch = oldEnhancedOdometry.overallSwitch;
+        this.callableSwitch = oldEnhancedOdometry.callableSwitch;
     }
 
     public double getAngleErrorMargin(){
@@ -186,53 +189,57 @@ public class DistanceSensorEnhancedOdometry extends OdometryMethod {
         RobotPose2D afterPose = new RobotPose2D(beforePose2D);
         boolean positionShifted = false;
         //lets see which quadrant in the field we are in...
+        DistanceSensorOdometerSwitchType switchType = this.overallSwitch;
+        if(this.callableSwitch != null){
+            DistanceSensorOdometerSwitchType calculatedType = this.callableSwitch.getSwitchType(beforePose2D.X,beforePose2D.Y);
+            if((switchType == DistanceSensorOdometerSwitchType.NONE) || (switchType == DistanceSensorOdometerSwitchType.ONLY_X && calculatedType == DistanceSensorOdometerSwitchType.ONLY_Y) || (switchType == DistanceSensorOdometerSwitchType.ONLY_Y && calculatedType == DistanceSensorOdometerSwitchType.ONLY_X) || calculatedType == DistanceSensorOdometerSwitchType.NONE) {
+                switchType = DistanceSensorOdometerSwitchType.NONE;
+            }else if(switchType != DistanceSensorOdometerSwitchType.BOTH_XY){
+                //switchType = switchType;
+            }else{
+                switchType = calculatedType;
+            }
+        }
+
         if(beforePose2D.X >= 0 && beforePose2D.Y >= 0){
             //first quadrant
-            if(this.quadrant1Enabled) {
-                if (distToPositiveXExt != DarbotsDistanceSensor.DISTANCE_INVALID) {
-                    positionShifted = true;
-                    afterPose.X = this.c_HalfFieldSizeX - distToPositiveXExt;
-                }
-                if (distToPositiveYExt != DarbotsDistanceSensor.DISTANCE_INVALID) {
-                    positionShifted = true;
-                    afterPose.Y = this.c_HalfFieldSizeY - distToPositiveYExt;
-                }
+            if (distToPositiveXExt != DarbotsDistanceSensor.DISTANCE_INVALID && (switchType == DistanceSensorOdometerSwitchType.ONLY_X || switchType == DistanceSensorOdometerSwitchType.BOTH_XY)) {
+                positionShifted = true;
+                afterPose.X = this.c_HalfFieldSizeX - distToPositiveXExt;
+            }
+            if (distToPositiveYExt != DarbotsDistanceSensor.DISTANCE_INVALID && (switchType == DistanceSensorOdometerSwitchType.ONLY_Y || switchType == DistanceSensorOdometerSwitchType.BOTH_XY)) {
+                positionShifted = true;
+                afterPose.Y = this.c_HalfFieldSizeY - distToPositiveYExt;
             }
         }else if(beforePose2D.X >= 0 && beforePose2D.Y < 0){
             //forth quadrant
-            if(this.quadrant4Enabled) {
-                if (distToPositiveXExt != DarbotsDistanceSensor.DISTANCE_INVALID) {
-                    positionShifted = true;
-                    afterPose.X = this.c_HalfFieldSizeX - distToPositiveXExt;
-                }
-                if (distToNegativeYExt != DarbotsDistanceSensor.DISTANCE_INVALID) {
-                    positionShifted = true;
-                    afterPose.Y = -(this.c_HalfFieldSizeY - distToNegativeYExt);
-                }
+            if (distToPositiveXExt != DarbotsDistanceSensor.DISTANCE_INVALID && (switchType == DistanceSensorOdometerSwitchType.ONLY_X || switchType == DistanceSensorOdometerSwitchType.BOTH_XY)) {
+                positionShifted = true;
+                afterPose.X = this.c_HalfFieldSizeX - distToPositiveXExt;
+            }
+            if (distToNegativeYExt != DarbotsDistanceSensor.DISTANCE_INVALID && (switchType == DistanceSensorOdometerSwitchType.ONLY_Y || switchType == DistanceSensorOdometerSwitchType.BOTH_XY)) {
+                positionShifted = true;
+                afterPose.Y = -(this.c_HalfFieldSizeY - distToNegativeYExt);
             }
         }else if(beforePose2D.X < 0 && beforePose2D.Y >= 0){
             //second quadrant
-            if(quadrant2Enabled) {
-                if (distToNegativeXExt != DarbotsDistanceSensor.DISTANCE_INVALID) {
-                    positionShifted = true;
-                    afterPose.X = -(this.c_HalfFieldSizeX - distToNegativeXExt);
-                }
-                if (distToPositiveYExt != DarbotsDistanceSensor.DISTANCE_INVALID) {
-                    positionShifted = true;
-                    afterPose.Y = this.c_HalfFieldSizeY - distToPositiveYExt;
-                }
+            if (distToNegativeXExt != DarbotsDistanceSensor.DISTANCE_INVALID && (switchType == DistanceSensorOdometerSwitchType.ONLY_X || switchType == DistanceSensorOdometerSwitchType.BOTH_XY)) {
+                positionShifted = true;
+                afterPose.X = -(this.c_HalfFieldSizeX - distToNegativeXExt);
+            }
+            if (distToPositiveYExt != DarbotsDistanceSensor.DISTANCE_INVALID && (switchType == DistanceSensorOdometerSwitchType.ONLY_Y || switchType == DistanceSensorOdometerSwitchType.BOTH_XY)) {
+                positionShifted = true;
+                afterPose.Y = this.c_HalfFieldSizeY - distToPositiveYExt;
             }
         }else{ //beforePose2D.X < 0 && beforePose2D.Y < 0
             //quadrant 3
-            if(quadrant3Enabled){
-                if(distToNegativeXExt != DarbotsDistanceSensor.DISTANCE_INVALID){
-                    positionShifted = true;
-                    afterPose.X = -(this.c_HalfFieldSizeX - distToNegativeXExt);
-                }
-                if(distToNegativeYExt != DarbotsDistanceSensor.DISTANCE_INVALID){
-                    positionShifted = true;
-                    afterPose.Y = -(this.c_HalfFieldSizeY - distToNegativeYExt);
-                }
+            if(distToNegativeXExt != DarbotsDistanceSensor.DISTANCE_INVALID && (switchType == DistanceSensorOdometerSwitchType.ONLY_X || switchType == DistanceSensorOdometerSwitchType.BOTH_XY)){
+                positionShifted = true;
+                afterPose.X = -(this.c_HalfFieldSizeX - distToNegativeXExt);
+            }
+            if(distToNegativeYExt != DarbotsDistanceSensor.DISTANCE_INVALID && (switchType == DistanceSensorOdometerSwitchType.ONLY_Y || switchType == DistanceSensorOdometerSwitchType.BOTH_XY)){
+                positionShifted = true;
+                afterPose.Y = -(this.c_HalfFieldSizeY - distToNegativeYExt);
             }
         }
 
