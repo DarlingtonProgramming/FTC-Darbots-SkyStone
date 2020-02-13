@@ -46,26 +46,14 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
         this.m_UpdateStatusCount = 0;
         GlobalRegister.allExtensionHubs = hardwareMap.getAll(LynxModule.class);
         GlobalUtil.setDataUpdateMethod(LynxModule.BulkCachingMode.MANUAL);
+        this.updateBulkRead();
     }
     public RobotCore(String logFileName, HardwareMap hardwareMap, int ThreadPriority){
-        m_HardwareMap = hardwareMap;
-        GlobalRegister.currentRobotCore = this;
-        if(logFileName != null && (!logFileName.isEmpty())) {
-            m_Logger = new RobotLogFile(logFileName);
-            GlobalRegister.currentLog = m_Logger.addNewRunLog();
-        }else{
-            m_Logger = null;
-            GlobalRegister.currentLog = null;
-        }
-        GlobalUtil.LowestLogLevel = LogLevel.INFO;
-        m_Gyro = new BNO055Gyro(hardwareMap,"imu");
+        this(logFileName,hardwareMap);
         if(ThreadPriority >= Thread.MIN_PRIORITY || ThreadPriority <= Thread.MAX_PRIORITY){
             Thread.currentThread().setPriority(ThreadPriority);
             GlobalRegister.currentLog.threadPriority = ThreadPriority;
         }
-        this.m_UpdateStatusCount = 0;
-        GlobalRegister.allExtensionHubs = hardwareMap.getAll(LynxModule.class);
-        GlobalUtil.setDataUpdateMethod(LynxModule.BulkCachingMode.MANUAL);
     }
     public void stop(){
         this.__stop();
@@ -99,9 +87,12 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
     @Override
     public void updateStatus(){
         this.m_UpdateStatusCount++;
-        GlobalUtil.updateBulkRead();
+        this.updateBulkRead();
         this.m_Gyro.updateStatus();
         this.__updateStatus();
+    }
+    public void updateBulkRead(){
+        GlobalUtil.updateBulkRead();
     }
     public long getUpdateStatusCount(){
         return this.m_UpdateStatusCount;
