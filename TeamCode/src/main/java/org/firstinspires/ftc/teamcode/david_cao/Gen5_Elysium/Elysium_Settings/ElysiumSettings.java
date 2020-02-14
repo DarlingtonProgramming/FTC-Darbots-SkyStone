@@ -16,10 +16,14 @@ import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 public class ElysiumSettings {
     //========== Start of Physical Settings ==========
     public static final double PHYSICAL_MASS_KG = 5;
-    public static final double PHYSICAL_LENGTH = 45.72; //Exactly 18 Inches
-    public static final double PHYSICAL_LENGTH_EXPANDED = 0;
-    public static final double PHYSICAL_LENGTH_EXPANDED_AND_DOORCLOSED = 0;
-    public static final double PHYSICAL_WIDTH = 0;
+    public static final double PHYSICAL_CENTER_TO_FRONT = 45.72; //Exactly 18 Inches
+    public static final double PHYSICAL_CENTER_TO_FRONT_EXPANDED = 0;
+    public static final double PHYSICAL_CENTER_TO_BACK = 0;
+    public static final double PHYSICAL_CENTER_TO_BACK_DOOR_CLOSED = 0;
+    public static final double PHYSICAL_CENTER_TO_LEFT = 0;
+    public static final double PHYSICAL_CENTER_TO_RIGHT = 0;
+    public static final double PHYSICAL_WIDTH = PHYSICAL_CENTER_TO_LEFT + PHYSICAL_CENTER_TO_RIGHT;
+    public static final double PHYSICAL_LENGTH = PHYSICAL_CENTER_TO_FRONT_EXPANDED + PHYSICAL_CENTER_TO_BACK;
     public static final double PHYSICAL_INTERTIA = (PHYSICAL_MASS_KG * (Math.pow(PHYSICAL_LENGTH / 2.0 / 100.0,2) + Math.pow(PHYSICAL_WIDTH / 2.0 / 100.0,2))) / 2.0; //Suppose Mass evenly distributed, MR^2 / 2.0, unit in kg*m*m
     //========== End of Physical Settings ==========
     //========== Start of Chassis Settings ==========
