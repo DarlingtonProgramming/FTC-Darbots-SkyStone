@@ -60,6 +60,7 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
         GlobalRegister.runningOpMode = null;
         GlobalRegister.currentLog = null;
         GlobalRegister.allExtensionHubs = null;
+        GlobalRegister.currentRobotCore = null;
         this.m_TimerSinceStart = null;
         this.m_TimerSinceInit = null;
     }

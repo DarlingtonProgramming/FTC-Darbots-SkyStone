@@ -221,6 +221,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
         }else{
             this.m_PosTrackerIsAsync = false;
         }
+        this.clearPositionCache();
     }
     public void addTask(@NonNull RobotMotionSystemTask Task){
         this.m_TaskLists.add(Task);

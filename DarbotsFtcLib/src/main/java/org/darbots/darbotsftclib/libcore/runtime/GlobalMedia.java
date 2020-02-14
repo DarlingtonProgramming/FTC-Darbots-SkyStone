@@ -18,7 +18,7 @@ public class GlobalMedia {
      * @param loopSound are we looping the music
      * @param loopTime number of time the sound gets played, -1 = forever.
      */
-    public void playResourceFile(Context context, boolean waitForPreviousSound, int resourceID, float rate, float volume, boolean loopSound, int loopTime){
+    public static void playResourceFile(Context context, boolean waitForPreviousSound, int resourceID, float rate, float volume, boolean loopSound, int loopTime){
         int realLoopTime = loopSound ? (loopTime == -1 ? -1 : loopTime - 1) : 0;
         SoundPlayer.PlaySoundParams params = new SoundPlayer.PlaySoundParams();
         params.loopControl = realLoopTime;
@@ -38,7 +38,7 @@ public class GlobalMedia {
      * @param loopSound are we looping the music
      * @param loopTime number of time the sound gets played, -1 = forever.
      */
-    public void playLocalFile(Context context, boolean waitForPreviousSound, File soundFile, float rate, float volume, boolean loopSound, int loopTime){
+    public static void playLocalFile(Context context, boolean waitForPreviousSound, File soundFile, float rate, float volume, boolean loopSound, int loopTime){
         int realLoopTime = loopSound ? (loopTime == -1 ? -1 : loopTime - 1) : 0;
         SoundPlayer.PlaySoundParams params = new SoundPlayer.PlaySoundParams();
         params.loopControl = realLoopTime;
@@ -48,11 +48,11 @@ public class GlobalMedia {
         SoundPlayer.getInstance().startPlaying(context,soundFile,params,null,null);
     }
 
-    public void stopPlayingAllSounds(){
+    public static void stopPlayingAllSounds(){
         SoundPlayer.getInstance().stopPlayingAll();
     }
 
-    public void stopPlayingLoopSounds(){
+    public static void stopPlayingLoopSounds(){
         SoundPlayer.getInstance().stopPlayingLoops();
     }
 }

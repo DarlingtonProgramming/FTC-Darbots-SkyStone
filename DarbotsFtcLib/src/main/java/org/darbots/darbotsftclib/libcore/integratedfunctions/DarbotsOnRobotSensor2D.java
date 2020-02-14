@@ -1,11 +1,11 @@
 package org.darbots.darbotsftclib.libcore.integratedfunctions;
 
-import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 
 public class DarbotsOnRobotSensor2D<E> {
-    public RobotPose2D OnRobotPosition;
+    public RobotPoint2D OnRobotPosition;
     public E Sensor;
-    public DarbotsOnRobotSensor2D(RobotPose2D onRobotPosition, E sensor){
+    public DarbotsOnRobotSensor2D(RobotPoint2D onRobotPosition, E sensor){
         this.OnRobotPosition = onRobotPosition;
         this.Sensor = sensor;
     }
