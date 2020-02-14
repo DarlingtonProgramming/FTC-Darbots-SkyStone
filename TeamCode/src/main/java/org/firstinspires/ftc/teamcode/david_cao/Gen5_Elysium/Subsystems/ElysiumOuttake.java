@@ -10,7 +10,7 @@ import org.darbots.darbotsftclib.libcore.runtime.SensorUtil;
 import org.darbots.darbotsftclib.libcore.sensors.servos.TimeControlledServo;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumSettings;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 
 public class ElysiumOuttake implements RobotNonBlockingDevice {
     public static enum Outtake_Grabber_State{

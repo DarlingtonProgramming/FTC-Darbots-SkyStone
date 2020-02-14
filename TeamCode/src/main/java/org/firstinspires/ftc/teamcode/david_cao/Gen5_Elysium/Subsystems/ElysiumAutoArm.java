@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.darbots.darbotsftclib.libcore.runtime.SensorUtil;
-import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumSettings;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 
 public class ElysiumAutoArm{
     public static enum GrabberServoState{

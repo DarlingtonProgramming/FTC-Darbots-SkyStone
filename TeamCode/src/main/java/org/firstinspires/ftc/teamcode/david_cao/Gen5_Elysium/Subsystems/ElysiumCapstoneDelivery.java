@@ -13,7 +13,7 @@ import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
 import org.darbots.darbotsftclib.libcore.sensors.servos.motor_powered_servos.RobotServoUsingMotor;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumSettings;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 
 public class ElysiumCapstoneDelivery implements RobotNonBlockingDevice {
     public static final double CAPSTONEDELIVERY_SLIDE_MIN_POS = ElysiumSettings.CAPSTONE_SLIDE_MIN;

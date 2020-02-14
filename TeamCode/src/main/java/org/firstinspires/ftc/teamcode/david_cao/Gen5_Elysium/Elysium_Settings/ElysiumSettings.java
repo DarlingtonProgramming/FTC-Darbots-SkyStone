@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium;
+package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
@@ -14,11 +14,20 @@ import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 
 public class ElysiumSettings {
+    //========== Start of Physical Settings ==========
+    public static final double PHYSICAL_MASS_KG = 5;
+    public static final double PHYSICAL_LENGTH = 45.72; //Exactly 18 Inches
+    public static final double PHYSICAL_LENGTH_EXPANDED = 0;
+    public static final double PHYSICAL_LENGTH_EXPANDED_AND_DOORCLOSED = 0;
+    public static final double PHYSICAL_WIDTH = 0;
+    public static final double PHYSICAL_INTERTIA = (PHYSICAL_MASS_KG * (Math.pow(PHYSICAL_LENGTH / 2.0 / 100.0,2) + Math.pow(PHYSICAL_WIDTH / 2.0 / 100.0,2))) / 2.0; //Suppose Mass evenly distributed, MR^2 / 2.0, unit in kg*m*m
+    //========== End of Physical Settings ==========
     //========== Start of Chassis Settings ==========
     public static final MotorType CHASSIS_MOTOR_TYPE = MotorTypeUtil.applyGearRatio(
             new GoBilda5202Series1150RPMMotor(),
             2.0
     );
+    public static final double CHASSIS_MOTOR_TORQUE_KG_PER_CM = 7.9;
     public static final double CHASSIS_WHEEL_RADIUS = 5.08; //4 Inch Diameter
     public static final double CHASSIS_LENGTH = 33.6; //14 GOBILDA BIG HOLES 14 * 24mm
     public static final double CHASSIS_WIDTH = 33.0;
@@ -27,6 +36,10 @@ public class ElysiumSettings {
             1.0,
             1.0
     );
+    public static final double CHASSIS_FRICTION_FACTOR = 0.6;
+    public static final double CHASSIS_MAXIMUM_ACCEL = (((CHASSIS_MOTOR_TORQUE_KG_PER_CM * 9.8 * 2.0 / CHASSIS_WHEEL_RADIUS) * 4) / PHYSICAL_MASS_KG * 100.0) * CHASSIS_FRICTION_FACTOR; //7.9 kg * cm with a friction factor
+    public static final double CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD = (((CHASSIS_MOTOR_TORQUE_KG_PER_CM * 9.8 * 2.0 / CHASSIS_WHEEL_RADIUS) * 4) * Math.sqrt(Math.pow(CHASSIS_LENGTH / 2.0 / 100.0,2) + Math.pow(CHASSIS_WIDTH/2.0 / 100.0,2)) / PHYSICAL_INTERTIA) * CHASSIS_FRICTION_FACTOR;
+    public static final double CHASSIS_MAXIMUM_ANGULAR_ACCEL_DEG = Math.toDegrees(CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD);
     //========== End of Chassis Settings ==========
 
     //========== Start of Position Localization Settings ==========

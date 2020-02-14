@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumSettings;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 
 public class ElysiumAutoArms {
     public ElysiumAutoArm leftArm;

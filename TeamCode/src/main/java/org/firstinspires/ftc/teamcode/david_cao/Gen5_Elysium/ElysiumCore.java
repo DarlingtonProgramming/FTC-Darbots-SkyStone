@@ -10,15 +10,19 @@ import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCMemory;
 import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
 import org.darbots.darbotsftclib.libcore.odometry.DistanceSensorEnhancedOdometry;
 import org.darbots.darbotsftclib.libcore.odometry.MecanumOdometry;
+import org.darbots.darbotsftclib.libcore.runtime.MovementUtil;
 import org.darbots.darbotsftclib.libcore.sensors.DarbotsDistanceSensor;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
+import org.darbots.darbotsftclib.libcore.templates.chassis_related.MotionSystemConstraints;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.odometry.OdometryMethod;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumAutoArm;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumAutoArms;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumCapstoneDelivery;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumIntake;
@@ -32,6 +36,7 @@ public class ElysiumCore extends RobotCore {
     public ElysiumOuttake outtakeSubSystem;
     public ElysiumStacker stackerSubSystem;
     public ElysiumAutoArms autoArmsSubSystem;
+    public MotionSystemConstraints motionSystemConstraints;
 
     public ElysiumCore(String logFileName, HardwareMap hardwareMap, boolean read, RobotPose2D initialPose, boolean distanceEnhancedLocalization) {
         super(logFileName, hardwareMap);
@@ -55,6 +60,8 @@ public class ElysiumCore extends RobotCore {
         posTracker.setDistanceFactors(ElysiumSettings.CHASSIS_FACTORS);
         this.getChassis().setPositionTracker(posTracker);
         posTracker.start();
+        this.motionSystemConstraints = this.getChassis().getMotionSystemConstraints(ElysiumSettings.CHASSIS_MAXIMUM_ACCEL,0,ElysiumSettings.CHASSIS_MAXIMUM_ANGULAR_ACCEL_DEG,0);
+        MovementUtil.drivetrain_constraints = this.motionSystemConstraints;
     }
 
     private void initializeDriveTrain(HardwareMap map){

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium;
+package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings;
 
 public class ElysiumTeleOpSettings {
     public static final double GAMEPAD_THRESEHOLD = 0.15;
