@@ -41,13 +41,11 @@ public class ElysiumChassisTuning extends DarbotsBasicOpMode<ElysiumCore> {
             if(this.isStopRequested()){
                 return false;
             }
-            sleep(50);
         }
         while(this.gamepad1.x){
             if(this.isStopRequested()){
                 return false;
             }
-            sleep(50);
         }
         return true;
     }
@@ -82,6 +80,7 @@ public class ElysiumChassisTuning extends DarbotsBasicOpMode<ElysiumCore> {
         telemetry.addData("X Factor","" + endXOffset + " / Actual Distance Pushed");
         telemetry.addData("Info", "Press X to continue");
         telemetry.update();
+        sleep(100);
         if(!waitForPadX()){
             return;
         }
@@ -108,6 +107,7 @@ public class ElysiumChassisTuning extends DarbotsBasicOpMode<ElysiumCore> {
         telemetry.addData("Y Factor","" + endYOffset + " / Actual Distance Pushed");
         telemetry.addData("Info","Press X on gamepad to continue");
         telemetry.update();
+        sleep(100);
         if(!waitForPadX()){
             return;
         }

@@ -32,6 +32,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -52,13 +54,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * @see <a href="http://revrobotics.com">REV Robotics Web Page</a>
  */
 @TeleOp(name = "Elysium-Util-DistanceSensorTuning", group = "4100")
-@Disabled
 public class ElysiumDistanceSensorTuning extends LinearOpMode {
     public static final String SENSOR_CONFIG_NAME = "frontDistanceSensor";
     private DistanceSensor sensorRange;
 
     @Override
     public void runOpMode() {
+        this.telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         // you can use this as a regular DistanceSensor.
         sensorRange = hardwareMap.get(DistanceSensor.class, SENSOR_CONFIG_NAME);
 

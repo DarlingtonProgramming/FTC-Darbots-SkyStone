@@ -3,10 +3,13 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
+import org.darbots.darbotsftclib.libcore.runtime.SensorUtil;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 
 public class ElysiumIntake implements RobotNonBlockingDevice {
     public static enum ElysiumIntakeStatus{
@@ -14,11 +17,18 @@ public class ElysiumIntake implements RobotNonBlockingDevice {
         SPITTING,
         STOPPED
     }
+    public static enum ElysiumIntakePositioningServoStatus{
+        REST,
+        AUTO,
+        HIT
+    }
     private DcMotor intakeLeft;
     private DcMotor intakeRight;
+    private Servo intakeOrient;
 
-    private ElysiumIntakeStatus lastStatus;
-    private double lastSpeed;
+
+    private ElysiumIntakeStatus lastStatus = ElysiumIntakeStatus.STOPPED;
+    private double lastSpeed = 0;
     public ElysiumIntake(HardwareMap map){
         this.intakeLeft = map.dcMotor.get("intakeLeftMotor");
         this.intakeLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -26,6 +36,8 @@ public class ElysiumIntake implements RobotNonBlockingDevice {
         this.intakeRight = map.dcMotor.get("intakeRightMotor");
         this.intakeRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.intakeRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.intakeOrient = map.servo.get("intakePositioningServo");
+        SensorUtil.setServoPulseWidth(this.intakeOrient, ElysiumSettings.INTAKE_POSITIONING_SERVO_TYPE);
     }
 
     public ElysiumIntakeStatus getIntakeSystemStatus(){

@@ -106,13 +106,19 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
                 RobotPose2D currentPos = this.getChassis().getCurrentPosition();
                 GlobalUtil.addTelmetryLine(telemetry,telemetryPacket,"Current Pose","(" + currentPos.X + ", " + currentPos.Y + ", " + currentPos.getRotationZ() + ")");
             }
-            {
-                RobotPose2D lastSupposedPose = this.getChassis().getCurrentTask().getLastSupposedPose();
-                GlobalUtil.addTelmetryLine(telemetry,telemetryPacket,"Last Supposed Pose","(" + lastSupposedPose.X + ", " + lastSupposedPose.Y + ", " + lastSupposedPose.getRotationZ() + ")");
-            }
-            {
-                RobotPose2D lastError = this.getChassis().getCurrentTask().getLastError();
-                GlobalUtil.addTelmetryLine(telemetry,telemetryPacket,"Last Error","(" + lastError.X + ", " + lastError.Y + ", " + lastError.getRotationZ() + ")");
+            if(this.getChassis().isBusy()) {
+                {
+                    RobotPose2D lastSupposedPose = this.getChassis().getCurrentTask().getLastSupposedPose();
+                    if (lastSupposedPose != null) {
+                        GlobalUtil.addTelmetryLine(telemetry, telemetryPacket, "Last Supposed Pose", "(" + lastSupposedPose.X + ", " + lastSupposedPose.Y + ", " + lastSupposedPose.getRotationZ() + ")");
+                    }
+                }
+                {
+                    RobotPose2D lastError = this.getChassis().getCurrentTask().getLastError();
+                    if (lastError != null) {
+                        GlobalUtil.addTelmetryLine(telemetry, telemetryPacket, "Last Error", "(" + lastError.X + ", " + lastError.Y + ", " + lastError.getRotationZ() + ")");
+                    }
+                }
             }
         }
 

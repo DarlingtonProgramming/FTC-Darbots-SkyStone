@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp(group = "DarbotsLib-Utilities", name = "EncoderMotorSpeedMeasureUtility")
 public class EncoderMotorSpeedMeasure extends DarbotsBasicOpMode {
-    public static final String motorConfigName = "motor";
+    public static final String motorConfigName = "LF";
     public static final MotorType motorCountsPerRevProvider = new AndyMark3637();
     public static final double motorTestDurationInSec = 10.0;
     public static final double motorTestAccelDurationInSec = 5.0;

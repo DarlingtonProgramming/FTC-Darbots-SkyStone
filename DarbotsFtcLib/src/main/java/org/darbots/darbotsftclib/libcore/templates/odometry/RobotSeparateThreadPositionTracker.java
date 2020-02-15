@@ -75,6 +75,7 @@ public class RobotSeparateThreadPositionTracker extends RobotSynchronized2DPosit
         this.m_XDistanceFactor = 1;
         this.m_YDistanceFactor = 1;
         this.m_ZRotDistanceFactor = 1;
+        this.m_Method = odometryMethod;
         this.__setupRunnableTracking();
     }
 

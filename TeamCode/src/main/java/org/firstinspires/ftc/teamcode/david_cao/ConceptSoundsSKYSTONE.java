@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode.david_cao;
 
 import android.content.Context;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -59,7 +61,7 @@ public class ConceptSoundsSKYSTONE extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        this.telemetry = new MultipleTelemetry(this.telemetry,FtcDashboard.getInstance().getTelemetry());
         // Variables for choosing from the available sounds
         int     soundIndex      = 0;
         int     soundID         = -1;
