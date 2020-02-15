@@ -7,14 +7,16 @@ import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.RobotMotionSystemTeleOpTask;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumCore;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumSoundBox;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumTeleOpSettings;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Soundboxes.ElysiumTeleOpSoundBox;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumIntake;
 
 public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
     private ElysiumCore m_Core;
     private int telemetry_i = 0;
     private RobotMotionSystemTeleOpTask teleOpTask;
-
+    private ElysiumTeleOpSoundBox SoundBox;
     @Override
     public ElysiumCore getRobotCore() {
         return this.m_Core;
@@ -25,15 +27,18 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
         this.m_Core = new ElysiumCore("ElysiumTeleOp.log",this.hardwareMap,true,new RobotPose2D(0,0,0),false);
         this.teleOpTask = new RobotMotionSystemTeleOpTask();
         this.m_Core.getChassis().addTask(this.teleOpTask);
+        this.SoundBox = new ElysiumTeleOpSoundBox(this);
+        this.SoundBox.onInitialize();
     }
 
     @Override
     public void hardwareDestroy() {
-
+        this.SoundBox.terminate();
     }
 
     @Override
     public void RunThisOpMode() {
+        this.SoundBox.onStart();
         this.telemetry_i = 0;
         while(this.opModeIsActive()){
             controlLoop();
@@ -45,6 +50,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
         this.intakeControl();
 
         this.updateStatus();
+        this.SoundBox.updateStatus();
 
         if(telemetry_i>=CONST_TELMETRY_PACKET_CYCLE_TIME) {
             telemetryCycle();

@@ -19,7 +19,7 @@ public class DistanceSensorEnhancedOdometry extends OdometryMethod {
         NONE
     };
     public static interface DistanceSensorOdometrySwitch{
-        DistanceSensorOdometerSwitchType getSwitchType(double currentX, double currentY);
+        DistanceSensorOdometerSwitchType getSwitchType(double currentX, double currentY, double currentRotationZ, double squaredRotationZ);
     }
     public DarbotsOnRobotSensor2D<DarbotsDistanceSensor> frontDistanceSensor, leftDistanceSensor, backDistanceSensor, rightDistanceSensor;
     private OdometryMethod m_OriginalOdometryMethod;
@@ -191,7 +191,7 @@ public class DistanceSensorEnhancedOdometry extends OdometryMethod {
         //lets see which quadrant in the field we are in...
         DistanceSensorOdometerSwitchType switchType = this.overallSwitch;
         if(this.callableSwitch != null){
-            DistanceSensorOdometerSwitchType calculatedType = this.callableSwitch.getSwitchType(beforePose2D.X,beforePose2D.Y);
+            DistanceSensorOdometerSwitchType calculatedType = this.callableSwitch.getSwitchType(beforePose2D.X,beforePose2D.Y, beforePose2D.getRotationZ(), squaredAngle);
             if((switchType == DistanceSensorOdometerSwitchType.NONE) || (switchType == DistanceSensorOdometerSwitchType.ONLY_X && calculatedType == DistanceSensorOdometerSwitchType.ONLY_Y) || (switchType == DistanceSensorOdometerSwitchType.ONLY_Y && calculatedType == DistanceSensorOdometerSwitchType.ONLY_X) || calculatedType == DistanceSensorOdometerSwitchType.NONE) {
                 switchType = DistanceSensorOdometerSwitchType.NONE;
             }else if(switchType != DistanceSensorOdometerSwitchType.BOTH_XY){

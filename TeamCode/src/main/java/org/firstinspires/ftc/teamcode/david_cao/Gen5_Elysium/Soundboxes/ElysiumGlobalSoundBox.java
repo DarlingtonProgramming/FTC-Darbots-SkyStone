@@ -12,17 +12,22 @@ public abstract class ElysiumGlobalSoundBox extends ElysiumSoundBox {
     }
     protected double secondsForOpModeRun = 30.0;
     private boolean endingSoundPlayed = false;
-    private static final double ENDINGSOUND_SECONDS = 6.0;
+    private static final double ENDING_SOUND_SECONDS = 5.5;
 
     @Override
     public void __onInitialize() {
         GlobalMedia.playResourceFile(super.opMode.hardwareMap.appContext,false, R.raw.global_initialization,1.0f,1.0f,false,0);
+        GlobalMedia.preloadResourceFile(super.opMode.hardwareMap.appContext,R.raw.global_shutdown);
+        this.___onInitialize();
     }
+
+    public abstract void ___onInitialize();
 
     @Override
     public void __onLoop(double secondsSinceOpModeStart) {
-        if(secondsSinceOpModeStart >= secondsForOpModeRun - ENDINGSOUND_SECONDS){
+        if(secondsSinceOpModeStart >= secondsForOpModeRun - ENDING_SOUND_SECONDS){
             if(!endingSoundPlayed){
+                this.__beforeEnding();
                 GlobalMedia.playResourceFile(super.opMode.hardwareMap.appContext,false, R.raw.global_shutdown,1.0f,1.0f,false,0);
                 endingSoundPlayed = true;
             }
@@ -30,4 +35,5 @@ public abstract class ElysiumGlobalSoundBox extends ElysiumSoundBox {
     }
 
     public abstract void ___onLoop(double secondsSinceOpModeStart);
+    public abstract void __beforeEnding();
 }

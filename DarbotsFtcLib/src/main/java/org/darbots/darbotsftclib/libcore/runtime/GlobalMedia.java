@@ -7,7 +7,12 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import java.io.File;
 
 public class GlobalMedia {
-
+    public static void preloadResourceFile(Context context, int resourceID){
+        SoundPlayer.getInstance().preload(context,resourceID);
+    }
+    public static void preloadLocalFile(Context context, File soundFile){
+        SoundPlayer.getInstance().preload(context,soundFile);
+    }
     /**
      * Play a resource file in an Android Module
      * @param context the context (module) pointer, you can use OpMode.appContext as the TeamCode Module pointer
