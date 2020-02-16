@@ -7,7 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class XYPlaneCalculations {
@@ -209,10 +209,10 @@ public class XYPlaneCalculations {
         }
     }
 
-    public static ArrayList<RobotPoint2D> verticalLineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, double fixedX){
+    public static LinkedList<RobotPoint2D> verticalLineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, double fixedX){
         double x1 = fixedX - circleCenter.X;
         double ySquared = Math.pow(circleRadius,2) - Math.pow(x1,2);
-        ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
+        LinkedList<RobotPoint2D> allPoints = new LinkedList<RobotPoint2D>();
         if(ySquared < 0){
             return allPoints;
         }
@@ -229,10 +229,10 @@ public class XYPlaneCalculations {
         return allPoints;
     }
 
-    public static ArrayList<RobotPoint2D> horizontalLineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, double fixedY){
+    public static LinkedList<RobotPoint2D> horizontalLineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, double fixedY){
         double y1 = fixedY - circleCenter.Y;
         double xSquared = Math.pow(circleRadius,2) - Math.pow(y1,2);
-        ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
+        LinkedList<RobotPoint2D> allPoints = new LinkedList<RobotPoint2D>();
         if(xSquared < 0){
             return allPoints;
         }
@@ -249,7 +249,7 @@ public class XYPlaneCalculations {
         return allPoints;
     }
 
-    public static ArrayList<RobotPoint2D> lineSegmentCircleIntersections(RobotPoint2D circleCenter, double circleRadius, RobotPoint2D linePoint1, RobotPoint2D linePoint2){
+    public static LinkedList<RobotPoint2D> lineSegmentCircleIntersections(RobotPoint2D circleCenter, double circleRadius, RobotPoint2D linePoint1, RobotPoint2D linePoint2){
         RobotPoint2D boundingBoxMin = new RobotPoint2D(
                 Math.min(linePoint1.X,linePoint2.X),
                 Math.min(linePoint1.Y,linePoint2.Y)
@@ -260,9 +260,9 @@ public class XYPlaneCalculations {
         );
 
         if(linePoint1.X == linePoint2.X || linePoint1.Y == linePoint2.Y){
-            ArrayList<RobotPoint2D> resultArray = null;
+            LinkedList<RobotPoint2D> resultArray = null;
             if(linePoint1.X == linePoint2.X && linePoint1.Y == linePoint2.Y){
-                resultArray = new ArrayList<RobotPoint2D>();
+                resultArray = new LinkedList<RobotPoint2D>();
                 if(isPointAtCircleEdge(circleCenter,circleRadius,linePoint1)){
                     resultArray.add(linePoint1);
                 }
@@ -271,7 +271,7 @@ public class XYPlaneCalculations {
             }else { //linePoint1.Y == linePoint2.Y
                 resultArray = horizontalLineCircleIntersections(circleCenter,circleRadius,linePoint1.Y);
             }
-            ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
+            LinkedList<RobotPoint2D> allPoints = new LinkedList<RobotPoint2D>();
             for(RobotPoint2D i : resultArray){
                 if(isInBoundingBox(i,boundingBoxMin,boundingBoxMax)){
                     allPoints.add(i);
@@ -289,7 +289,7 @@ public class XYPlaneCalculations {
         double quadraticC = ((Math.pow(m1,2) * Math.pow(x1,2))) - (2.0 * y1 * m1 * x1) + Math.pow(y1,2) - Math.pow(circleRadius,2);
         double quadraticDelta = Math.pow(quadraticB,2) - (4.0 * quadraticA * quadraticC);
 
-        ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
+        LinkedList<RobotPoint2D> allPoints = new LinkedList<RobotPoint2D>();
         if(quadraticDelta > 0) {
             double xRoot1 = (-quadraticB + Math.sqrt(quadraticDelta)) / (2.0 * quadraticA);
             double yRoot1 = m1 * (xRoot1 - x1) + y1;
@@ -320,11 +320,11 @@ public class XYPlaneCalculations {
         return allPoints;
     }
 
-    public static ArrayList<RobotPoint2D> lineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, RobotPoint2D linePoint1, RobotPoint2D linePoint2){
+    public static LinkedList<RobotPoint2D> lineCircleIntersections(RobotPoint2D circleCenter, double circleRadius, RobotPoint2D linePoint1, RobotPoint2D linePoint2){
         if(linePoint1.X == linePoint2.X || linePoint1.Y == linePoint2.Y){
-            ArrayList<RobotPoint2D> resultArray = null;
+            LinkedList<RobotPoint2D> resultArray = null;
             if(linePoint1.X == linePoint2.X && linePoint1.Y == linePoint2.Y){
-                resultArray = new ArrayList<RobotPoint2D>();
+                resultArray = new LinkedList<RobotPoint2D>();
                 if(isPointAtCircleEdge(circleCenter,circleRadius,linePoint1)){
                     resultArray.add(linePoint1);
                 }
@@ -345,7 +345,7 @@ public class XYPlaneCalculations {
         double quadraticC = ((Math.pow(m1,2) * Math.pow(x1,2))) - (2.0 * y1 * m1 * x1) + Math.pow(y1,2) - Math.pow(circleRadius,2);
         double quadraticDelta = Math.pow(quadraticB,2) - (4.0 * quadraticA * quadraticC);
 
-        ArrayList<RobotPoint2D> allPoints = new ArrayList<RobotPoint2D>();
+        LinkedList<RobotPoint2D> allPoints = new LinkedList<RobotPoint2D>();
         if(quadraticDelta > 0) {
             double xRoot1 = (-quadraticB + Math.sqrt(quadraticDelta)) / (2.0 * quadraticA);
             double yRoot1 = m1 * (xRoot1 - x1) + y1;
@@ -369,6 +369,22 @@ public class XYPlaneCalculations {
             allPoints.add(root1);
         }
         return allPoints;
+    }
+
+    public static RobotPoint2D lineCircleIntersection_CLOSEST_TO_POINT_2(RobotPoint2D circleCenter, double circleRadius, RobotPoint2D linePoint1, RobotPoint2D linePoint2){
+        LinkedList<RobotPoint2D> allIntersections = lineCircleIntersections(circleCenter,circleRadius,linePoint1,linePoint2);
+        int listSize = allIntersections.size();
+        if(listSize >= 2){
+            if (allIntersections.get(0).distanceTo(linePoint2) > allIntersections.get(1).distanceTo(linePoint2)) {
+                return allIntersections.get(1);
+            }else{
+                return allIntersections.get(0);
+            }
+        }else if(listSize > 0){
+            return allIntersections.get(0);
+        }else{
+            return null;
+        }
     }
 
     public static RobotPoint2D getNearestPoint(List<RobotPoint2D> allPoints, RobotPoint2D point){

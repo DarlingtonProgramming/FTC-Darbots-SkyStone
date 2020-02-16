@@ -47,7 +47,10 @@ public class RobotPoint2D implements Serializable {
     	this.Y = indicator.Y;
     }
     public double distanceTo(RobotPoint2D secondPoint){
-        return Math.sqrt(Math.pow(secondPoint.X - this.X,2) + Math.pow(secondPoint.Y - this.Y,2));
+        return Math.hypot(secondPoint.X - this.X,secondPoint.Y - this.Y);
+    }
+    public double distanceToOrigin(){
+        return Math.hypot(this.X,this.Y);
     }
     public void setValues(RobotPoint2D value){
         this.X = value.X;
