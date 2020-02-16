@@ -480,7 +480,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
             currentRobotX[i] = transferredPoint.X;
             currentRobotY[i] = transferredPoint.Y;
         }
-        RobotPoint2D robotFrontPoint =XYPlaneCalculations.getRelativePosition(currentRobotPosition,this.m_RobotFrontPoint);
+        RobotPoint2D robotFrontPoint = XYPlaneCalculations.getAbsolutePosition(currentRobotPosition,this.m_RobotFrontPoint);
         RobotPoint2D currentRobotPositionInch = new RobotPoint2D(currentRobotPosition.X * XYPlaneCalculations.INCH_PER_CM, currentRobotPosition.Y * XYPlaneCalculations.INCH_PER_CM);
         robotFrontPoint.X *= XYPlaneCalculations.INCH_PER_CM;
         robotFrontPoint.Y *= XYPlaneCalculations.INCH_PER_CM;

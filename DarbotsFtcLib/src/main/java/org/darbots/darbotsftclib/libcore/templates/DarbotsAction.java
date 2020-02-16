@@ -23,7 +23,7 @@ public abstract class DarbotsAction implements RobotNonBlockingDevice {
             return;
         }
         this.m_Busy = true;
-        this.m_Finished = false;
+        this.resetFinished();
         this.__startAction();
     }
 
@@ -38,6 +38,10 @@ public abstract class DarbotsAction implements RobotNonBlockingDevice {
         this.m_Busy = false;
         this.m_Finished = true;
         this.__stopAction();
+    }
+
+    public void resetFinished(){
+        this.m_Finished = false;
     }
 
     @Override

@@ -130,7 +130,7 @@ public class SkyStoneCoordinates {
         RobotPoint2D parkPos = getParkPosition(alliance,parkPosition);
 
         RobotPoint2D firstPoint = new RobotPoint2D(stonePos.X,stonePos.Y + deltaY);
-        firstPoint = XYPlaneCalculations.fixFieldPosition(new RobotPose2D(firstPoint,0),XYPlaneCalculations.getRobotExtremeBoundingBox(halfRobotLength,halfRobotLength,halfRobotWidth,halfRobotWidth)).toPoint2D();
+        firstPoint = XYPlaneCalculations.fixFieldPosition(new RobotPose2D(firstPoint,0),XYPlaneCalculations.getRobotExtremeBoundingBox(halfRobotLength,halfRobotLength,halfRobotWidth,halfRobotWidth));
 
         RobotPoint2D secondPoint = new RobotPoint2D(parkPos.X + robotWidth,parkPos.Y);
         ArrayList<RobotPoint2D> returnList = new ArrayList<>();

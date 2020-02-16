@@ -60,6 +60,6 @@ public class RobotWheel implements PositionIndicator {
         return Math.sin(Math.toRadians(this.m_OnRobotPosition.getRotationZ()));
     }
     public double getDistanceFromCenterOfRobot(){
-        return this.m_OnRobotPosition.getDistanceToOrigin();
+        return this.m_OnRobotPosition.distanceToOrigin();
     }
 }

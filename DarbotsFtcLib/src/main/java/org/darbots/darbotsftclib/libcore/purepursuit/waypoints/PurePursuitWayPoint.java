@@ -11,6 +11,7 @@ public class PurePursuitWayPoint extends RobotPoint2D {
     public DarbotsAction SegmentBeginAction = null;
     public boolean skipActionWhenSegmentFinished = false;
     public boolean stopActionWhenSkipping = true;
+    public double allowedSecondsForThisSegment = -1;
 
     public double getEndFollowNormalizedSpeed(){
         return this.m_EndFollowNormalizedSpeed;
@@ -44,5 +45,6 @@ public class PurePursuitWayPoint extends RobotPoint2D {
         this.SegmentBeginAction = point.SegmentBeginAction;
         this.stopActionWhenSkipping = point.stopActionWhenSkipping;
         this.skipActionWhenSegmentFinished = point.skipActionWhenSegmentFinished;
+        this.allowedSecondsForThisSegment = point.allowedSecondsForThisSegment;
     }
 }

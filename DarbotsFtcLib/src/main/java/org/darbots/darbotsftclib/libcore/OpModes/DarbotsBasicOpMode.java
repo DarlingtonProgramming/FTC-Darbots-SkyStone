@@ -24,7 +24,11 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
     public abstract void hardwareDestroy();
     public abstract void RunThisOpMode();
     public TelemetryPacket updateTelemetry(){
-        return this.getRobotCore().updateTelemetry();
+        if(this.getRobotCore() != null) {
+            return this.getRobotCore().updateTelemetry();
+        }else{
+            return new TelemetryPacket();
+        }
     }
     @Override
     public void runOpMode() throws InterruptedException {
@@ -67,11 +71,9 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
     @Override
     public void waitForStart(){
         while ((!opModeIsActive()) && (!isStopRequested())) {
-            telemetry.addData("status", "Initialized, waiting for start command...");
-            telemetry.update();
-        }
-        if(opModeIsActive()){
-            telemetry.addData("status","Started");
+            TelemetryPacket packet = this.updateTelemetry();
+            GlobalUtil.addTelmetryLine(this.telemetry,packet,"status", "Initialized, waiting for start command...");
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
             telemetry.update();
         }
     }

@@ -1,6 +1,7 @@
 package org.darbots.darbotsftclib.libcore.purepursuit.followers;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
@@ -25,6 +26,7 @@ public class PurePursuitWorldAxisFollower extends RobotMotionSystemTask {
     protected double m_PreferredAngle;
     protected double m_FollowStartSpeedNormalized;
     protected double m_SpeedThreshold = 0.05;
+    protected ElapsedTime m_CurrentSegmentRuntime;
 
     public PurePursuitWorldAxisFollower(List<PurePursuitWayPoint> path, double normalizedStartSpeed, double normalizedFollowSpeed, double normalizedAngleSpeed, double preferredAngle){
         this.m_Path = new ArrayList<PurePursuitWayPoint>();
@@ -93,11 +95,12 @@ public class PurePursuitWorldAxisFollower extends RobotMotionSystemTask {
     @Override
     protected void __startTask() {
         this.m_PathCursor = -1;
+        this.m_CurrentSegmentRuntime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     }
 
     @Override
     protected void __taskFinished() {
-
+        this.m_CurrentSegmentRuntime = null;
     }
 
     @Override
@@ -155,11 +158,13 @@ public class PurePursuitWorldAxisFollower extends RobotMotionSystemTask {
         double distToTarget;
         PurePursuitWayPoint target;
         DarbotsAction targetAction;
+        double secondsAlreadyRunForThisSegment;
         do {
             jumpToNextSegment = false;
             target = this.m_Path.get(this.m_PathCursor + 1);
             targetAction = target.SegmentBeginAction;
             distToTarget = currentPosition.distanceTo(target);
+            secondsAlreadyRunForThisSegment = this.m_CurrentSegmentRuntime.seconds();
             if (target instanceof PurePursuitEndPoint) {
                 PurePursuitEndPoint targetEnd = (PurePursuitEndPoint) target;
                 if (distToTarget <= targetEnd.getEndErrorToleranceDistance()) {
@@ -205,8 +210,19 @@ public class PurePursuitWorldAxisFollower extends RobotMotionSystemTask {
                     }
                 }
             }
+
+            if(secondsAlreadyRunForThisSegment >= target.allowedSecondsForThisSegment && target.allowedSecondsForThisSegment > 0){
+                if(targetAction.isBusy()){
+                    if(target.stopActionWhenSkipping && targetAction != null){
+                        targetAction.stopAction();
+                    }
+                }
+                jumpToNextSegment = true;
+            }
+
             if (jumpToNextSegment) {
                 this.m_PathCursor++;
+                this.m_CurrentSegmentRuntime.reset();
             }
         } while (jumpToNextSegment && this.m_PathCursor < this.m_Path.size() - 1);
         if (this.m_PathCursor >= this.m_Path.size() - 1) {return null;}

@@ -40,7 +40,7 @@ public class OmniDrivetrain extends RobotMotionSystem {
 
     protected void __calculateConstants(){
         double Lx = Math.abs(this.m_LT.getRobotWheel().getOnRobotPosition().X), Ly = Math.abs(this.m_LT.getRobotWheel().getOnRobotPosition().Y);
-        this.c_Kd = this.m_LT.getRobotWheel().getOnRobotPosition().getDistanceToOrigin();
+        this.c_Kd = this.m_LT.getRobotWheel().getOnRobotPosition().distanceToOrigin();
         this.c_Wmax = this.m_LTMotor.getMotorType().getRevPerSec() * 360.0;
         this.c_R = this.m_LT.getRobotWheel().getRadius();
         this.c_Kwl = XYPlaneCalculations.CONST_180_OVER_PI / (this.c_R * Math.sqrt(2));
