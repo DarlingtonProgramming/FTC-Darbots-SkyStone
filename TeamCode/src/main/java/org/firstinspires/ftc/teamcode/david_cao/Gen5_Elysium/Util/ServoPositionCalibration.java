@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Util;
 
 import android.hardware.Sensor;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -20,6 +22,7 @@ public class ServoPositionCalibration extends DarbotsBasicOpMode {
     public void hardwareInitialize() {
         this.mServo = hardwareMap.servo.get(ServoPositionCalibrationSettings.servoPositionCalibrationConfigName);
         SensorUtil.setServoPulseWidth(this.mServo,ServoPositionCalibrationSettings.servoPositionCalibrationServoType);
+        this.telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     @Override
@@ -31,6 +34,12 @@ public class ServoPositionCalibration extends DarbotsBasicOpMode {
     public void RunThisOpMode() {
         while(this.opModeIsActive()){
             this.mServo.setPosition(ServoPositionCalibrationSettings.servoPositionCalibrationPos);
+            this.updateTelmetry();
+            telemetry.update();
         }
+    }
+
+    public void updateTelmetry(){
+        telemetry.addData("ServoPosition",this.mServo.getPosition());
     }
 }
