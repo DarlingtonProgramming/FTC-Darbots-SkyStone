@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.util.NoSuchElementException;
 
 public class GlobalUtil {
+    private static Field lynxModuleLastDataField = null;
     public static LogLevel LowestLogLevel = LogLevel.INFO;
     public static void addLog(String module, String caption, LogContent content, LogLevel logLevel){
         if(GlobalRegister.currentLog != null && logLevel.value() >= LowestLogLevel.value()){
@@ -91,14 +92,14 @@ public class GlobalUtil {
         if(GlobalRegister.allExtensionHubs == null){
             return;
         }
+        if(lynxModuleLastDataField == null){
+            setupLynxModuleReflection();
+        }
         for(LynxModule i : GlobalRegister.allExtensionHubs){
             i.clearBulkCache();
             try {
-                Class<LynxModule> LynxModuleClass = LynxModule.class;
-                Field lynxModuleField = LynxModuleClass.getDeclaredField("lastBulkData");
-                lynxModuleField.setAccessible(true);
-                lynxModuleField.set(i,i.getBulkData());
-            }catch(NoSuchFieldException|IllegalAccessException e){
+                lynxModuleLastDataField.set(i,i.getBulkData());
+            }catch(IllegalAccessException e){
                 e.printStackTrace();
             }
         }
@@ -112,7 +113,17 @@ public class GlobalUtil {
             i.setBulkCachingMode(Mode);
         }
         if(Mode != LynxModule.BulkCachingMode.OFF) {
+            setupLynxModuleReflection();
             updateBulkRead();
+        }
+    }
+
+    private static void setupLynxModuleReflection(){
+        try {
+            lynxModuleLastDataField = LynxModule.class.getDeclaredField("lastBulkData");
+            lynxModuleLastDataField.setAccessible(true);
+        }catch(NoSuchFieldException e){
+            e.printStackTrace();
         }
     }
 
