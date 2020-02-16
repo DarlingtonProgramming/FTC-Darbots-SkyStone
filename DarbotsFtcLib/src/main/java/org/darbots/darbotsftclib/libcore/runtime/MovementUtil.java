@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.libcore.runtime;
 
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCFileIO;
@@ -62,6 +63,14 @@ public class MovementUtil {
             }
         }
         return new TrajectoryFollower(linearTrajectory);
+    }
+    public static TrajectoryFollower getGotoWorldPointTask(RobotPose2D currentPosition, double X, double Y, double startSpeedNormalized, double cruiseSpeedNormalized, double endSpeedNormalized, double preferredWorldAngle){
+        RobotPoint2D relativePoint = XYPlaneCalculations.getRelativePosition(currentPosition,new RobotPoint2D(X,Y));
+        double startSpeed = startSpeedNormalized * drivetrain_constraints.maximumLinearSpeed;
+        double endSpeed = endSpeedNormalized * drivetrain_constraints.maximumLinearSpeed;
+        double cruiseSpeed = cruiseSpeedNormalized * drivetrain_constraints.maximumLinearSpeed;
+        double preferredAngle = preferredWorldAngle - currentPosition.getRotationZ();
+        return getGoToPointTask(relativePoint.X,relativePoint.Y,startSpeed,cruiseSpeed,endSpeed,preferredAngle);
     }
     public static FixedTurnAngleTask getTurnToWorldAngTask(double worldAng, double startAngularV, double cruiseAngularV, double endAngularV, boolean forceDirection, boolean forceDirectionCCW){
         if(GlobalRegister.runningOpMode == null || GlobalRegister.runningOpMode.getRobotCore() == null || GlobalRegister.runningOpMode.getRobotCore().getChassis() == null || GlobalRegister.runningOpMode.getRobotCore().getChassis().getPositionTracker() == null){

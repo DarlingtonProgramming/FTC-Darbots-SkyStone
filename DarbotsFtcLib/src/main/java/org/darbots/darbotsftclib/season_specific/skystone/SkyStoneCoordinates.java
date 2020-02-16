@@ -44,19 +44,19 @@ public class SkyStoneCoordinates {
     );
     public static RobotPoint2D BRIDGE_PARK_BLUE_WALL = new RobotPoint2D(
             0,
-            153.5
+            153.68
     );
     public static RobotPoint2D BRIDGE_PARK_BLUE_MIDDLE_BRIDGE = new RobotPoint2D(
             0,
-            91
+            95.28
     );
     public static RobotPoint2D BRIDGE_PARK_RED_WALL = new RobotPoint2D(
             0,
-            -153.5
+            -153.68
     );
     public static RobotPoint2D BRIDGE_PARK_RED_MIDDLE_BRIDGE = new RobotPoint2D(
             0,
-            -91
+            -95.28
     );
 
     public static double FOUNDATION_WIDTH = 46.99;
@@ -71,6 +71,13 @@ public class SkyStoneCoordinates {
             128.91,
             -39.37
     );
+
+    public static double TILE_FLOOR_CONNECTION_SIDE_WIDTH = 2.22;
+    public static double TILE_FLOOR_WIDTH = 57.79;
+
+    public static double NEUTRAL_BRIDGE_FLOOR_WIDTH = 45.72;
+    public static double NEUTRAL_BRIDGE_FLOOR_LENGTH = 121.92;
+    public static double NEUTRAL_BRIDGE_FLOOR_THINKNESS = 1.19888;
 
    public static RobotPoint2D getStonePosition(AllianceType alliance, int stoneNumberFromBridge){
         RobotPoint2D sixthStonePosition = null;

@@ -1,5 +1,6 @@
 package org.darbots.darbotsftclib.libcore.purepursuit.waypoints;
 
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 
 public class PurePursuitHeadingInterpolationWayPoint extends PurePursuitWayPoint {
@@ -27,6 +28,10 @@ public class PurePursuitHeadingInterpolationWayPoint extends PurePursuitWayPoint
         this.m_AllowedHeadingError = point.m_AllowedHeadingError;
     }
     public PurePursuitHeadingInterpolationWayPoint(PurePursuitWayPoint point, double Heading){
+        super(point);
+        this.setDesiredHeading(Heading);
+    }
+    public PurePursuitHeadingInterpolationWayPoint(RobotPoint2D point, double Heading){
         super(point);
         this.setDesiredHeading(Heading);
     }

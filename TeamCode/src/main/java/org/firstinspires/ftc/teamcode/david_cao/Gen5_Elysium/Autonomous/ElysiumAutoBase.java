@@ -18,6 +18,22 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumA
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumStacker;
 
 public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumCore> {
+    public static final RobotPoint2D placeStoneOnFoundationPosition_RED = new RobotPoint2D(
+            SkyStoneCoordinates.FOUNDATION_RED.X,
+            SkyStoneCoordinates.FOUNDATION_RED.Y - SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 - ElysiumSettings.PHYSICAL_CENTER_TO_RIGHT_SIGN
+    );
+    public static final RobotPoint2D placeStoneOnFoundationPosition_BLUE = new RobotPoint2D(
+            SkyStoneCoordinates.FOUNDATION_BLUE.X,
+            SkyStoneCoordinates.FOUNDATION_BLUE.Y + SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_LEFT_SIGN
+    );
+    public static final RobotPoint2D grabFoundationPosition_RED = new RobotPoint2D(
+            SkyStoneCoordinates.FOUNDATION_RED.X,
+            SkyStoneCoordinates.FOUNDATION_RED.Y - SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 - ElysiumSettings.PHYSICAL_CENTER_TO_BACK
+    );
+    public static final RobotPoint2D grabFoundationPosition_BLUE = new RobotPoint2D(
+            SkyStoneCoordinates.FOUNDATION_BLUE.X,
+            SkyStoneCoordinates.FOUNDATION_BLUE.Y + SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_BACK
+    );
     public static class ElysiumAutoClawCloseAction extends DarbotsAction{
         public ElysiumAutoArm m_Arm = null;
         private ElapsedTime m_Time = null;
@@ -159,6 +175,7 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumCore> {
         while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy()){
             this.updateStatus();
         }
+        this.autoSoundBox.onGrabbingFoundation();
     }
 
     public ElysiumWaitForArmRotToComeInAction getWaitForLeftClawInAction(){
@@ -192,6 +209,18 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumCore> {
         RobotPoint2D LoadingZonePoint = new RobotPoint2D(parkPoint);
         LoadingZonePoint.X += ElysiumSettings.PHYSICAL_CENTER_TO_FRONT;
         return LoadingZonePoint;
+    }
+
+    public static RobotPoint2D getLoadingZoneFurtherFromBridgePoint(AllianceType allianceType, ParkPosition parkPosition){
+        RobotPoint2D closeToBridge = getLoadingZoneNextToBridgePoint(allianceType,parkPosition);
+        closeToBridge.X -= SkyStoneCoordinates.NEUTRAL_BRIDGE_FLOOR_THINKNESS / 2.0;
+        return closeToBridge;
+    }
+
+    public static RobotPoint2D getBuildingZoneFurtherFromBridgePoint(AllianceType allianceType, ParkPosition parkPosition){
+        RobotPoint2D closeToBridge = getBuildingZoneNextToBridgePoint(allianceType,parkPosition);
+        closeToBridge.X += SkyStoneCoordinates.NEUTRAL_BRIDGE_FLOOR_THINKNESS / 2.0;
+        return closeToBridge;
     }
 
     public abstract void __hardwareInit();

@@ -197,9 +197,6 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                 if ((Math.abs(XYPlaneCalculations.normalizeDeg(currentOffset.getRotationZ() - ptTarget.getDesiredHeading())) <= ptTarget.getAllowedHeadingError())) {
                     jumpToNextSegment = true;
                 }
-                if(distToTarget > target.getFollowDistance()){
-                    jumpToNextSegment = false;
-                }
             }else {
                 if (distToTarget <= target.getFollowDistance()) {
                     jumpToNextSegment = true;

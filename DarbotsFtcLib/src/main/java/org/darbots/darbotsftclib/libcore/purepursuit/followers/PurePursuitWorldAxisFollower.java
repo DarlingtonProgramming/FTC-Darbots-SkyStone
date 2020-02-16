@@ -180,9 +180,6 @@ public class PurePursuitWorldAxisFollower extends RobotMotionSystemTask {
                 if ((Math.abs(XYPlaneCalculations.normalizeDeg(currentPosition.getRotationZ() - ptTarget.getDesiredHeading())) <= ptTarget.getAllowedHeadingError())) {
                     jumpToNextSegment = true;
                 }
-                if(distToTarget > target.getFollowDistance()){
-                    jumpToNextSegment = false;
-                }
             }else {
                 if (distToTarget <= target.getFollowDistance()) {
                     jumpToNextSegment = true;
