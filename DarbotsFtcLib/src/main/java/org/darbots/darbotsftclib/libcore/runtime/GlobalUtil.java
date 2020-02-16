@@ -13,6 +13,8 @@ import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.NoSuchElementException;
 
 public class GlobalUtil {
     public static LogLevel LowestLogLevel = LogLevel.INFO;
@@ -91,6 +93,14 @@ public class GlobalUtil {
         }
         for(LynxModule i : GlobalRegister.allExtensionHubs){
             i.clearBulkCache();
+            try {
+                Class<LynxModule> LynxModuleClass = LynxModule.class;
+                Field lynxModuleField = LynxModuleClass.getDeclaredField("lastBulkData");
+                lynxModuleField.setAccessible(true);
+                lynxModuleField.set(i,i.getBulkData());
+            }catch(NoSuchFieldException|IllegalAccessException e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -100,6 +110,9 @@ public class GlobalUtil {
         }
         for(LynxModule i : GlobalRegister.allExtensionHubs){
             i.setBulkCachingMode(Mode);
+        }
+        if(Mode != LynxModule.BulkCachingMode.OFF) {
+            updateBulkRead();
         }
     }
 
