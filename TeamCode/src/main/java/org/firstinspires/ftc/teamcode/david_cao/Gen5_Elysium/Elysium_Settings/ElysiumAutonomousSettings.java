@@ -8,18 +8,18 @@ public class ElysiumAutonomousSettings {
     //========== Start of Sampling Settings ==========
     public static final double SAMPLE_PHONE_ROTATION = 90;
 
-    public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_START_X = 0;
-    public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_START_Y = 0;
-    public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_END_X = 0;
-    public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_END_Y = 0;
-    public static final int SAMPLE_RED_STONE_MIDDLE_START_X = 0;
-    public static final int SAMPLE_RED_STONE_MIDDLE_START_Y = 0;
-    public static final int SAMPLE_RED_STONE_MIDDLE_END_X = 0;
-    public static final int SAMPLE_RED_STONE_MIDDLE_END_Y = 0;
-    public static final int SAMPLE_RED_STONE_NEXT_TO_WALL_START_X = 0;
-    public static final int SAMPLE_RED_STONE_NEXT_TO_WALL_START_Y = 0;
-    public static final int SAMPLE_RED_STONE_NEXT_TO_WALL_END_X = 0;
-    public static final int SAMPLE_RED_STONE_NEXT_TO_WALL_END_Y = 0;
+    public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_START_X = 880;
+    public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_START_Y = 525;
+    public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_END_X = 1063;
+    public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_END_Y = 622;
+    public static final int SAMPLE_RED_STONE_MIDDLE_START_X = 620;
+    public static final int SAMPLE_RED_STONE_MIDDLE_START_Y = 520;
+    public static final int SAMPLE_RED_STONE_MIDDLE_END_X = 807;
+    public static final int SAMPLE_RED_STONE_MIDDLE_END_Y = 616;
+    public static final int SAMPLE_RED_STONE_NEXT_TO_WALL_START_X = 362;
+    public static final int SAMPLE_RED_STONE_NEXT_TO_WALL_START_Y = 525;
+    public static final int SAMPLE_RED_STONE_NEXT_TO_WALL_END_X = 573;
+    public static final int SAMPLE_RED_STONE_NEXT_TO_WALL_END_Y = 612;
 
     public static final int SAMPLE_BLUE_STONE_NEXT_TO_BRIDGE_START_X = 998;
     public static final int SAMPLE_BLUE_STONE_NEXT_TO_BRIDGE_START_Y = 536;
