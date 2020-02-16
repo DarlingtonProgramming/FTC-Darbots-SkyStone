@@ -108,6 +108,7 @@ public class ElysiumSettings {
     public static final double OUTTAKE_GRABBER_GRABBED_POS = 0.25;
     public static final double OUTTAKE_GRABBER_RELEASED_POS = 0.4;
     public static final ServoType OUTTAKE_GRABBER_SERVO_TYPE = new HS485HB();
+    public static final double OUTTAKE_GRABBER_WAIT_SEC = 0.5;
     //========== End of Our-Take System Settings ==========
 
     //========== Start of Intake System Settings ==========
@@ -115,6 +116,7 @@ public class ElysiumSettings {
     public static final double INTAKE_POSITIONING_SERVO_AUTO = 0.0;
     public static final double INTAKE_POSITIONING_SERVO_HIT = 0.0;
     public static final ServoType INTAKE_POSITIONING_SERVO_TYPE = new HS485HB();
+    public static final double INTAKE_POSITIONING_SERVO_WAIT_SEC = 0.3;
     //========== End of Intake System Settings ==========
 
     //========== Start of Capstone Delivery System Settings ==========
