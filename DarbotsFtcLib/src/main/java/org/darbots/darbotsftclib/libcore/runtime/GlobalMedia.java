@@ -7,11 +7,13 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import java.io.File;
 
 public class GlobalMedia {
+    public static SoundPlayer globalSoundPlayer = SoundPlayer.getInstance();
+
     public static void preloadResourceFile(Context context, int resourceID){
-        SoundPlayer.getInstance().preload(context,resourceID);
+        globalSoundPlayer.preload(context,resourceID);
     }
     public static void preloadLocalFile(Context context, File soundFile){
-        SoundPlayer.getInstance().preload(context,soundFile);
+        globalSoundPlayer.preload(context,soundFile);
     }
     /**
      * Play a resource file in an Android Module
@@ -30,7 +32,7 @@ public class GlobalMedia {
         params.volume = volume;
         params.waitForNonLoopingSoundsToFinish = waitForPreviousSound;
         params.rate = rate;
-        SoundPlayer.getInstance().startPlaying(context,resourceID,params,null,null);
+        globalSoundPlayer.startPlaying(context,resourceID,params,null,null);
     }
 
     /**
@@ -50,14 +52,14 @@ public class GlobalMedia {
         params.volume = volume;
         params.waitForNonLoopingSoundsToFinish = waitForPreviousSound;
         params.rate = rate;
-        SoundPlayer.getInstance().startPlaying(context,soundFile,params,null,null);
+        globalSoundPlayer.startPlaying(context,soundFile,params,null,null);
     }
 
     public static void stopPlayingAllSounds(){
-        SoundPlayer.getInstance().stopPlayingAll();
+        globalSoundPlayer.stopPlayingAll();
     }
 
     public static void stopPlayingLoopSounds(){
-        SoundPlayer.getInstance().stopPlayingLoops();
+        globalSoundPlayer.stopPlayingLoops();
     }
 }

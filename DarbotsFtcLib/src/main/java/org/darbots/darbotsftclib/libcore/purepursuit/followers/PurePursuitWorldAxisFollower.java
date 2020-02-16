@@ -17,24 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PurePursuitPathFollower extends RobotMotionSystemTask {
-    public static class FollowInformation{
-        public PurePursuitWayPoint purePursuitWayPoint;
-        public RobotPoint2D pursuitPoint;
-        public double normalizedFollowSpeed;
-
-        public FollowInformation(PurePursuitWayPoint wayPoint, RobotPoint2D followPoint, double normalizedFollowSpeed){
-            this.pursuitPoint = followPoint;
-            this.purePursuitWayPoint = wayPoint;
-            this.normalizedFollowSpeed = Math.abs(normalizedFollowSpeed);
-        }
-        public FollowInformation(FollowInformation oldInfo){
-            this.pursuitPoint = oldInfo.pursuitPoint;
-            this.purePursuitWayPoint = oldInfo.purePursuitWayPoint;
-            this.normalizedFollowSpeed = oldInfo.normalizedFollowSpeed;
-        }
-    }
-
+public class PurePursuitWorldAxisFollower extends RobotMotionSystemTask {
     protected ArrayList<PurePursuitWayPoint> m_Path;
     protected int m_PathCursor;
     protected double m_FollowSpeedNormalized;
@@ -43,7 +26,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
     protected double m_FollowStartSpeedNormalized;
     protected double m_SpeedThreshold = 0.05;
 
-    public PurePursuitPathFollower(List<PurePursuitWayPoint> path, double normalizedStartSpeed, double normalizedFollowSpeed, double normalizedAngleSpeed, double preferredAngle){
+    public PurePursuitWorldAxisFollower(List<PurePursuitWayPoint> path, double normalizedStartSpeed, double normalizedFollowSpeed, double normalizedAngleSpeed, double preferredAngle){
         this.m_Path = new ArrayList<PurePursuitWayPoint>();
         this.m_Path.addAll(path);
         this.setFollowSpeed(normalizedFollowSpeed);
@@ -52,7 +35,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         this.setPreferredAngle(preferredAngle);
     }
 
-    public PurePursuitPathFollower(PurePursuitPathFollower oldFollower){
+    public PurePursuitWorldAxisFollower(PurePursuitPathFollower oldFollower){
         super(oldFollower);
         this.m_Path = new ArrayList<PurePursuitWayPoint>();
         this.m_Path.addAll(oldFollower.m_Path);
@@ -119,8 +102,8 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
     @Override
     protected void __updateStatus() {
-        RobotPose2D currentOffset = this.getRelativePositionOffsetSinceStart();
-        FollowInformation followInfo = this.getFollowInformation(currentOffset);
+        RobotPose2D currentPosition = this.getMotionSystem().getCurrentPosition();
+        PurePursuitPathFollower.FollowInformation followInfo = this.getFollowInformation(currentPosition);
         if(followInfo == null){
             this.stopTask();
             return;
@@ -133,21 +116,21 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                 followInfo.purePursuitWayPoint.SegmentBeginAction.updateStatus();
             }
         }
-        this.gotoPoint(currentOffset,followInfo.purePursuitWayPoint,followInfo.pursuitPoint,followInfo.normalizedFollowSpeed,this.m_AngleSpeedNormalized,this.m_PreferredAngle);
+        this.gotoPoint(currentPosition,followInfo.purePursuitWayPoint,followInfo.pursuitPoint,followInfo.normalizedFollowSpeed,this.m_AngleSpeedNormalized,this.m_PreferredAngle);
     }
 
-    public void gotoPoint(RobotPose2D currentOffset, PurePursuitWayPoint pursuitWayPoint, RobotPoint2D pursuitPoint, double pursuitSpeedNormalized, double angleSpeedNormalized, double preferredAngle){
-        RobotPoint2D currentRobotAxisTarget = XYPlaneCalculations.getRelativePosition(currentOffset,pursuitPoint);
+    public void gotoPoint(RobotPose2D currentPosition, PurePursuitWayPoint pursuitWayPoint, RobotPoint2D pursuitPoint, double pursuitSpeedNormalized, double angleSpeedNormalized, double preferredAngle){
+        RobotPoint2D currentRobotAxisTarget = XYPlaneCalculations.getRelativePosition(currentPosition,pursuitPoint);
         double targetPointAngle = Math.toDegrees(Math.atan2(currentRobotAxisTarget.Y,currentRobotAxisTarget.X));
         double wantedAngleInCurrentRobotAxis = targetPointAngle + preferredAngle;
         if(pursuitWayPoint instanceof PurePursuitHeadingInterpolationWayPoint){
             double preferredAngleInOriginalRobotAxis = ((PurePursuitHeadingInterpolationWayPoint) pursuitWayPoint).getDesiredHeading();
-            wantedAngleInCurrentRobotAxis = preferredAngleInOriginalRobotAxis - currentOffset.getRotationZ();
+            wantedAngleInCurrentRobotAxis = preferredAngleInOriginalRobotAxis - currentPosition.getRotationZ();
         }else if(pursuitWayPoint instanceof PurePursuitEndPoint){
             PurePursuitEndPoint endPoint = (PurePursuitEndPoint) pursuitWayPoint;
             if(endPoint.headingInterpolationEnabled){
                 double preferredAngleInOriginalRobotAxis = endPoint.getDesiredHeading();
-                wantedAngleInCurrentRobotAxis = preferredAngleInOriginalRobotAxis - currentOffset.getRotationZ();
+                wantedAngleInCurrentRobotAxis = preferredAngleInOriginalRobotAxis - currentPosition.getRotationZ();
             }
         }
 
@@ -165,7 +148,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         );
     }
 
-    public FollowInformation getFollowInformation(RobotPose2D currentOffset){
+    public PurePursuitPathFollower.FollowInformation getFollowInformation(RobotPose2D currentPosition){
 
         // Check whether we should advance to the next piece of the curve
         boolean jumpToNextSegment = false;
@@ -176,20 +159,20 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
             jumpToNextSegment = false;
             target = this.m_Path.get(this.m_PathCursor + 1);
             targetAction = target.SegmentBeginAction;
-            distToTarget = currentOffset.distanceTo(target);
+            distToTarget = currentPosition.distanceTo(target);
             if (target instanceof PurePursuitEndPoint) {
                 PurePursuitEndPoint targetEnd = (PurePursuitEndPoint) target;
                 if (distToTarget <= targetEnd.getEndErrorToleranceDistance()) {
                     jumpToNextSegment = true;
                 }
                 if(targetEnd.headingInterpolationEnabled) {
-                    if (!(Math.abs(XYPlaneCalculations.normalizeDeg(currentOffset.getRotationZ() - targetEnd.getDesiredHeading())) <= targetEnd.getAllowedHeadingError())) {
+                    if (!(Math.abs(XYPlaneCalculations.normalizeDeg(currentPosition.getRotationZ() - targetEnd.getDesiredHeading())) <= targetEnd.getAllowedHeadingError())) {
                         jumpToNextSegment = false;
                     }
                 }
             }else if (target instanceof PurePursuitHeadingInterpolationWayPoint) {
                 PurePursuitHeadingInterpolationWayPoint ptTarget = (PurePursuitHeadingInterpolationWayPoint) target;
-                if ((Math.abs(XYPlaneCalculations.normalizeDeg(currentOffset.getRotationZ() - ptTarget.getDesiredHeading())) <= ptTarget.getAllowedHeadingError())) {
+                if ((Math.abs(XYPlaneCalculations.normalizeDeg(currentPosition.getRotationZ() - ptTarget.getDesiredHeading())) <= ptTarget.getAllowedHeadingError())) {
                     jumpToNextSegment = true;
                 }
                 if(distToTarget > target.getFollowDistance()){
@@ -240,7 +223,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
 
         double currentSegmentStartSpeed = 0;
         if(this.m_PathCursor < 0){
-            targetStartPoint = XYPlaneCalculations.ORIGIN_POINT;
+            targetStartPoint = this.getSupposedWorldTaskStartPose();
             currentSegmentStartSpeed = this.getStartSpeed();
         }else{
             PurePursuitWayPoint targetStart = this.m_Path.get(this.m_PathCursor);
@@ -282,20 +265,20 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         }
 
         if (target instanceof PurePursuitEndPoint && distToTarget < target.getFollowDistance()) {
-            return new FollowInformation(target,target,followSpeed);
+            return new PurePursuitPathFollower.FollowInformation(target,target,followSpeed);
         } else if (target instanceof PurePursuitHeadingInterpolationWayPoint) {
             if(distToTarget < target.getFollowDistance()) {
-                return new FollowInformation(target, target, followSpeed);
+                return new PurePursuitPathFollower.FollowInformation(target, target, followSpeed);
             }else{
-                return new FollowInformation(target,getCurrentSegmentFollowPoint(currentOffset,targetStartPoint,target),followSpeed);
+                return new PurePursuitPathFollower.FollowInformation(target,getCurrentSegmentFollowPoint(currentPosition,targetStartPoint,target),followSpeed);
             }
         } else {
-            return new FollowInformation(target,getCurrentSegmentFollowPoint(currentOffset,targetStartPoint,target),followSpeed);
+            return new PurePursuitPathFollower.FollowInformation(target,getCurrentSegmentFollowPoint(currentPosition,targetStartPoint,target),followSpeed);
         }
     }
 
-    protected RobotPoint2D getCurrentSegmentFollowPoint(RobotPoint2D currentOffsetPoint, RobotPoint2D startPoint, PurePursuitWayPoint endWayPoint){
-        RobotPoint2D centerPoint = XYPlaneCalculations.nearestPointOnLine(currentOffsetPoint,startPoint,endWayPoint);
+    protected RobotPoint2D getCurrentSegmentFollowPoint(RobotPoint2D currentPositionPoint, RobotPoint2D startPoint, PurePursuitWayPoint endWayPoint){
+        RobotPoint2D centerPoint = XYPlaneCalculations.nearestPointOnLine(currentPositionPoint,startPoint,endWayPoint);
         LinkedList<RobotPoint2D> intersectionPoints = XYPlaneCalculations.lineCircleIntersections(centerPoint,endWayPoint.getFollowDistance(),startPoint,endWayPoint);
         RobotPoint2D closestPoint = XYPlaneCalculations.getNearestPoint(intersectionPoints,endWayPoint);
         return closestPoint;
