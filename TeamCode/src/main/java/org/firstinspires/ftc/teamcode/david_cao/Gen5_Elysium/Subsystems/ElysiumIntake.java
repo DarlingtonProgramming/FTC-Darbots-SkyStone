@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -31,6 +32,7 @@ public class ElysiumIntake implements RobotNonBlockingDevice {
     private double lastSpeed = 0;
     public ElysiumIntake(HardwareMap map){
         this.intakeLeft = map.dcMotor.get("intakeLeftMotor");
+        intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         this.intakeLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.intakeLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.intakeRight = map.dcMotor.get("intakeRightMotor");

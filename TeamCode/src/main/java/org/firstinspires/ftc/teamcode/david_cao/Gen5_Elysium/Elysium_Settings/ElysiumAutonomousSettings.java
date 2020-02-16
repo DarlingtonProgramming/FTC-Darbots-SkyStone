@@ -6,8 +6,6 @@ import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 public class ElysiumAutonomousSettings {
 
     //========== Start of Sampling Settings ==========
-    public static final double SAMPLE_PHONE_ROTATION = 90;
-
     public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_START_X = 0;
     public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_START_Y = 0;
     public static final int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_END_X = 0;

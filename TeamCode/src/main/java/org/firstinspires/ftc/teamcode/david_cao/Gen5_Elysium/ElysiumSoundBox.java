@@ -16,6 +16,7 @@ public abstract class ElysiumSoundBox implements RobotNonBlockingDevice {
     public void terminate(){
         this.__terminate();
         GlobalMedia.stopPlayingAllSounds();
+        GlobalMedia.stopPlayingLoopSounds();
     }
     public void onInitialize(){
         this.__onInitialize();

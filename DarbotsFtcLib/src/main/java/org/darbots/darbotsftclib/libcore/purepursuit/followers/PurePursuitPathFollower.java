@@ -298,7 +298,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         }else{
             firstPoint = this.m_Path.get(this.m_PathCursor);
         }
-        secondPoint = this.m_Path.get(this.m_PathCursor);
+        secondPoint = this.m_Path.get(this.m_PathCursor + 1);
         RobotPoint2D centerPoint = XYPlaneCalculations.nearestPointOnLine(currentOffset.toPoint2D(),firstPoint,secondPoint);
         ArrayList<RobotPoint2D> intersectionPoints = XYPlaneCalculations.lineCircleIntersections(centerPoint,wayPoint.getFollowDistance(),firstPoint,secondPoint);
         RobotPoint2D closestPoint = XYPlaneCalculations.getNearestPoint(intersectionPoints,secondPoint);

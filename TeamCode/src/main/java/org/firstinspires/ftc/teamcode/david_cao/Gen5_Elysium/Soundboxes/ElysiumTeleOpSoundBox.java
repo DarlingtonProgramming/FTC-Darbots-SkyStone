@@ -28,7 +28,7 @@ public class ElysiumTeleOpSoundBox extends ElysiumGlobalSoundBox {
 
     @Override
     public void __onStart() {
-        GlobalMedia.playResourceFile(super.opMode.hardwareMap.appContext,false,R.raw.teleop_bgm,1.0f,1.0f,true,-1);
+        GlobalMedia.playResourceFile(super.opMode.hardwareMap.appContext,false,R.raw.teleop_bgm,1.0f,1.0f,false,0);
     }
 
     @Override

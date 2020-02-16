@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.TeleOp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.El
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Soundboxes.ElysiumTeleOpSoundBox;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumIntake;
 
+@TeleOp(name = "Elysium-TeleOp", group = "4100")
 public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
     private ElysiumCore m_Core;
     private int telemetry_i = 0;
