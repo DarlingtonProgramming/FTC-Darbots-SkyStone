@@ -38,6 +38,7 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
     protected double m_AngleSpeedNormalized;
     protected double m_PreferredAngle;
     protected double m_FollowStartSpeedNormalized;
+    protected double m_SpeedThreshold = 0.05;
 
     public PurePursuitPathFollower(ArrayList<PurePursuitWayPoint> path, double normalizedStartSpeed, double normalizedFollowSpeed, double normalizedAngleSpeed, double preferredAngle){
         this.m_Path = new ArrayList<>();
@@ -56,6 +57,15 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
         this.m_AngleSpeedNormalized = oldFollower.m_AngleSpeedNormalized;
         this.m_PreferredAngle = oldFollower.m_PreferredAngle;
         this.m_FollowStartSpeedNormalized = oldFollower.m_FollowStartSpeedNormalized;
+        this.m_SpeedThreshold = oldFollower.m_SpeedThreshold;
+    }
+
+    public double getSpeedThreshold(){
+        return this.m_SpeedThreshold;
+    }
+
+    public void setSpeedThreshold(double speedThreshold){
+        this.m_SpeedThreshold = Math.abs(speedThreshold);
     }
 
     public double getStartSpeed(){
@@ -120,7 +130,11 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                 followInfo.purePursuitWayPoint.SegmentBeginAction.updateStatus();
             }
         }
-        this.gotoPoint(currentOffset,followInfo.purePursuitWayPoint,followInfo.pursuitPoint,followInfo.normalizedFollowSpeed * this.m_FollowSpeedNormalized,this.m_AngleSpeedNormalized,this.m_PreferredAngle);
+        double followSpeed = followInfo.normalizedFollowSpeed * this.m_FollowSpeedNormalized;
+        if(followSpeed < this.m_SpeedThreshold){
+            followSpeed = this.m_SpeedThreshold;
+        }
+        this.gotoPoint(currentOffset,followInfo.purePursuitWayPoint,followInfo.pursuitPoint,followSpeed,this.m_AngleSpeedNormalized,this.m_PreferredAngle);
     }
 
     public void gotoPoint(RobotPose2D currentOffset, PurePursuitWayPoint pursuitWayPoint, RobotPoint2D pursuitPoint, double pursuitSpeedNormalized, double angleSpeedNormalized, double preferredAngle){
@@ -140,6 +154,18 @@ public class PurePursuitPathFollower extends RobotMotionSystemTask {
                 wantedAngleInOriginalRobotAxis = preferredAngleInOriginalRobotAxis;
             }
         }
+
+        double distToTargetWaypoint = currentOffset.toPoint2D().distanceTo(pursuitWayPoint);
+        if(pursuitWayPoint instanceof PurePursuitEndPoint){
+            if(distToTargetWaypoint < ((PurePursuitEndPoint) pursuitWayPoint).getEndErrorToleranceDistance()){
+                pursuitSpeedNormalized = 0;
+            }
+        }else{
+            if(distToTargetWaypoint < Math.min(pursuitWayPoint.getFollowDistance(),3)){
+                pursuitSpeedNormalized = 0;
+            }
+        }
+
         RobotPose2D supposedPose = new RobotPose2D(pursuitPoint,wantedAngleInOriginalRobotAxis);
         this.updateSupposedPos(supposedPose);
 

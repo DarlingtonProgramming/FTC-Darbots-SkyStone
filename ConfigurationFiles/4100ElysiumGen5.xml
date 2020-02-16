@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ2D5NQT" parentModuleAddress="1">
+        <LynxModule name="Expansion Hub 1" port="1">
+            <goBILDA5202SeriesMotor name="LF" port="0" />
+            <goBILDA5202SeriesMotor name="LB" port="1" />
+            <goBILDA5202SeriesMotor name="RF" port="2" />
+            <goBILDA5202SeriesMotor name="RB" port="3" />
+            <Servo name="rightAutoArmGrabber" port="0" />
+            <Servo name="rightAutoArmRot" port="1" />
+            <Servo name="leftAutoArmGrabber" port="2" />
+            <Servo name="leftAutoArmRot" port="3" />
+            <Servo name="outTakeSlideServo" port="4" />
+            <Servo name="capstoneRotServo" port="5" />
+            <REV_VL53L0X_RANGE_SENSOR name="backDistanceSensor" port="0" bus="2" />
+            <REV_VL53L0X_RANGE_SENSOR name="frontDistanceSensor" port="0" bus="3" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+            <REV_VL53L0X_RANGE_SENSOR name="leftDistanceSensor" port="1" bus="0" />
+            <REV_VL53L0X_RANGE_SENSOR name="rightDistanceSensor" port="0" bus="1" />
+        </LynxModule>
+        <LynxModule name="Expansion Hub 2" port="2">
+            <RevRoboticsCoreHexMotor name="intakeLeftMotor" port="0" />
+            <RevRoboticsCoreHexMotor name="intakeRightMotor" port="1" />
+            <goBILDA5202SeriesMotor name="stackerSlideMotor" port="2" />
+            <RevRobotics40HDHexMotor name="capstoneSlideMotor" port="3" />
+            <Servo name="outTakeGrabberServo" port="0" />
+            <Servo name="stackerDoorLeftServo" port="1" />
+            <Servo name="stackerDoorRightServo" port="2" />
+            <Servo name="intakePositioningServo" port="3" />
+            <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>

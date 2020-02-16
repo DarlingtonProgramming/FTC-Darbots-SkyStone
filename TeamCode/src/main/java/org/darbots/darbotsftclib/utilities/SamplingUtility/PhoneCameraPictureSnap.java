@@ -21,6 +21,7 @@ public class PhoneCameraPictureSnap extends LinearOpMode {
         RobotOnPhoneCamera camera = new RobotOnPhoneCamera(this,true,CameraDirection,vuforiaKey);
         RobotOnPhoneCamera.setFlashlightEnabled(enableFlashLight);
         telemetry.addData("Info","Welcome to picture snap Op Mode, press start to take a snapshot");
+        telemetry.update();
         waitForStart();
         if(this.opModeIsActive()){
             Bitmap frame = camera.getFrame();

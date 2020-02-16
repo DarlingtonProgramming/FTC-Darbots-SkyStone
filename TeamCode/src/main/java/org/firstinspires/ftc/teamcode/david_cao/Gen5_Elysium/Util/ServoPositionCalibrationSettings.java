@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Util;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS485HB;
+import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS755MG;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 
 @Config

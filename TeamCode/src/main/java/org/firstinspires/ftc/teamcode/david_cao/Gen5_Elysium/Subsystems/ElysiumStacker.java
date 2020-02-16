@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -29,6 +30,7 @@ public class ElysiumStacker implements RobotNonBlockingDevice {
 
     public ElysiumStacker(HardwareMap map){
         DcMotor stackerSlideDcMotor = map.dcMotor.get("stackerSlideMotor");
+        stackerSlideDcMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         stackerSlideDcMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RobotMotorWithEncoder stackerSlideMotor = new RobotMotorWithEncoder(stackerSlideDcMotor,ElysiumSettings.STACKER_SLIDE_TYPE);
         RobotMotorController stackerSlideMotorController = new RobotMotorController(stackerSlideMotor,true,2.0);

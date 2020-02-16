@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Util;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -12,6 +13,7 @@ import org.darbots.darbotsftclib.libcore.sensors.servos.motor_powered_servos.Rob
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 
+@TeleOp(name = "Elysium-Util-SlideCalibration",group = "4100")
 public class SlideCalibration extends DarbotsBasicOpMode {
     private RobotServoUsingMotor servoUsingMotor;
 
@@ -26,7 +28,7 @@ public class SlideCalibration extends DarbotsBasicOpMode {
         if(SlideCalibrationSettings.slideCalibrationReversed){
             motor.setDirection(DcMotorSimple.Direction.REVERSE);
         }
-        RobotMotorController motorController = new RobotMotorController(new RobotMotorWithEncoder(motor,SlideCalibrationSettings.slideCalibrationMotorType),false,1.0);
+        RobotMotorController motorController = new RobotMotorController(new RobotMotorWithEncoder(motor,SlideCalibrationSettings.slideCalibrationMotorType),true,2.0);
         this.servoUsingMotor = new RobotServoUsingMotor(motorController,0,SlideCalibrationSettings.slideCalibrationMinPos,SlideCalibrationSettings.slideCalibrationMaxPos);
         this.telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
     }
@@ -39,17 +41,26 @@ public class SlideCalibration extends DarbotsBasicOpMode {
     @Override
     public void RunThisOpMode() {
         while(this.opModeIsActive()){
-            if(gamepad1.left_stick_y < 0.15){
-                if(!this.servoUsingMotor.isBusy()){
-                    this.servoUsingMotor.replaceTask(new TargetPosTask(null,this.servoUsingMotor.getMaxPos(),SlideCalibrationSettings.slideCalibrationSpeed));
-                }
-            }else if(gamepad1.left_stick_y > 0.15){
-                if(!this.servoUsingMotor.isBusy()){
-                    this.servoUsingMotor.replaceTask(new TargetPosTask(null,this.servoUsingMotor.getMinPos(),SlideCalibrationSettings.slideCalibrationSpeed));
+            if(Math.abs(gamepad1.left_stick_y) >= 0.3) {
+                if (gamepad1.left_stick_y < 0.3) {
+                    if (!this.servoUsingMotor.isBusy()) {
+                        telemetry.addData("Control","Set Max Position");
+                        this.servoUsingMotor.replaceTask(new TargetPosTask(null,this.servoUsingMotor.getMaxPos(),SlideCalibrationSettings.slideCalibrationSpeed));
+                    }
+                } else { //if (gamepad1.left_stick_y > 0.3) {
+                    if (!this.servoUsingMotor.isBusy()) {
+                        telemetry.addData("Control", "Set Min Position");
+                        this.servoUsingMotor.replaceTask(new TargetPosTask(null,this.servoUsingMotor.getMinPos(),SlideCalibrationSettings.slideCalibrationSpeed));
+                    }
                 }
             }else{
-                this.servoUsingMotor.deleteAllTasks();
+                if(this.servoUsingMotor.isBusy()) {
+                    telemetry.addData("Control","No Activity, Del");
+                    this.servoUsingMotor.deleteAllTasks();
+                }
             }
+
+            this.servoUsingMotor.updateStatus();
             this.updateTelmetry();
             telemetry.update();
         }
@@ -57,5 +68,7 @@ public class SlideCalibration extends DarbotsBasicOpMode {
 
     public void updateTelmetry(){
         this.telemetry.addData("Slide Position","" + this.servoUsingMotor.getCurrentPosition() + "[" + (this.servoUsingMotor.getCurrentPosition() / (this.servoUsingMotor.getMaxPos() - this.servoUsingMotor.getMinPos())) + "%]");
+        this.telemetry.addData("gamepad value","" + gamepad1.left_stick_y);
+        this.telemetry.addData("slide Busy","" + this.servoUsingMotor.isBusy());
     }
 }

@@ -4,12 +4,14 @@ import android.hardware.Sensor;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.runtime.SensorUtil;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 
+@TeleOp(name = "Elysium-Util-ServoCalibration",group = "4100")
 public class ServoPositionCalibration extends DarbotsBasicOpMode {
     private Servo mServo;
 
