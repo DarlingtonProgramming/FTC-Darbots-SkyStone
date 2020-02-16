@@ -24,7 +24,7 @@ public class ElysiumIntake implements RobotNonBlockingDevice {
     }
     private DcMotor intakeLeft;
     private DcMotor intakeRight;
-    private Servo intakeOrient;
+    private Servo positioningServo;
 
 
     private ElysiumIntakeStatus lastStatus = ElysiumIntakeStatus.STOPPED;
@@ -36,8 +36,30 @@ public class ElysiumIntake implements RobotNonBlockingDevice {
         this.intakeRight = map.dcMotor.get("intakeRightMotor");
         this.intakeRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.intakeRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.intakeOrient = map.servo.get("intakePositioningServo");
-        SensorUtil.setServoPulseWidth(this.intakeOrient, ElysiumSettings.INTAKE_POSITIONING_SERVO_TYPE);
+        this.positioningServo = map.servo.get("intakePositioningServo");
+        SensorUtil.setServoPulseWidth(this.positioningServo, ElysiumSettings.INTAKE_POSITIONING_SERVO_TYPE);
+        this.setPositioningServoStatus(ElysiumIntakePositioningServoStatus.REST);
+    }
+
+    public ElysiumIntakePositioningServoStatus getPositioningServoStatus(){
+        double positioningServoPos = this.positioningServo.getPosition();
+        if(positioningServoPos == ElysiumSettings.INTAKE_POSITIONING_SERVO_HIT){
+            return ElysiumIntakePositioningServoStatus.HIT;
+        }else if(positioningServoPos == ElysiumSettings.INTAKE_POSITIONING_SERVO_AUTO){
+            return ElysiumIntakePositioningServoStatus.AUTO;
+        }else{
+            return ElysiumIntakePositioningServoStatus.REST;
+        }
+    }
+
+    public void setPositioningServoStatus(ElysiumIntakePositioningServoStatus status){
+        if(status == ElysiumIntakePositioningServoStatus.HIT){
+            this.positioningServo.setPosition(ElysiumSettings.INTAKE_POSITIONING_SERVO_HIT);
+        }else if(status == ElysiumIntakePositioningServoStatus.AUTO){
+            this.positioningServo.setPosition(ElysiumSettings.INTAKE_POSITIONING_SERVO_AUTO);
+        }else{
+            this.positioningServo.setPosition(ElysiumSettings.INTAKE_POSITIONING_SERVO_REST);
+        }
     }
 
     public ElysiumIntakeStatus getIntakeSystemStatus(){
