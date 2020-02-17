@@ -12,10 +12,11 @@ import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.logContents.
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.templates.RobotCore;
+import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 
 public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends LinearOpMode {
-    public static final int CONST_TELMETRY_PACKET_CYCLE_TIME = 4;
+    public static final int CONST_TELMETRY_PACKET_CYCLE_TIME = 1;
     protected boolean FEATURE_EnableUSBCommandReadAfterDSStop = false;
     private ElapsedTime m_TimerSinceStart = null;
     private ElapsedTime m_TimerSinceInit = null;
@@ -71,6 +72,7 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
     @Override
     public void waitForStart(){
         while ((!opModeIsActive()) && (!isStopRequested())) {
+            this.getRobotCore().updateStatus();
             TelemetryPacket packet = this.updateTelemetry();
             GlobalUtil.addTelmetryLine(this.telemetry,packet,"status", "Initialized, waiting for start command...");
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
@@ -94,6 +96,26 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
         int i=0;
         while(this.opModeIsActive() && this.getRobotCore().getChassis().isBusy()){
             this.getRobotCore().updateStatus();
+            if(i>=CONST_TELMETRY_PACKET_CYCLE_TIME) {
+                TelemetryPacket packet = this.updateTelemetry();
+                dashboard.sendTelemetryPacket(packet);
+                this.telemetry.update();
+                i = 0;
+            }else{
+                i++;
+            }
+        }
+        return this.opModeIsActive();
+    }
+
+    public boolean waitForDrive_ChassisUpdateOnly_WithTelemetry(){
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        int i=0;
+        while(this.opModeIsActive() && this.getRobotCore().getChassis().isBusy()){
+            if(this.getRobotCore().getGyro() instanceof RobotNonBlockingDevice) {
+                ((RobotNonBlockingDevice) this.getRobotCore().getGyro()).updateStatus();
+            }
+            this.getRobotCore().getChassis().updateStatus();
             if(i>=CONST_TELMETRY_PACKET_CYCLE_TIME) {
                 TelemetryPacket packet = this.updateTelemetry();
                 dashboard.sendTelemetryPacket(packet);

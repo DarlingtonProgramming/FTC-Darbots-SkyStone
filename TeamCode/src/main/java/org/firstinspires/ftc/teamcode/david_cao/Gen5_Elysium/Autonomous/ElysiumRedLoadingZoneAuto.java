@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.darbots.darbotsftclib.game_specific.AllianceType;
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -28,8 +29,9 @@ import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+@Autonomous(group = "4100", name = "Elysium-Auto-Red-LoadingZone")
 public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
-    public static final AllianceType ALLIANCE_TYPE = AllianceType.BLUE;
+    public static final AllianceType ALLIANCE_TYPE = AllianceType.RED;
     public static final ParkPosition PARK_POSITION = ParkPosition.NEXT_TO_NEUTRAL_BRIDGE;
     public static final double DURATION_EACH_STONE = 10.0;
     public static final double DURATION_FOUNDATION = 0;
@@ -47,7 +49,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
 
     @Override
     public void __hardwareInit() {
-        this.m_Core = new ElysiumCore("ElysiumRedLoadingZoneAuto.log",this.hardwareMap,false, ElysiumAutonomousSettings.RED_AUTO_START_POSE,true);
+        this.m_Core = new ElysiumCore("ElysiumRedLoadingZoneAuto.log",this.hardwareMap,false, ElysiumAutonomousSettings.RED_AUTO_START_POSE,false);
         this.m_Camera = new RobotOnPhoneCamera(this,ElysiumAutonomousSettings.SAMPLE_PREVIEW, RobotOnPhoneCamera.PhoneCameraDirection.Back, Robot4100Common.VUFORIA_LICENSE);
         this.m_Sampler = new DarbotsPixelSkyStoneSampler(this.m_Camera);
         this.telemetry_I = 0;
@@ -140,7 +142,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
             thirdPoint.setEndFollowNormalizedSpeed(0.4);
             wayPoints.add(thirdPoint);
 
-            PurePursuitWorldAxisFollower goUnderBridgeFollower = new PurePursuitWorldAxisFollower(wayPoints,0.1,0.5,0.3,0);
+            PurePursuitWorldAxisFollower goUnderBridgeFollower = new PurePursuitWorldAxisFollower(wayPoints,0.1,0.5,0.25,0);
             grabStoneStartSpeed = 0.4;
             this.getRobotCore().getChassis().replaceTask(goUnderBridgeFollower);
             if(!this.waitForDrive_WithTelemetry()){
@@ -184,10 +186,10 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
             wayPoints.add(secondPoint);
 
             PurePursuitEndPoint stonePoint = new PurePursuitEndPoint(stonePosition,true,-180);
-            stonePoint.setEndFollowNormalizedSpeed(0.1);
+            stonePoint.setEndFollowNormalizedSpeed(0.2);
             wayPoints.add(stonePoint);
 
-            PurePursuitWorldAxisFollower grabStoneFollower = new PurePursuitWorldAxisFollower(wayPoints,grabStoneStartSpeed,0.4,0.3,0);
+            PurePursuitWorldAxisFollower grabStoneFollower = new PurePursuitWorldAxisFollower(wayPoints,grabStoneStartSpeed,0.4,0.25,0);
             this.getRobotCore().getChassis().replaceTask(grabStoneFollower);
             if(!this.waitForDrive_WithTelemetry()){
                 return false;

@@ -137,6 +137,8 @@ public class PurePursuitWorldAxisFollower extends RobotMotionSystemTask {
             }
         }
 
+        wantedAngleInCurrentRobotAxis = XYPlaneCalculations.normalizeDeg(wantedAngleInCurrentRobotAxis);
+
         double xSpeed = currentRobotAxisTarget.X, ySpeed = currentRobotAxisTarget.Y;
         double tempSpeed = Math.abs(currentRobotAxisTarget.X) + Math.abs(currentRobotAxisTarget.Y);
         double tempFactor = pursuitSpeedNormalized / tempSpeed;

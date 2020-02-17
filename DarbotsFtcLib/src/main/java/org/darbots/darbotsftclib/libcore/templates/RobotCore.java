@@ -122,7 +122,10 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
                 }
             }
         }
-
+        GlobalUtil.addTelmetryLine(telemetry,telemetryPacket,"UpdateStatus Count","" + this.m_UpdateStatusCount);
+        if(GlobalRegister.runningOpMode != null) {
+            GlobalUtil.addTelmetryLine(telemetry, telemetryPacket, "UpdateStatus Rate", "" + (this.m_UpdateStatusCount / GlobalRegister.runningOpMode.getSecondsSinceOpModeInited()));
+        }
         __updateTelemetry(telemetry,telemetryPacket);
         return telemetryPacket;
     }

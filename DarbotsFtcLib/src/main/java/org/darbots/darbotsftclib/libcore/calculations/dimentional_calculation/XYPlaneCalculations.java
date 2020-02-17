@@ -148,23 +148,22 @@ public class XYPlaneCalculations {
         double tempDeg = Rad % PIT2;
         if(tempDeg >= Math.PI){
             tempDeg -= PIT2;
+        }else if(tempDeg < Math.PI){
+            tempDeg += PIT2;
         }
         return tempDeg;
     }
 
     public static float normalizeRad(float Rad){
-        double PIT2 = Math.PI * 2;
-        double tempDeg = Rad % PIT2;
-        if(tempDeg >= Math.PI){
-            tempDeg -= PIT2;
-        }
-        return (float) tempDeg;
+        return (float) normalizeRad((double) Rad);
     }
 
     public static double normalizeDeg(double Deg) {
         double tempDeg = Deg % 360;
         if(tempDeg >= 180){
             tempDeg -= 360;
+        }else if(tempDeg < -180){
+            tempDeg += 360;
         }
         return tempDeg;
     }
@@ -182,11 +181,7 @@ public class XYPlaneCalculations {
     }
 
     public static float normalizeDeg(float Deg) {
-        float tempDeg = Deg % 360;
-        if(tempDeg >= 180){
-            tempDeg -= 360;
-        }
-        return tempDeg;
+        return (float) normalizeDeg((double) Deg);
     }
 
     public static float roundDegToSquare(float Deg){

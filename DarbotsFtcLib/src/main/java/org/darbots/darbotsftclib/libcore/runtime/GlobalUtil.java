@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCFileIO;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.logContents.Number_Log;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.logContents.String_Log;
+import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.log.LogContent;
 import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
@@ -102,6 +103,22 @@ public class GlobalUtil {
             }catch(IllegalAccessException e){
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void updateGlobalGyro(){
+        if(GlobalRegister.currentRobotCore == null){
+            return;
+        }
+        RobotGyro gyro = GlobalRegister.currentRobotCore.getGyro();
+        if(gyro != null && gyro instanceof RobotNonBlockingDevice){
+            ((RobotNonBlockingDevice) gyro).updateStatus();
+        }
+    }
+
+    public static void updateGyro(RobotGyro gyro){
+        if(gyro != null && gyro instanceof RobotNonBlockingDevice){
+            ((RobotNonBlockingDevice) gyro).updateStatus();
         }
     }
 

@@ -7,7 +7,7 @@ public class PurePursuitEndPoint extends PurePursuitWayPoint {
     private double m_EndToleranceDist = 3;
     public boolean headingInterpolationEnabled;
     private double m_Heading;
-    private double m_AllowedHeadingError = 2;
+    private double m_AllowedHeadingError = 5;
 
     public double getEndErrorToleranceDistance(){
         return this.m_EndToleranceDist;

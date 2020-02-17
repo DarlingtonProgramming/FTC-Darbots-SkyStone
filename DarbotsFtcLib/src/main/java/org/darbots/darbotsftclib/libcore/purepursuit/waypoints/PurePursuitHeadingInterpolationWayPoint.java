@@ -5,7 +5,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XY
 
 public class PurePursuitHeadingInterpolationWayPoint extends PurePursuitWayPoint {
     private double m_Heading;
-    private double m_AllowedHeadingError = 2;
+    private double m_AllowedHeadingError = 5;
     public double getDesiredHeading(){
         return this.m_Heading;
     }

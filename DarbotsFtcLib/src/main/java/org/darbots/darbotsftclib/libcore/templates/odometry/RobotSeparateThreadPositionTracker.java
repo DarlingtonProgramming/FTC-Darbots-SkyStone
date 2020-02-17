@@ -232,14 +232,22 @@ public class RobotSeparateThreadPositionTracker extends RobotSynchronized2DPosit
     public RobotPose2D getCurrentPosition(){
         RobotPose2D currentPose = super.getCurrentPosition();
         if(this.m_GyroProvider != null){
+            currentPose.setRotationZ(this.getGyroFixedRotation());
+        }
+        return currentPose;
+    }
+
+    public double getGyroFixedRotation(){
+        if(this.m_GyroProvider != null){
             double currentGyroReading = this.m_GyroProvider.getHeading();
             double deltaAng = currentGyroReading - this.m_GyroReadingAtZero;
             if(this.m_GyroProvider.getHeadingRotationPositiveOrientation() == HeadingRotationPositiveOrientation.Clockwise){
                 deltaAng = -deltaAng;
             }
-            currentPose.setRotationZ(XYPlaneCalculations.normalizeDeg(deltaAng));
+            return deltaAng;
+        }else{
+            return 0;
         }
-        return currentPose;
     }
 
     public void setCurrentPosition(RobotPose2D currentPosition){
