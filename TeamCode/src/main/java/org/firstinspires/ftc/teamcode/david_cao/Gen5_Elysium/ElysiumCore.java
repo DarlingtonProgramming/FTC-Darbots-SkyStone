@@ -19,6 +19,7 @@ import org.darbots.darbotsftclib.libcore.templates.RobotCore;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.MotionSystemConstraints;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.odometry.OdometryMethod;
+import org.darbots.darbotsftclib.libcore.templates.odometry.RobotAsyncPositionTracker;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
@@ -30,7 +31,7 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumO
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumStacker;
 
 public class ElysiumCore extends RobotCore {
-    private MecanumDrivetrain m_Chassis;
+    protected MecanumDrivetrain m_Chassis;
     public ElysiumCapstoneDelivery capstoneDeliverySubSystem;
     public ElysiumIntake intakeSubSystem;
     public ElysiumOuttake outtakeSubSystem;
@@ -41,6 +42,8 @@ public class ElysiumCore extends RobotCore {
     public ElysiumCore(String logFileName, HardwareMap hardwareMap, boolean read, RobotPose2D initialPose, boolean distanceEnhancedLocalization) {
         super(logFileName, hardwareMap);
         this.initializeDriveTrain(hardwareMap);
+        this.getChassis().setDrawRobotLength(ElysiumSettings.PHYSICAL_LENGTH);
+        this.getChassis().setDrawRobotWidth(ElysiumSettings.PHYSICAL_WIDTH);
         this.capstoneDeliverySubSystem = new ElysiumCapstoneDelivery(hardwareMap);
         this.intakeSubSystem = new ElysiumIntake(hardwareMap);
         this.outtakeSubSystem = new ElysiumOuttake(hardwareMap);
@@ -52,7 +55,7 @@ public class ElysiumCore extends RobotCore {
         }else{
             odometryMethod = this.initializeNoDistanceSensorTracker();
         }
-        RobotSeparateThreadPositionTracker posTracker = new RobotSeparateThreadPositionTracker(odometryMethod,initialPose);
+        RobotAsyncPositionTracker posTracker = new RobotAsyncPositionTracker(odometryMethod,initialPose);
         if(read){
             this.read(initialPose);
         }

@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumCore;
 
 public class ElysiumAutoSoundBox extends ElysiumGlobalSoundBox {
-    public ElysiumAutoSoundBox(DarbotsBasicOpMode<ElysiumCore> opMode) {
-        super(opMode);
+    public ElysiumAutoSoundBox(DarbotsBasicOpMode opMode,  ElysiumCore core) {
+        super(opMode, core);
     }
 
     @Override

@@ -130,8 +130,7 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
 
     public boolean delay(double seconds){
         ElapsedTime m_Time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-        m_Time.reset();
-        while(this.opModeIsActive() && m_Time.seconds() < seconds){
+        while((!isStopRequested()) && m_Time.seconds() < seconds){
             sleep(20);
         }
         return this.opModeIsActive();

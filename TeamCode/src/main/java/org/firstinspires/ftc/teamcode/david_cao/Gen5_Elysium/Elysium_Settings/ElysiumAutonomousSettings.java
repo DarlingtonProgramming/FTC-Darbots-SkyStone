@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.season_specific.skystone.ParkPosition;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 
+@Config
 public class ElysiumAutonomousSettings {
 
     //========== Start of Sampling Settings ==========
@@ -54,5 +57,7 @@ public class ElysiumAutonomousSettings {
     );
 
     public static double STACKER_SLIDE_SPEED = 1.0;
+
+    public static double PURE_PURSUIT_ANGLE_SPEED = 0.15;
 
 }

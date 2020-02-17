@@ -44,8 +44,8 @@ import java.util.ArrayList;
 
 //distanceFactor = wantedDistance / actualDistance
 public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
-    public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(2,0,1.5);
-    public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(2,0,1.5);
+    public final static PIDCoefficients LINEAR_X_PID_DEFAULT = new PIDCoefficients(5,0,1);
+    public final static PIDCoefficients LINEAR_Y_PID_DEFAULT = new PIDCoefficients(5,0,1);
     public final static PIDCoefficients ROTATIONAL_Z_PID_DEFAULT = new PIDCoefficients(3,0,0.2);
 
     private ArrayList<RobotMotionSystemTask> m_TaskLists;
@@ -60,8 +60,8 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     private double m_Cache_MaxLinearX, m_Cache_MaxLinearY, m_Cache_MaxZRot, m_Cache_MaxLinear;
     private RobotPose2D m_Cache_WorldPosition = null;
 
-    private double m_DrawRobotHalfWidth = 9, m_DrawRobotHalfLength = 9;
-    private RobotPoint2D m_RobotFrontPoint = new RobotPoint2D(m_DrawRobotHalfLength / XYPlaneCalculations.INCH_PER_CM,0);
+    private double m_DrawRobotHalfWidth = 9 / XYPlaneCalculations.INCH_PER_CM, m_DrawRobotHalfLength = 9 / XYPlaneCalculations.INCH_PER_CM;
+    private RobotPoint2D m_RobotFrontPoint = new RobotPoint2D(m_DrawRobotHalfLength,0);
     public String robotDrawColor = "#000066",pathDrawColor = "#0066ff", supposedPoseDrawColor = "#cccccc";
 
     public RobotMotionSystem(Robot2DPositionTracker PositionTracker){
@@ -110,23 +110,19 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
     }
 
     public double getDrawRobotWidth(){
-        double widthInInch = this.m_DrawRobotHalfWidth * 2.0;
-        return (widthInInch / XYPlaneCalculations.INCH_PER_CM);
+        return this.m_DrawRobotHalfWidth * 2.0;
     }
 
     public void setDrawRobotWidth(double widthInCM){
-        double widthInInch = widthInCM * XYPlaneCalculations.INCH_PER_CM;
-        this.m_DrawRobotHalfWidth = widthInInch / 2.0;
+        this.m_DrawRobotHalfWidth = widthInCM / 2.0;
     }
 
     public double getDrawRobotLength(){
-        double lengthInInch = this.m_DrawRobotHalfLength * 2.0;
-        return (lengthInInch / XYPlaneCalculations.INCH_PER_CM);
+        return this.m_DrawRobotHalfLength * 2.0;
     }
 
     public void setDrawRobotLength(double lengthInCM){
-        double lengthInInch = lengthInCM * XYPlaneCalculations.INCH_PER_CM;
-        this.m_DrawRobotHalfLength = lengthInInch / 2.0;
+        this.m_DrawRobotHalfLength = lengthInCM / 2.0;
         m_RobotFrontPoint.X = lengthInCM / 2.0;
     }
 
@@ -463,7 +459,7 @@ public abstract class RobotMotionSystem implements RobotNonBlockingDevice {
 
     public void drawFieldOverlay(Canvas canvas){
         canvas.setFill(this.pathDrawColor);
-        canvas.setStroke(this.robotDrawColor);
+        canvas.setStroke(this.pathDrawColor);
         if(this.isBusy()){
             this.m_TaskLists.get(0).drawPath(canvas);
         }

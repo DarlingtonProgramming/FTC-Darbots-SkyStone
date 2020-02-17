@@ -72,7 +72,7 @@ public class MovementUtil {
         double preferredAngle = preferredWorldAngle - currentPosition.getRotationZ();
         return getGoToPointTask(relativePoint.X,relativePoint.Y,startSpeed,cruiseSpeed,endSpeed,preferredAngle);
     }
-    public static FixedTurnAngleTask getTurnToWorldAngTask(double worldAng, double startAngularV, double cruiseAngularV, double endAngularV, boolean forceDirection, boolean forceDirectionCCW){
+    public static FixedTurnAngleTask getTurnToWorldAngTask(RobotPose2D currentPosition, double worldAng, double startAngularVNormalized, double cruiseAngularVNormalized, double endAngularVNormalized, boolean forceDirection, boolean forceDirectionCCW){
         if(GlobalRegister.runningOpMode == null || GlobalRegister.runningOpMode.getRobotCore() == null || GlobalRegister.runningOpMode.getRobotCore().getChassis() == null || GlobalRegister.runningOpMode.getRobotCore().getChassis().getPositionTracker() == null){
             return null;
         }
@@ -80,7 +80,7 @@ public class MovementUtil {
             return null;
         }
         worldAng = XYPlaneCalculations.normalizeDeg(worldAng);
-        double currentWorldAng = GlobalRegister.runningOpMode.getRobotCore().getChassis().getCurrentPosition().getRotationZ();
+        double currentWorldAng = currentPosition.getRotationZ();
 
         RobotPose2D lastTaskFinishPos = GlobalRegister.runningOpMode.getRobotCore().getChassis().getLastTaskFinishFieldPos();
         if(lastTaskFinishPos != null && !Double.isNaN(lastTaskFinishPos.getRotationZ())){
@@ -100,33 +100,50 @@ public class MovementUtil {
             CCWAng = actualBigAng;
             CWAng = actualSmallAng;
         }
+
         if(!forceDirection){
             return new FixedTurnAngleTask(
                     actualSmallAng,
-                    startAngularV,
-                    cruiseAngularV,
-                    endAngularV,
-                    drivetrain_constraints
+                    startAngularVNormalized,
+                    cruiseAngularVNormalized,
+                    endAngularVNormalized
             );
         }else{
             if(forceDirectionCCW){
                 return new FixedTurnAngleTask(
                         CCWAng,
-                        startAngularV,
-                        cruiseAngularV,
-                        endAngularV,
-                        drivetrain_constraints
+                        startAngularVNormalized,
+                        cruiseAngularVNormalized,
+                        endAngularVNormalized
                 );
             }else { //!forceDirectionCCW
                 return new FixedTurnAngleTask(
                         CWAng,
-                        startAngularV,
-                        cruiseAngularV,
-                        endAngularV,
-                        drivetrain_constraints
+                        startAngularVNormalized,
+                        cruiseAngularVNormalized,
+                        endAngularVNormalized
                 );
             }
         }
+    }
+    public static FixedTurnAngleTask getTurnToAngTask(double deltaAng, double startAngularVNormalized, double cruiseAngularVNormalized, double endAngularVNormalized){
+        if(GlobalRegister.runningOpMode == null || GlobalRegister.runningOpMode.getRobotCore() == null || GlobalRegister.runningOpMode.getRobotCore().getChassis() == null || GlobalRegister.runningOpMode.getRobotCore().getChassis().getPositionTracker() == null){
+            return null;
+        }
+        if(drivetrain_constraints == null){
+            return null;
+        }
+
+        double startAngularV = startAngularVNormalized * GlobalRegister.runningOpMode.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec();
+        double cruiseAngularV = cruiseAngularVNormalized * GlobalRegister.runningOpMode.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec();
+        double endAngularV = endAngularVNormalized * GlobalRegister.runningOpMode.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec();
+
+        return new FixedTurnAngleTask(
+            deltaAng,
+            startAngularV,
+            cruiseAngularV,
+            endAngularV
+        );
     }
     protected static void checkFolder(){
         File firstFolder = FTCFileIO.getFirstFolder();

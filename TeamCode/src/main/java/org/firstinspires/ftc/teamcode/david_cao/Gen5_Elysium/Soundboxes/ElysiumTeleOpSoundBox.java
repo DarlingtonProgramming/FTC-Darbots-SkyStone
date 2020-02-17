@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumCore;
 
 public class ElysiumTeleOpSoundBox extends ElysiumGlobalSoundBox {
-    public ElysiumTeleOpSoundBox(DarbotsBasicOpMode<ElysiumCore> opMode) {
-        super(opMode);
+    public ElysiumTeleOpSoundBox(DarbotsBasicOpMode<ElysiumCore> opMode, ElysiumCore core) {
+        super(opMode, core);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class ElysiumTeleOpSoundBox extends ElysiumGlobalSoundBox {
 
     @Override
     public void __onStart() {
-        GlobalMedia.playResourceFile(super.opMode.hardwareMap.appContext,false,R.raw.teleop_bgm,1.0f,1.0f,true,-1);
+        GlobalMedia.playResourceFile(super.opMode.hardwareMap.appContext,false,R.raw.teleop_bgm,1.0f,1.0f,false,0);
     }
 
     @Override

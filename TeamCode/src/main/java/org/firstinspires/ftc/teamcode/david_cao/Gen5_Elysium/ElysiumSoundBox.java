@@ -5,9 +5,11 @@ import org.darbots.darbotsftclib.libcore.runtime.GlobalMedia;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 
 public abstract class ElysiumSoundBox implements RobotNonBlockingDevice {
-    public DarbotsBasicOpMode<ElysiumCore> opMode;
-    public ElysiumSoundBox(DarbotsBasicOpMode<ElysiumCore> opMode){
+    public DarbotsBasicOpMode opMode;
+    public ElysiumCore core;
+    public ElysiumSoundBox(DarbotsBasicOpMode opMode, ElysiumCore core){
         this.opMode = opMode;
+        this.core = core;
     }
     public abstract void __onInitialize();
     public abstract void __onStart();

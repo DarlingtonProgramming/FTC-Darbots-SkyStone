@@ -31,6 +31,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
                     getRobotCore().outtakeSubSystem.OUTTAKE_OUT_OF_WAY_INTAKE_POS,
                     1.0
             );
+            intakeTimeCounter = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         }
 
         @Override
@@ -47,20 +48,23 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
             switch(step){
                 case 0:
                     if(!getRobotCore().outtakeSubSystem.outTakeSlide.isBusy()){
+                        intakeTimeCounter.reset();
                         step = 1;
                         getRobotCore().intakeSubSystem.setIntakeSystemStatus(ElysiumIntake.ElysiumIntakeStatus.SUCKING,1.0);
-                        intakeTimeCounter = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
                     }
+                    break;
                 case 1:
                     if(intakeTimeCounter.seconds() >= 1){
                         step = 2;
                         intakeTimeCounter = null;
                         getRobotCore().outtakeSubSystem.outTakeSlide.setTargetPosition(getRobotCore().outtakeSubSystem.OUTTAKE_SLIDE_MIN_POS,1.0);
                     }
+                    break;
                 case 2:
                     if(!getRobotCore().outtakeSubSystem.outTakeSlide.isBusy()){
                         step = 3;
                     }
+                    break;
                 default:
                     this.stopAction();
                     return;
@@ -99,16 +103,19 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
                         commonTimer.reset();
                         getRobotCore().outtakeSubSystem.setGrabberState(ElysiumOuttake.Outtake_Grabber_State.RELEASED);
                     }
+                    break;
                 case 1:
                     if(commonTimer.seconds() >= ElysiumSettings.OUTTAKE_GRABBER_WAIT_SEC){
                         step = 2;
                         commonTimer.reset();
                         getRobotCore().outtakeSubSystem.outTakeSlide.setTargetPosition(getRobotCore().outtakeSubSystem.OUTTAKE_SLIDE_MIN_POS,ElysiumTeleOpSettings.OUTTAKE_SLIDE_SPEED);
                     }
+                    break;
                 case 2:
                     if(!getRobotCore().outtakeSubSystem.outTakeSlide.isBusy()){
                         step = 3;
                     }
+                    break;
                 default:
                     this.stopAction();
                     return;
@@ -145,16 +152,19 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
                         getRobotCore().outtakeSubSystem.setGrabberState(ElysiumOuttake.Outtake_Grabber_State.GRABBED);
                         commonTimer.reset();
                     }
+                    break;
                 case 1:
                     if(commonTimer.seconds() >= ElysiumSettings.OUTTAKE_GRABBER_WAIT_SEC){
                         step = 2;
                         getRobotCore().intakeSubSystem.setPositioningServoStatus(ElysiumIntake.ElysiumIntakePositioningServoStatus.REST);
                         commonTimer.reset();
                     }
+                    break;
                 case 2:
                     if(commonTimer.seconds() >= ElysiumSettings.INTAKE_POSITIONING_SERVO_WAIT_SEC){
                         step = 3;
                     }
+                    break;
                 default:
                     this.stopAction();
                     return;
@@ -179,7 +189,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
         this.m_Core = new ElysiumCore("ElysiumTeleOp.log",this.hardwareMap,true,new RobotPose2D(0,0,0),false);
         this.teleOpTask = new RobotMotionSystemTeleOpTask();
         this.m_Core.getChassis().addTask(this.teleOpTask);
-        this.SoundBox = new ElysiumTeleOpSoundBox(this);
+        this.SoundBox = new ElysiumTeleOpSoundBox(this,this.m_Core);
         this.SoundBox.onInitialize();
         telemetry_i = 0;
 
@@ -208,7 +218,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
     public void teleopAutoMovement(){
         AutoCalibrateAction autoCalibrateAction = new AutoCalibrateAction();
         autoCalibrateAction.startAction();
-        while(autoCalibrateAction.isBusy() && opModeIsActive()){
+        while(autoCalibrateAction.isBusy() && (!isStopRequested())){
             driveControl();
             this.updateStatus();
             autoCalibrateAction.updateStatus();

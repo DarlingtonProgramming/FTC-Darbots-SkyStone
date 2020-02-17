@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumCore;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumSoundBox;
 
 public abstract class ElysiumGlobalSoundBox extends ElysiumSoundBox {
-    public ElysiumGlobalSoundBox(DarbotsBasicOpMode<ElysiumCore> opMode) {
-        super(opMode);
+    public ElysiumGlobalSoundBox(DarbotsBasicOpMode opMode, ElysiumCore core) {
+        super(opMode,core);
     }
     protected double secondsForOpModeRun = 30.0;
     private boolean endingSoundPlayed = false;

@@ -5,6 +5,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XY
 
 public class PurePursuitEndPoint extends PurePursuitWayPoint {
     private double m_EndToleranceDist = 3;
+    private double m_EndingPIDDist = 10;
     public boolean headingInterpolationEnabled;
     private double m_Heading;
     private double m_AllowedHeadingError = 5;
@@ -15,6 +16,14 @@ public class PurePursuitEndPoint extends PurePursuitWayPoint {
 
     public void setEndErrorToleranceDistance(double distance){
         this.m_EndToleranceDist = Math.abs(distance);
+    }
+
+    public double getEndingPIDDistance(){
+        return m_EndingPIDDist;
+    }
+
+    public void setEndingPIDDistance(double distance){
+        this.m_EndingPIDDist = Math.abs(distance);
     }
 
     public double getDesiredHeading(){
@@ -55,5 +64,13 @@ public class PurePursuitEndPoint extends PurePursuitWayPoint {
         super(point);
         this.headingInterpolationEnabled = headingControl;
         this.setDesiredHeading(desiredHeading);
+    }
+    public PurePursuitEndPoint(PurePursuitEndPoint endPoint) {
+        super(endPoint);
+        this.headingInterpolationEnabled = endPoint.headingInterpolationEnabled;
+        this.m_EndingPIDDist = endPoint.m_EndingPIDDist;
+        this.m_AllowedHeadingError = endPoint.m_AllowedHeadingError;
+        this.m_EndToleranceDist = endPoint.m_EndToleranceDist;
+        this.m_Heading = endPoint.m_Heading;
     }
 }

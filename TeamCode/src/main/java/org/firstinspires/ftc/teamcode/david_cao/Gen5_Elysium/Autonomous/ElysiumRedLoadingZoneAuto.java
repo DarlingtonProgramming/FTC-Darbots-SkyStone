@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.path.heading.ConstantInterpolator;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.darbots.darbotsftclib.game_specific.AllianceType;
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.purepursuit.followers.PurePursuitPathFollower;
 import org.darbots.darbotsftclib.libcore.purepursuit.followers.PurePursuitWorldAxisFollower;
 import org.darbots.darbotsftclib.libcore.purepursuit.waypoints.PurePursuitEndPoint;
@@ -21,6 +24,7 @@ import org.darbots.darbotsftclib.season_specific.skystone.ParkPosition;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStonePosition;
 import org.darbots.darbotsftclib.season_specific.skystone.darbots_pixel_skystone_detection.DarbotsPixelSkyStoneSampler;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumAutoCore;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumCore;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumAutonomousSettings;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
@@ -35,7 +39,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     public static final ParkPosition PARK_POSITION = ParkPosition.NEXT_TO_NEUTRAL_BRIDGE;
     public static final double DURATION_EACH_STONE = 10.0;
     public static final double DURATION_FOUNDATION = 0;
-    private ElysiumCore m_Core;
+    private ElysiumAutoCore m_Core;
     private int telemetry_I;
     private RobotOnPhoneCamera m_Camera;
     private DarbotsPixelSkyStoneSampler m_Sampler;
@@ -43,13 +47,13 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     private SkyStonePosition sampledPosition;
 
     @Override
-    public ElysiumCore getRobotCore() {
+    public ElysiumAutoCore getRobotCore() {
         return this.m_Core;
     }
 
     @Override
     public void __hardwareInit() {
-        this.m_Core = new ElysiumCore("ElysiumRedLoadingZoneAuto.log",this.hardwareMap,false, ElysiumAutonomousSettings.RED_AUTO_START_POSE,false);
+        this.m_Core = new ElysiumAutoCore("ElysiumRedLoadingZoneAuto.log",this.hardwareMap,false, ElysiumAutonomousSettings.RED_AUTO_START_POSE,false);
         this.m_Camera = new RobotOnPhoneCamera(this,ElysiumAutonomousSettings.SAMPLE_PREVIEW, RobotOnPhoneCamera.PhoneCameraDirection.Back, Robot4100Common.VUFORIA_LICENSE);
         this.m_Sampler = new DarbotsPixelSkyStoneSampler(this.m_Camera);
         this.telemetry_I = 0;
@@ -102,6 +106,19 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
                 }
             }
         }
+        {
+            RobotPoint2D pointAwayFromWall = ElysiumAutonomousSettings.RED_AUTO_START_POSE;
+            pointAwayFromWall.Y += 20;
+            //let's go away from the wall first.
+            this.m_Core.chassis.followTrajectorySync(
+                    this.m_Core.chassis.trajectoryBuilder()
+                            .lineTo(XYPlaneCalculations.getPositionFromDarbotsToRoadRunner(pointAwayFromWall),new ConstantInterpolator(0))
+                    .build()
+            );
+            this.m_Core.chassis.turnSync(
+                    Math.toRadians(180)
+            );
+        }
 
         {
             //do as many stones as possible
@@ -121,120 +138,59 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     }
 
     public boolean runToStoneAndPlaceOnFoundation(int stoneNumber){
-        RobotPose2D currentPosition = this.getRobotCore().getChassis().getCurrentPosition();
+        RobotPose2D currentPosition = this.getRobotCore().getCurrentPosition();
         double grabStoneStartSpeed = 0.1;
         if(currentPosition.X >= 0){
             //gotta pass the bridge first
             this.setRightClawToRest();
 
-            ArrayList<PurePursuitWayPoint> wayPoints = new ArrayList<>();
-            wayPoints.ensureCapacity(3);
+            RobotPoint2D firstPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
+            firstPoint.Y -= 10;
+            RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
+            secondPoint.Y -= 10;
 
-            PurePursuitWayPoint startPoint = new PurePursuitWayPoint(ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION));
-            startPoint.setEndFollowNormalizedSpeed(0.5);
-            wayPoints.add(startPoint);
-
-            PurePursuitWayPoint secondPoint = new PurePursuitWayPoint(ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION));
-            secondPoint.setEndFollowNormalizedSpeed(0.5);
-            wayPoints.add(secondPoint);
-
-            PurePursuitWayPoint thirdPoint = new PurePursuitHeadingInterpolationWayPoint(ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION),-180);
-            thirdPoint.setEndFollowNormalizedSpeed(0.4);
-            wayPoints.add(thirdPoint);
-
-            PurePursuitWorldAxisFollower goUnderBridgeFollower = new PurePursuitWorldAxisFollower(wayPoints,0.1,0.5,0.25,0);
-            grabStoneStartSpeed = 0.4;
-            this.getRobotCore().getChassis().replaceTask(goUnderBridgeFollower);
-            if(!this.waitForDrive_WithTelemetry()){
-                return false;
-            }
+            Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
+                    .splineTo(getRoadRunnerSplinePose(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .lineTo(getRoadRunnerPos(secondPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .build();
+            this.m_Core.chassis.followTrajectorySync(trajectory);
         }
         {
             //go to the stone.
-
-            RobotPoint2D stonePosition = allStonePositions.get(stoneNumber);
-            RobotPoint2D beforeStonePosition = new RobotPoint2D(stonePosition);
-            beforeStonePosition.Y -= 20;
-            ArrayList<PurePursuitWayPoint> wayPoints = new ArrayList<>();
-            wayPoints.ensureCapacity(3);
-
-            PurePursuitWayPoint firstPoint = new PurePursuitHeadingInterpolationWayPoint(beforeStonePosition,-180);
-            firstPoint.setEndFollowNormalizedSpeed(0.4);
-            wayPoints.add(firstPoint);
-
-            PurePursuitWayPoint secondPoint = new PurePursuitHeadingInterpolationWayPoint(beforeStonePosition,-180);
-            secondPoint.SegmentBeginAction = new DarbotsAction() {
-                @Override
-                protected void __startAction() {
-                    setRightClawToPrepareGrab();
-                    this.stopAction();
-                }
-
-                @Override
-                protected void __stopAction() {
-
-                }
-
-                @Override
-                public void updateStatus() {
-
-                }
-            }; //prepare grabber to grab
-            secondPoint.stopActionWhenSkipping = true;
-            secondPoint.skipActionWhenSegmentFinished = false;
-            secondPoint.setEndFollowNormalizedSpeed(0.4);
-            wayPoints.add(secondPoint);
-
-            PurePursuitEndPoint stonePoint = new PurePursuitEndPoint(stonePosition,true,-180);
-            stonePoint.setEndFollowNormalizedSpeed(0.2);
-            wayPoints.add(stonePoint);
-
-            PurePursuitWorldAxisFollower grabStoneFollower = new PurePursuitWorldAxisFollower(wayPoints,grabStoneStartSpeed,0.4,0.25,0);
-            this.getRobotCore().getChassis().replaceTask(grabStoneFollower);
-            if(!this.waitForDrive_WithTelemetry()){
-                return false;
-            }
+            setRightClawToPrepareGrab();
+            RobotPoint2D stonePosition = allStonePositions.get(stoneNumber - 1);
+            Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
+                    .lineTo(getRoadRunnerPos(stonePosition),new ConstantInterpolator(Math.toRadians(-180)))
+                    .build();
+            this.m_Core.chassis.followTrajectorySync(trajectory);
         }
         {
             //grab stone
-            this.closeRightClaw();
-            while(!this.isRightClawClosed()){
-                this.updateStatus();
-                this.lazyUpdateTelemetry();
-            }
+            this.grabRightClaw();
         }
         {
             //finished grabbing stone, now we should head to the foundation.
             ArrayList<PurePursuitWayPoint> wayPoints = new ArrayList<>();
             wayPoints.ensureCapacity(4);
 
-            PurePursuitWayPoint firstPoint = new PurePursuitWayPoint(ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION));
-            firstPoint.Y -= 15;
-            firstPoint.setEndFollowNormalizedSpeed(0.4);
-            wayPoints.add(firstPoint);
+            RobotPoint2D firstPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
+            firstPoint.Y -= 5;
 
-            PurePursuitWayPoint secondPoint = new PurePursuitWayPoint(ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION));
-            secondPoint.Y -= 15;
-            secondPoint.SegmentBeginAction = super.getWaitForRightClawInAction();
-            secondPoint.skipActionWhenSegmentFinished = false;
-            secondPoint.stopActionWhenSkipping = true;
-            secondPoint.setEndFollowNormalizedSpeed(0.5);
-            wayPoints.add(secondPoint);
+            RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
+            secondPoint.Y -= 10;
 
-            PurePursuitWayPoint thirdPoint = new PurePursuitWayPoint(ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION));
-            thirdPoint.Y -= 15;
-            thirdPoint.setEndFollowNormalizedSpeed(0.4);
-            wayPoints.add(thirdPoint);
+            RobotPoint2D thirdPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
+            thirdPoint.Y -= 10;
 
-            PurePursuitWayPoint fourthPoint = new PurePursuitHeadingInterpolationWayPoint(ElysiumAutoBase.placeStoneOnFoundationPosition_RED,-180);
-            wayPoints.add(fourthPoint);
-            thirdPoint.setEndFollowNormalizedSpeed(0.1);
+            RobotPoint2D fourthPoint = ElysiumAutoBase.placeStoneOnFoundationPosition_RED;
 
-            PurePursuitWorldAxisFollower gotoFoundationFollower = new PurePursuitWorldAxisFollower(wayPoints,0.1,0.5,0.3,-180);
-            this.getRobotCore().getChassis().replaceTask(gotoFoundationFollower);
-            if(!this.waitForDrive_WithTelemetry()){
-                return false;
-            }
+            Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
+                    .splineTo(getRoadRunnerSplinePose(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .lineTo(getRoadRunnerPos(secondPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .lineTo(getRoadRunnerPos(thirdPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .lineTo(getRoadRunnerPos(fourthPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .build();
+            this.m_Core.chassis.followTrajectorySync(trajectory);
         }
         {
             //release stone from hand
@@ -243,7 +199,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
         return true;
     }
     public boolean grabFoundationAndPark(){
-        RobotPose2D currentPosition = this.getRobotCore().getChassis().getCurrentPosition();
+        RobotPose2D currentPosition = this.getRobotCore().getCurrentPosition();
         double gotoFoundationPrepPositinoStartSpeed = 0.1;
         this.setRightClawToRest();
         if(currentPosition.X <= 0){
@@ -259,7 +215,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
             secondPoint.setEndFollowNormalizedSpeed(0.5);
             wayPoints.add(secondPoint);
 
-            PurePursuitWorldAxisFollower goUnderBrdigeFollower = new PurePursuitWorldAxisFollower(wayPoints,0.1,0.5,0.3,-180);
+            PurePursuitWorldAxisFollower goUnderBrdigeFollower = new PurePursuitWorldAxisFollower(wayPoints,0.1,0.5,ElysiumAutonomousSettings.PURE_PURSUIT_ANGLE_SPEED,-180);
             this.getRobotCore().getChassis().replaceTask(goUnderBrdigeFollower);
             if(!this.waitForDrive_WithTelemetry()){
                 return false;
@@ -282,7 +238,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
             secondPoint.setEndFollowNormalizedSpeed(0.05);
             wayPoints.add(secondPoint);
 
-            PurePursuitWorldAxisFollower gotoFoundationFollower = new PurePursuitWorldAxisFollower(wayPoints,gotoFoundationPrepPositinoStartSpeed,0.4,0.3,-180);
+            PurePursuitWorldAxisFollower gotoFoundationFollower = new PurePursuitWorldAxisFollower(wayPoints,gotoFoundationPrepPositinoStartSpeed,0.4,ElysiumAutonomousSettings.PURE_PURSUIT_ANGLE_SPEED,-180);
             this.getRobotCore().getChassis().replaceTask(gotoFoundationFollower);
             if(!this.waitForDrive_WithTelemetry()){
                 return false;
@@ -306,7 +262,9 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
                 return false;
             }
             //let's turn and smash the foundation into the building site!
+            currentPosition = this.getRobotCore().getCurrentPosition();
             this.getRobotCore().getChassis().replaceTask(MovementUtil.getTurnToWorldAngTask(
+                    currentPosition,
                     -180,
                     0.1 * this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec(),
                     0.5 * this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec(),
@@ -338,7 +296,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
             secondPoint.setEndFollowNormalizedSpeed(0.1);
             wayPoints.add(secondPoint);
 
-            PurePursuitWorldAxisFollower gotoParkFollower = new PurePursuitWorldAxisFollower(wayPoints,0.1,0.5,0.3,0);
+            PurePursuitWorldAxisFollower gotoParkFollower = new PurePursuitWorldAxisFollower(wayPoints,0.1,0.5,ElysiumAutonomousSettings.PURE_PURSUIT_ANGLE_SPEED,0);
             this.getRobotCore().getChassis().replaceTask(gotoParkFollower);
             if(!this.waitForDrive_WithTelemetry()){
                 return false;
@@ -350,7 +308,9 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
 
     public TelemetryPacket updateTelemetry(){
         TelemetryPacket packet = super.updateTelemetry();
-
+        if(this.sampledPosition != null) {
+            GlobalUtil.addTelmetryLine(this.telemetry, packet, "RecognitionResult", this.sampledPosition.name());
+        }
         return packet;
     }
 
@@ -358,7 +318,6 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
         if(telemetry_I >= DarbotsBasicOpMode.CONST_TELMETRY_PACKET_CYCLE_TIME){
             telemetry_I = 0;
             TelemetryPacket packet = this.updateTelemetry();
-            GlobalUtil.addTelmetryLine(this.telemetry,packet,"RecognitionResult",this.sampledPosition.name());
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
             this.telemetry.update();
         }else{

@@ -4,6 +4,8 @@ import android.support.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 
@@ -502,5 +504,14 @@ public class XYPlaneCalculations {
             currentPoint.Y += y;
         }
         return array;
+    }
+    public static Pose2d getPosefromDarbotsToRoadRunner(RobotPose2D pose){
+        return new Pose2d(pose.X * XYPlaneCalculations.INCH_PER_CM,pose.Y * XYPlaneCalculations.INCH_PER_CM,Math.toRadians(pose.getRotationZ()));
+    }
+    public static RobotPose2D getPoseFromRoadRunnerToDarbots(Pose2d pose){
+        return new RobotPose2D(pose.getX() / XYPlaneCalculations.INCH_PER_CM,pose.getY() / XYPlaneCalculations.INCH_PER_CM,Math.toDegrees(pose.getHeading()));
+    }
+    public static Vector2d getPositionFromDarbotsToRoadRunner(RobotPoint2D point){
+        return new Vector2d(point.X * XYPlaneCalculations.INCH_PER_CM,point.Y * XYPlaneCalculations.INCH_PER_CM);
     }
 }

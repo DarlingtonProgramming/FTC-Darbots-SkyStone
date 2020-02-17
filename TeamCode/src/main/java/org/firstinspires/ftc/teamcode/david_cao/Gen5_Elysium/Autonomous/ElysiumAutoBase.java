@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Autonomous;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.game_specific.AllianceType;
@@ -11,13 +14,17 @@ import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_t
 import org.darbots.darbotsftclib.libcore.templates.DarbotsAction;
 import org.darbots.darbotsftclib.season_specific.skystone.ParkPosition;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumAutoCore;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumCore;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumAutonomousSettings;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Soundboxes.ElysiumAutoSoundBox;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumAutoArm;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumStacker;
 
-public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumCore> {
+import java.util.List;
+
+public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore> {
     public static final RobotPoint2D placeStoneOnFoundationPosition_RED = new RobotPoint2D(
             SkyStoneCoordinates.FOUNDATION_RED.X,
             SkyStoneCoordinates.FOUNDATION_RED.Y - SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 - ElysiumSettings.PHYSICAL_CENTER_TO_RIGHT_SIGN
@@ -34,116 +41,39 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumCore> {
             SkyStoneCoordinates.FOUNDATION_BLUE.X,
             SkyStoneCoordinates.FOUNDATION_BLUE.Y + SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_BACK
     );
-    public static class ElysiumAutoClawCloseAction extends DarbotsAction{
-        public ElysiumAutoArm m_Arm = null;
-        private ElapsedTime m_Time = null;
-
-        public ElysiumAutoClawCloseAction(ElysiumAutoArm arm){
-            this.m_Arm = arm;
-        }
-
-        @Override
-        protected void __startAction() {
-            if(this.m_Time == null) {
-                this.m_Time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-            }{
-                this.m_Time.reset();
-            }
-            this.m_Arm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.GRAB_STONE);
-        }
-
-        @Override
-        protected void __stopAction() {
-
-        }
-
-        public boolean rotServoReady(){
-            if((!this.isBusy()) && this.m_Time.seconds() >= ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_OUT_IN_SEC){
-                return true;
-            }else{
-                return false;
-            }
-        }
-
-        @Override
-        public void updateStatus() {
-            if(this.isBusy()) {
-                if (this.m_Time.seconds() >= ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_CLOSE_SEC){
-                    this.m_Arm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.IN);
-                    this.m_Time.reset();
-                    this.stopAction();
-                }
-            }
-        }
-    }
-    public static class ElysiumWaitForArmRotToComeInAction extends DarbotsAction{
-        public ElysiumAutoClawCloseAction clawCloseAction;
-
-        public ElysiumWaitForArmRotToComeInAction(ElysiumAutoClawCloseAction autoClawCloseAction){
-            this.clawCloseAction = autoClawCloseAction;
-        }
-
-        @Override
-        protected void __startAction() {
-
-        }
-
-        @Override
-        protected void __stopAction() {
-
-        }
-
-        @Override
-        public void updateStatus() {
-            if(this.isBusy()) {
-                if (this.clawCloseAction.rotServoReady()) {
-                    this.stopAction();
-                }
-            }
-        }
-    }
     public ElysiumAutoSoundBox autoSoundBox;
-    protected ElysiumAutoClawCloseAction m_LeftClawClose, m_RightClawClose;
-
     @Override
     public void hardwareInitialize() {
         this.__hardwareInit();
-        this.autoSoundBox = new ElysiumAutoSoundBox(this);
+        this.autoSoundBox = new ElysiumAutoSoundBox(this,this.getRobotCore());
         this.autoSoundBox.onInitialize();
-        this.m_LeftClawClose = new ElysiumAutoClawCloseAction(this.getRobotCore().autoArmsSubSystem.leftArm);
-        this.m_RightClawClose = new ElysiumAutoClawCloseAction(this.getRobotCore().autoArmsSubSystem.rightArm);
     }
 
-    public void closeLeftClaw(){
-        if(!this.m_LeftClawClose.isBusy()) {
-            this.m_LeftClawClose.startAction();
-            autoSoundBox.onGrabbingStone();
-        }
+    public void grabLeftClaw(){
+        this.getRobotCore().autoArmsSubSystem.leftArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.GRAB_STONE);
+        autoSoundBox.onGrabbingStone();
+        delay(ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_CLOSE_SEC);
+        this.getRobotCore().autoArmsSubSystem.leftArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.IN);
+        delay(ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_OUT_IN_SEC);
     }
 
-    public void closeRightClaw(){
-        if(!this.m_RightClawClose.isBusy()) {
-            this.m_RightClawClose.startAction();
-            autoSoundBox.onGrabbingStone();
-        }
+    public void grabRightClaw(){
+        this.getRobotCore().autoArmsSubSystem.rightArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.GRAB_STONE);
+        autoSoundBox.onGrabbingStone();
+        delay(ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_CLOSE_SEC);
+        this.getRobotCore().autoArmsSubSystem.rightArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.IN);
+        //delay(ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_OUT_IN_SEC);
     }
-
-    public boolean isLeftClawClosed(){
-        return (!this.m_LeftClawClose.isBusy());
-    }
-
-    public boolean isRightClawClosed(){
-        return (!this.m_RightClawClose.isBusy());
-    }
-
     public void setLeftClawToDropStone(){
         //this.getRobotCore().autoArmsSubSystem.leftArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.OUT);
         this.getRobotCore().autoArmsSubSystem.leftArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.WIDE_OPEN);
+        autoSoundBox.onReleasingStone();
     }
 
     public void setRightClawToDropStone(){
         //this.getRobotCore().autoArmsSubSystem.rightArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.OUT);
         this.getRobotCore().autoArmsSubSystem.rightArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.WIDE_OPEN);
+        autoSoundBox.onReleasingStone();
     }
 
     public void setLeftClawToPrepareGrab(){
@@ -176,14 +106,6 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumCore> {
             this.updateStatus();
         }
         this.autoSoundBox.onGrabbingFoundation();
-    }
-
-    public ElysiumWaitForArmRotToComeInAction getWaitForLeftClawInAction(){
-        return new ElysiumWaitForArmRotToComeInAction(this.m_LeftClawClose);
-    }
-
-    public ElysiumWaitForArmRotToComeInAction getWaitForRightClawInAction(){
-        return new ElysiumWaitForArmRotToComeInAction(this.m_RightClawClose);
     }
 
     public static RobotPose2D getGrabStonePose(AllianceType allianceType, int stoneNumber){
@@ -243,7 +165,11 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumCore> {
 
     public void updateStatus(){
         this.getRobotCore().updateStatus();
-        this.m_LeftClawClose.updateStatus();
-        this.m_RightClawClose.updateStatus();
+    }
+    public static Pose2d getRoadRunnerSplinePose(RobotPoint2D point){
+        return XYPlaneCalculations.getPosefromDarbotsToRoadRunner(new RobotPose2D(point,0));
+    }
+    public static Vector2d getRoadRunnerPos(RobotPoint2D point){
+        return XYPlaneCalculations.getPositionFromDarbotsToRoadRunner(point);
     }
 }

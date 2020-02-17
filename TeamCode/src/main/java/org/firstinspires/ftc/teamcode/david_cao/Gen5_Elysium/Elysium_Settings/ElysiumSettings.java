@@ -17,7 +17,7 @@ import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 
 public class ElysiumSettings {
     //========== Start of Physical Settings ==========
-    public static final double PHYSICAL_MASS_KG = 6.0;
+    public static final double PHYSICAL_MASS_KG = 12.0;
     public static final double PHYSICAL_CENTER_TO_FRONT = 21.5; //Exactly 18 Inches
     public static final double PHYSICAL_CENTER_TO_FRONT_EXPANDED = 26.0;
     public static final double PHYSICAL_CENTER_TO_BACK = 23.0;
@@ -46,9 +46,10 @@ public class ElysiumSettings {
             1.0,
             1.0
     );
-    public static final double CHASSIS_FRICTION_FACTOR = 0.6;
-    public static final double CHASSIS_MAXIMUM_ACCEL = (((CHASSIS_MOTOR_TORQUE_KG_PER_CM * 9.8 * 2.0 / CHASSIS_WHEEL_RADIUS) * 4) / PHYSICAL_MASS_KG * 100.0) * CHASSIS_FRICTION_FACTOR; //7.9 kg * cm with a friction factor
-    public static final double CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD = (((CHASSIS_MOTOR_TORQUE_KG_PER_CM * 9.8 * 2.0 / CHASSIS_WHEEL_RADIUS) * 4) * Math.sqrt(Math.pow(CHASSIS_LENGTH / 2.0 / 100.0,2) + Math.pow(CHASSIS_WIDTH/2.0 / 100.0,2)) / PHYSICAL_INTERTIA) * CHASSIS_FRICTION_FACTOR;
+    public static final double CHASSIS_FRICTION_FACTOR = 0.5;
+    public static final double CHASSIS_MAX_FORCE = Math.min((CHASSIS_MOTOR_TORQUE_KG_PER_CM * 9.8 * 2.0 / CHASSIS_WHEEL_RADIUS) * 4,PHYSICAL_MASS_KG * 9.8 * CHASSIS_FRICTION_FACTOR);
+    public static final double CHASSIS_MAXIMUM_ACCEL = (CHASSIS_MAX_FORCE / PHYSICAL_MASS_KG * 100.0); //7.9 kg * cm with a friction factor
+    public static final double CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD = (CHASSIS_MAX_FORCE * Math.sqrt(Math.pow(CHASSIS_LENGTH / 2.0 / 100.0,2) + Math.pow(CHASSIS_WIDTH/2.0 / 100.0,2)) / PHYSICAL_INTERTIA) * 0.8;
     public static final double CHASSIS_MAXIMUM_ANGULAR_ACCEL_DEG = Math.toDegrees(CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD);
     //========== End of Chassis Settings ==========
 
@@ -80,7 +81,7 @@ public class ElysiumSettings {
     public static final double AUTONOMOUS_CLAW_RIGHT_ALL_CLOSED_POS = 0.7;
     public static final double AUTONOMOUS_CLAW_RIGHT_GRAB_STONE_POS = 0.6;
 
-    public static final double AUTONOMOUS_CLAW_WAIT_FOR_CLOSE_SEC = 0.1;
+    public static final double AUTONOMOUS_CLAW_WAIT_FOR_CLOSE_SEC = 0.5;
     public static final double AUTONOMOUS_CLAW_WAIT_FOR_OUT_IN_SEC = 0.5;
     //========== End of Autonomous Claw Settings ==========
 

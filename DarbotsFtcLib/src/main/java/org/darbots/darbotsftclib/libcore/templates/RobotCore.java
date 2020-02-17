@@ -13,6 +13,8 @@ import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogFile
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.sensors.gyros.BNO055Gyro;
+import org.darbots.darbotsftclib.libcore.sensors.gyros.BNO055GyroMethod;
+import org.darbots.darbotsftclib.libcore.sensors.gyros.SeperateThreadGyro;
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotGyro;
@@ -29,7 +31,7 @@ import java.util.List;
  */
 public abstract class RobotCore implements RobotNonBlockingDevice {
     private RobotLogFile m_Logger;
-    private BNO055Gyro m_Gyro;
+    private SeperateThreadGyro m_Gyro;
     private long m_UpdateStatusCount = 0;
     HardwareMap m_HardwareMap;
     public RobotCore(String logFileName, HardwareMap hardwareMap){
@@ -43,7 +45,9 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
             GlobalRegister.currentLog = null;
         }
         GlobalUtil.LowestLogLevel = LogLevel.INFO;
-        m_Gyro = new BNO055Gyro(hardwareMap,"imu");
+        BNO055GyroMethod gyroMethod = new BNO055GyroMethod(hardwareMap,"imu");
+        m_Gyro = new SeperateThreadGyro(gyroMethod);
+        this.m_Gyro.start();
         this.m_UpdateStatusCount = 0;
         GlobalRegister.allExtensionHubs = hardwareMap.getAll(LynxModule.class);
         GlobalUtil.setDataUpdateMethod(LynxModule.BulkCachingMode.MANUAL);
@@ -66,6 +70,7 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
             GlobalUtil.addLog(this.getClass().getSimpleName(),"UpdateStatus Frequency",this.m_UpdateStatusCount / GlobalRegister.runningOpMode.getSecondsSinceOpModeStarted(),LogLevel.INFO);
         }
         GlobalRegister.currentRobotCore = null;
+        this.m_Gyro.terminate();
     }
     protected abstract void __stop();
     protected abstract void __terminate();
@@ -89,7 +94,6 @@ public abstract class RobotCore implements RobotNonBlockingDevice {
     public void updateStatus(){
         this.m_UpdateStatusCount++;
         this.updateBulkRead();
-        this.m_Gyro.updateStatus();
         this.__updateStatus();
     }
     public void updateBulkRead(){
