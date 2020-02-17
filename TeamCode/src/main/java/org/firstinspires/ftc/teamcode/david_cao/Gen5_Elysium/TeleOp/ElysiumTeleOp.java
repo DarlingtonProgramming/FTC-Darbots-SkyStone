@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.RobotMotionSystemTeleOpTask;
+import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
 import org.darbots.darbotsftclib.libcore.templates.DarbotsAction;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumCore;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumSoundBox;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.El
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Soundboxes.ElysiumTeleOpSoundBox;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumIntake;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumOuttake;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumStacker;
 
 @TeleOp(name = "Elysium-TeleOp", group = "4100")
 public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
@@ -223,9 +225,9 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
         }
         {
             //gamepad 2 zone
-            
+            stackerControl();
+            capstoneControl();
         }
-
     }
 
     public void driveControl(){
@@ -258,6 +260,78 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
                 this.outtakeControlAction.stopAction();
             }
             this.intakePositioningAction.startAction();
+        }
+    }
+
+    public void stackerControl(){
+        if(Math.abs(gamepad2.left_stick_y) >= ElysiumTeleOpSettings.GAMEPAD_THRESEHOLD){
+            if(gamepad2.left_stick_y < 0){
+                if(!this.getRobotCore().stackerSubSystem.stackerSlide.isBusy()) {
+                    this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(
+                            new TargetPosTask(
+                                    null,
+                                    this.getRobotCore().stackerSubSystem.stackerSlide.getMaxPos(),
+                                    ElysiumTeleOpSettings.STACKER_SLIDE_SPEED
+                            )
+                    );
+                }
+            }else{
+                if(!this.getRobotCore().stackerSubSystem.stackerSlide.isBusy()) {
+                    this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(
+                            new TargetPosTask(
+                                    null,
+                                    this.getRobotCore().stackerSubSystem.stackerSlide.getMinPos(),
+                                    ElysiumTeleOpSettings.STACKER_SLIDE_SPEED
+                            )
+                    );
+                }
+            }
+        }else{
+            if(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy()){
+                this.getRobotCore().stackerSubSystem.stackerSlide.deleteAllTasks();
+            }
+        }
+
+        if(gamepad2.right_bumper){
+            this.getRobotCore().stackerSubSystem.setDoorState(ElysiumStacker.Stacker_Door_State.RELEASED);
+        }else{
+            this.getRobotCore().stackerSubSystem.setDoorState(ElysiumStacker.Stacker_Door_State.CLOSED);
+        }
+    }
+
+    public void capstoneControl(){
+        if(Math.abs(gamepad2.right_stick_y) >= ElysiumTeleOpSettings.GAMEPAD_THRESEHOLD){
+            if(gamepad2.right_stick_y < 0){
+                if(!this.getRobotCore().capstoneDeliverySubSystem.capstoneSlide.isBusy()) {
+                    this.getRobotCore().capstoneDeliverySubSystem.capstoneSlide.replaceTask(
+                            new TargetPosTask(
+                                    null,
+                                    this.getRobotCore().capstoneDeliverySubSystem.capstoneSlide.getMaxPos(),
+                                    ElysiumTeleOpSettings.CAPSTONE_SLIDE_SPEED
+                            )
+                    );
+                }
+            }else{
+                if(!this.getRobotCore().capstoneDeliverySubSystem.capstoneSlide.isBusy()) {
+                    this.getRobotCore().capstoneDeliverySubSystem.capstoneSlide.replaceTask(
+                            new TargetPosTask(
+                                    null,
+                                    this.getRobotCore().capstoneDeliverySubSystem.capstoneSlide.getMinPos(),
+                                    ElysiumTeleOpSettings.CAPSTONE_SLIDE_SPEED
+                            )
+                    );
+                }
+            }
+        }else{
+            if(this.getRobotCore().capstoneDeliverySubSystem.isBusy()){
+                this.getRobotCore().capstoneDeliverySubSystem.capstoneSlide.deleteAllTasks();
+            }
+        }
+
+        if(gamepad2.dpad_left){
+            this.getRobotCore().capstoneDeliverySubSystem.setCapstoneServoOut(false);
+        }else if(gamepad2.dpad_right){
+            this.getRobotCore().capstoneDeliverySubSystem.setCapstoneServoOut(true);
         }
     }
 
