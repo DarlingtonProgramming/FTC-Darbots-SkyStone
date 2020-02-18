@@ -12,6 +12,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
@@ -28,6 +29,7 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.RoadRunner.util.DashboardUtil;
 
 import java.util.ArrayList;
@@ -77,7 +79,12 @@ public abstract class ElysiumRoadRunnerBase extends MecanumDrive {
         turnController = new PIDFController(HEADING_PID);
         turnController.setInputBounds(0, 2 * Math.PI);
 
-        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
+        DriveConstraints driveConstraints = new DriveConstraints(
+                ElysiumSettings.CHASSIS_MAXIMUM_SPEED,ElysiumSettings.CHASSIS_MAXIMUM_ACCEL,0,
+                ElysiumSettings.CHASSIS_MAXIMUM_ANGULAR_SPEED_RAD,ElysiumSettings.CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD,0
+        );
+
+        constraints = new MecanumConstraints(driveConstraints, TRACK_WIDTH);
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID);
     }
 

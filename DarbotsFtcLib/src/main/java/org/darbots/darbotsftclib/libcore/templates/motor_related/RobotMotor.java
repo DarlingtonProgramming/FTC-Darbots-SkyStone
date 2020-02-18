@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 
 public interface RobotMotor<E extends MotorType> extends RobotNonBlockingDevice {
+    public static final double N_OVER_M_PER_KG_OVER_CM = 0.0980665;
     enum MovingType{
         toCount,
         withSpeed,

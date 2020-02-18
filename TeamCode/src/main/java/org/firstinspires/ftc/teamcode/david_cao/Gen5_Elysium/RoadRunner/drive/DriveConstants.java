@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series1150RPMMotor;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 
 /*
  * Constants shared between multiple drive types.
@@ -69,9 +70,12 @@ public class DriveConstants {
      * acceleration values are required, and the jerk values are optional (setting a jerk of 0.0
      * forces acceleration-limited profiling).
      */
+
+    //default: 76.2 cm/s, cm/s^2 or 30 inch / s, inch/s^2
+    //180 deg /s, 180 deg/s^2
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            30.0, 30.0, 0.0,
-            Math.toRadians(180.0), Math.toRadians(180.0), 0.0
+            ElysiumSettings.CHASSIS_MAXIMUM_ACCEL, ElysiumSettings.CHASSIS_MAXIMUM_ACCEL, 0.0,
+            ElysiumSettings.CHASSIS_MAXIMUM_ANGULAR_SPEED_RAD, Math.toRadians(ElysiumSettings.CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD), 0.0
     );
 
 

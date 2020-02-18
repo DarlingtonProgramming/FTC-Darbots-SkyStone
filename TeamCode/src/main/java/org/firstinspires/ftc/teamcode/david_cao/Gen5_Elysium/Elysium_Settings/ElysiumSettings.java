@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series1150RPMMotor;
 import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series435RPMMotor;
 import org.darbots.darbotsftclib.libcore.motortypes.MotorTypeUtil;
@@ -15,6 +16,7 @@ import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS755MG;
 import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS765HB;
 import org.darbots.darbotsftclib.libcore.motortypes.servotypes.HS785HB;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
+import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 
 @Config
@@ -40,7 +42,7 @@ public class ElysiumSettings {
             new GoBilda5202Series1150RPMMotor(),
             2.0
     );
-    public static double CHASSIS_MOTOR_TORQUE_KG_PER_CM = 7.9;
+    public static double CHASSIS_MOTOR_TORQUE_KG_PER_CM = 7.9 * 2;
     public static double CHASSIS_WHEEL_RADIUS = 5.08; //4 Inch Diameter
     public static double CHASSIS_LENGTH = 31.2; //14 GOBILDA BIG HOLES 14 * 24mm
     public static double CHASSIS_WIDTH = 33.0;
@@ -50,10 +52,26 @@ public class ElysiumSettings {
             1.0
     );
     public static double CHASSIS_FRICTION_FACTOR = 0.5;
-    public static double CHASSIS_MAX_FORCE = Math.min((CHASSIS_MOTOR_TORQUE_KG_PER_CM * 9.8 * 2.0 / CHASSIS_WHEEL_RADIUS) * 4,PHYSICAL_MASS_KG * 9.8 * CHASSIS_FRICTION_FACTOR);
-    public static double CHASSIS_MAXIMUM_ACCEL = (CHASSIS_MAX_FORCE / PHYSICAL_MASS_KG * 100.0); //7.9 kg * cm with a friction factor
-    public static double CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD = (CHASSIS_MAX_FORCE * Math.sqrt(Math.pow(CHASSIS_LENGTH / 2.0 / 100.0,2) + Math.pow(CHASSIS_WIDTH/2.0 / 100.0,2)) / PHYSICAL_INTERTIA) * 0.8;
+    public static double GEAR_ENERGY_LOSS_FACTOR = 0.7;
+    public static double OVERALL_ACCEL_REDUCTION_FACTOR = 0.8;
+    public static double CHASSIS_MAX_FORCE = Math.min((CHASSIS_MOTOR_TORQUE_KG_PER_CM * RobotMotor.N_OVER_M_PER_KG_OVER_CM / (CHASSIS_WHEEL_RADIUS / 100.0)) * 4 * GEAR_ENERGY_LOSS_FACTOR,PHYSICAL_MASS_KG * 9.8 * CHASSIS_FRICTION_FACTOR) * OVERALL_ACCEL_REDUCTION_FACTOR;
+
+    //public static double CHASSIS_MAXIMUM_ACCEL = (CHASSIS_MAX_FORCE / PHYSICAL_MASS_KG * 100.0); //7.9 kg * cm with a friction factor
+    //calculated 313.6 CM / s (too bigg!!!)
+    public static double CHASSIS_MAXIMUM_ACCEL = 150; //7.9 kg * cm with a friction factor
+
+    //public static double CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD = (CHASSIS_MAX_FORCE * Math.sqrt(Math.pow(CHASSIS_LENGTH / 2.0 / 100.0,2) + Math.pow(CHASSIS_WIDTH/2.0 / 100.0,2)) / PHYSICAL_INTERTIA);
+    //calculated 7.188 Rad / s^2, 412 deg / s^2
+    public static double CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD = 225;
     public static double CHASSIS_MAXIMUM_ANGULAR_ACCEL_DEG = Math.toDegrees(CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD);
+
+
+    //public static double CHASSIS_MAXIMUM_SPEED = CHASSIS_WHEEL_RADIUS * (2 * Math.PI) / 2.0 * CHASSIS_MOTOR_TYPE.getRevPerSec();
+    //calculated value: 611.46
+    public static double CHASSIS_MAXIMUM_SPEED = 300;
+
+    public static double CHASSIS_MAXIMUM_ANGULAR_SPEED_DEG = 270;
+    public static double CHASSIS_MAXIMUM_ANGULAR_SPEED_RAD = Math.toRadians(CHASSIS_MAXIMUM_ANGULAR_SPEED_DEG);
     //========== End of Chassis Settings ==========
 
     //========== Start of Position Localization Settings ==========
