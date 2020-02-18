@@ -48,6 +48,7 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
             SkyStoneCoordinates.FOUNDATION_BLUE.X,
             SkyStoneCoordinates.FOUNDATION_BLUE.Y + SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_BACK
     );
+    public static double BridgeFurtherOffset = 0;
 
     public ElysiumAutoSoundBox autoSoundBox;
     @Override
@@ -147,13 +148,13 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
 
     public static RobotPoint2D getLoadingZoneFurtherFromBridgePoint(AllianceType allianceType, ParkPosition parkPosition){
         RobotPoint2D closeToBridge = getLoadingZoneNextToBridgePoint(allianceType,parkPosition);
-        closeToBridge.X -= SkyStoneCoordinates.NEUTRAL_BRIDGE_FLOOR_THINKNESS / 2.0;
+        closeToBridge.X -= SkyStoneCoordinates.NEUTRAL_BRIDGE_FLOOR_THINKNESS / 2.0 + BridgeFurtherOffset;
         return closeToBridge;
     }
 
     public static RobotPoint2D getBuildingZoneFurtherFromBridgePoint(AllianceType allianceType, ParkPosition parkPosition){
         RobotPoint2D closeToBridge = getBuildingZoneNextToBridgePoint(allianceType,parkPosition);
-        closeToBridge.X += SkyStoneCoordinates.NEUTRAL_BRIDGE_FLOOR_THINKNESS / 2.0;
+        closeToBridge.X += SkyStoneCoordinates.NEUTRAL_BRIDGE_FLOOR_THINKNESS / 2.0 + BridgeFurtherOffset;
         return closeToBridge;
     }
 
