@@ -48,7 +48,7 @@ public class ElysiumAutonomousSamplingVerification extends LinearOpMode {
                 GlobalUtil.addTelmetryLine(this.telemetry, packet, "SkyStone Position", sampledPosition.name());
                 telemetry.update();
                 FtcDashboard.getInstance().sendTelemetryPacket(packet);
-                FtcDashboard.getInstance().sendImage(m_Sampler.getLastSampledFrame());
+                FtcDashboard.getInstance().sendImage(m_Sampler.LastSampledFrame);
             }
             while(this.opModeIsActive()){
                 sleep(20);

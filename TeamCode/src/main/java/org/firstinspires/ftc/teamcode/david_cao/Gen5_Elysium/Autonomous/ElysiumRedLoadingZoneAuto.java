@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Autonomous;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.path.heading.ConstantInterpolator;
+import com.acmerobotics.roadrunner.path.heading.LinearInterpolator;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -26,7 +27,6 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.El
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 @Autonomous(group = "4100", name = "Elysium-Auto-Red-LoadingZone")
@@ -40,7 +40,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     private ElysiumAutoCore m_Core;
     private int telemetry_I;
     private RobotOnPhoneCamera m_Camera;
-    private DarbotsPixelSkyStoneSampler m_Sampler;
+    private ElysiumAutoSampler m_Sampler;
     private ArrayList<RobotPose2D> allStonePositions;
     private SkyStonePosition sampledPosition;
 
@@ -53,7 +53,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     public void __hardwareInit() {
         this.m_Core = new ElysiumAutoCore("ElysiumRedLoadingZoneAuto.log",this.hardwareMap,false, ElysiumAutonomousSettings.RED_AUTO_START_POSE,false);
         this.m_Camera = new RobotOnPhoneCamera(this,ElysiumAutonomousSettings.SAMPLE_PREVIEW, RobotOnPhoneCamera.PhoneCameraDirection.Back, Robot4100Common.VUFORIA_LICENSE);
-        this.m_Sampler = new DarbotsPixelSkyStoneSampler(this.m_Camera);
+        this.m_Sampler = new ElysiumAutoSampler(this.m_Camera);
         this.telemetry_I = 0;
         this.allStonePositions = new ArrayList<>();
         this.allStonePositions.ensureCapacity(6);
@@ -70,24 +70,8 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     @Override
     public void __RunOpMode() {
         //Sample First
-        this.sampledPosition = m_Sampler.sample(
-                ElysiumAutonomousSettings.SAMPLE_PICTURE_SIZE_X,
-                ElysiumAutonomousSettings.SAMPLE_PICTURE_SIZE_Y,
-                ElysiumAutonomousSettings.SAMPLE_SHRINKED_SIZE_X,
-                ElysiumAutonomousSettings.SAMPLE_SHRINKED_SIZE_Y,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_NEXT_TO_WALL_START_X,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_NEXT_TO_WALL_START_Y,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_NEXT_TO_WALL_END_X,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_NEXT_TO_WALL_END_Y,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_MIDDLE_START_X,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_MIDDLE_START_Y,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_MIDDLE_END_X,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_MIDDLE_END_Y,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_NEXT_TO_BRIDGE_START_X,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_NEXT_TO_BRIDGE_START_Y,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_NEXT_TO_BRIDGE_END_X,
-                ElysiumAutonomousSettings.SAMPLE_RED_STONE_NEXT_TO_BRIDGE_END_Y
-        );
+        this.sampledPosition = m_Sampler.sample(ALLIANCE_TYPE);
+        FtcDashboard.getInstance().sendImage(this.m_Sampler.LastSampledFrame);
         //calculate which stones to grab first
         int[] skystoneNumbers = {sampledPosition.value(), sampledPosition.value() + 3};
         int[] remainingStoneNumbers = new int[4];
@@ -106,16 +90,16 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
         }
         {
             RobotPoint2D pointAwayFromWall = ElysiumAutonomousSettings.RED_AUTO_START_POSE;
-            pointAwayFromWall.Y += 30;
+            pointAwayFromWall.Y += 20;
             //let's go away from the wall first.
             this.m_Core.chassis.followTrajectorySync(
                     this.m_Core.chassis.trajectoryBuilder()
                             .lineTo(getRoadRunnerPos(pointAwayFromWall),new ConstantInterpolator(0))
                     .build()
             );
-            this.m_Core.chassis.turnSync(
-                    Math.toRadians(180)
-            );
+            if(!this.opModeIsActive()){
+                return;
+            }
         }
 
         {
@@ -164,14 +148,19 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
         } else{
             //go to the stone.
             setRightClawToPrepareGrab();
+
+            RobotPose2D currentPose = this.getRobotCore().getCurrentPosition();
+            RobotPoint2D stonePrepPosition = new RobotPoint2D(stonePosition);
+            stonePrepPosition.Y -= 10;
+
             Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
+                    .lineTo(getRoadRunnerPos(stonePrepPosition),new LinearInterpolator(Math.toRadians(currentPose.getRotationZ()),Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(stonePosition),new ConstantInterpolator(Math.toRadians(-180)))
                     .build();
             this.m_Core.chassis.followTrajectorySync(trajectory);
             if(!this.opModeIsActive()){
                 return false;
             }
-            this.calibratePositionUsingDistanceSensor();
         }
         {
             //grab stone
@@ -179,6 +168,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
             if(!this.opModeIsActive()){
                 return false;
             }
+            this.calibratePositionUsingDistanceSensor();
         }
         {
             //finished grabbing stone, now we should head to the foundation.

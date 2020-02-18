@@ -9,14 +9,14 @@ import org.darbots.darbotsftclib.season_specific.skystone.darbots_pixel_skystone
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumAutonomousSettings;
 
 public class ElysiumAutoSampler extends DarbotsPixelSkyStoneSampler {
-    private Bitmap m_LastSampledFrame;
+    public Bitmap LastSampledFrame;
     public ElysiumAutoSampler(RobotCamera camera) {
         super(camera);
     }
     public SkyStonePosition sampleRed(){
-        m_LastSampledFrame = super.getFrame();
+        LastSampledFrame = super.getFrame();
         return super.sample(
-                m_LastSampledFrame,
+                LastSampledFrame,
                 true,
                 ElysiumAutonomousSettings.SAMPLE_PICTURE_SIZE_X,
                 ElysiumAutonomousSettings.SAMPLE_PICTURE_SIZE_Y,
@@ -37,9 +37,9 @@ public class ElysiumAutoSampler extends DarbotsPixelSkyStoneSampler {
         );
     }
     public SkyStonePosition sampleBlue(){
-        m_LastSampledFrame = super.getFrame();
+        LastSampledFrame = super.getFrame();
         return super.sample(
-                m_LastSampledFrame,
+                LastSampledFrame,
                 true,
                 ElysiumAutonomousSettings.SAMPLE_PICTURE_SIZE_X,
                 ElysiumAutonomousSettings.SAMPLE_PICTURE_SIZE_Y,
@@ -65,8 +65,5 @@ public class ElysiumAutoSampler extends DarbotsPixelSkyStoneSampler {
         }else{
             return this.sampleRed();
         }
-    }
-    public Bitmap getLastSampledFrame(){
-        return this.m_LastSampledFrame;
     }
 }
