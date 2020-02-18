@@ -107,7 +107,7 @@ public class XYPlaneCalculations {
     public static RobotPose2D getAbsolutePosition(double robotRotationInDegOnField, RobotPoint2D relativeObjectOnBot, RobotPoint2D relativeObjectOnField){
         robotRotationInDegOnField = XYPlaneCalculations.normalizeDeg(robotRotationInDegOnField);
         RobotPoint2D relativeObjectOnBot_RotatedToField = rotatePointAroundFixedPoint_Deg(relativeObjectOnBot,XYPlaneCalculations.ORIGIN_POINT,robotRotationInDegOnField);
-        return new RobotPose2D(relativeObjectOnField.X - relativeObjectOnBot_RotatedToField.X, relativeObjectOnField.Y - relativeObjectOnBot.Y, robotRotationInDegOnField);
+        return new RobotPose2D(relativeObjectOnField.X - relativeObjectOnBot_RotatedToField.X, relativeObjectOnField.Y - relativeObjectOnBot_RotatedToField.Y, robotRotationInDegOnField);
     }
 
     public static RobotVector2D getRelativePosition(RobotVector2D PerspectiveOrigin, RobotVector2D Target){

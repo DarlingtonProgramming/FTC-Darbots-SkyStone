@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.RoadRunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.RoadRunner.drive.mecanum.ElysiumRoadRunnerBase;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.RoadRunner.drive.mecanum.ElysiumRoadRunnerChassis;
@@ -40,7 +41,7 @@ import static org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.RoadRunner.d
 @Config
 @Autonomous(group = "drive")
 public class DriveVelocityPIDTuner extends LinearOpMode {
-    public static double DISTANCE = 72;
+    public static double DISTANCE = 72 / XYPlaneCalculations.INCH_PER_CM;
 
     private static final String PID_VAR_NAME = "VELO_PID";
 

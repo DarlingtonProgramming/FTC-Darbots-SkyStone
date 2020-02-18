@@ -11,14 +11,10 @@ import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.purepursuit.followers.PurePursuitPathFollower;
-import org.darbots.darbotsftclib.libcore.purepursuit.followers.PurePursuitWorldAxisFollower;
-import org.darbots.darbotsftclib.libcore.purepursuit.waypoints.PurePursuitEndPoint;
-import org.darbots.darbotsftclib.libcore.purepursuit.waypoints.PurePursuitHeadingInterpolationWayPoint;
 import org.darbots.darbotsftclib.libcore.purepursuit.waypoints.PurePursuitWayPoint;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
-import org.darbots.darbotsftclib.libcore.runtime.MovementUtil;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
+import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
 import org.darbots.darbotsftclib.libcore.templates.DarbotsAction;
 import org.darbots.darbotsftclib.season_specific.skystone.ParkPosition;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
@@ -38,7 +34,9 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     public static final AllianceType ALLIANCE_TYPE = AllianceType.RED;
     public static final ParkPosition PARK_POSITION = ParkPosition.NEXT_TO_NEUTRAL_BRIDGE;
     public static final double DURATION_EACH_STONE = 10.0;
-    public static final double DURATION_FOUNDATION = 0;
+    public static final double DURATION_FOUNDATION = 10.0;
+    public static final double DURATION_PARK = 4.0;
+
     private ElysiumAutoCore m_Core;
     private int telemetry_I;
     private RobotOnPhoneCamera m_Camera;
@@ -108,11 +106,11 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
         }
         {
             RobotPoint2D pointAwayFromWall = ElysiumAutonomousSettings.RED_AUTO_START_POSE;
-            pointAwayFromWall.Y += 20;
+            pointAwayFromWall.Y += 30;
             //let's go away from the wall first.
             this.m_Core.chassis.followTrajectorySync(
                     this.m_Core.chassis.trajectoryBuilder()
-                            .lineTo(XYPlaneCalculations.getPositionFromDarbotsToRoadRunner(pointAwayFromWall),new ConstantInterpolator(0))
+                            .lineTo(getRoadRunnerPos(pointAwayFromWall),new ConstantInterpolator(0))
                     .build()
             );
             this.m_Core.chassis.turnSync(
@@ -140,6 +138,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     public boolean runToStoneAndPlaceOnFoundation(int stoneNumber){
         RobotPose2D currentPosition = this.getRobotCore().getCurrentPosition();
         double grabStoneStartSpeed = 0.1;
+        RobotPoint2D stonePosition = allStonePositions.get(stoneNumber - 1);
         if(currentPosition.X >= 0){
             //gotta pass the bridge first
             this.setRightClawToRest();
@@ -149,48 +148,62 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
             secondPoint.Y -= 10;
 
+            RobotPoint2D thirdPoint = new RobotPoint2D(stonePosition);
+            thirdPoint.Y -= 15;
+
             Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
-                    .splineTo(getRoadRunnerSplinePose(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(secondPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .lineTo(getRoadRunnerPos(thirdPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .build();
             this.m_Core.chassis.followTrajectorySync(trajectory);
-        }
-        {
+            if(!this.opModeIsActive()){
+                return false;
+            }
+            this.calibratePositionUsingDistanceSensor();
+        } else{
             //go to the stone.
             setRightClawToPrepareGrab();
-            RobotPoint2D stonePosition = allStonePositions.get(stoneNumber - 1);
             Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
                     .lineTo(getRoadRunnerPos(stonePosition),new ConstantInterpolator(Math.toRadians(-180)))
                     .build();
             this.m_Core.chassis.followTrajectorySync(trajectory);
+            if(!this.opModeIsActive()){
+                return false;
+            }
+            this.calibratePositionUsingDistanceSensor();
         }
         {
             //grab stone
             this.grabRightClaw();
+            if(!this.opModeIsActive()){
+                return false;
+            }
         }
         {
             //finished grabbing stone, now we should head to the foundation.
-            ArrayList<PurePursuitWayPoint> wayPoints = new ArrayList<>();
-            wayPoints.ensureCapacity(4);
-
             RobotPoint2D firstPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y -= 5;
+            firstPoint.Y -= 10;
 
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y -= 10;
+            secondPoint.Y -= 15;
 
             RobotPoint2D thirdPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            thirdPoint.Y -= 10;
+            thirdPoint.Y -= 15;
 
             RobotPoint2D fourthPoint = ElysiumAutoBase.placeStoneOnFoundationPosition_RED;
 
             Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
-                    .splineTo(getRoadRunnerSplinePose(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(secondPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(thirdPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(fourthPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .build();
             this.m_Core.chassis.followTrajectorySync(trajectory);
+            if(!this.opModeIsActive()){
+                return false;
+            }
+            this.calibratePositionUsingDistanceSensor();
         }
         {
             //release stone from hand
@@ -200,105 +213,117 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     }
     public boolean grabFoundationAndPark(){
         RobotPose2D currentPosition = this.getRobotCore().getCurrentPosition();
-        double gotoFoundationPrepPositinoStartSpeed = 0.1;
-        this.setRightClawToRest();
         if(currentPosition.X <= 0){
-            //We are on the loading zone, so let's just go pass the bridge.
-            ArrayList<PurePursuitWayPoint> wayPoints = new ArrayList<>();
-            wayPoints.ensureCapacity(2);
+            //we are not in the building zone, let's go to the building zone.
+            this.setRightClawToRest();
+            RobotPoint2D firstPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
+            firstPoint.Y -= 5;
 
-            PurePursuitWayPoint firstPoint = new PurePursuitWayPoint(ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION));
-            firstPoint.setEndFollowNormalizedSpeed(0.4);
-            wayPoints.add(firstPoint);
+            RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
+            secondPoint.Y -= 10;
 
-            PurePursuitWayPoint secondPoint = new PurePursuitWayPoint(ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION));
-            secondPoint.setEndFollowNormalizedSpeed(0.5);
-            wayPoints.add(secondPoint);
+            RobotPoint2D thirdPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
+            thirdPoint.Y -= 10;
 
-            PurePursuitWorldAxisFollower goUnderBrdigeFollower = new PurePursuitWorldAxisFollower(wayPoints,0.1,0.5,ElysiumAutonomousSettings.PURE_PURSUIT_ANGLE_SPEED,-180);
-            this.getRobotCore().getChassis().replaceTask(goUnderBrdigeFollower);
-            if(!this.waitForDrive_WithTelemetry()){
-                return false;
-            }
-            gotoFoundationPrepPositinoStartSpeed = 0.5;
-        }
-        {
-            //raise up foundation grabber, go to foundation prep position, then go to the foundation
-            super.prepareToGrabFoundation(ElysiumAutonomousSettings.STACKER_SLIDE_SPEED);
-            ArrayList<PurePursuitWayPoint> wayPoints = new ArrayList<>();
-            wayPoints.ensureCapacity(2);
+            Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
+                    .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .lineTo(getRoadRunnerPos(secondPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .lineTo(getRoadRunnerPos(thirdPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                    .build();
+            this.m_Core.chassis.followTrajectorySync(trajectory);
 
-            PurePursuitWayPoint firstPoint = new PurePursuitEndPoint(ElysiumAutoBase.grabFoundationPosition_RED,true,-180);
-            firstPoint.setEndFollowNormalizedSpeed(0.4);
-            firstPoint.Y -= 30;
-            wayPoints.add(firstPoint);
-
-            PurePursuitWayPoint secondPoint = new PurePursuitEndPoint(ElysiumAutoBase.grabFoundationPosition_RED,true,-90);
-            secondPoint.Y += 5;
-            secondPoint.setEndFollowNormalizedSpeed(0.05);
-            wayPoints.add(secondPoint);
-
-            PurePursuitWorldAxisFollower gotoFoundationFollower = new PurePursuitWorldAxisFollower(wayPoints,gotoFoundationPrepPositinoStartSpeed,0.4,ElysiumAutonomousSettings.PURE_PURSUIT_ANGLE_SPEED,-180);
-            this.getRobotCore().getChassis().replaceTask(gotoFoundationFollower);
-            if(!this.waitForDrive_WithTelemetry()){
+            if(!this.opModeIsActive()){
                 return false;
             }
         }
         {
-            //let's grab the foundation and pull it out!
-            super.grabFoundation(ElysiumAutonomousSettings.STACKER_SLIDE_SPEED);
-            //foundation grabbing is a blocking function, so it the foundation is in our hands!
-            //let's schedule a path for the robot to drag the foundation into place
-
-            //first give the foundation a little bit of space to turn.
-            this.getRobotCore().getChassis().replaceTask(MovementUtil.getGoToPointTask(
-                    20,
-                    -10,
-                    0.1 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),
-                    0.5 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),
-                    0.1 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),
-                    0));
-            if(!this.waitForDrive_WithTelemetry()){
-                return false;
+            //We are absolutely in the building zone now, go to position to prepare to grab foundation.
+            //we can rise the foundation puller first
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.STACKER_SLIDE_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+            while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
+                this.getRobotCore().updateStatus();
+                this.lazyUpdateTelemetry();
             }
-            //let's turn and smash the foundation into the building site!
-            currentPosition = this.getRobotCore().getCurrentPosition();
-            this.getRobotCore().getChassis().replaceTask(MovementUtil.getTurnToWorldAngTask(
-                    currentPosition,
-                    -180,
-                    0.1 * this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec(),
-                    0.5 * this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec(),
-                    0.1 * this.getRobotCore().getChassis().calculateMaxAngularSpeedInDegPerSec(),
-                    true,
-                    false
-            ));
-            this.getRobotCore().getChassis().addTask(MovementUtil.getGoToPointTask(
-                    -20,
-                    0,
-                    0.1 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),
-                    0.5 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),
-                    0.1 * this.getRobotCore().getChassis().calculateMaxLinearSpeedInCMPerSec(),
-                    0
-            ));
-            if(!this.waitForDrive_WithTelemetry()){
+
+            RobotPoint2D grabFoundationPos = ElysiumAutoBase.grabFoundationPosition_RED;
+            RobotPoint2D grabFoundationPrepPos = new RobotPoint2D(grabFoundationPos);
+            grabFoundationPos.Y -= 40;
+            Trajectory trajectory =
+                    this.getRobotCore().chassis.trajectoryBuilder()
+                    .lineTo(getRoadRunnerPos(grabFoundationPrepPos),new ConstantInterpolator(Math.toRadians(-180)))
+                    .lineTo(getRoadRunnerPos(grabFoundationPos),new ConstantInterpolator(Math.toRadians(-90)))
+                    .build();
+            this.m_Core.chassis.followTrajectorySync(trajectory);
+            if(!this.opModeIsActive()){
                 return false;
             }
 
-            //done with foundation, time to park!
-            ArrayList<PurePursuitWayPoint> wayPoints = new ArrayList<>();
-            wayPoints.ensureCapacity(2);
+            //set puller to grab foundation
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+            while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
+                this.getRobotCore().updateStatus();
+                this.lazyUpdateTelemetry();
+            }
+            this.calibratePositionUsingDistanceSensor();
+        }
+        {
+            //Now the foundation is in our hands, let's pull it.
+            RobotPoint2D firstPoint = new RobotPoint2D(ElysiumAutoBase.grabFoundationPosition_RED);
+            firstPoint.X -= 15;
+            firstPoint.Y = SkyStoneCoordinates.RED_BUILDING_ZONE_FIELD_EXTREME_POINT.Y + (SkyStoneCoordinates.TILE_FLOOR_CONNECTION_SIDE_WIDTH + ElysiumSettings.FOUNDATION_HOOK_DISTANCE_FROM_CENTER);
+            RobotPoint2D secondPoint = new RobotPoint2D(firstPoint);
+            secondPoint.X = SkyStoneCoordinates.RED_BUILDING_ZONE_FIELD_EXTREME_POINT.X - (SkyStoneCoordinates.FOUNDATION_WIDTH + ElysiumSettings.PHYSICAL_CENTER_TO_BACK);
 
-            PurePursuitWayPoint firstPoint = new PurePursuitWayPoint(ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION));
-            firstPoint.setEndFollowNormalizedSpeed(0.5);
-            wayPoints.add(firstPoint);
+            Trajectory trajectory =
+                    this.getRobotCore().chassis.trajectoryBuilder()
+                            .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-90)))
+                            .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                            .build();
+            this.m_Core.chassis.followTrajectorySync(trajectory);
+            if(!this.opModeIsActive()){
+                return false;
+            }
+        }
+        {
+            //foundation pulled, let's get our hands out of the foundation
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.STACKER_SLIDE_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+            while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
+                this.getRobotCore().updateStatus();
+                this.lazyUpdateTelemetry();
+            }
 
-            PurePursuitWayPoint secondPoint = new PurePursuitEndPoint(SkyStoneCoordinates.getParkPosition(ALLIANCE_TYPE,PARK_POSITION),true,-180);
-            secondPoint.setEndFollowNormalizedSpeed(0.1);
-            wayPoints.add(secondPoint);
+            RobotPoint2D leaveFoundationPoint = new RobotPoint2D(this.getRobotCore().getCurrentPosition());
+            leaveFoundationPoint.X -= 10;
+            this.m_Core.chassis.followTrajectorySync(
+                    this.m_Core.chassis.trajectoryBuilder()
+                    .lineTo(getRoadRunnerPos(leaveFoundationPoint),new ConstantInterpolator(-180))
+                    .build()
+            );
+            if(!this.opModeIsActive()){
+                return false;
+            }
 
-            PurePursuitWorldAxisFollower gotoParkFollower = new PurePursuitWorldAxisFollower(wayPoints,0.1,0.5,ElysiumAutonomousSettings.PURE_PURSUIT_ANGLE_SPEED,0);
-            this.getRobotCore().getChassis().replaceTask(gotoParkFollower);
-            if(!this.waitForDrive_WithTelemetry()){
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+            while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
+                this.getRobotCore().updateStatus();
+                this.lazyUpdateTelemetry();
+            }
+            this.calibratePositionUsingDistanceSensor();
+        }
+        {
+            //finish foundation pulling, go to park
+            RobotPoint2D firstPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
+            firstPoint.Y -= 10;
+
+            RobotPoint2D secondPoint = SkyStoneCoordinates.getParkPosition(ALLIANCE_TYPE,PARK_POSITION);
+            secondPoint.Y -= 5;
+
+            Trajectory trajectory = this.getRobotCore().chassis.trajectoryBuilder()
+                    .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(-180))
+                    .lineTo(getRoadRunnerPos(secondPoint), new ConstantInterpolator(-180))
+                    .build();
+            this.m_Core.chassis.followTrajectorySync(trajectory);
+            if(!this.opModeIsActive()){
                 return false;
             }
         }

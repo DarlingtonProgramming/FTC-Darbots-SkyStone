@@ -67,4 +67,8 @@ public class RobotVector2D extends RobotPoint2D implements Serializable {
     public void setRotationZ(double RotationZ){
         this.m_RotationZ = RotationZ;
     }
+    @Override
+    public String toString(){
+        return "[" + this.X + ", " + this.Y + "](" + this.getRotationZ() + ")";
+    }
 }

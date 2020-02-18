@@ -1,7 +1,11 @@
 package org.darbots.darbotsftclib.season_specific.skystone.darbots_pixel_skystone_detection;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+
+import com.vuforia.Frame;
 
 import org.darbots.darbotsftclib.libcore.integratedfunctions.image_processing.FTCImageUtility;
 import org.darbots.darbotsftclib.libcore.templates.other_sensors.RobotCamera;
@@ -21,14 +25,9 @@ public class DarbotsPixelSkyStoneSampler {
         return this.m_Camera;
     }
     public SkyStoneType getStoneType(int originalImageWidth, int originalImageHeight, int sampleImageWidth, int sampleImageHeight, int originalImageStartX, int originalImageStartY, int originalImageEndX, int originalImageEndY){
-        int trial = 0;
-        Bitmap frame = null;
-        while(frame == null){
-            trial++;
-            if(trial > 3){
-                return SkyStoneType.UNKNOWN;
-            }
-            frame = this.m_Camera.getFrame();
+        Bitmap frame = this.getFrame();
+        if(frame == null){
+            return SkyStoneType.UNKNOWN;
         }
         int countedColor = FTCImageUtility.countShrinkedScaledAverageColor(frame,sampleImageWidth,sampleImageHeight,originalImageWidth,originalImageHeight,originalImageStartX,originalImageStartY,originalImageEndX,originalImageEndY);
         float[] countedHSV = new float[3];
@@ -46,16 +45,31 @@ public class DarbotsPixelSkyStoneSampler {
         return SkyStoneType.UNKNOWN;
     }
     public SkyStonePosition sample(int originalImageWidth, int originalImageHeight, int sampleImageWidth, int sampleImageHeight, int WallStoneStartX, int WallStoneStartY, int WallStoneEndX, int WallStoneEndY, int CenterStoneStartX, int CenterStoneStartY, int CenterStoneEndX, int CenterStoneEndY, int BridgeStoneStartX, int BridgeStoneStartY, int BridgeStoneEndX, int BridgeStoneEndY){
+        Bitmap frame = this.getFrame();
+        if(frame == null){
+            return SkyStonePosition.UNKNOWN;
+        }
+        return this.sample(frame,false, originalImageWidth,originalImageHeight,sampleImageWidth,sampleImageHeight,WallStoneStartX,WallStoneStartY,WallStoneEndX,WallStoneEndY,CenterStoneStartX,CenterStoneStartY,CenterStoneEndX,CenterStoneEndY,BridgeStoneStartX,BridgeStoneStartY,BridgeStoneEndX,BridgeStoneEndY);
+    }
+    public Bitmap getFrame(){
         int trial = 0;
         Bitmap frame = null;
         while(frame == null){
             trial++;
             if(trial > 3){
-                return SkyStonePosition.UNKNOWN;
+                return null;
             }
             frame = this.m_Camera.getFrame();
         }
+        return frame;
+    }
+    public SkyStonePosition sample(Bitmap frame, boolean drawWhereItIs ,int originalImageWidth, int originalImageHeight, int sampleImageWidth, int sampleImageHeight, int WallStoneStartX, int WallStoneStartY, int WallStoneEndX, int WallStoneEndY, int CenterStoneStartX, int CenterStoneStartY, int CenterStoneEndX, int CenterStoneEndY, int BridgeStoneStartX, int BridgeStoneStartY, int BridgeStoneEndX, int BridgeStoneEndY){
         Bitmap scaledBitmap = FTCImageUtility.getScaledImage(frame,sampleImageWidth,sampleImageHeight);
+
+        if(drawWhereItIs) {
+            this.drawSamplingBoxOnFrame(frame,WallStoneStartX,WallStoneStartY,WallStoneEndX,WallStoneEndY,CenterStoneStartX,CenterStoneStartY,CenterStoneEndX,CenterStoneEndY,BridgeStoneStartX,BridgeStoneStartY,BridgeStoneEndX,BridgeStoneEndY);
+        }
+
         int WallStoneColor = FTCImageUtility.countShrinkedScaledAverageColor(scaledBitmap,originalImageWidth,originalImageHeight,WallStoneStartX,WallStoneStartY,WallStoneEndX,WallStoneEndY);
         float[] WallStoneHSV = new float[3];
         Color.colorToHSV(WallStoneColor,WallStoneHSV);
@@ -77,6 +91,26 @@ public class DarbotsPixelSkyStoneSampler {
             return SkyStonePosition.MIDDLE;
         }else{
             return SkyStonePosition.NEXT_TO_BRIDGE;
+        }
+    }
+    public void drawSamplingBoxOnFrame(Bitmap frame, int WallStoneStartX, int WallStoneStartY, int WallStoneEndX, int WallStoneEndY, int CenterStoneStartX, int CenterStoneStartY, int CenterStoneEndX, int CenterStoneEndY, int BridgeStoneStartX, int BridgeStoneStartY, int BridgeStoneEndX, int BridgeStoneEndY){
+        Paint samplerPainter = new Paint();
+        samplerPainter.setColor(Color.BLACK);
+        samplerPainter.setTextSize(32);
+        samplerPainter.setStrokeWidth(3.0f);
+        samplerPainter.setTextAlign(Paint.Align.LEFT);
+        Canvas bitmapCanvas = new Canvas(frame);
+        {
+            bitmapCanvas.drawRect(WallStoneStartX, WallStoneStartY, WallStoneEndX, WallStoneEndY, samplerPainter);
+            bitmapCanvas.drawText("Wall Stone", WallStoneStartX, WallStoneStartY, samplerPainter);
+        }
+        {
+            bitmapCanvas.drawRect(CenterStoneStartX, CenterStoneStartY, WallStoneEndX, WallStoneEndY, samplerPainter);
+            bitmapCanvas.drawText("Center Stone", CenterStoneStartX, CenterStoneStartY, samplerPainter);
+        }
+        {
+            bitmapCanvas.drawRect(BridgeStoneStartX,BridgeStoneStartY,BridgeStoneEndX,BridgeStoneEndY,samplerPainter);
+            bitmapCanvas.drawText("Bridge Stone", BridgeStoneStartX, BridgeStoneStartY, samplerPainter);
         }
     }
 }

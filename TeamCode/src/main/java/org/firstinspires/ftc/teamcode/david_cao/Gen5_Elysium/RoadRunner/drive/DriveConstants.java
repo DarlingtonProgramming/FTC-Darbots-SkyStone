@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.hardware.motors.GoBILDA5202Series;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series1150RPMMotor;
 
 /*
@@ -46,9 +47,9 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 2;
+    public static double WHEEL_RADIUS = 5.08;
     public static double GEAR_RATIO = 0.5; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 13.46;
+    public static double TRACK_WIDTH = 13.46 / XYPlaneCalculations.INCH_PER_CM;
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using

@@ -24,12 +24,12 @@ public class RoadRunnerLocalizer implements Localizer {
     @Override
     public Pose2d getPoseEstimate() {
         this.positionTracker.updateGyroProvider();
-        return new Pose2d(positionTracker.getCurrentPosition().X * XYPlaneCalculations.INCH_PER_CM,positionTracker.getCurrentPosition().Y * XYPlaneCalculations.INCH_PER_CM, Math.toRadians(positionTracker.getCurrentPosition().getRotationZ()));
+        return new Pose2d(positionTracker.getCurrentPosition().X,positionTracker.getCurrentPosition().Y, Math.toRadians(positionTracker.getCurrentPosition().getRotationZ()));
     }
 
     @Override
     public void setPoseEstimate(@NotNull Pose2d pose2d) {
-        positionTracker.setCurrentPosition(new RobotPose2D(pose2d.getX() / XYPlaneCalculations.INCH_PER_CM,pose2d.getY() / XYPlaneCalculations.INCH_PER_CM, Math.toDegrees(pose2d.getHeading())));
+        positionTracker.setCurrentPosition(new RobotPose2D(pose2d.getX(),pose2d.getY(), Math.toDegrees(pose2d.getHeading())));
     }
 
     @Override

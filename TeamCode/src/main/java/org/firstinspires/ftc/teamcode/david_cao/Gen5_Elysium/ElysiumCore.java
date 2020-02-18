@@ -39,32 +39,36 @@ public class ElysiumCore extends RobotCore {
     public ElysiumAutoArms autoArmsSubSystem;
     public MotionSystemConstraints motionSystemConstraints;
 
-    public ElysiumCore(String logFileName, HardwareMap hardwareMap, boolean read, RobotPose2D initialPose, boolean distanceEnhancedLocalization) {
+    public ElysiumCore(String logFileName, HardwareMap hardwareMap, boolean read, boolean initChassis, RobotPose2D initialPose, boolean distanceEnhancedLocalization) {
         super(logFileName, hardwareMap);
-        this.initializeDriveTrain(hardwareMap);
-        this.getChassis().setDrawRobotLength(ElysiumSettings.PHYSICAL_LENGTH);
-        this.getChassis().setDrawRobotWidth(ElysiumSettings.PHYSICAL_WIDTH);
+        if(initChassis) {
+            this.initializeDriveTrain(hardwareMap);
+            this.getChassis().setDrawRobotLength(ElysiumSettings.PHYSICAL_LENGTH);
+            this.getChassis().setDrawRobotWidth(ElysiumSettings.PHYSICAL_WIDTH);
+
+            OdometryMethod odometryMethod = null;
+            if (distanceEnhancedLocalization) {
+                odometryMethod = this.initializeDistanceSensorEnhancedTracker(hardwareMap);
+            } else {
+                odometryMethod = this.initializeNoDistanceSensorTracker();
+            }
+            RobotAsyncPositionTracker posTracker = new RobotAsyncPositionTracker(odometryMethod, initialPose);
+            if (read) {
+                this.read(initialPose);
+            }
+            posTracker.setGyroProvider(this.getGyro());
+            posTracker.setDistanceFactors(ElysiumSettings.CHASSIS_FACTORS);
+            this.getChassis().setPositionTracker(posTracker);
+            posTracker.start();
+            this.motionSystemConstraints = this.getChassis().getMotionSystemConstraints(ElysiumSettings.CHASSIS_MAXIMUM_ACCEL, 0, ElysiumSettings.CHASSIS_MAXIMUM_ANGULAR_ACCEL_DEG, 0);
+            MovementUtil.drivetrain_constraints = this.motionSystemConstraints;
+        }
+
         this.capstoneDeliverySubSystem = new ElysiumCapstoneDelivery(hardwareMap);
         this.intakeSubSystem = new ElysiumIntake(hardwareMap);
         this.outtakeSubSystem = new ElysiumOuttake(hardwareMap);
         this.stackerSubSystem = new ElysiumStacker(hardwareMap);
         this.autoArmsSubSystem = new ElysiumAutoArms(hardwareMap);
-        OdometryMethod odometryMethod = null;
-        if(distanceEnhancedLocalization){
-            odometryMethod = this.initializeDistanceSensorEnhancedTracker(hardwareMap);
-        }else{
-            odometryMethod = this.initializeNoDistanceSensorTracker();
-        }
-        RobotAsyncPositionTracker posTracker = new RobotAsyncPositionTracker(odometryMethod,initialPose);
-        if(read){
-            this.read(initialPose);
-        }
-        posTracker.setGyroProvider(this.getGyro());
-        posTracker.setDistanceFactors(ElysiumSettings.CHASSIS_FACTORS);
-        this.getChassis().setPositionTracker(posTracker);
-        posTracker.start();
-        this.motionSystemConstraints = this.getChassis().getMotionSystemConstraints(ElysiumSettings.CHASSIS_MAXIMUM_ACCEL,0,ElysiumSettings.CHASSIS_MAXIMUM_ANGULAR_ACCEL_DEG,0);
-        MovementUtil.drivetrain_constraints = this.motionSystemConstraints;
     }
 
     private void initializeDriveTrain(HardwareMap map){
@@ -107,8 +111,10 @@ public class ElysiumCore extends RobotCore {
         this.capstoneDeliverySubSystem.save();
         this.outtakeSubSystem.save();
         this.stackerSubSystem.save();
-        RobotPose2D currentPosition = this.getChassis().getCurrentPosition();
-        FTCMemory.setSetting("ElysiumRobotPose",currentPosition);
+        if(this.getChassis() != null) {
+            RobotPose2D currentPosition = this.getChassis().getCurrentPosition();
+            FTCMemory.setSetting("ElysiumRobotPose", currentPosition);
+        }
         FTCMemory.saveMemoryMapToFile();
     }
 
@@ -116,17 +122,21 @@ public class ElysiumCore extends RobotCore {
         this.capstoneDeliverySubSystem.read();
         this.outtakeSubSystem.read();
         this.stackerSubSystem.read();
-        try {
-            RobotPose2D readPosition = FTCMemory.getSetting("ElysiumRobotPose", defaultPose);
-            this.getChassis().getPositionTracker().setCurrentPosition(readPosition);
-        }catch(Exception e){
-            //do nothing
+        if(this.getChassis() != null) {
+            try {
+                RobotPose2D readPosition = FTCMemory.getSetting("ElysiumRobotPose", defaultPose);
+                this.getChassis().getPositionTracker().setCurrentPosition(readPosition);
+            } catch (Exception e) {
+                //do nothing
+            }
         }
     }
 
     @Override
     protected void __stop() {
-        this.getChassis().stop();
+        if(this.getChassis() != null) {
+            this.getChassis().stop();
+        }
         this.stackerSubSystem.stop();
         this.intakeSubSystem.stop();
         this.outtakeSubSystem.stop();
@@ -135,7 +145,9 @@ public class ElysiumCore extends RobotCore {
 
     @Override
     protected void __terminate() {
-        this.getChassis().terminate();
+        if(this.getChassis() != null) {
+            this.getChassis().terminate();
+        }
     }
 
     @Override
@@ -145,7 +157,9 @@ public class ElysiumCore extends RobotCore {
 
     @Override
     protected void __updateStatus() {
-        this.getChassis().updateStatus();
+        if(this.getChassis() != null) {
+            this.getChassis().updateStatus();
+        }
         this.stackerSubSystem.updateStatus();
         this.outtakeSubSystem.updateStatus();
         this.intakeSubSystem.updateStatus();

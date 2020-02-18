@@ -33,6 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Util;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -52,9 +53,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  *
  * @see <a href="http://revrobotics.com">REV Robotics Web Page</a>
  */
+
+@Config
 @TeleOp(name = "Elysium-Util-DistanceSensorTuning", group = "4100")
 public class ElysiumDistanceSensorTuning extends LinearOpMode {
-    public static final String SENSOR_CONFIG_NAME = "frontDistanceSensor";
+    public static String SENSOR_CONFIG_NAME = "frontDistanceSensor";
     private DistanceSensor sensorRange;
 
     @Override

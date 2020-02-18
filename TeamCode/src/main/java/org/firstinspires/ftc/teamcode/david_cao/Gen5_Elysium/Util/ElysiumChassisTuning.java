@@ -31,7 +31,7 @@ public class ElysiumChassisTuning extends DarbotsBasicOpMode<ElysiumCore> {
 
     @Override
     public void hardwareInitialize() {
-        this.m_Core = new ElysiumCore("ElysiumChassisTuning",this.hardwareMap,false,new RobotPose2D(0,0,0),false);
+        this.m_Core = new ElysiumCore("ElysiumChassisTuning",this.hardwareMap,false,true,new RobotPose2D(0,0,0),false);
         this.relativeOffsetPose = new RobotPose2D(0,0,0);
     }
 

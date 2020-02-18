@@ -35,12 +35,12 @@ public class SkyStoneCoordinates {
     public static double STONE_LENGTH = 20.32; //8 Inch
     public static double STONE_HEIGHT = 10.16; //4 Inch, with 1 Inch Prominence
     public static RobotPoint2D STONE_AUDIENCE_BLUE = new RobotPoint2D(
-            -182.88,
-            57.79
+            -172.72,
+            57.78
     );
     public static RobotPoint2D STONE_AUDIENCE_RED = new RobotPoint2D(
-            -182.88,
-            -57.79
+            -172.72,
+            -57.78
     );
     public static RobotPoint2D BRIDGE_PARK_BLUE_WALL = new RobotPoint2D(
             0,

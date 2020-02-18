@@ -5,12 +5,15 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.Path;
 
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
+
 /**
  * Set of helper functions for drawing Road Runner paths and trajectories on dashboard canvases.
  */
 public class DashboardUtil {
     private static final double DEFAULT_RESOLUTION = 2.0; // distance units; presumed inches
-    private static final double ROBOT_RADIUS = 9; // in
+    private static final double ROBOT_RADIUS = (ElysiumSettings.PHYSICAL_WIDTH / 2.0) * XYPlaneCalculations.INCH_PER_CM; // in
 
 
     public static void drawSampledPath(Canvas canvas, Path path, double resolution) {
@@ -21,8 +24,8 @@ public class DashboardUtil {
         for (int i = 0; i < samples; i++) {
             double displacement = i * dx;
             Pose2d pose = path.get(displacement);
-            xPoints[i] = pose.getX();
-            yPoints[i] = pose.getY();
+            xPoints[i] = pose.getX() * XYPlaneCalculations.INCH_PER_CM;
+            yPoints[i] = pose.getY() * XYPlaneCalculations.INCH_PER_CM;
         }
         canvas.strokePolyline(xPoints, yPoints);
     }
@@ -32,10 +35,12 @@ public class DashboardUtil {
     }
 
     public static void drawRobot(Canvas canvas, Pose2d pose) {
-        canvas.strokeCircle(pose.getX(), pose.getY(), ROBOT_RADIUS);
+        double x = pose.getX() * XYPlaneCalculations.INCH_PER_CM;
+        double y = pose.getY() * XYPlaneCalculations.INCH_PER_CM;
+        canvas.strokeCircle(x, y, ROBOT_RADIUS);
         Vector2d v = pose.headingVec().times(ROBOT_RADIUS);
-        double x1 = pose.getX() + v.getX() / 2, y1 = pose.getY() + v.getY() / 2;
-        double x2 = pose.getX() + v.getX(), y2 = pose.getY() + v.getY();
+        double x1 = x + v.getX() / 2, y1 = y + v.getY() / 2;
+        double x2 = x + v.getX(), y2 = y + v.getY();
         canvas.strokeLine(x1, y1, x2, y2);
     }
 }

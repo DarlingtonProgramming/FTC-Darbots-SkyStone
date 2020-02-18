@@ -174,10 +174,10 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
 
     private ElysiumCore m_Core;
     private int telemetry_i = 0;
-    private RobotMotionSystemTeleOpTask teleOpTask;
+    public RobotMotionSystemTeleOpTask teleOpTask;
     public ElysiumTeleOpSoundBox SoundBox;
-    private OutTakeContorlAction outtakeControlAction;
-    private IntakePositioningAction intakePositioningAction;
+    public OutTakeContorlAction outtakeControlAction;
+    public IntakePositioningAction intakePositioningAction;
 
     @Override
     public ElysiumCore getRobotCore() {
@@ -186,7 +186,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
 
     @Override
     public void hardwareInitialize() {
-        this.m_Core = new ElysiumCore("ElysiumTeleOp.log",this.hardwareMap,true,new RobotPose2D(0,0,0),false);
+        this.m_Core = new ElysiumCore("ElysiumTeleOp.log",this.hardwareMap,true,true,new RobotPose2D(0,0,-180),false);
         this.teleOpTask = new RobotMotionSystemTeleOpTask();
         this.m_Core.getChassis().addTask(this.teleOpTask);
         this.SoundBox = new ElysiumTeleOpSoundBox(this,this.m_Core);
@@ -207,10 +207,11 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
         this.SoundBox.onStart();
         this.teleopAutoMovement();
         while(this.opModeIsActive()){
+            this.updateStatus();
+
             controlLoop();
 
             this.SoundBox.updateStatus();
-            this.updateStatus();
             lazyTelemetry();
         }
     }

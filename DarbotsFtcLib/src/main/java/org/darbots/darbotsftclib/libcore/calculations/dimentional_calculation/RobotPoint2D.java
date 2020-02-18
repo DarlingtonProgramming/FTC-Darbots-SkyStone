@@ -64,4 +64,8 @@ public class RobotPoint2D implements Serializable {
             return false;
         }
     }
+    @Override
+    public String toString(){
+        return "[" + this.X + ", " + this.Y + "]";
+    }
 }
