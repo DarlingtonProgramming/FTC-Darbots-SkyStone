@@ -51,9 +51,6 @@ public class ElysiumCore extends RobotCore {
                 odometryMethod = this.initializeNoDistanceSensorTracker();
             }
             RobotAsyncPositionTracker posTracker = new RobotAsyncPositionTracker(odometryMethod, initialPose);
-            if (read) {
-                this.read(initialPose);
-            }
             posTracker.setGyroProvider(this.getGyro());
             posTracker.setDistanceFactors(ElysiumSettings.CHASSIS_FACTORS);
             this.getChassis().setPositionTracker(posTracker);
@@ -67,6 +64,9 @@ public class ElysiumCore extends RobotCore {
         this.outtakeSubSystem = new ElysiumOuttake(hardwareMap);
         this.stackerSubSystem = new ElysiumStacker(hardwareMap);
         this.autoArmsSubSystem = new ElysiumAutoArms(hardwareMap);
+        if (read) {
+            this.read(initialPose);
+        }
     }
 
     private void initializeDriveTrain(HardwareMap map){

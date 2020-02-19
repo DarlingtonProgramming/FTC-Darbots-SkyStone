@@ -7,6 +7,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Ro
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotVector2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
 import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series1150RPMMotor;
+import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series117RPMMotor;
 import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series435RPMMotor;
 import org.darbots.darbotsftclib.libcore.motortypes.MotorTypeUtil;
 import org.darbots.darbotsftclib.libcore.motortypes.RevHDHex40Motor;
@@ -114,13 +115,13 @@ public class ElysiumSettings {
     public static double STACKER_SLIDE_MIN_POS = 0;
     public static double STACKER_ABOVE_FOUNDATION_POS = 0;
     public static double STACKER_STONE_DOWN_POS = 0;
-    public static double STACKER_SLIDE_MAX_POS = 0;
-    public static MotorType STACKER_SLIDE_TYPE = new GoBilda5202Series435RPMMotor();
+    public static double STACKER_SLIDE_MAX_POS = 1.576;
+    public static MotorType STACKER_SLIDE_TYPE = new GoBilda5202Series117RPMMotor();
 
     public static double STACKER_DOOR_LEFT_OPEN_POS = 0;
     public static double STACKER_DOOR_LEFT_CLOSED_POS = 0.5;
-    public static double STACKER_DOOR_RIGHT_OPEN_POS = 0;
-    public static double STACKER_DOOR_RIGHT_CLOSED_POS = 0;
+    public static double STACKER_DOOR_RIGHT_OPEN_POS = 0.95;
+    public static double STACKER_DOOR_RIGHT_CLOSED_POS = 0.45;
     public static ServoType STACKER_DOOR_SERVO_TYPE = new HS755MG();
 
     public static double FOUNDATION_HOOK_DISTANCE_FROM_CENTER = 10;
@@ -132,19 +133,20 @@ public class ElysiumSettings {
     public static double OUTTAKE_SLIDE_OUT_OF_WAY_INTAKE_POS = 0.6;
     public static double OUTTAKE_SLIDE_SAFE_FAR_RELEASE = 0.3;
     public static ServoType OUTTAKE_SLIDE_SERVO_TYPE = new HS755MG();
-    public static double OUTTAKE_GRABBER_FAR_RELEASED_POS = 0.6;
+    public static double OUTTAKE_GRABBER_FAR_RELEASED_POS = 0.8;
     public static double OUTTAKE_GRABBER_GRABBED_POS = 0.25;
     public static double OUTTAKE_GRABBER_RELEASED_POS = 0.4;
     public static ServoType OUTTAKE_GRABBER_SERVO_TYPE = new HS485HB();
     public static double OUTTAKE_GRABBER_WAIT_SEC = 0.5;
+    public static double OUTTAKE_SLIDE_WAIT_SEC = 2.0;
     //========== End of Our-Take System Settings ==========
 
     //========== Start of Intake System Settings ==========
-    public static double INTAKE_POSITIONING_SERVO_REST = 0.0;
-    public static double INTAKE_POSITIONING_SERVO_AUTO = 0.0;
-    public static double INTAKE_POSITIONING_SERVO_HIT = 0.0;
+    public static double INTAKE_POSITIONING_SERVO_REST = 0.95;
+    public static double INTAKE_POSITIONING_SERVO_AUTO = 0.05;
+    public static double INTAKE_POSITIONING_SERVO_HIT = 0.35;
     public static ServoType INTAKE_POSITIONING_SERVO_TYPE = new HS485HB();
-    public static double INTAKE_POSITIONING_SERVO_WAIT_SEC = 0.3;
+    public static double INTAKE_POSITIONING_SERVO_WAIT_SEC = 1.5;
     //========== End of Intake System Settings ==========
 
     //========== Start of Capstone Delivery System Settings ==========

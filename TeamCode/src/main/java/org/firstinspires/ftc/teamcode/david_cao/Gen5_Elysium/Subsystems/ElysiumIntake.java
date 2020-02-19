@@ -40,7 +40,7 @@ public class ElysiumIntake implements RobotNonBlockingDevice {
         this.intakeRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.positioningServo = map.servo.get("intakePositioningServo");
         SensorUtil.setServoPulseWidth(this.positioningServo, ElysiumSettings.INTAKE_POSITIONING_SERVO_TYPE);
-        this.setPositioningServoStatus(ElysiumIntakePositioningServoStatus.REST);
+        this.setPositioningServoStatus(ElysiumIntakePositioningServoStatus.AUTO);
     }
 
     public ElysiumIntakePositioningServoStatus getPositioningServoStatus(){
