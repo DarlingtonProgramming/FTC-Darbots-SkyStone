@@ -70,7 +70,6 @@ public class ElysiumRoadRunnerChassis extends ElysiumRoadRunnerBase {
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-
     }
 
     @Override

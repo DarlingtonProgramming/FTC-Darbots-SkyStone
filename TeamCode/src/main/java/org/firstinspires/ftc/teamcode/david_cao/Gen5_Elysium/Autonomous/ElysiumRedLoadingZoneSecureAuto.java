@@ -14,6 +14,7 @@ import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.odometry.DistanceSensorEnhancedOdometry;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
@@ -51,6 +52,15 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
     @Override
     public ElysiumAutoCore getRobotCore() {
         return this.m_Core;
+    }
+
+    @Override
+    public DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType getDistanceSensorSwitchType(RobotPose2D currentPosition) {
+        if(currentPosition.X >= ElysiumAutonomousSettings.DISTANCE_SENSOR_CALIBRATION_STARTX && currentPosition.X <= ElysiumAutonomousSettings.DISTANCE_SENSOR_CALIBRATION_ENDX){
+            return DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType.BOTH_XY;
+        }else{
+            return DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType.ONLY_X;
+        }
     }
 
     @Override
@@ -276,6 +286,7 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
             if(!this.opModeIsActive()){
                 return false;
             }
+            //calibrate our position first
             RobotPose2D foundationFinishedPose = new RobotPose2D(secondPoint,-180);
             foundationFinishedPose.X = SkyStoneCoordinates.RED_BUILDING_ZONE_FIELD_EXTREME_POINT.X - (SkyStoneCoordinates.FOUNDATION_WIDTH + ElysiumSettings.PHYSICAL_CENTER_TO_BACK);
             this.getRobotCore().setCurrentPosition(foundationFinishedPose);
@@ -283,20 +294,19 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
         {
             //foundation pulled, let's get our hands out of the foundation
             this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.STACKER_SLIDE_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
-            while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
-                this.getRobotCore().updateStatus();
-                this.lazyUpdateTelemetry();
-            }
-
             RobotPoint2D leaveFoundationPoint = new RobotPoint2D(this.getRobotCore().getCurrentPosition());
             leaveFoundationPoint.X -= 10;
-            this.m_Core.chassis.followTrajectorySync(
+            this.m_Core.chassis.followTrajectory(
                     this.m_Core.chassis.trajectoryBuilder()
                     .lineTo(getRoadRunnerPos(leaveFoundationPoint),new ConstantInterpolator(-180))
                     .build()
             );
-            if(!this.opModeIsActive()){
-                return false;
+            while(this.m_Core.chassis.isBusy()){
+                if(this.isStopRequested()){
+                    return false;
+                }
+                this.m_Core.chassis.update();
+                this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
             }
 
             this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));

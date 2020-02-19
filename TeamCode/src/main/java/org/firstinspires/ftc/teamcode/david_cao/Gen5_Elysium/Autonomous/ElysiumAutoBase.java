@@ -11,6 +11,7 @@ import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.odometry.DistanceSensorEnhancedOdometry;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.sensors.distance_sensors.DarbotsRevDistanceSensor;
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
@@ -51,6 +52,8 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
         this.autoSoundBox = new ElysiumAutoSoundBox(this,this.getRobotCore());
         this.autoSoundBox.onInitialize();
     }
+
+    public abstract DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType getDistanceSensorSwitchType(RobotPose2D currentPosition);
 
     public void grabLeftClaw(){
         this.getRobotCore().autoArmsSubSystem.leftArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.GRAB_STONE);
@@ -185,81 +188,93 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     }
 
     public void calibratePositionUsingDistanceSensor(){
+
         if(!ElysiumAutonomousSettings.DISTANCE_SENSOR_POSITION_CALIBRATION){
             return;
         }
         RobotPose2D currentPose = this.getRobotCore().getCurrentPosition();
+        DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType switchType = this.getDistanceSensorSwitchType(currentPose);
+        if(switchType == DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType.NONE){
+            return;
+        }
         double squaredAngle = XYPlaneCalculations.roundDegToSquare(currentPose.getRotationZ());
         double angleError = squaredAngle - currentPose.getRotationZ();
-        if(currentPose.X >= 0){
-            DarbotsDistanceSensor sensor = null;
-            double sensorPosition = 0;
-            if(squaredAngle == 0) {
-                sensor = this.getRobotCore().FrontSensor.Sensor;
-                sensorPosition = this.getRobotCore().FrontSensor.OnRobotPosition.X;
-            }else if(squaredAngle == 90){
-                sensor = this.getRobotCore().RightSensor.Sensor;
-                sensorPosition = -this.getRobotCore().RightSensor.OnRobotPosition.Y;
-            }else if(squaredAngle == -90){
-                sensor = this.getRobotCore().LeftSensor.Sensor;
-                sensorPosition = this.getRobotCore().LeftSensor.OnRobotPosition.Y;
-            }else{ //squareAngle == -180
-                sensor = this.getRobotCore().BackSensor.Sensor;
-                sensorPosition = -this.getRobotCore().BackSensor.OnRobotPosition.X;
-            }
-            this.useSensorToCalibratePositiveXPosition(currentPose,sensorPosition,sensor,angleError);
-        }else{
-            DarbotsDistanceSensor sensor = null;
-            double sensorPosition = 0;
-            if(squaredAngle == 0) {
-                sensor = this.getRobotCore().BackSensor.Sensor;
-                sensorPosition = -this.getRobotCore().BackSensor.OnRobotPosition.X;
-            }else if(squaredAngle == 90){
-                sensor = this.getRobotCore().LeftSensor.Sensor;
-                sensorPosition = this.getRobotCore().LeftSensor.OnRobotPosition.Y;
-            }else if(squaredAngle == -90){
-                sensor = this.getRobotCore().RightSensor.Sensor;
-                sensorPosition = -this.getRobotCore().RightSensor.OnRobotPosition.Y;
-            }else{ //squareAngle == -180
-                sensor = this.getRobotCore().FrontSensor.Sensor;
-                sensorPosition = this.getRobotCore().FrontSensor.OnRobotPosition.X;
-            }
-            this.useSensorToCalibrateNegativeXPosition(currentPose,sensorPosition,sensor,angleError);
+        if(Math.abs(angleError) > 5){
+            return;
         }
-        if(currentPose.Y >= 0){
-            DarbotsDistanceSensor sensor = null;
-            double sensorPosition = 0;
-            if(squaredAngle == 0) {
-                sensor = this.getRobotCore().LeftSensor.Sensor;
-                sensorPosition = this.getRobotCore().LeftSensor.OnRobotPosition.Y;
-            }else if(squaredAngle == 90){
-                sensor = this.getRobotCore().FrontSensor.Sensor;
-                sensorPosition = this.getRobotCore().FrontSensor.OnRobotPosition.X;
-            }else if(squaredAngle == -90){
-                sensor = this.getRobotCore().BackSensor.Sensor;
-                sensorPosition = -this.getRobotCore().BackSensor.OnRobotPosition.X;
-            }else{ //squareAngle == -180
-                sensor = this.getRobotCore().RightSensor.Sensor;
-                sensorPosition = -this.getRobotCore().RightSensor.OnRobotPosition.Y;
+        if(switchType == DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType.BOTH_XY || switchType == DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType.ONLY_X) {
+            if (currentPose.X >= 0) {
+                DarbotsDistanceSensor sensor = null;
+                double sensorPosition = 0;
+                if (squaredAngle == 0) {
+                    sensor = this.getRobotCore().FrontSensor.Sensor;
+                    sensorPosition = this.getRobotCore().FrontSensor.OnRobotPosition.X;
+                } else if (squaredAngle == 90) {
+                    sensor = this.getRobotCore().RightSensor.Sensor;
+                    sensorPosition = -this.getRobotCore().RightSensor.OnRobotPosition.Y;
+                } else if (squaredAngle == -90) {
+                    sensor = this.getRobotCore().LeftSensor.Sensor;
+                    sensorPosition = this.getRobotCore().LeftSensor.OnRobotPosition.Y;
+                } else { //squareAngle == -180
+                    sensor = this.getRobotCore().BackSensor.Sensor;
+                    sensorPosition = -this.getRobotCore().BackSensor.OnRobotPosition.X;
+                }
+                this.useSensorToCalibratePositiveXPosition(currentPose, sensorPosition, sensor, angleError);
+            } else {
+                DarbotsDistanceSensor sensor = null;
+                double sensorPosition = 0;
+                if (squaredAngle == 0) {
+                    sensor = this.getRobotCore().BackSensor.Sensor;
+                    sensorPosition = -this.getRobotCore().BackSensor.OnRobotPosition.X;
+                } else if (squaredAngle == 90) {
+                    sensor = this.getRobotCore().LeftSensor.Sensor;
+                    sensorPosition = this.getRobotCore().LeftSensor.OnRobotPosition.Y;
+                } else if (squaredAngle == -90) {
+                    sensor = this.getRobotCore().RightSensor.Sensor;
+                    sensorPosition = -this.getRobotCore().RightSensor.OnRobotPosition.Y;
+                } else { //squareAngle == -180
+                    sensor = this.getRobotCore().FrontSensor.Sensor;
+                    sensorPosition = this.getRobotCore().FrontSensor.OnRobotPosition.X;
+                }
+                this.useSensorToCalibrateNegativeXPosition(currentPose, sensorPosition, sensor, angleError);
             }
-            this.useSensorToCalibratePositiveYPosition(currentPose,sensorPosition,sensor,angleError);
-        }else{
-            DarbotsDistanceSensor sensor = null;
-            double sensorPosition = 0;
-            if(squaredAngle == 0) {
-                sensor = this.getRobotCore().RightSensor.Sensor;
-                sensorPosition = -this.getRobotCore().RightSensor.OnRobotPosition.Y;
-            }else if(squaredAngle == 90){
-                sensor = this.getRobotCore().BackSensor.Sensor;
-                sensorPosition = -this.getRobotCore().BackSensor.OnRobotPosition.X;
-            }else if(squaredAngle == -90){
-                sensor = this.getRobotCore().FrontSensor.Sensor;
-                sensorPosition = this.getRobotCore().FrontSensor.OnRobotPosition.X;
-            }else{ //squareAngle == -180
-                sensor = this.getRobotCore().LeftSensor.Sensor;
-                sensorPosition = this.getRobotCore().LeftSensor.OnRobotPosition.Y;
+        }
+        if(switchType == DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType.BOTH_XY || switchType == DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType.ONLY_Y) {
+            if (currentPose.Y >= 0) {
+                DarbotsDistanceSensor sensor = null;
+                double sensorPosition = 0;
+                if (squaredAngle == 0) {
+                    sensor = this.getRobotCore().LeftSensor.Sensor;
+                    sensorPosition = this.getRobotCore().LeftSensor.OnRobotPosition.Y;
+                } else if (squaredAngle == 90) {
+                    sensor = this.getRobotCore().FrontSensor.Sensor;
+                    sensorPosition = this.getRobotCore().FrontSensor.OnRobotPosition.X;
+                } else if (squaredAngle == -90) {
+                    sensor = this.getRobotCore().BackSensor.Sensor;
+                    sensorPosition = -this.getRobotCore().BackSensor.OnRobotPosition.X;
+                } else { //squareAngle == -180
+                    sensor = this.getRobotCore().RightSensor.Sensor;
+                    sensorPosition = -this.getRobotCore().RightSensor.OnRobotPosition.Y;
+                }
+                this.useSensorToCalibratePositiveYPosition(currentPose, sensorPosition, sensor, angleError);
+            } else {
+                DarbotsDistanceSensor sensor = null;
+                double sensorPosition = 0;
+                if (squaredAngle == 0) {
+                    sensor = this.getRobotCore().RightSensor.Sensor;
+                    sensorPosition = -this.getRobotCore().RightSensor.OnRobotPosition.Y;
+                } else if (squaredAngle == 90) {
+                    sensor = this.getRobotCore().BackSensor.Sensor;
+                    sensorPosition = -this.getRobotCore().BackSensor.OnRobotPosition.X;
+                } else if (squaredAngle == -90) {
+                    sensor = this.getRobotCore().FrontSensor.Sensor;
+                    sensorPosition = this.getRobotCore().FrontSensor.OnRobotPosition.X;
+                } else { //squareAngle == -180
+                    sensor = this.getRobotCore().LeftSensor.Sensor;
+                    sensorPosition = this.getRobotCore().LeftSensor.OnRobotPosition.Y;
+                }
+                this.useSensorToCalibrateNegativeYPosition(currentPose, sensorPosition, sensor, angleError);
             }
-            this.useSensorToCalibrateNegativeYPosition(currentPose,sensorPosition,sensor,angleError);
         }
         this.getRobotCore().setCurrentPosition(currentPose);
     }
@@ -305,5 +320,12 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     public void useSensorToCalibrateNegativeYPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsDistanceSensor distanceSensor, double errorAngle){
         this.useSensorToCalibratePositiveYPosition(positionReceiver,sensorOnBotPosition,distanceSensor,errorAngle);
         positionReceiver.Y = -positionReceiver.Y;
+    }
+
+    public boolean waitForDrive(){
+        while(this.getRobotCore().chassis.isBusy() && this.opModeIsActive()){
+            this.getRobotCore().chassis.update();
+        }
+        return this.opModeIsActive();
     }
 }

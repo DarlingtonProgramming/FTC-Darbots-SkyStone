@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.darbots.darbotsftclib.game_specific.AllianceType;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.season_specific.skystone.ParkPosition;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Autonomous.ElysiumAutoBase;
 
 @Config
 public class ElysiumAutonomousSettings {
@@ -62,4 +64,6 @@ public class ElysiumAutonomousSettings {
 
     public static boolean DISTANCE_SENSOR_POSITION_CALIBRATION = false;
 
+    public static double DISTANCE_SENSOR_CALIBRATION_STARTX = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(AllianceType.BLUE,ParkPosition.NEXT_TO_WALL).X;
+    public static double DISTANCE_SENSOR_CALIBRATION_ENDX = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(AllianceType.BLUE,ParkPosition.NEXT_TO_WALL).X;
 }

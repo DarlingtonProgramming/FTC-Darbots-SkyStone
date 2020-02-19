@@ -29,6 +29,7 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Autonomous.ElysiumAutoBase;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.RoadRunner.util.DashboardUtil;
 
@@ -135,6 +136,7 @@ public abstract class ElysiumRoadRunnerBase extends MecanumDrive {
     public void update() {
         GlobalUtil.updateBulkRead();
         updatePoseEstimate();
+
 
         Pose2d currentPose = getPoseEstimate();
         Pose2d lastError = getLastError();
