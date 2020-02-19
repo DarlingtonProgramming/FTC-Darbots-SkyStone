@@ -14,6 +14,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XY
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.sensors.distance_sensors.DarbotsRevDistanceSensor;
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
+import org.darbots.darbotsftclib.libcore.templates.sensors.DarbotsDistanceSensor;
 import org.darbots.darbotsftclib.season_specific.skystone.ParkPosition;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumAutoCore;
@@ -191,7 +192,7 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
         double squaredAngle = XYPlaneCalculations.roundDegToSquare(currentPose.getRotationZ());
         double angleError = squaredAngle - currentPose.getRotationZ();
         if(currentPose.X >= 0){
-            DarbotsRevDistanceSensor sensor = null;
+            DarbotsDistanceSensor sensor = null;
             double sensorPosition = 0;
             if(squaredAngle == 0) {
                 sensor = this.getRobotCore().FrontSensor.Sensor;
@@ -208,7 +209,7 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
             }
             this.useSensorToCalibratePositiveXPosition(currentPose,sensorPosition,sensor,angleError);
         }else{
-            DarbotsRevDistanceSensor sensor = null;
+            DarbotsDistanceSensor sensor = null;
             double sensorPosition = 0;
             if(squaredAngle == 0) {
                 sensor = this.getRobotCore().BackSensor.Sensor;
@@ -226,7 +227,7 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
             this.useSensorToCalibrateNegativeXPosition(currentPose,sensorPosition,sensor,angleError);
         }
         if(currentPose.Y >= 0){
-            DarbotsRevDistanceSensor sensor = null;
+            DarbotsDistanceSensor sensor = null;
             double sensorPosition = 0;
             if(squaredAngle == 0) {
                 sensor = this.getRobotCore().LeftSensor.Sensor;
@@ -243,7 +244,7 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
             }
             this.useSensorToCalibratePositiveYPosition(currentPose,sensorPosition,sensor,angleError);
         }else{
-            DarbotsRevDistanceSensor sensor = null;
+            DarbotsDistanceSensor sensor = null;
             double sensorPosition = 0;
             if(squaredAngle == 0) {
                 sensor = this.getRobotCore().RightSensor.Sensor;
@@ -276,32 +277,32 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
         }
     }
 
-    public void useSensorToCalibratePositiveXPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsRevDistanceSensor distanceSensor, double errorAngle){
+    public void useSensorToCalibratePositiveXPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsDistanceSensor distanceSensor, double errorAngle){
         distanceSensor.updateStatus();
         double dist = distanceSensor.getDistanceInCM();
-        if(dist == DarbotsRevDistanceSensor.DISTANCE_INVALID){
+        if(dist == DarbotsDistanceSensor.DISTANCE_INVALID){
             return;
         }
         positionReceiver.X = SkyStoneCoordinates.FIELD_SIZE_X / 2.0 - Math.cos(Math.toRadians(errorAngle)) * (sensorOnBotPosition + dist);
         return;
     }
 
-    public void useSensorToCalibrateNegativeXPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsRevDistanceSensor distanceSensor, double errorAngle){
+    public void useSensorToCalibrateNegativeXPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsDistanceSensor distanceSensor, double errorAngle){
         this.useSensorToCalibratePositiveXPosition(positionReceiver,sensorOnBotPosition,distanceSensor,errorAngle);
         positionReceiver.X = -positionReceiver.X;
     }
 
-    public void useSensorToCalibratePositiveYPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsRevDistanceSensor distanceSensor, double errorAngle){
+    public void useSensorToCalibratePositiveYPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsDistanceSensor distanceSensor, double errorAngle){
         distanceSensor.updateStatus();
         double dist = distanceSensor.getDistanceInCM();
-        if(dist == DarbotsRevDistanceSensor.DISTANCE_INVALID){
+        if(dist == DarbotsDistanceSensor.DISTANCE_INVALID){
             return;
         }
         positionReceiver.Y = SkyStoneCoordinates.FIELD_SIZE_Y / 2.0 - Math.cos(Math.toRadians(errorAngle)) * (sensorOnBotPosition + dist);
         return;
     }
 
-    public void useSensorToCalibrateNegativeYPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsRevDistanceSensor distanceSensor, double errorAngle){
+    public void useSensorToCalibrateNegativeYPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsDistanceSensor distanceSensor, double errorAngle){
         this.useSensorToCalibratePositiveYPosition(positionReceiver,sensorOnBotPosition,distanceSensor,errorAngle);
         positionReceiver.Y = -positionReceiver.Y;
     }
