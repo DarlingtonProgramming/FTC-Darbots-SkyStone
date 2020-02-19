@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.path.heading.ConstantInterpolator;
 import com.acmerobotics.roadrunner.path.heading.LinearInterpolator;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.darbots.darbotsftclib.game_specific.AllianceType;
@@ -12,25 +14,22 @@ import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPoint2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.RobotPose2D;
 import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
-import org.darbots.darbotsftclib.libcore.purepursuit.waypoints.PurePursuitWayPoint;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.sensors.cameras.RobotOnPhoneCamera;
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
-import org.darbots.darbotsftclib.libcore.templates.DarbotsAction;
 import org.darbots.darbotsftclib.season_specific.skystone.ParkPosition;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStoneCoordinates;
 import org.darbots.darbotsftclib.season_specific.skystone.SkyStonePosition;
-import org.darbots.darbotsftclib.season_specific.skystone.darbots_pixel_skystone_detection.DarbotsPixelSkyStoneSampler;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumAutoCore;
-import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumCore;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumAutonomousSettings;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.RoadRunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 import java.util.ArrayList;
 
-@Autonomous(group = "4100", name = "Elysium-Auto-Red-LoadingZone-Progressive")
-public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
+@Autonomous(group = "4100", name = "Elysium-Auto-Red-LoadingZone-Secure")
+public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
     public static final AllianceType ALLIANCE_TYPE = AllianceType.RED;
     public static final ParkPosition PARK_POSITION = ParkPosition.NEXT_TO_NEUTRAL_BRIDGE;
     public static final double DURATION_EACH_STONE = 10.0;
@@ -44,6 +43,11 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     private ArrayList<RobotPose2D> allStonePositions;
     private SkyStonePosition sampledPosition;
 
+    public static DriveConstraints secureConstraints = new DriveConstraints(
+            30 / XYPlaneCalculations.INCH_PER_CM, 30 / XYPlaneCalculations.INCH_PER_CM,0,
+            Math.toRadians(135),Math.toRadians(135),0
+    );
+
     @Override
     public ElysiumAutoCore getRobotCore() {
         return this.m_Core;
@@ -52,6 +56,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
     @Override
     public void __hardwareInit() {
         this.m_Core = new ElysiumAutoCore("ElysiumRedLoadingZoneAuto.log",this.hardwareMap,false, ElysiumAutonomousSettings.RED_AUTO_START_POSE,false);
+        this.m_Core.chassis.constraints = new MecanumConstraints(secureConstraints, DriveConstants.TRACK_WIDTH);
         this.m_Camera = new RobotOnPhoneCamera(this,ElysiumAutonomousSettings.SAMPLE_PREVIEW, RobotOnPhoneCamera.PhoneCameraDirection.Back, Robot4100Common.VUFORIA_LICENSE);
         this.m_Sampler = new ElysiumAutoSampler(this.m_Camera);
         this.telemetry_I = 0;
@@ -104,10 +109,7 @@ public class ElysiumRedLoadingZoneAuto extends ElysiumAutoBase {
 
         {
             //do as many stones as possible
-            for(int i=0; i<6; i++) {
-                if ((30.0 - this.getSecondsSinceOpModeStarted() - DURATION_FOUNDATION) < DURATION_EACH_STONE) {
-                    break;
-                }
+            for(int i=0; i<1; i++) {
                 this.runToStoneAndPlaceOnFoundation(getStoneOrder[i]);
             }
         }

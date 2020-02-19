@@ -11,7 +11,7 @@ import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
 import org.darbots.darbotsftclib.libcore.odometry.DistanceSensorEnhancedOdometry;
 import org.darbots.darbotsftclib.libcore.odometry.MecanumOdometry;
 import org.darbots.darbotsftclib.libcore.runtime.MovementUtil;
-import org.darbots.darbotsftclib.libcore.sensors.DarbotsDistanceSensor;
+import org.darbots.darbotsftclib.libcore.sensors.distance_sensors.DarbotsRevDistanceSensor;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotMotion;
 import org.darbots.darbotsftclib.libcore.sensors.motion_related.RobotWheel;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
@@ -20,10 +20,8 @@ import org.darbots.darbotsftclib.libcore.templates.chassis_related.MotionSystemC
 import org.darbots.darbotsftclib.libcore.templates.chassis_related.RobotMotionSystem;
 import org.darbots.darbotsftclib.libcore.templates.odometry.OdometryMethod;
 import org.darbots.darbotsftclib.libcore.templates.odometry.RobotAsyncPositionTracker;
-import org.darbots.darbotsftclib.libcore.templates.odometry.RobotSeparateThreadPositionTracker;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
-import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumAutoArm;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumAutoArms;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumCapstoneDelivery;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumIntake;
@@ -97,11 +95,11 @@ public class ElysiumCore extends RobotCore {
     }
 
     private OdometryMethod initializeDistanceSensorEnhancedTracker(HardwareMap map){
-        DarbotsOnRobotSensor2D<DarbotsDistanceSensor> FrontSensor, LeftSensor, BackSensor, RightSensor;
-        FrontSensor = new DarbotsOnRobotSensor2D<DarbotsDistanceSensor>(ElysiumSettings.LOCALIZATION_FRONTDISTSENSOR_POS,new DarbotsDistanceSensor(map.get(DistanceSensor.class,"frontDistanceSensor")));
-        LeftSensor = new DarbotsOnRobotSensor2D<DarbotsDistanceSensor>(ElysiumSettings.LOCALIZATION_LEFTDISTSENSOR_POS,new DarbotsDistanceSensor(map.get(DistanceSensor.class,"leftDistanceSensor")));
-        BackSensor = new DarbotsOnRobotSensor2D<DarbotsDistanceSensor>(ElysiumSettings.LOCALIZATION_BACKDISTSENSOR_POS,new DarbotsDistanceSensor(map.get(DistanceSensor.class,"backDistanceSensor")));
-        RightSensor = new DarbotsOnRobotSensor2D<DarbotsDistanceSensor>(ElysiumSettings.LOCALIZATION_RIGHTDISTSENSOR_POS,new DarbotsDistanceSensor(map.get(DistanceSensor.class,"rightDistanceSensor")));
+        DarbotsOnRobotSensor2D<DarbotsRevDistanceSensor> FrontSensor, LeftSensor, BackSensor, RightSensor;
+        FrontSensor = new DarbotsOnRobotSensor2D<DarbotsRevDistanceSensor>(ElysiumSettings.LOCALIZATION_FRONTDISTSENSOR_POS,new DarbotsRevDistanceSensor(map.get(DistanceSensor.class,"frontDistanceSensor")));
+        LeftSensor = new DarbotsOnRobotSensor2D<DarbotsRevDistanceSensor>(ElysiumSettings.LOCALIZATION_LEFTDISTSENSOR_POS,new DarbotsRevDistanceSensor(map.get(DistanceSensor.class,"leftDistanceSensor")));
+        BackSensor = new DarbotsOnRobotSensor2D<DarbotsRevDistanceSensor>(ElysiumSettings.LOCALIZATION_BACKDISTSENSOR_POS,new DarbotsRevDistanceSensor(map.get(DistanceSensor.class,"backDistanceSensor")));
+        RightSensor = new DarbotsOnRobotSensor2D<DarbotsRevDistanceSensor>(ElysiumSettings.LOCALIZATION_RIGHTDISTSENSOR_POS,new DarbotsRevDistanceSensor(map.get(DistanceSensor.class,"rightDistanceSensor")));
         OdometryMethod originalOdometry = initializeNoDistanceSensorTracker();
         OdometryMethod distanceEnhancedOdometry = new DistanceSensorEnhancedOdometry(originalOdometry,FrontSensor,LeftSensor,BackSensor,RightSensor);
         return distanceEnhancedOdometry;
