@@ -29,9 +29,16 @@ public class ElysiumAutoCore extends ElysiumCore {
         this.chassis = new ElysiumRoadRunnerChassis(hardwareMap);
         this.setCurrentPosition(initialPose);
         FrontSensor = new DarbotsOnRobotSensor2D<DarbotsDistanceSensor>(ElysiumSettings.LOCALIZATION_FRONTDISTSENSOR_POS,new DarbotsDistanceSensor(hardwareMap.get(DistanceSensor.class,"frontDistanceSensor")));
+        FrontSensor.Sensor.ActualDistanceFactor = ElysiumSettings.LOCALIZATION_FRONTDISTANCESENSOR_FACTOR;
+
         LeftSensor = new DarbotsOnRobotSensor2D<DarbotsDistanceSensor>(ElysiumSettings.LOCALIZATION_LEFTDISTSENSOR_POS,new DarbotsDistanceSensor(hardwareMap.get(DistanceSensor.class,"leftDistanceSensor")));
+        LeftSensor.Sensor.ActualDistanceFactor = ElysiumSettings.LOCALIZATION_LEFTDISTANCESENSOR_FACTOR;
+
         BackSensor = new DarbotsOnRobotSensor2D<DarbotsDistanceSensor>(ElysiumSettings.LOCALIZATION_BACKDISTSENSOR_POS,new DarbotsDistanceSensor(hardwareMap.get(DistanceSensor.class,"backDistanceSensor")));
+        BackSensor.Sensor.ActualDistanceFactor = ElysiumSettings.LOCALIZATION_BACKDISTANCESENSOR_FACTOR;
+
         RightSensor = new DarbotsOnRobotSensor2D<DarbotsDistanceSensor>(ElysiumSettings.LOCALIZATION_RIGHTDISTSENSOR_POS,new DarbotsDistanceSensor(hardwareMap.get(DistanceSensor.class,"rightDistanceSensor")));
+        RightSensor.Sensor.ActualDistanceFactor = ElysiumSettings.LOCALIZATION_RIGHTDISTANCESENSOR_FACTOR;
     }
     public void save(){
         super.save();

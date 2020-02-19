@@ -60,4 +60,6 @@ public class ElysiumAutonomousSettings {
 
     public static double PURE_PURSUIT_ANGLE_SPEED = 0.15;
 
+    public static boolean DISTANCE_SENSOR_POSITION_CALIBRATION = false;
+
 }

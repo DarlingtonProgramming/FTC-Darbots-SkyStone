@@ -72,7 +72,9 @@ public abstract class DarbotsBasicOpMode<CoreType extends RobotCore> extends Lin
     @Override
     public void waitForStart(){
         while ((!opModeIsActive()) && (!isStopRequested())) {
-            this.getRobotCore().updateStatus();
+            if (this.getRobotCore() != null) {
+                this.getRobotCore().updateStatus();
+            }
             TelemetryPacket packet = this.updateTelemetry();
             GlobalUtil.addTelmetryLine(this.telemetry,packet,"status", "Initialized, waiting for start command...");
             FtcDashboard.getInstance().sendTelemetryPacket(packet);

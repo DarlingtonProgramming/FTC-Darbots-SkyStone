@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -189,6 +190,9 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     }
 
     public void calibratePositionUsingDistanceSensor(){
+        if(!ElysiumAutonomousSettings.DISTANCE_SENSOR_POSITION_CALIBRATION){
+            return;
+        }
         RobotPose2D currentPose = this.getRobotCore().getCurrentPosition();
         double squaredAngle = XYPlaneCalculations.roundDegToSquare(currentPose.getRotationZ());
         double angleError = squaredAngle - currentPose.getRotationZ();

@@ -40,6 +40,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XYPlaneCalculations;
+import org.darbots.darbotsftclib.libcore.runtime.SensorUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
@@ -59,6 +61,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class ElysiumDistanceSensorTuning extends LinearOpMode {
     public static String SENSOR_CONFIG_NAME = "frontDistanceSensor";
     private DistanceSensor sensorRange;
+    public static int SENSOR_TRIAL = 3;
 
     @Override
     public void runOpMode() {
@@ -76,11 +79,19 @@ public class ElysiumDistanceSensorTuning extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()) {
             // generic DistanceSensor methods.
+            double cmReading = SensorUtil.getDistanceSensorReading(sensorRange,SENSOR_TRIAL);
             telemetry.addData("deviceName",sensorRange.getDeviceName() );
-            telemetry.addData("range", String.format("%.01f mm", sensorRange.getDistance(DistanceUnit.MM)));
-            telemetry.addData("range", String.format("%.01f cm", sensorRange.getDistance(DistanceUnit.CM)));
-            telemetry.addData("range", String.format("%.01f m", sensorRange.getDistance(DistanceUnit.METER)));
-            telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
+            if(cmReading != DistanceSensor.distanceOutOfRange) {
+                telemetry.addData("rangeMM", String.format("%.01f", cmReading * 10.0));
+                telemetry.addData("rangeCM", String.format("%.01f", cmReading));
+                telemetry.addData("rangeM", String.format("%.01f", cmReading / 100.0));
+                telemetry.addData("rangeINCH", String.format("%.01f", cmReading * XYPlaneCalculations.INCH_PER_CM));
+            }else{
+                telemetry.addData("rangeMM", String.format("0.00", cmReading * 10.0));
+                telemetry.addData("rangeCM", String.format("0.00", cmReading));
+                telemetry.addData("rangeM", String.format("0.00", cmReading / 100.0));
+                telemetry.addData("rangeINCH", String.format("0.00", cmReading * XYPlaneCalculations.INCH_PER_CM));
+            }
 
             // Rev2mDistanceSensor specific methods.
             telemetry.addData("ID", String.format("%x", sensorTimeOfFlight.getModelID()));

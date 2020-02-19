@@ -96,21 +96,28 @@ public class DarbotsPixelSkyStoneSampler {
     public void drawSamplingBoxOnFrame(Bitmap frame, int WallStoneStartX, int WallStoneStartY, int WallStoneEndX, int WallStoneEndY, int CenterStoneStartX, int CenterStoneStartY, int CenterStoneEndX, int CenterStoneEndY, int BridgeStoneStartX, int BridgeStoneStartY, int BridgeStoneEndX, int BridgeStoneEndY){
         Paint samplerPainter = new Paint();
         samplerPainter.setColor(Color.BLACK);
+
         samplerPainter.setTextSize(32);
         samplerPainter.setStrokeWidth(3.0f);
         samplerPainter.setTextAlign(Paint.Align.LEFT);
         Canvas bitmapCanvas = new Canvas(frame);
         {
-            bitmapCanvas.drawRect(WallStoneStartX, WallStoneStartY, WallStoneEndX, WallStoneEndY, samplerPainter);
+            drawRect(bitmapCanvas,samplerPainter,WallStoneStartX, WallStoneStartY, WallStoneEndX, WallStoneEndY);
             bitmapCanvas.drawText("Wall Stone", WallStoneStartX, WallStoneStartY, samplerPainter);
         }
         {
-            bitmapCanvas.drawRect(CenterStoneStartX, CenterStoneStartY, WallStoneEndX, WallStoneEndY, samplerPainter);
+            drawRect(bitmapCanvas,samplerPainter,CenterStoneStartX, CenterStoneStartY, WallStoneEndX, WallStoneEndY);
             bitmapCanvas.drawText("Center Stone", CenterStoneStartX, CenterStoneStartY, samplerPainter);
         }
         {
-            bitmapCanvas.drawRect(BridgeStoneStartX,BridgeStoneStartY,BridgeStoneEndX,BridgeStoneEndY,samplerPainter);
+            drawRect(bitmapCanvas,samplerPainter,BridgeStoneStartX,BridgeStoneStartY,BridgeStoneEndX,BridgeStoneEndY);
             bitmapCanvas.drawText("Bridge Stone", BridgeStoneStartX, BridgeStoneStartY, samplerPainter);
         }
+    }
+    public static void drawRect(Canvas canvas, Paint paint, float startX, float startY, float endX, float endY){
+        canvas.drawLine(startX,startY,endX,startY,paint);
+        canvas.drawLine(endX,startY,endX,endY,paint);
+        canvas.drawLine(endX,endY,startX,endY,paint);
+        canvas.drawLine(startX,endY,startX,startY,paint);
     }
 }

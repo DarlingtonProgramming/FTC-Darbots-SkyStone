@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class DarbotsDistanceSensor implements RobotNonBlockingDevice {
     public static double DISTANCE_INVALID = -1;
 
+    public double ActualDistanceFactor = 1.0;
     private DistanceSensor m_DistanceSensor;
     private double m_LastReadingCM = DISTANCE_INVALID;
 
@@ -42,6 +43,8 @@ public class DarbotsDistanceSensor implements RobotNonBlockingDevice {
         this.m_LastReadingCM = this.m_DistanceSensor.getDistance(DistanceUnit.CM);
         if(this.m_LastReadingCM == DistanceSensor.distanceOutOfRange){
             this.m_LastReadingCM = DISTANCE_INVALID;
+        }else{
+            this.m_LastReadingCM *= this.ActualDistanceFactor;
         }
     }
 

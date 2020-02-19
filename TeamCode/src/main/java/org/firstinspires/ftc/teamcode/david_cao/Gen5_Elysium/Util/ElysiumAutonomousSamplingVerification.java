@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.darbots.darbotsftclib.game_specific.AllianceType;
 import org.darbots.darbotsftclib.libcore.OpModes.DarbotsBasicOpMode;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.El
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 @Config
+@TeleOp(group = "4100", name = "Elysium-Util-Sampling")
 public class ElysiumAutonomousSamplingVerification extends LinearOpMode {
     public static boolean sampleBlue = false;
     private RobotOnPhoneCamera m_Camera;
