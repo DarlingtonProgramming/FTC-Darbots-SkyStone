@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.RoadRunner.drive.me
 @Config
 @Autonomous(group = "drive")
 public class FollowerPIDTuner extends LinearOpMode {
-    public static double DISTANCE = 48;
+    public static double DISTANCE = 40;
 
     @Override
     public void runOpMode() throws InterruptedException {

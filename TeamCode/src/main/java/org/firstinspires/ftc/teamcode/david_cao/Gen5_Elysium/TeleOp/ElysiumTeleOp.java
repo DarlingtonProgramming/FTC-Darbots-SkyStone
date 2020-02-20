@@ -318,7 +318,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
                 state_StackerSlideManual = false;
             }
         }
-        if(gamepad2.right_bumper){
+        if(gamepad2.dpad_up){
             state_StackerSlideManual = false;
             this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(
                     new TargetPosTask(
@@ -327,7 +327,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
                             ElysiumTeleOpSettings.STACKER_SLIDE_SPEED
                     )
             );
-        }else if(gamepad2.left_bumper){
+        }else if(gamepad2.dpad_down){
             state_StackerSlideManual = false;
             this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(
                     new TargetPosTask(

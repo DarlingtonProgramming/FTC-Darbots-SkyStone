@@ -49,7 +49,7 @@ public class ElysiumSettings {
     public static double CHASSIS_WIDTH = 33.0;
     public static RobotVector2D CHASSIS_FACTORS = new RobotVector2D(
             1.0,
-            1.05,
+            1.12,
             1.0
     );
     public static double CHASSIS_FRICTION_FACTOR = 0.5;
@@ -63,7 +63,7 @@ public class ElysiumSettings {
 
     //public static double CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD = (CHASSIS_MAX_FORCE * Math.sqrt(Math.pow(CHASSIS_LENGTH / 2.0 / 100.0,2) + Math.pow(CHASSIS_WIDTH/2.0 / 100.0,2)) / PHYSICAL_INTERTIA);
     //calculated 7.188 Rad / s^2, 412 deg / s^2
-    public static double CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD = 180;
+    public static double CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD = 90;
     public static double CHASSIS_MAXIMUM_ANGULAR_ACCEL_DEG = Math.toDegrees(CHASSIS_MAXIMUM_ANGULAR_ACCEL_RAD);
 
 
@@ -71,7 +71,7 @@ public class ElysiumSettings {
     //calculated value: 611.46
     public static double CHASSIS_MAXIMUM_SPEED = 200;
 
-    public static double CHASSIS_MAXIMUM_ANGULAR_SPEED_DEG = 270;
+    public static double CHASSIS_MAXIMUM_ANGULAR_SPEED_DEG = 180;
     public static double CHASSIS_MAXIMUM_ANGULAR_SPEED_RAD = Math.toRadians(CHASSIS_MAXIMUM_ANGULAR_SPEED_DEG);
     //========== End of Chassis Settings ==========
 
@@ -89,17 +89,17 @@ public class ElysiumSettings {
     //========== Start of Autonomous Claw Settings ==========
     public static ServoType AUTONOMOUS_CLAW_ROTSERVO_TYPE = new HS755MG();
     public static ServoType AUTONOMOUS_CLAW_GRABSERVO_TYPE = new HS485HB();
-    public static RobotPoint2D AUTONOMOUS_CLAW_LEFT_POSITION_WHEN_DOWN = new RobotPoint2D(13.5,25.0);
-    public static double AUTONOMOUS_CLAW_LEFT_INSIDE_POS = 0.15;
+    public static RobotPoint2D AUTONOMOUS_CLAW_LEFT_POSITION_WHEN_DOWN = new RobotPoint2D(8.0,20.0);
+    public static double AUTONOMOUS_CLAW_LEFT_INSIDE_POS = 0.41;//0.15;
     public static double AUTONOMOUS_CLAW_LEFT_ROT_STONE_GRABBED_POS = 0.41;
-    public static double AUTONOMOUS_CLAW_LEFT_REST_POS = 0.28;
+    public static double AUTONOMOUS_CLAW_LEFT_REST_POS = 0.35;
     public static double AUTONOMOUS_CLAW_LEFT_OUTSIDE_POS = 0.89;
     public static double AUTONOMOUS_CLAW_LEFT_WIDE_OPEN_POS = 0.8;
     public static double AUTONOMOUS_CLAW_LEFT_ALL_CLOSED_POS = 0.0;
     public static double AUTONOMOUS_CLAW_LEFT_GRAB_STONE_POS = 0.1;
 
-    public static RobotPoint2D AUTONOMOUS_CLAW_RIGHT_POSITION_WHEN_DOWN = new RobotPoint2D(13.5,-25.0);
-    public static double AUTONOMOUS_CLAW_RIGHT_INSIDE_POS = 0.9;
+    public static RobotPoint2D AUTONOMOUS_CLAW_RIGHT_POSITION_WHEN_DOWN = new RobotPoint2D(8.0,-20.0);
+    public static double AUTONOMOUS_CLAW_RIGHT_INSIDE_POS = 0.56;//0.9;
     public static double AUTONOMOUS_CLAW_RIGHT_ROT_STONE_GRABBED_POS = 0.56;
     public static double AUTONOMOUS_CLAW_RIGHT_REST_POS = 0.75;
     public static double AUTONOMOUS_CLAW_RIGHT_OUTSIDE_POS = 0.11;

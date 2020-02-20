@@ -73,8 +73,9 @@ public class RobotAsyncPositionTracker extends RobotBasic2DPositionTracker imple
     }
 
     protected void drive_MoveThroughRobotAxisOffset(RobotPose2D robotAxisValues) {
-        RobotPose2D tempField = XYPlaneCalculations.getAbsolutePosition(super.m_CurrentPos,robotAxisValues);
-        super.m_CurrentPos = tempField;
+        RobotPose2D currentPose = this.getCurrentPosition();
+        RobotPose2D tempField = XYPlaneCalculations.getAbsolutePosition(currentPose,robotAxisValues);
+        super.setCurrentPosition(tempField);
     }
 
     @Override

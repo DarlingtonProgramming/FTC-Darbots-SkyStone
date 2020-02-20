@@ -9,6 +9,6 @@ import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 @Config
 public class ServoPositionCalibrationSettings {
     public static String servoPositionCalibrationConfigName = "leftAutoArmGrabber";
-    public static ServoType servoPositionCalibrationServoType = new HS485HB();
+    public static ServoType servoPositionCalibrationServoType = new HS755MG();
     public static double servoPositionCalibrationPos = 0.0;
 }

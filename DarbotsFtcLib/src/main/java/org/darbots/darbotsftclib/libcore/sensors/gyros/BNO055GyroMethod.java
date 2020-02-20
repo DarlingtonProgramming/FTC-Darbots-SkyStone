@@ -45,6 +45,6 @@ public class BNO055GyroMethod implements GyroMethod {
 
     @Override
     public RobotGyro.HeadingRotationPositiveOrientation getHeadingRotationPositiveOrientation() {
-        return null;
+        return RobotGyro.HeadingRotationPositiveOrientation.CounterClockwise;
     }
 }

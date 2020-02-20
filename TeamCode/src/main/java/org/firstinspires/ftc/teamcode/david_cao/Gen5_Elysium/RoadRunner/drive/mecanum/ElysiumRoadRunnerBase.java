@@ -42,8 +42,8 @@ import java.util.List;
  */
 @Config
 public abstract class ElysiumRoadRunnerBase extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(1, 0.1, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(1, 0.2, 0.2);
 
 
     public enum Mode {
@@ -193,10 +193,12 @@ public abstract class ElysiumRoadRunnerBase extends MecanumDrive {
 
                 fieldOverlay.setStroke("#F44336");
                 double t = follower.elapsedTime();
-                DashboardUtil.drawRobot(fieldOverlay, trajectory.get(t));
+                //DashboardUtil.drawRobot(fieldOverlay, trajectory.get(t));
+                DashboardUtil.drawRobot(fieldOverlay,currentPose);
 
                 fieldOverlay.setStroke("#3F51B5");
                 fieldOverlay.fillCircle(currentPose.getX(), currentPose.getY(), 3);
+
 
                 if (!follower.isFollowing()) {
                     mode = Mode.IDLE;

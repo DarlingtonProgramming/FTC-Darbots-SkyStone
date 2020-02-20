@@ -22,6 +22,7 @@ public class RobotSeparateThreadPositionTracker extends RobotSynchronized2DPosit
             m_RunningFlag = true;
             m_Time = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
             GlobalUtil.updateBulkRead();
+            updateGyroProvider();
             __trackStart();
 
             m_Time.reset();
@@ -37,6 +38,7 @@ public class RobotSeparateThreadPositionTracker extends RobotSynchronized2DPosit
                 double time = m_Time.seconds();
                 m_Time.reset();
                 GlobalUtil.updateBulkRead();
+                updateGyroProvider();
                 __trackLoop(time);
                 if(GlobalRegister.runningOpMode != null && GlobalRegister.runningOpMode.isStopRequested()){
                     break;
@@ -139,9 +141,14 @@ public class RobotSeparateThreadPositionTracker extends RobotSynchronized2DPosit
     }
 
     protected void drive_MoveThroughRobotAxisOffset(RobotPose2D robotAxisValues) {
+        RobotPose2D currentPose = this.getCurrentPosition();
+        RobotPose2D newPose = XYPlaneCalculations.getAbsolutePosition(currentPose,robotAxisValues);
         synchronized (super.m_CurrentPos) {
-            RobotPose2D tempField = XYPlaneCalculations.getAbsolutePosition(super.m_CurrentPos,robotAxisValues);
-            super.m_CurrentPos = tempField;
+            super.m_CurrentPos.X = newPose.X;
+            super.m_CurrentPos.Y = newPose.Y;
+            if (this.m_GyroProvider == null) {
+                super.m_CurrentPos.setRotationZ(newPose.getRotationZ());
+            }
         }
     }
 
