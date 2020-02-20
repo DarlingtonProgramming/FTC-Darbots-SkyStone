@@ -17,13 +17,6 @@ public class ElysiumOuttake implements RobotNonBlockingDevice {
         RELEASED,
         GRABBED
     }
-    public static final double OUTTAKE_SLIDE_MAX_POS = ElysiumSettings.OUTTAKE_SLIDE_MAX_POS;
-    public static final double OUTTAKE_SLIDE_MIN_POS = ElysiumSettings.OUTTAKE_SLIDE_MIN_POS;
-    public static final double OUTTAKE_OUT_OF_WAY_INTAKE_POS = ElysiumSettings.OUTTAKE_SLIDE_OUT_OF_WAY_INTAKE_POS;
-    private static final double OUTTAKE_GRABBER_RELEASED_POS = ElysiumSettings.OUTTAKE_GRABBER_RELEASED_POS;
-    private static final double OUTTAKE_GRABBER_GRABBED_POS = ElysiumSettings.OUTTAKE_GRABBER_GRABBED_POS;
-    private static final double OUTTAKE_GRABBER_FAR_RELEASED_POS = ElysiumSettings.OUTTAKE_GRABBER_FAR_RELEASED_POS;
-    private static final double OUTTAKE_SLIDE_MIDDLE_BETWEEN_RELEASED_AND_FAR_RELEASED = (OUTTAKE_SLIDE_MIN_POS + OUTTAKE_SLIDE_MAX_POS) / 2.0;
     public TimeControlledServo outTakeSlide;
     private Servo grabber;
 
@@ -31,10 +24,10 @@ public class ElysiumOuttake implements RobotNonBlockingDevice {
     public ElysiumOuttake(HardwareMap map){
         Servo outTakeSlideServo = map.servo.get("outTakeSlideServo");
         SensorUtil.setServoPulseWidth(outTakeSlideServo,ElysiumSettings.OUTTAKE_SLIDE_SERVO_TYPE);
-        this.outTakeSlide = new TimeControlledServo(outTakeSlideServo,ElysiumSettings.OUTTAKE_SLIDE_SERVO_TYPE,OUTTAKE_SLIDE_MIN_POS,true);
+        this.outTakeSlide = new TimeControlledServo(outTakeSlideServo,ElysiumSettings.OUTTAKE_SLIDE_SERVO_TYPE,ElysiumSettings.OUTTAKE_SLIDE_MIN_POS,true);
         this.grabber = map.servo.get("outTakeGrabberServo");
         SensorUtil.setServoPulseWidth(this.grabber,ElysiumSettings.OUTTAKE_GRABBER_SERVO_TYPE);
-        this.grabber.setPosition(OUTTAKE_GRABBER_FAR_RELEASED_POS);
+        this.grabber.setPosition(ElysiumSettings.OUTTAKE_GRABBER_FAR_RELEASED_POS);
         this.lastSlidePosition = this.outTakeSlide.getCurrentPosition();
     }
 
@@ -48,7 +41,7 @@ public class ElysiumOuttake implements RobotNonBlockingDevice {
         this.outTakeSlide.updateStatus();
         {
             double currentSlidePosition = this.outTakeSlide.getCurrentPosition();
-            if((lastSlidePosition < OUTTAKE_SLIDE_MIDDLE_BETWEEN_RELEASED_AND_FAR_RELEASED && currentSlidePosition >= OUTTAKE_SLIDE_MIDDLE_BETWEEN_RELEASED_AND_FAR_RELEASED) || (lastSlidePosition >= OUTTAKE_SLIDE_MIDDLE_BETWEEN_RELEASED_AND_FAR_RELEASED && currentSlidePosition < OUTTAKE_SLIDE_MIDDLE_BETWEEN_RELEASED_AND_FAR_RELEASED)){
+            if((lastSlidePosition < ElysiumSettings.OUTTAKE_SLIDE_SAFE_FAR_RELEASE && currentSlidePosition >= ElysiumSettings.OUTTAKE_SLIDE_SAFE_FAR_RELEASE) || (lastSlidePosition >= ElysiumSettings.OUTTAKE_SLIDE_SAFE_FAR_RELEASE && currentSlidePosition < ElysiumSettings.OUTTAKE_SLIDE_SAFE_FAR_RELEASE)){
                 if(this.getGrabberState() == Outtake_Grabber_State.RELEASED){
                     this.setGrabberState(Outtake_Grabber_State.RELEASED);
                 }else{
@@ -61,7 +54,7 @@ public class ElysiumOuttake implements RobotNonBlockingDevice {
     }
 
     public Outtake_Grabber_State getGrabberState(){
-        if(this.grabber.getPosition() == OUTTAKE_GRABBER_GRABBED_POS){
+        if(this.grabber.getPosition() == ElysiumSettings.OUTTAKE_GRABBER_GRABBED_POS){
             return Outtake_Grabber_State.GRABBED;
         }else{
             return Outtake_Grabber_State.RELEASED;
@@ -70,13 +63,13 @@ public class ElysiumOuttake implements RobotNonBlockingDevice {
 
     public void setGrabberState(Outtake_Grabber_State grabberState){
         if(grabberState == Outtake_Grabber_State.GRABBED){
-            this.grabber.setPosition(OUTTAKE_GRABBER_GRABBED_POS);
+            this.grabber.setPosition(ElysiumSettings.OUTTAKE_GRABBER_GRABBED_POS);
         }else{
-            double currentSlidePosition = this.outTakeSlide.getCurrentPosition();
-            if(currentSlidePosition < OUTTAKE_SLIDE_MIDDLE_BETWEEN_RELEASED_AND_FAR_RELEASED){
-                this.grabber.setPosition(OUTTAKE_GRABBER_FAR_RELEASED_POS);
+            double currentSlidePosition = this.outTakeSlide.getServo().getPosition();
+            if(currentSlidePosition >= ElysiumSettings.OUTTAKE_SLIDE_SAFE_FAR_RELEASE){
+                this.grabber.setPosition(ElysiumSettings.OUTTAKE_GRABBER_FAR_RELEASED_POS);
             }else{
-                this.grabber.setPosition(OUTTAKE_GRABBER_RELEASED_POS);
+                this.grabber.setPosition(ElysiumSettings.OUTTAKE_GRABBER_RELEASED_POS);
             }
             this.lastSlidePosition = currentSlidePosition;
         }
@@ -112,7 +105,7 @@ public class ElysiumOuttake implements RobotNonBlockingDevice {
 
     public void updateTelemetry(Telemetry telemetry, TelemetryPacket telemetryPacket){
         double currentOuttakePos = outTakeSlide.getCurrentPosition();
-        GlobalUtil.addTelmetryLine(telemetry,telemetryPacket,"OuttakeSlide","" + currentOuttakePos + "[" + (currentOuttakePos / (OUTTAKE_SLIDE_MAX_POS - OUTTAKE_SLIDE_MIN_POS)) + "%]");
+        GlobalUtil.addTelmetryLine(telemetry,telemetryPacket,"OuttakeSlide","" + currentOuttakePos + "[" + (currentOuttakePos / (ElysiumSettings.OUTTAKE_SLIDE_MIN_POS - ElysiumSettings.OUTTAKE_SLIDE_MAX_POS)) + "%]");
         GlobalUtil.addTelmetryLine(telemetry,telemetryPacket,"OuttakeGrabber",this.getGrabberState().name());
     }
 }

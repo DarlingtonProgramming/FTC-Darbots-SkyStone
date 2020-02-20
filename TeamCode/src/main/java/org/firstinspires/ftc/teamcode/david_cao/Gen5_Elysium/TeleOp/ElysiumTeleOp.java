@@ -10,8 +10,11 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.Ro
 import org.darbots.darbotsftclib.libcore.tasks.chassis_tasks.RobotMotionSystemTeleOpTask;
 import org.darbots.darbotsftclib.libcore.tasks.servo_tasks.motor_powered_servo_tasks.TargetPosTask;
 import org.darbots.darbotsftclib.libcore.templates.DarbotsAction;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Autonomous.ElysiumAutoBase;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumAutoCore;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumCore;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.ElysiumSoundBox;
+import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumAutonomousSettings;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumTeleOpSettings;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Soundboxes.ElysiumTeleOpSoundBox;
@@ -28,7 +31,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
         protected void __startAction() {
             step = 0;
             getRobotCore().outtakeSubSystem.outTakeSlide.setTargetPosition(
-                    getRobotCore().outtakeSubSystem.OUTTAKE_OUT_OF_WAY_INTAKE_POS,
+                    ElysiumSettings.OUTTAKE_SLIDE_OUT_OF_WAY_INTAKE_POS,
                     1.0
             );
             getRobotCore().intakeSubSystem.setPositioningServoStatus(ElysiumIntake.ElysiumIntakePositioningServoStatus.AUTO);
@@ -59,7 +62,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
                         step = 2;
                         intakeTimeCounter = null;
                         getRobotCore().intakeSubSystem.setIntakeSystemStatus(ElysiumIntake.ElysiumIntakeStatus.STOPPED,0);
-                        getRobotCore().outtakeSubSystem.outTakeSlide.setTargetPosition(getRobotCore().outtakeSubSystem.OUTTAKE_SLIDE_MIN_POS,1.0);
+                        getRobotCore().outtakeSubSystem.outTakeSlide.setTargetPosition(ElysiumSettings.OUTTAKE_SLIDE_MIN_POS,1.0);
                         getRobotCore().intakeSubSystem.setPositioningServoStatus(ElysiumIntake.ElysiumIntakePositioningServoStatus.REST);
                     }
                     break;
@@ -82,7 +85,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
         protected void __startAction() {
             step = 0;
             commonTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-            getRobotCore().outtakeSubSystem.outTakeSlide.getServo().setPosition(getRobotCore().outtakeSubSystem.OUTTAKE_SLIDE_MAX_POS);
+            getRobotCore().outtakeSubSystem.outTakeSlide.getServo().setPosition(ElysiumSettings.OUTTAKE_SLIDE_MAX_POS);
             getRobotCore().outtakeSubSystem.setGrabberState(ElysiumOuttake.Outtake_Grabber_State.GRABBED);
         }
 
@@ -90,8 +93,8 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
         protected void __stopAction() {
             step = 0;
             commonTimer = null;
-            getRobotCore().outtakeSubSystem.outTakeSlide.setTargetPosition(getRobotCore().outtakeSubSystem.OUTTAKE_SLIDE_MIN_POS,ElysiumTeleOpSettings.OUTTAKE_SLIDE_SPEED);
-            getRobotCore().outtakeSubSystem.setGrabberState(ElysiumOuttake.Outtake_Grabber_State.GRABBED);
+            getRobotCore().outtakeSubSystem.outTakeSlide.setTargetPosition(ElysiumSettings.OUTTAKE_SLIDE_MIN_POS,ElysiumTeleOpSettings.OUTTAKE_SLIDE_SPEED);
+            getRobotCore().outtakeSubSystem.setGrabberState(ElysiumOuttake.Outtake_Grabber_State.RELEASED);
         }
 
         @Override
@@ -111,7 +114,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
                     if(commonTimer.seconds() >= ElysiumSettings.OUTTAKE_GRABBER_WAIT_SEC){
                         step = 2;
                         commonTimer.reset();
-                        getRobotCore().outtakeSubSystem.outTakeSlide.getServo().setPosition(getRobotCore().outtakeSubSystem.OUTTAKE_SLIDE_MIN_POS);
+                        getRobotCore().outtakeSubSystem.outTakeSlide.getServo().setPosition(ElysiumSettings.OUTTAKE_SLIDE_MIN_POS);
                     }
                     break;
                 case 2:
@@ -189,7 +192,8 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
 
     @Override
     public void hardwareInitialize() {
-        this.m_Core = new ElysiumCore("ElysiumTeleOp.log",this.hardwareMap,true,true,new RobotPose2D(0,0,-180),false);
+        RobotPose2D initialPose = ElysiumAutonomousSettings.RED_AUTO_START_POSE;
+        this.m_Core = new ElysiumCore("ElysiumTeleOp.log",this.hardwareMap,true,true,initialPose,false);
         this.teleOpTask = new RobotMotionSystemTeleOpTask();
         this.m_Core.getChassis().addTask(this.teleOpTask);
         this.SoundBox = new ElysiumTeleOpSoundBox(this,this.m_Core);
@@ -256,6 +260,12 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
             controlRotZ = -gamepad1.right_stick_x;
         }
 
+        if(gamepad1.left_bumper){
+            controlX *= 0.3;
+            controlY *= 0.3;
+            controlRotZ *= 0.3;
+        }
+
         this.teleOpTask.xSpeedNormalized = controlX * ElysiumTeleOpSettings.CHASSIS_SPEED_X_FACTOR;
         this.teleOpTask.ySpeedNormalized = controlY * ElysiumTeleOpSettings.CHASSIS_SPEED_Y_FACTOR;
         this.teleOpTask.zRotSpeedNormalized = controlRotZ * ElysiumTeleOpSettings.CHASSIS_SPEED_ROT_FACTOR;
@@ -269,7 +279,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
         }else{
             this.m_Core.intakeSubSystem.setIntakeSystemStatus(ElysiumIntake.ElysiumIntakeStatus.STOPPED, 0);
         }
-        if(gamepad1.x){
+        if(gamepad2.x){
             if(this.outtakeControlAction.isBusy()){
                 this.outtakeControlAction.stopAction();
             }
@@ -307,9 +317,9 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
         }
 
         if(gamepad2.right_bumper){
-            this.getRobotCore().stackerSubSystem.setDoorState(ElysiumStacker.Stacker_Door_State.RELEASED);
-        }else{
             this.getRobotCore().stackerSubSystem.setDoorState(ElysiumStacker.Stacker_Door_State.CLOSED);
+        }else{
+            this.getRobotCore().stackerSubSystem.setDoorState(ElysiumStacker.Stacker_Door_State.RELEASED);
         }
     }
 

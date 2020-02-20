@@ -16,10 +16,9 @@ import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings;
 
+import static org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Elysium_Settings.ElysiumSettings.STACKER_SLIDE_MAX_POS;
+
 public class ElysiumStacker implements RobotNonBlockingDevice {
-    public static final double STACKER_SLIDE_MIN_POS = ElysiumSettings.STACKER_SLIDE_MIN_POS;
-    public static final double STACKER_SLIDE_MAX_POS = ElysiumSettings.STACKER_SLIDE_MAX_POS;
-    public static final double STACKER_SLIDE_ABOVE_FOUNDATION_POS = ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS;
     public static enum Stacker_Door_State{
         RELEASED,
         CLOSED
@@ -34,7 +33,7 @@ public class ElysiumStacker implements RobotNonBlockingDevice {
         stackerSlideDcMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RobotMotorWithEncoder stackerSlideMotor = new RobotMotorWithEncoder(stackerSlideDcMotor,ElysiumSettings.STACKER_SLIDE_TYPE);
         RobotMotorController stackerSlideMotorController = new RobotMotorController(stackerSlideMotor,true,2.0);
-        this.stackerSlide = new RobotServoUsingMotor(stackerSlideMotorController,STACKER_SLIDE_MIN_POS,STACKER_SLIDE_MIN_POS,STACKER_SLIDE_MAX_POS);
+        this.stackerSlide = new RobotServoUsingMotor(stackerSlideMotorController,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumSettings.STACKER_SLIDE_MIN_POS,STACKER_SLIDE_MAX_POS);
         this.leftDoor = map.servo.get("stackerDoorLeftServo");
         SensorUtil.setServoPulseWidth(this.leftDoor,ElysiumSettings.STACKER_DOOR_SERVO_TYPE);
         this.rightDoor = map.servo.get("stackerDoorRightServo");

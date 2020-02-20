@@ -106,7 +106,7 @@ public class DarbotsPixelSkyStoneSampler {
             bitmapCanvas.drawText("Wall Stone", WallStoneStartX, WallStoneStartY, samplerPainter);
         }
         {
-            drawRect(bitmapCanvas,samplerPainter,CenterStoneStartX, CenterStoneStartY, WallStoneEndX, WallStoneEndY);
+            drawRect(bitmapCanvas,samplerPainter,CenterStoneStartX, CenterStoneStartY, CenterStoneEndX, CenterStoneEndY);
             bitmapCanvas.drawText("Center Stone", CenterStoneStartX, CenterStoneStartY, samplerPainter);
         }
         {

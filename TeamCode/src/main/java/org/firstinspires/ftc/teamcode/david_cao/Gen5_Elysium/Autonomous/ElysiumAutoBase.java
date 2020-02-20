@@ -94,6 +94,7 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     public void setRightClawToPrepareGrab(){
         this.getRobotCore().autoArmsSubSystem.rightArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.WIDE_OPEN);
         this.getRobotCore().autoArmsSubSystem.rightArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.OUT);
+
     }
 
     public void setLeftClawToRest(){
@@ -109,11 +110,14 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     }
 
     public void prepareToGrabFoundation(double power){
-        this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null, ElysiumStacker.STACKER_SLIDE_ABOVE_FOUNDATION_POS,power));
+        this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null, ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS,power));
+        while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy()){
+            this.updateStatus();
+        }
     }
 
     public void grabFoundation(double power){
-        this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumStacker.STACKER_SLIDE_MIN_POS,power));
+        this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,power));
         while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy()){
             this.updateStatus();
         }

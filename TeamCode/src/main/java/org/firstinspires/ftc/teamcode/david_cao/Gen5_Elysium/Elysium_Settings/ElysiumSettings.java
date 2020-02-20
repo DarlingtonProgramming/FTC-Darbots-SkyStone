@@ -49,7 +49,7 @@ public class ElysiumSettings {
     public static double CHASSIS_WIDTH = 33.0;
     public static RobotVector2D CHASSIS_FACTORS = new RobotVector2D(
             1.0,
-            1.0,
+            1.05,
             1.0
     );
     public static double CHASSIS_FRICTION_FACTOR = 0.5;
@@ -89,7 +89,7 @@ public class ElysiumSettings {
     //========== Start of Autonomous Claw Settings ==========
     public static ServoType AUTONOMOUS_CLAW_ROTSERVO_TYPE = new HS755MG();
     public static ServoType AUTONOMOUS_CLAW_GRABSERVO_TYPE = new HS485HB();
-    public static RobotPoint2D AUTONOMOUS_CLAW_LEFT_POSITION_WHEN_DOWN = new RobotPoint2D(13.5,23.0);
+    public static RobotPoint2D AUTONOMOUS_CLAW_LEFT_POSITION_WHEN_DOWN = new RobotPoint2D(13.5,25.0);
     public static double AUTONOMOUS_CLAW_LEFT_INSIDE_POS = 0.15;
     public static double AUTONOMOUS_CLAW_LEFT_ROT_STONE_GRABBED_POS = 0.41;
     public static double AUTONOMOUS_CLAW_LEFT_REST_POS = 0.28;
@@ -98,7 +98,7 @@ public class ElysiumSettings {
     public static double AUTONOMOUS_CLAW_LEFT_ALL_CLOSED_POS = 0.0;
     public static double AUTONOMOUS_CLAW_LEFT_GRAB_STONE_POS = 0.1;
 
-    public static RobotPoint2D AUTONOMOUS_CLAW_RIGHT_POSITION_WHEN_DOWN = new RobotPoint2D(13.5,-23.0);
+    public static RobotPoint2D AUTONOMOUS_CLAW_RIGHT_POSITION_WHEN_DOWN = new RobotPoint2D(13.5,-25.0);
     public static double AUTONOMOUS_CLAW_RIGHT_INSIDE_POS = 0.9;
     public static double AUTONOMOUS_CLAW_RIGHT_ROT_STONE_GRABBED_POS = 0.56;
     public static double AUTONOMOUS_CLAW_RIGHT_REST_POS = 0.75;
@@ -113,9 +113,9 @@ public class ElysiumSettings {
 
     //========== Start of Stacker System Settings ==========
     public static double STACKER_SLIDE_MIN_POS = 0;
-    public static double STACKER_ABOVE_FOUNDATION_POS = 0;
+    public static double STACKER_ABOVE_FOUNDATION_POS = 0.468;
     public static double STACKER_STONE_DOWN_POS = 0;
-    public static double STACKER_SLIDE_MAX_POS = 1.576;
+    public static double STACKER_SLIDE_MAX_POS = 1.560;
     public static MotorType STACKER_SLIDE_TYPE = new GoBilda5202Series117RPMMotor();
 
     public static double STACKER_DOOR_LEFT_OPEN_POS = 0;
@@ -129,7 +129,7 @@ public class ElysiumSettings {
 
     //========== Start of Out-Take System Settings ==========
     public static double OUTTAKE_SLIDE_MIN_POS = 0.78;
-    public static double OUTTAKE_SLIDE_MAX_POS = 0.08;
+    public static double OUTTAKE_SLIDE_MAX_POS = 0.10;
     public static double OUTTAKE_SLIDE_OUT_OF_WAY_INTAKE_POS = 0.6;
     public static double OUTTAKE_SLIDE_SAFE_FAR_RELEASE = 0.3;
     public static ServoType OUTTAKE_SLIDE_SERVO_TYPE = new HS755MG();
@@ -138,7 +138,7 @@ public class ElysiumSettings {
     public static double OUTTAKE_GRABBER_RELEASED_POS = 0.4;
     public static ServoType OUTTAKE_GRABBER_SERVO_TYPE = new HS485HB();
     public static double OUTTAKE_GRABBER_WAIT_SEC = 0.5;
-    public static double OUTTAKE_SLIDE_WAIT_SEC = 2.0;
+    public static double OUTTAKE_SLIDE_WAIT_SEC = 1.0;
     //========== End of Our-Take System Settings ==========
 
     //========== Start of Intake System Settings ==========

@@ -242,7 +242,7 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
         {
             //We are absolutely in the building zone now, go to position to prepare to grab foundation.
             //we can rise the foundation puller first
-            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.STACKER_SLIDE_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
             while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
                 this.getRobotCore().updateStatus();
                 this.lazyUpdateTelemetry();
@@ -250,19 +250,30 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
 
             RobotPoint2D grabFoundationPos = ElysiumAutoBase.grabFoundationPosition_RED;
             RobotPoint2D grabFoundationPrepPos = new RobotPoint2D(grabFoundationPos);
-            grabFoundationPos.Y -= 40;
-            Trajectory trajectory =
+            grabFoundationPrepPos.Y -= 40;
+            this.m_Core.chassis.followTrajectorySync(
                     this.getRobotCore().chassis.trajectoryBuilder()
-                    .lineTo(getRoadRunnerPos(grabFoundationPrepPos),new ConstantInterpolator(Math.toRadians(-180)))
-                    .lineTo(getRoadRunnerPos(grabFoundationPos),new ConstantInterpolator(Math.toRadians(-90)))
-                    .build();
-            this.m_Core.chassis.followTrajectorySync(trajectory);
+                        .lineTo(getRoadRunnerPos(grabFoundationPrepPos),new ConstantInterpolator(Math.toRadians(-180)))
+                        .build()
+            );
+            if(!this.opModeIsActive()){
+                return false;
+            }
+            this.m_Core.chassis.turnSync(Math.toDegrees(90));
+            if(!this.opModeIsActive()){
+                return false;
+            }
+            this.m_Core.chassis.followTrajectorySync(
+                    this.getRobotCore().chassis.trajectoryBuilder()
+                        .lineTo(getRoadRunnerPos(grabFoundationPos),new ConstantInterpolator(Math.toRadians(-180)))
+                        .build()
+            );
             if(!this.opModeIsActive()){
                 return false;
             }
 
             //set puller to grab foundation
-            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
             while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
                 this.getRobotCore().updateStatus();
                 this.lazyUpdateTelemetry();
@@ -293,7 +304,7 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
         }
         {
             //foundation pulled, let's get our hands out of the foundation
-            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.STACKER_SLIDE_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
             RobotPoint2D leaveFoundationPoint = new RobotPoint2D(this.getRobotCore().getCurrentPosition());
             leaveFoundationPoint.X -= 10;
             this.m_Core.chassis.followTrajectory(
@@ -309,7 +320,7 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
                 this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
             }
 
-            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
             while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
                 this.getRobotCore().updateStatus();
                 this.lazyUpdateTelemetry();

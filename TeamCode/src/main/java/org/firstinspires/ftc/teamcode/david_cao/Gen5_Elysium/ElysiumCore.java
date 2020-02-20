@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -76,6 +77,10 @@ public class ElysiumCore extends RobotCore {
         RobotMotorWithEncoder RTMotor = new RobotMotorWithEncoder(map.dcMotor.get("RF"),ElysiumSettings.CHASSIS_MOTOR_TYPE);
         RobotMotorWithEncoder LBMotor = new RobotMotorWithEncoder(map.dcMotor.get("LB"),ElysiumSettings.CHASSIS_MOTOR_TYPE);
         RobotMotorWithEncoder RBMotor = new RobotMotorWithEncoder(map.dcMotor.get("RB"),ElysiumSettings.CHASSIS_MOTOR_TYPE);
+        LTMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RTMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LBMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RBMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RobotWheel LTWheel = new RobotWheel(new RobotPose2D(HALF_LENGTH,HALF_WIDTH,135),ElysiumSettings.CHASSIS_WHEEL_RADIUS);
         RobotWheel RTWheel = new RobotWheel(new RobotPose2D(HALF_LENGTH,-HALF_WIDTH,45),ElysiumSettings.CHASSIS_WHEEL_RADIUS);
         RobotWheel LBWheel = new RobotWheel(new RobotPose2D(-HALF_LENGTH,HALF_WIDTH,-135),ElysiumSettings.CHASSIS_WHEEL_RADIUS);

@@ -36,6 +36,12 @@ public abstract class ElysiumFieldOrientedTeleOp extends ElysiumTeleOp {
             controlRotZ = -gamepad1.right_stick_x;
         }
 
+        if(gamepad1.left_bumper){
+            controlX *= 0.3;
+            controlY *= 0.3;
+            controlRotZ *= 0.3;
+        }
+
         RobotVector2D fieldOrientedControlSpeed = this.fieldControl.getRobotSpeed(new RobotVector2D(controlX,controlY,controlRotZ));
 
         this.teleOpTask.xSpeedNormalized = fieldOrientedControlSpeed.X * ElysiumTeleOpSettings.CHASSIS_SPEED_X_FACTOR;
