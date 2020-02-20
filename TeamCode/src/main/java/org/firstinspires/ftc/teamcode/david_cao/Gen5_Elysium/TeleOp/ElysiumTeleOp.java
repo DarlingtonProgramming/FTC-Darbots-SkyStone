@@ -184,6 +184,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
     public ElysiumTeleOpSoundBox SoundBox;
     public OutTakeContorlAction outtakeControlAction;
     public IntakePositioningAction intakePositioningAction;
+    public boolean state_StackerSlideManual = false;
 
     @Override
     public ElysiumCore getRobotCore() {
@@ -289,6 +290,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
 
     public void stackerControl(){
         if(Math.abs(gamepad2.left_stick_y) >= ElysiumTeleOpSettings.GAMEPAD_THRESEHOLD){
+            state_StackerSlideManual = true;
             if(gamepad2.left_stick_y < 0){
                 if(!this.getRobotCore().stackerSubSystem.stackerSlide.isBusy()) {
                     this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(
@@ -311,9 +313,29 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
                 }
             }
         }else{
-            if(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy()){
+            if(state_StackerSlideManual && this.getRobotCore().stackerSubSystem.stackerSlide.isBusy()){
                 this.getRobotCore().stackerSubSystem.stackerSlide.deleteAllTasks();
+                state_StackerSlideManual = false;
             }
+        }
+        if(gamepad2.right_bumper){
+            state_StackerSlideManual = false;
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(
+                    new TargetPosTask(
+                            null,
+                            ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS,
+                            ElysiumTeleOpSettings.STACKER_SLIDE_SPEED
+                    )
+            );
+        }else if(gamepad2.left_bumper){
+            state_StackerSlideManual = false;
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(
+                    new TargetPosTask(
+                            null,
+                            this.getRobotCore().stackerSubSystem.stackerSlide.getMinPos(),
+                            ElysiumTeleOpSettings.STACKER_SLIDE_SPEED
+                    )
+            );
         }
 
         if(gamepad2.right_bumper){

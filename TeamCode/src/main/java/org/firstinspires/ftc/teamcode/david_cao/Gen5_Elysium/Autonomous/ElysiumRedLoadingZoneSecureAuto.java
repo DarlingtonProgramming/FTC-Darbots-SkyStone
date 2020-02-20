@@ -253,20 +253,10 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
             grabFoundationPrepPos.Y -= 40;
             this.m_Core.chassis.followTrajectorySync(
                     this.getRobotCore().chassis.trajectoryBuilder()
-                        .lineTo(getRoadRunnerPos(grabFoundationPrepPos),new ConstantInterpolator(Math.toRadians(-180)))
-                        .build()
-            );
-            if(!this.opModeIsActive()){
-                return false;
-            }
-            this.m_Core.chassis.turnSync(Math.toDegrees(90));
-            if(!this.opModeIsActive()){
-                return false;
-            }
-            this.m_Core.chassis.followTrajectorySync(
-                    this.getRobotCore().chassis.trajectoryBuilder()
-                        .lineTo(getRoadRunnerPos(grabFoundationPos),new ConstantInterpolator(Math.toRadians(-180)))
-                        .build()
+                            .lineTo(getRoadRunnerPos(grabFoundationPrepPos),new ConstantInterpolator(Math.toRadians(-180)))
+                            .lineTo(getRoadRunnerPos(grabFoundationPrepPos),new LinearInterpolator(Math.toRadians(-180),Math.toRadians(-90)))
+                            .lineTo(getRoadRunnerPos(grabFoundationPos),new ConstantInterpolator(Math.toRadians(-90)))
+                            .build()
             );
             if(!this.opModeIsActive()){
                 return false;
@@ -291,7 +281,8 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
             Trajectory trajectory =
                     this.getRobotCore().chassis.trajectoryBuilder()
                             .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-90)))
-                            .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
+                            .lineTo(getRoadRunnerPos(firstPoint),new LinearInterpolator(Math.toRadians(-90),Math.toRadians(-180)))
+                            .lineTo(getRoadRunnerPos(secondPoint),new ConstantInterpolator(Math.toRadians(-180)))
                             .build();
             this.m_Core.chassis.followTrajectorySync(trajectory);
             if(!this.opModeIsActive()){
