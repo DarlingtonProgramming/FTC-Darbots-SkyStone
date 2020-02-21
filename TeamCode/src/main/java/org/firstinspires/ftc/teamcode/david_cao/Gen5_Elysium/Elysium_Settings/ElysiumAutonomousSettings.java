@@ -13,7 +13,7 @@ public class ElysiumAutonomousSettings {
 
     //========== Start of Sampling Settings ==========
     public static boolean SAMPLE_PREVIEW = true;
-    
+
     public static int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_START_X = 805;
     public static int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_START_Y = 600;
     public static int SAMPLE_RED_STONE_NEXT_TO_BRIDGE_END_X = 1011;
