@@ -12,7 +12,6 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XY
 import org.darbots.darbotsftclib.libcore.integratedfunctions.DarbotsOnRobotSensor2D;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCMemory;
 import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
-import org.darbots.darbotsftclib.libcore.odometry.MecanumOdometry;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.sensors.distance_sensors.DarbotsRevDistanceSensor;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
@@ -38,7 +37,7 @@ public class ElysiumAutoCore extends ElysiumCore {
         this.oldMotionSystem = this.getChassis();
         this.oldMotionSystem.getPositionTracker().stop();
         this.m_Chassis = null;
-        MecanumOdometry odometryMethod = new MecanumOdometry((MecanumDrivetrain) this.oldMotionSystem);
+        RoadRunnerMecanumOdometry odometryMethod = new RoadRunnerMecanumOdometry((MecanumDrivetrain) this.oldMotionSystem);
         RobotAsyncPositionTracker positionTracker = new RobotAsyncPositionTracker(odometryMethod,initialPose);
         positionTracker.setDistanceFactors(ElysiumSettings.CHASSIS_FACTORS);
         positionTracker.setGyroProvider(this.getGyro());

@@ -95,6 +95,8 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
 
     @Override
     public void __RunOpMode() {
+        this.getRobotCore().chassis.getLocalizer().update();
+        this.getRobotCore().setCurrentPosition(ElysiumAutonomousSettings.BLUE_AUTO_START_POSE);
         //Sample First
         this.sampledPosition = m_Sampler.sample(ALLIANCE_TYPE);
         FtcDashboard.getInstance().sendImage(this.m_Sampler.LastSampledFrame);

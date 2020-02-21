@@ -26,7 +26,6 @@ public class RoadRunnerDistanceEnhancedLocalizer implements Localizer {
     @Override
     public void update() {
         originalLocalizer.update();
-        Pose2d currentPose2D = this.getPoseEstimate();
         autoBase.calibratePositionUsingDistanceSensor();
     }
 }

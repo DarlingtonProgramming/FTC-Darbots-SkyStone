@@ -162,7 +162,7 @@ public class RobotAsyncPositionTracker extends RobotBasic2DPositionTracker imple
 
     @Override
     public RobotPose2D getCurrentPosition(){
-        RobotPose2D currentPose = super.getCurrentPosition();
+        RobotPose2D currentPose = new RobotPose2D(super.getCurrentPosition());
         if(this.m_GyroProvider != null){
             double currentGyroReading = this.m_GyroProvider.getHeading();
             double deltaAng = currentGyroReading - this.m_GyroReadingAtZero;
