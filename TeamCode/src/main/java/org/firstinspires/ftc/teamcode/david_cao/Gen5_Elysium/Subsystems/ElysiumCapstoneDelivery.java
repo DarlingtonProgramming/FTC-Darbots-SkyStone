@@ -25,7 +25,7 @@ public class ElysiumCapstoneDelivery implements RobotNonBlockingDevice {
         DcMotor capstoneSlideDcMotor = map.dcMotor.get("capstoneSlideMotor");
         capstoneSlideDcMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RobotMotorWithEncoder capstoneSlideMotor = new RobotMotorWithEncoder(capstoneSlideDcMotor,ElysiumSettings.CAPSTONE_SLIDE_MOTOR_TYPE);
-        RobotMotorController capstoneSlideMotorController = new RobotMotorController(capstoneSlideMotor,false,1.0);
+        RobotMotorController capstoneSlideMotorController = new RobotMotorController(capstoneSlideMotor,true,2.0);
         this.capstoneSlide = new RobotServoUsingMotor(capstoneSlideMotorController,CAPSTONEDELIVERY_SLIDE_MIN_POS,CAPSTONEDELIVERY_SLIDE_MIN_POS,CAPSTONEDELIVERY_SLIDE_MAX_POS);
         this.capstoneRotServo = map.servo.get("capstoneRotServo");
         SensorUtil.setServoPulseWidth(this.capstoneRotServo,ElysiumSettings.CAPSTONE_SERVO_TYPE);
