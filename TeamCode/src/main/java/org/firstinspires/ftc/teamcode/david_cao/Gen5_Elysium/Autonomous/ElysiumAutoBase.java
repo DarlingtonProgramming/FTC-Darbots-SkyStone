@@ -28,20 +28,20 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumS
 @Config
 public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore> {
     public static RobotPoint2D placeStoneOnFoundationPosition_RED = new RobotPoint2D(
-            SkyStoneCoordinates.FOUNDATION_RED.X,
-            SkyStoneCoordinates.FOUNDATION_RED.Y - SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 - ElysiumSettings.PHYSICAL_CENTER_TO_RIGHT_SIGN
+            SkyStoneCoordinates.FOUNDATION_RED.X - 20,
+            SkyStoneCoordinates.FOUNDATION_RED.Y - (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_RIGHT_SIGN - 5)
     );
     public static RobotPoint2D placeStoneOnFoundationPosition_BLUE = new RobotPoint2D(
-            SkyStoneCoordinates.FOUNDATION_BLUE.X,
-            SkyStoneCoordinates.FOUNDATION_BLUE.Y + SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_LEFT_SIGN
+            SkyStoneCoordinates.FOUNDATION_BLUE.X - 20,
+            SkyStoneCoordinates.FOUNDATION_BLUE.Y + (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_LEFT_SIGN - 5)
     );
     public static RobotPoint2D grabFoundationPosition_RED = new RobotPoint2D(
             SkyStoneCoordinates.FOUNDATION_RED.X,
-            SkyStoneCoordinates.FOUNDATION_RED.Y - (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_BACK - 5)
+            SkyStoneCoordinates.FOUNDATION_RED.Y - (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_BACK - 10)
     );
     public static RobotPoint2D grabFoundationPosition_BLUE = new RobotPoint2D(
             SkyStoneCoordinates.FOUNDATION_BLUE.X,
-            SkyStoneCoordinates.FOUNDATION_BLUE.Y + (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_BACK - 5)
+            SkyStoneCoordinates.FOUNDATION_BLUE.Y + (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_BACK - 10)
     );
     public static double BridgeFurtherOffset = 0;
 
@@ -70,20 +70,24 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
         this.getRobotCore().autoArmsSubSystem.rightArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.IN);
         //delay(ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_OUT_IN_SEC);
     }
+    public void setLeftClawToPrepareDrop(){
+        this.getRobotCore().autoArmsSubSystem.leftArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.PREPARE_DROP);
+    }
+    public void setRightClawToPrepareDrop(){
+        this.getRobotCore().autoArmsSubSystem.rightArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.PREPARE_DROP);
+    }
     public void setLeftClawToDropStone(){
         //this.getRobotCore().autoArmsSubSystem.leftArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.OUT);
-        this.getRobotCore().autoArmsSubSystem.leftArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.OUT);
-        this.getRobotCore().autoArmsSubSystem.leftArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.WIDE_OPEN);
         autoSoundBox.onReleasingStone();
-        delay(ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_CLOSE_SEC);
+        this.getRobotCore().autoArmsSubSystem.leftArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.WIDE_OPEN);
+        delay(0.3);
     }
 
     public void setRightClawToDropStone(){
         //this.getRobotCore().autoArmsSubSystem.rightArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.OUT);
-        this.getRobotCore().autoArmsSubSystem.rightArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.OUT);
-        this.getRobotCore().autoArmsSubSystem.rightArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.WIDE_OPEN);
         autoSoundBox.onReleasingStone();
-        delay(ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_CLOSE_SEC);
+        this.getRobotCore().autoArmsSubSystem.rightArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.WIDE_OPEN);
+        delay(0.3);
     }
 
     public void setLeftClawToPrepareGrab(){
@@ -100,13 +104,11 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     public void setLeftClawToRest(){
         this.getRobotCore().autoArmsSubSystem.leftArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.CLOSED);
         this.getRobotCore().autoArmsSubSystem.leftArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.REST);
-        delay(ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_OUT_IN_SEC);
     }
 
     public void setRightClawToRest(){
         this.getRobotCore().autoArmsSubSystem.rightArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.CLOSED);
         this.getRobotCore().autoArmsSubSystem.rightArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.REST);
-        delay(ElysiumSettings.AUTONOMOUS_CLAW_WAIT_FOR_OUT_IN_SEC);
     }
 
     public void prepareToGrabFoundation(double power){
@@ -118,8 +120,14 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
 
     public void grabFoundation(double power){
         this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,power));
-        while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy()){
-            this.updateStatus();
+        this.getRobotCore().chassis.followTrajectory(
+                this.getRobotCore().chassis.trajectoryBuilder()
+                .back(5)
+                .build()
+        );
+        while(this.getRobotCore().chassis.isBusy() && this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
+            this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
+            this.getRobotCore().chassis.update();
         }
         this.autoSoundBox.onGrabbingFoundation();
     }
@@ -151,13 +159,13 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
 
     public static RobotPoint2D getLoadingZoneFurtherFromBridgePoint(AllianceType allianceType, ParkPosition parkPosition){
         RobotPoint2D closeToBridge = getLoadingZoneNextToBridgePoint(allianceType,parkPosition);
-        closeToBridge.X -= SkyStoneCoordinates.NEUTRAL_BRIDGE_FLOOR_THINKNESS / 2.0 + BridgeFurtherOffset;
+        closeToBridge.X -= SkyStoneCoordinates.NEUTRAL_BRIDGE_FLOOR_WIDTH / 2.0 + BridgeFurtherOffset;
         return closeToBridge;
     }
 
     public static RobotPoint2D getBuildingZoneFurtherFromBridgePoint(AllianceType allianceType, ParkPosition parkPosition){
         RobotPoint2D closeToBridge = getBuildingZoneNextToBridgePoint(allianceType,parkPosition);
-        closeToBridge.X += SkyStoneCoordinates.NEUTRAL_BRIDGE_FLOOR_THINKNESS / 2.0 + BridgeFurtherOffset;
+        closeToBridge.X += SkyStoneCoordinates.NEUTRAL_BRIDGE_FLOOR_WIDTH / 2.0 + BridgeFurtherOffset;
         return closeToBridge;
     }
 

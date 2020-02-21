@@ -12,6 +12,7 @@ import org.darbots.darbotsftclib.libcore.calculations.dimentional_calculation.XY
 import org.darbots.darbotsftclib.libcore.integratedfunctions.DarbotsOnRobotSensor2D;
 import org.darbots.darbotsftclib.libcore.integratedfunctions.FTCMemory;
 import org.darbots.darbotsftclib.libcore.motionsystems.MecanumDrivetrain;
+import org.darbots.darbotsftclib.libcore.odometry.MecanumOdometry;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.sensors.distance_sensors.DarbotsRevDistanceSensor;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
@@ -31,16 +32,16 @@ public class ElysiumAutoCore extends ElysiumCore {
     public RobotMotionSystem oldMotionSystem;
 
     public ElysiumAutoCore(String logFileName, HardwareMap hardwareMap, boolean read, RobotPose2D initialPose, boolean distanceEnhancedLocalization) {
-        super(logFileName, hardwareMap, read, true, initialPose, distanceEnhancedLocalization);
+        super(logFileName, hardwareMap, false, true, initialPose, distanceEnhancedLocalization);
         this.chassis = new ElysiumRoadRunnerChassis(hardwareMap);
 
         this.oldMotionSystem = this.getChassis();
         this.oldMotionSystem.getPositionTracker().stop();
-        RoadRunnerMecanumOdometry odometryMethod = new RoadRunnerMecanumOdometry((MecanumDrivetrain) this.oldMotionSystem);
+        this.m_Chassis = null;
+        MecanumOdometry odometryMethod = new MecanumOdometry((MecanumDrivetrain) this.oldMotionSystem);
         RobotAsyncPositionTracker positionTracker = new RobotAsyncPositionTracker(odometryMethod,initialPose);
         positionTracker.setDistanceFactors(ElysiumSettings.CHASSIS_FACTORS);
         positionTracker.setGyroProvider(this.getGyro());
-        this.oldMotionSystem.setPositionTracker(positionTracker);
         positionTracker.start();
 
         this.chassis.setLocalizer(new RoadRunnerLocalizer((RobotAsyncPositionTracker) super.getChassis().getPositionTracker()));

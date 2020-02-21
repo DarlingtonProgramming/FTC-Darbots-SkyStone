@@ -148,7 +148,7 @@ public abstract class ElysiumRoadRunnerBase extends MecanumDrive {
 
         packet.put("x", currentPose.getX());
         packet.put("y", currentPose.getY());
-        packet.put("heading", currentPose.getHeading());
+        packet.put("heading", Math.toDegrees(currentPose.getHeading()));
 
         packet.put("xError", lastError.getX());
         packet.put("yError", lastError.getY());

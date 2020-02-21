@@ -14,13 +14,14 @@ public class ElysiumAutoArm{
     public static enum ArmRotServoState{
         OUT,
         IN,
+        PREPARE_DROP,
         REST
     }
     private Servo ArmGrabber;
     private Servo ArmRot;
     private double armGrabber_CLOSED, armGrabber_OPEN, armGrabber_GRAB;
-    private double armRot_IN, armRot_OUT, armRot_REST;
-    public ElysiumAutoArm(Servo Grabber, Servo armRot, double GRABBER_CLOSED, double GRABBER_OPEN, double GRABBER_GRAB, double ROT_IN, double ROT_OUT, double ROT_REST){
+    private double armRot_IN, armRot_OUT, armRot_REST, armRot_PrepareDrop;
+    public ElysiumAutoArm(Servo Grabber, Servo armRot, double GRABBER_CLOSED, double GRABBER_OPEN, double GRABBER_GRAB, double ROT_IN, double ROT_OUT, double ROT_REST, double ROT_PREPARE_DROP){
         this.ArmGrabber = Grabber;
         SensorUtil.setServoPulseWidth(this.ArmGrabber, ElysiumSettings.AUTONOMOUS_CLAW_GRABSERVO_TYPE);
         this.ArmRot = armRot;
@@ -31,6 +32,7 @@ public class ElysiumAutoArm{
         this.armRot_IN = ROT_IN;
         this.armRot_OUT = ROT_OUT;
         this.armRot_REST = ROT_REST;
+        this.armRot_PrepareDrop = ROT_PREPARE_DROP;
         this.setArmRotServoState(ArmRotServoState.REST);
         this.setGrabberServoState(GrabberServoState.CLOSED);
     }
@@ -59,8 +61,10 @@ public class ElysiumAutoArm{
             return ArmRotServoState.IN;
         }else if(armRotPosition == armRot_OUT){
             return ArmRotServoState.OUT;
-        }else{
+        }else if(armRotPosition == armRot_REST){
             return ArmRotServoState.REST;
+        }else{
+            return ArmRotServoState.PREPARE_DROP;
         }
     }
     public void setArmRotServoState(ArmRotServoState state){
@@ -68,8 +72,10 @@ public class ElysiumAutoArm{
             this.ArmRot.setPosition(armRot_IN);
         }else if(state == ArmRotServoState.OUT){
             this.ArmRot.setPosition(armRot_OUT);
-        }else{
+        }else if(state == ArmRotServoState.REST){
             this.ArmRot.setPosition(armRot_REST);
+        }else{
+            this.ArmRot.setPosition(armRot_PrepareDrop);
         }
     }
 }

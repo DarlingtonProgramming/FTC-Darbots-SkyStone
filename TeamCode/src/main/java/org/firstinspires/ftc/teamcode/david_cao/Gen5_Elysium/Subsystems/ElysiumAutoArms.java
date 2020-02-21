@@ -16,7 +16,8 @@ public class ElysiumAutoArms {
                 ElysiumSettings.AUTONOMOUS_CLAW_LEFT_GRAB_STONE_POS,
                 ElysiumSettings.AUTONOMOUS_CLAW_LEFT_INSIDE_POS,
                 ElysiumSettings.AUTONOMOUS_CLAW_LEFT_OUTSIDE_POS,
-                ElysiumSettings.AUTONOMOUS_CLAW_LEFT_REST_POS
+                ElysiumSettings.AUTONOMOUS_CLAW_LEFT_REST_POS,
+                ElysiumSettings.AUTONOMOUS_CLAW_LEFT_PREPARE_DROP_POS
         );
         this.rightArm = new ElysiumAutoArm(
                 map.servo.get("rightAutoArmGrabber"),
@@ -26,7 +27,8 @@ public class ElysiumAutoArms {
                 ElysiumSettings.AUTONOMOUS_CLAW_RIGHT_GRAB_STONE_POS,
                 ElysiumSettings.AUTONOMOUS_CLAW_RIGHT_INSIDE_POS,
                 ElysiumSettings.AUTONOMOUS_CLAW_RIGHT_OUTSIDE_POS,
-                ElysiumSettings.AUTONOMOUS_CLAW_RIGHT_REST_POS
+                ElysiumSettings.AUTONOMOUS_CLAW_RIGHT_REST_POS,
+                ElysiumSettings.AUTONOMOUS_CLAW_RIGHT_PREPARE_DROP_POS
         );
     }
 }
