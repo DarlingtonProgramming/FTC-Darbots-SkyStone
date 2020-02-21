@@ -122,7 +122,7 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
         this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,power));
         this.getRobotCore().chassis.followTrajectory(
                 this.getRobotCore().chassis.trajectoryBuilder()
-                .back(5)
+                .back(8)
                 .build()
         );
         while(this.getRobotCore().chassis.isBusy() && this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){

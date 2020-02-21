@@ -284,12 +284,12 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
             }
 
             this.m_Core.chassis.turn(Math.toRadians(-90));
-            if(!this.opModeIsActive()){
-                return false;
-            }
             while(this.getRobotCore().chassis.isBusy() && this.opModeIsActive()){
                 this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
                 this.getRobotCore().chassis.update();
+            }
+            if(!this.opModeIsActive()){
+                return false;
             }
 
             this.m_Core.chassis.followTrajectory(
@@ -364,13 +364,6 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
                 this.m_Core.chassis.update();
                 this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
             }
-
-            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
-            while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
-                this.getRobotCore().updateStatus();
-                this.lazyUpdateTelemetry();
-            }
-            this.calibratePositionUsingDistanceSensor();
         }
         {
             //finish foundation pulling, go to park
@@ -384,7 +377,12 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
                     .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(secondPoint), new ConstantInterpolator(Math.toRadians(-180)))
                     .build();
-            this.m_Core.chassis.followTrajectorySync(trajectory);
+            this.m_Core.chassis.followTrajectory(trajectory);
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+            while(this.m_Core.chassis.isBusy() && this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
+                this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
+                this.m_Core.chassis.update();
+            }
             if(!this.opModeIsActive()){
                 return false;
             }

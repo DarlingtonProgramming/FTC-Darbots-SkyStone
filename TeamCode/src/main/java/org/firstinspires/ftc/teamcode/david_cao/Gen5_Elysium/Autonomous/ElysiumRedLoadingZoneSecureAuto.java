@@ -355,16 +355,8 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
                 this.m_Core.chassis.update();
                 this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
             }
-
-            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
-            while(this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
-                this.getRobotCore().updateStatus();
-                this.lazyUpdateTelemetry();
-            }
-            this.calibratePositionUsingDistanceSensor();
         }
         {
-            RobotPose2D currentPose = this.getRobotCore().getCurrentPosition();
             //finish foundation pulling, go to park
             RobotPoint2D firstPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
             firstPoint.Y -= 15;
@@ -376,7 +368,12 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
                     .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(secondPoint), new ConstantInterpolator(Math.toRadians(-180)))
                     .build();
-            this.m_Core.chassis.followTrajectorySync(trajectory);
+            this.m_Core.chassis.followTrajectory(trajectory);
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+            while(this.m_Core.chassis.isBusy() && this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
+                this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
+                this.m_Core.chassis.update();
+            }
             if(!this.opModeIsActive()){
                 return false;
             }
