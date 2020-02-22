@@ -66,4 +66,7 @@ public class ElysiumAutonomousSettings {
 
     public static double DISTANCE_SENSOR_CALIBRATION_STARTX = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(AllianceType.BLUE,ParkPosition.NEXT_TO_WALL).X;
     public static double DISTANCE_SENSOR_CALIBRATION_ENDX = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(AllianceType.BLUE,ParkPosition.NEXT_TO_WALL).X;
+
+    public static double RED_BRIDGE_AWAY_DIST = 10;
+    public static double BLUE_BRIDGE_AWAY_DIST = 5;
 }

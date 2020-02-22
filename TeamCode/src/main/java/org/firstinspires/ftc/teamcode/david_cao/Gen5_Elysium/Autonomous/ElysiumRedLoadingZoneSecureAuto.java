@@ -116,15 +116,20 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
         {
             //do as many stones as possible
             for(int i=0; i<2; i++) {
-                this.runToStoneAndPlaceOnFoundation(getStoneOrder[i]);
+                if(!this.runToStoneAndPlaceOnFoundation(getStoneOrder[i])){
+                    this.getRobotCore().save();
+                    return;
+                }
             }
         }
         {
             //not much time left, left's grab the foundation and park
             if(!this.grabFoundationAndPark()){
+                this.getRobotCore().save();
                 return;
             }
         }
+        this.getRobotCore().save();
     }
 
     public boolean runToStoneAndPlaceOnFoundation(int stoneNumber){
@@ -136,9 +141,9 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
             this.setRightClawToRest();
 
             RobotPoint2D firstPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y -= 5;
+            firstPoint.Y -= ElysiumAutonomousSettings.RED_BRIDGE_AWAY_DIST;
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y -= 5;
+            secondPoint.Y -= ElysiumAutonomousSettings.RED_BRIDGE_AWAY_DIST;
 
             RobotPoint2D thirdPoint = new RobotPoint2D(stonePosition);
             thirdPoint.Y -= 10;
@@ -195,13 +200,13 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
         {
             //finished grabbing stone, now we should head to the foundation.
             RobotPoint2D firstPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y -= 5;
+            firstPoint.Y -= ElysiumAutonomousSettings.RED_BRIDGE_AWAY_DIST;
 
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y -= 5;
+            secondPoint.Y -= ElysiumAutonomousSettings.RED_BRIDGE_AWAY_DIST;
 
             RobotPoint2D thirdPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            thirdPoint.Y -= 5;
+            thirdPoint.Y -= ElysiumAutonomousSettings.RED_BRIDGE_AWAY_DIST;
 
             RobotPoint2D fourthPoint = lastDropStonePos;
 
@@ -235,13 +240,13 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
             //we are not in the building zone, let's go to the building zone.
             this.setRightClawToRest();
             RobotPoint2D firstPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y -= 5;
+            firstPoint.Y -= ElysiumAutonomousSettings.RED_BRIDGE_AWAY_DIST;
 
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y -= 5;
+            secondPoint.Y -= ElysiumAutonomousSettings.RED_BRIDGE_AWAY_DIST;
 
             RobotPoint2D thirdPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            thirdPoint.Y -= 5;
+            thirdPoint.Y -= ElysiumAutonomousSettings.RED_BRIDGE_AWAY_DIST;
 
             Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
                     .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
@@ -345,10 +350,10 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
             leaveFoundationPoint.X -= 20;
 
             RobotPoint2D firstPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y -= 15;
+            firstPoint.Y -= ElysiumAutonomousSettings.RED_BRIDGE_AWAY_DIST + 5;
 
             RobotPoint2D secondPoint = SkyStoneCoordinates.getParkPosition(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y -= 10;
+            secondPoint.Y -= ElysiumAutonomousSettings.RED_BRIDGE_AWAY_DIST;
 
             this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
 
