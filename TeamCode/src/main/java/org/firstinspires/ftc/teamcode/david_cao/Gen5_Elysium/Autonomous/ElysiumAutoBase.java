@@ -25,6 +25,9 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Soundboxes.ElysiumA
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumAutoArm;
 import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumStacker;
 
+import java.util.HashMap;
+import java.util.Vector;
+
 @Config
 public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore> {
     public static RobotPoint2D placeStoneOnFoundationPosition_RED = new RobotPoint2D(
@@ -52,7 +55,6 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
         this.autoSoundBox = new ElysiumAutoSoundBox(this,this.getRobotCore());
         this.autoSoundBox.onInitialize();
     }
-
     public abstract DistanceSensorEnhancedOdometry.DistanceSensorOdometerSwitchType getDistanceSensorSwitchType(RobotPose2D currentPosition);
 
     public void grabLeftClaw(){
@@ -80,14 +82,12 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
         //this.getRobotCore().autoArmsSubSystem.leftArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.OUT);
         autoSoundBox.onReleasingStone();
         this.getRobotCore().autoArmsSubSystem.leftArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.WIDE_OPEN);
-        delay(0.3);
     }
 
     public void setRightClawToDropStone(){
         //this.getRobotCore().autoArmsSubSystem.rightArm.setArmRotServoState(ElysiumAutoArm.ArmRotServoState.OUT);
         autoSoundBox.onReleasingStone();
         this.getRobotCore().autoArmsSubSystem.rightArm.setGrabberServoState(ElysiumAutoArm.GrabberServoState.WIDE_OPEN);
-        delay(0.3);
     }
 
     public void setLeftClawToPrepareGrab(){
@@ -195,6 +195,7 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     public static Pose2d getRoadRunnerSplinePose(RobotPoint2D point){
         return new Pose2d(point.X, point.Y,0);
     }
+
     public static Vector2d getRoadRunnerPos(RobotPoint2D point){
         return new Vector2d(point.X,point.Y);
     }
