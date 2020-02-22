@@ -212,6 +212,7 @@ public class ElysiumTeleOp extends DarbotsBasicOpMode<ElysiumCore> {
 
     @Override
     public void RunThisOpMode() {
+        this.getRobotCore().initializaPosition();
         this.SoundBox.onStart();
         this.teleopAutoMovement();
         while(this.opModeIsActive()){

@@ -31,4 +31,8 @@ public class ElysiumAutoArms {
                 ElysiumSettings.AUTONOMOUS_CLAW_RIGHT_PREPARE_DROP_POS
         );
     }
+    public void initializePosition(){
+        this.leftArm.initializePosition();
+        this.rightArm.initializePosition();
+    }
 }

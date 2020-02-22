@@ -146,6 +146,14 @@ public class ElysiumCore extends RobotCore {
         this.capstoneDeliverySubSystem.stop();
     }
 
+    public void initializaPosition(){
+        this.capstoneDeliverySubSystem.initializePosition();
+        this.stackerSubSystem.initializePosition();
+        this.outtakeSubSystem.initializePosition();
+        this.intakeSubSystem.initializePosition();
+        this.autoArmsSubSystem.initializePosition();
+    }
+
     @Override
     protected void __terminate() {
         if(this.getChassis() != null) {

@@ -71,6 +71,7 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
     @Override
     public void __hardwareInit() {
         this.m_Core = new ElysiumAutoCore("ElysiumRedLoadingZoneAuto.log",this.hardwareMap,false, ElysiumAutonomousSettings.RED_AUTO_START_POSE,false);
+        this.m_Core.initializaPosition();
         this.m_Core.chassis.constraints = new MecanumConstraints(secureConstraints, DriveConstants.TRACK_WIDTH);
         this.m_Camera = new RobotOnPhoneCamera(this,ElysiumAutonomousSettings.SAMPLE_PREVIEW, RobotOnPhoneCamera.PhoneCameraDirection.Back, Robot4100Common.VUFORIA_LICENSE);
         this.m_Sampler = new ElysiumAutoSampler(this.m_Camera);
@@ -163,7 +164,7 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
         }else{
             //go to the stone.
 
-            RobotPoint2D pointAwayFromWall = ElysiumAutonomousSettings.RED_AUTO_START_POSE;
+            RobotPoint2D pointAwayFromWall = new RobotPoint2D(ElysiumAutonomousSettings.RED_AUTO_START_POSE);
             pointAwayFromWall.Y += 35;
 
             RobotPoint2D stonePrepPosition = new RobotPoint2D(stonePosition);

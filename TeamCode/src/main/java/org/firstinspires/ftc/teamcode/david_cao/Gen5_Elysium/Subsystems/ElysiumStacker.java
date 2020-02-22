@@ -38,6 +38,9 @@ public class ElysiumStacker implements RobotNonBlockingDevice {
         SensorUtil.setServoPulseWidth(this.leftDoor,ElysiumSettings.STACKER_DOOR_SERVO_TYPE);
         this.rightDoor = map.servo.get("stackerDoorRightServo");
         SensorUtil.setServoPulseWidth(this.rightDoor,ElysiumSettings.STACKER_DOOR_SERVO_TYPE);
+    }
+
+    public void initializePosition(){
         this.setDoorState(Stacker_Door_State.RELEASED);
     }
 

@@ -31,6 +31,10 @@ public class ElysiumOuttake implements RobotNonBlockingDevice {
         this.lastSlidePosition = this.outTakeSlide.getCurrentPosition();
     }
 
+    public void initializePosition(){
+
+    }
+
     @Override
     public boolean isBusy() {
         return outTakeSlide.isBusy();

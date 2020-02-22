@@ -43,6 +43,10 @@ public class ElysiumIntake implements RobotNonBlockingDevice {
         this.setPositioningServoStatus(ElysiumIntakePositioningServoStatus.AUTO);
     }
 
+    public void initializePosition(){
+
+    }
+
     public ElysiumIntakePositioningServoStatus getPositioningServoStatus(){
         double positioningServoPos = this.positioningServo.getPosition();
         if(positioningServoPos == ElysiumSettings.INTAKE_POSITIONING_SERVO_HIT){

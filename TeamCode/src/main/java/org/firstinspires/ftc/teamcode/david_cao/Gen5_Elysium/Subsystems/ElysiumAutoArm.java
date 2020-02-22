@@ -33,6 +33,8 @@ public class ElysiumAutoArm{
         this.armRot_OUT = ROT_OUT;
         this.armRot_REST = ROT_REST;
         this.armRot_PrepareDrop = ROT_PREPARE_DROP;
+    }
+    public void initializePosition(){
         this.setArmRotServoState(ArmRotServoState.REST);
         this.setGrabberServoState(GrabberServoState.CLOSED);
     }

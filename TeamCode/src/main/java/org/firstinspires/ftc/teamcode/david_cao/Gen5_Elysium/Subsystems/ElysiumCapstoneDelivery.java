@@ -29,6 +29,9 @@ public class ElysiumCapstoneDelivery implements RobotNonBlockingDevice {
         this.capstoneSlide = new RobotServoUsingMotor(capstoneSlideMotorController,CAPSTONEDELIVERY_SLIDE_MIN_POS,CAPSTONEDELIVERY_SLIDE_MIN_POS,CAPSTONEDELIVERY_SLIDE_MAX_POS);
         this.capstoneRotServo = map.servo.get("capstoneRotServo");
         SensorUtil.setServoPulseWidth(this.capstoneRotServo,ElysiumSettings.CAPSTONE_SERVO_TYPE);
+    }
+
+    public void initializePosition(){
         this.setCapstoneServoOut(false);
     }
 
