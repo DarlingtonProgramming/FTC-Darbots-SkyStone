@@ -143,7 +143,7 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
             secondPoint.Y += 0;
 
             RobotPoint2D thirdPoint = new RobotPoint2D(stonePosition);
-            thirdPoint.Y += 20;
+            thirdPoint.Y += 10;
 
             Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
                     .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
