@@ -129,15 +129,15 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
     public boolean runToStoneAndPlaceOnFoundation(int stoneNumber){
         RobotPose2D currentPosition = this.getRobotCore().getCurrentPosition();
         double grabStoneStartSpeed = 0.1;
-        RobotPoint2D stonePosition = allStonePositions.get(stoneNumber - 1);
+        RobotPoint2D stonePosition = new RobotPoint2D(allStonePositions.get(stoneNumber - 1));
         if(currentPosition.X >= 0){
             //gotta pass the bridge first
             this.setRightClawToRest();
 
             RobotPoint2D firstPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y -= 10;
+            firstPoint.Y -= 5;
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y -= 10;
+            secondPoint.Y -= 5;
 
             RobotPoint2D thirdPoint = new RobotPoint2D(stonePosition);
             thirdPoint.Y -= 20;
@@ -194,13 +194,13 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
         {
             //finished grabbing stone, now we should head to the foundation.
             RobotPoint2D firstPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y -= 10;
+            firstPoint.Y -= 5;
 
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y -= 15;
+            secondPoint.Y -= 5;
 
             RobotPoint2D thirdPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            thirdPoint.Y -= 15;
+            thirdPoint.Y -= 5;
 
             RobotPoint2D fourthPoint = lastDropStonePos;
 
@@ -218,7 +218,7 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
             if(!this.opModeIsActive()){
                 return false;
             }
-            lastDropStonePos.X += 25;
+            lastDropStonePos.X -= 25;
             this.calibratePositionUsingDistanceSensor();
         }
         {
@@ -237,10 +237,10 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
             firstPoint.Y -= 5;
 
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y -= 10;
+            secondPoint.Y -= 5;
 
             RobotPoint2D thirdPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            thirdPoint.Y -= 10;
+            thirdPoint.Y -= 5;
 
             Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
                     .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
@@ -280,9 +280,6 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
                 this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
                 this.getRobotCore().chassis.update();
             }
-            if(!this.opModeIsActive()){
-                return false;
-            }
 
             this.m_Core.chassis.followTrajectory(
                     this.getRobotCore().chassis.trajectoryBuilder()
@@ -304,8 +301,8 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
         {
             //Now the foundation is in our hands, let's pull it.
             RobotPoint2D firstPoint = new RobotPoint2D(ElysiumAutoBase.grabFoundationPosition_RED);
-            firstPoint.X -= 20;
-            firstPoint.Y = SkyStoneCoordinates.RED_BUILDING_ZONE_FIELD_EXTREME_POINT.Y + (SkyStoneCoordinates.TILE_FLOOR_WIDTH + ElysiumSettings.FOUNDATION_HOOK_DISTANCE_FROM_CENTER - 40);
+            firstPoint.X -= 10;
+            firstPoint.Y = SkyStoneCoordinates.RED_BUILDING_ZONE_FIELD_EXTREME_POINT.Y + (SkyStoneCoordinates.TILE_FLOOR_WIDTH + ElysiumSettings.FOUNDATION_HOOK_DISTANCE_FROM_CENTER - 35);
             RobotPoint2D secondPoint = new RobotPoint2D(firstPoint);
             secondPoint.X = SkyStoneCoordinates.RED_BUILDING_ZONE_FIELD_EXTREME_POINT.X - (SkyStoneCoordinates.FOUNDATION_WIDTH + ElysiumSettings.PHYSICAL_CENTER_TO_BACK) + 10;
 
@@ -318,35 +315,13 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
                 return false;
             }
 
-            this.getRobotCore().chassis.turnSync(Math.toRadians(90));
-            if(!this.opModeIsActive()){
-                return false;
-            }
+            this.getRobotCore().chassis.turnSync(Math.toRadians(-90));
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
 
-            this.getRobotCore().chassis.followTrajectorySync(
+            this.getRobotCore().chassis.followTrajectory(
                     this.getRobotCore().chassis.trajectoryBuilder()
                             .lineTo(getRoadRunnerPos(secondPoint),new ConstantInterpolator(Math.toRadians(-180)))
                             .build()
-            );
-            if(!this.opModeIsActive()){
-                return false;
-            }
-            //calibrate our position first
-            RobotPose2D foundationFinishedPose = new RobotPose2D(secondPoint,-180);
-            RobotPose2D currentPose = this.getRobotCore().getCurrentPosition();
-            foundationFinishedPose.setRotationZ(currentPose.getRotationZ());
-            foundationFinishedPose.X = SkyStoneCoordinates.RED_BUILDING_ZONE_FIELD_EXTREME_POINT.X - (SkyStoneCoordinates.FOUNDATION_WIDTH + ElysiumSettings.PHYSICAL_CENTER_TO_BACK);
-            this.getRobotCore().setCurrentPosition(foundationFinishedPose);
-        }
-        {
-            //foundation pulled, let's get our hands out of the foundation
-            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
-            RobotPoint2D leaveFoundationPoint = new RobotPoint2D(this.getRobotCore().getCurrentPosition());
-            leaveFoundationPoint.X -= 10;
-            this.m_Core.chassis.followTrajectory(
-                    this.m_Core.chassis.trajectoryBuilder()
-                    .lineTo(getRoadRunnerPos(leaveFoundationPoint),new ConstantInterpolator(-180))
-                    .build()
             );
             while(this.m_Core.chassis.isBusy()){
                 if(this.isStopRequested()){
@@ -355,22 +330,38 @@ public class ElysiumRedLoadingZoneSecureAuto extends ElysiumAutoBase {
                 this.m_Core.chassis.update();
                 this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
             }
+            //calibrate our position first
+            RobotPose2D foundationFinishedPose = new RobotPose2D(secondPoint,-180);
+            RobotPose2D currentPose = this.getRobotCore().getCurrentPosition();
+            foundationFinishedPose.setRotationZ(currentPose.getRotationZ());
+            foundationFinishedPose.X = SkyStoneCoordinates.RED_BUILDING_ZONE_FIELD_EXTREME_POINT.X - (SkyStoneCoordinates.FOUNDATION_WIDTH + ElysiumSettings.PHYSICAL_CENTER_TO_BACK);
+            this.useSensorToCalibrateNegativeYPosition(foundationFinishedPose,ElysiumSettings.LOCALIZATION_LEFTDISTSENSOR_POS.Y,this.getRobotCore().LeftSensor.Sensor,XYPlaneCalculations.normalizeDeg(foundationFinishedPose.getRotationZ() + 180));
+            this.getRobotCore().setCurrentPosition(foundationFinishedPose);
         }
         {
-            //finish foundation pulling, go to park
+            //foundation pulled, let's get our hands out of the foundation
+            RobotPoint2D leaveFoundationPoint = new RobotPoint2D(this.getRobotCore().getCurrentPosition());
+            leaveFoundationPoint.X -= 20;
+
             RobotPoint2D firstPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
             firstPoint.Y -= 15;
 
             RobotPoint2D secondPoint = SkyStoneCoordinates.getParkPosition(ALLIANCE_TYPE,PARK_POSITION);
             secondPoint.Y -= 10;
 
+            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+
             Trajectory trajectory = this.getRobotCore().chassis.trajectoryBuilder()
+                    .lineTo(getRoadRunnerPos(leaveFoundationPoint),new ConstantInterpolator(-180))
+                    .addMarker(()->{
+                        this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+                        return Unit.INSTANCE;
+                    })
                     .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(secondPoint), new ConstantInterpolator(Math.toRadians(-180)))
                     .build();
             this.m_Core.chassis.followTrajectory(trajectory);
-            this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
-            while(this.m_Core.chassis.isBusy() && this.getRobotCore().stackerSubSystem.stackerSlide.isBusy() && this.opModeIsActive()){
+            while(this.m_Core.chassis.isBusy() && this.opModeIsActive()){
                 this.getRobotCore().stackerSubSystem.stackerSlide.updateStatus();
                 this.m_Core.chassis.update();
             }

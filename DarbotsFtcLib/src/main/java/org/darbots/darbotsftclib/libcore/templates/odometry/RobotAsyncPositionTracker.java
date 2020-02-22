@@ -73,9 +73,11 @@ public class RobotAsyncPositionTracker extends RobotBasic2DPositionTracker imple
     }
 
     protected void drive_MoveThroughRobotAxisOffset(RobotPose2D robotAxisValues) {
-        RobotPose2D currentPose = this.getCurrentPosition();
+        RobotPose2D currentPose = super.m_CurrentPos;
         RobotPose2D tempField = XYPlaneCalculations.getAbsolutePosition(currentPose,robotAxisValues);
-        super.setCurrentPosition(tempField);
+        super.m_CurrentPos.X = tempField.X;
+        super.m_CurrentPos.Y = tempField.Y;
+        super.m_CurrentPos.setRotationZ(tempField.getRotationZ());
     }
 
     @Override
@@ -162,14 +164,14 @@ public class RobotAsyncPositionTracker extends RobotBasic2DPositionTracker imple
 
     @Override
     public RobotPose2D getCurrentPosition(){
-        RobotPose2D currentPose = new RobotPose2D(super.getCurrentPosition());
+        RobotPose2D currentPose = super.getCurrentPosition();
         if(this.m_GyroProvider != null){
             double currentGyroReading = this.m_GyroProvider.getHeading();
             double deltaAng = currentGyroReading - this.m_GyroReadingAtZero;
             if(this.m_GyroProvider.getHeadingRotationPositiveOrientation() == RobotGyro.HeadingRotationPositiveOrientation.Clockwise){
                 deltaAng = -deltaAng;
             }
-            currentPose.setRotationZ(XYPlaneCalculations.normalizeDeg(deltaAng));
+            currentPose.setRotationZ(deltaAng);
         }
         return currentPose;
     }
@@ -180,7 +182,7 @@ public class RobotAsyncPositionTracker extends RobotBasic2DPositionTracker imple
         if(this.m_GyroProvider != null) {
             this.updateGyroProvider();
             this.m_LastGyroReading = this.m_GyroProvider.getHeading();
-            this.m_GyroReadingAtZero = this.m_LastGyroReading - ((float) currentPosition.getRotationZ());
+            this.m_GyroReadingAtZero = XYPlaneCalculations.normalizeDeg(this.m_LastGyroReading - ((float) currentPosition.getRotationZ()));
         }
     }
 

@@ -28,12 +28,12 @@ import org.firstinspires.ftc.teamcode.david_cao.Gen5_Elysium.Subsystems.ElysiumS
 @Config
 public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore> {
     public static RobotPoint2D placeStoneOnFoundationPosition_RED = new RobotPoint2D(
-            SkyStoneCoordinates.FOUNDATION_RED.X - 20,
-            SkyStoneCoordinates.FOUNDATION_RED.Y - (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_RIGHT_SIGN - 5)
+            SkyStoneCoordinates.FOUNDATION_RED.X - 20 + (20 * 2),
+            SkyStoneCoordinates.FOUNDATION_RED.Y - (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_RIGHT_SIGN - 10)
     );
     public static RobotPoint2D placeStoneOnFoundationPosition_BLUE = new RobotPoint2D(
-            SkyStoneCoordinates.FOUNDATION_BLUE.X - 20,
-            SkyStoneCoordinates.FOUNDATION_BLUE.Y + (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_LEFT_SIGN - 5)
+            SkyStoneCoordinates.FOUNDATION_BLUE.X - 20 + (20 * 2 - 5),
+            SkyStoneCoordinates.FOUNDATION_BLUE.Y + (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_LEFT_SIGN - 15)
     );
     public static RobotPoint2D grabFoundationPosition_RED = new RobotPoint2D(
             SkyStoneCoordinates.FOUNDATION_RED.X,
@@ -41,7 +41,7 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     );
     public static RobotPoint2D grabFoundationPosition_BLUE = new RobotPoint2D(
             SkyStoneCoordinates.FOUNDATION_BLUE.X,
-            SkyStoneCoordinates.FOUNDATION_BLUE.Y + (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_BACK - 10)
+            SkyStoneCoordinates.FOUNDATION_BLUE.Y + (SkyStoneCoordinates.FOUNDATION_WIDTH / 2.0 + ElysiumSettings.PHYSICAL_CENTER_TO_BACK - 18)
     );
     public static double BridgeFurtherOffset = 0;
 
@@ -305,6 +305,9 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     }
 
     public void useSensorToCalibratePositiveXPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsDistanceSensor distanceSensor, double errorAngle){
+        if(!ElysiumAutonomousSettings.DISTANCE_SENSOR_POSITION_CALIBRATION){
+            return;
+        }
         distanceSensor.updateStatus();
         double dist = distanceSensor.getDistanceInCM();
         if(dist == DarbotsDistanceSensor.DISTANCE_INVALID){
@@ -315,11 +318,17 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     }
 
     public void useSensorToCalibrateNegativeXPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsDistanceSensor distanceSensor, double errorAngle){
+        if(!ElysiumAutonomousSettings.DISTANCE_SENSOR_POSITION_CALIBRATION){
+            return;
+        }
         this.useSensorToCalibratePositiveXPosition(positionReceiver,sensorOnBotPosition,distanceSensor,errorAngle);
         positionReceiver.X = -positionReceiver.X;
     }
 
     public void useSensorToCalibratePositiveYPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsDistanceSensor distanceSensor, double errorAngle){
+        if(!ElysiumAutonomousSettings.DISTANCE_SENSOR_POSITION_CALIBRATION){
+            return;
+        }
         distanceSensor.updateStatus();
         double dist = distanceSensor.getDistanceInCM();
         if(dist == DarbotsDistanceSensor.DISTANCE_INVALID){
@@ -330,6 +339,9 @@ public abstract class ElysiumAutoBase extends DarbotsBasicOpMode<ElysiumAutoCore
     }
 
     public void useSensorToCalibrateNegativeYPosition(RobotPose2D positionReceiver, double sensorOnBotPosition, DarbotsDistanceSensor distanceSensor, double errorAngle){
+        if(!ElysiumAutonomousSettings.DISTANCE_SENSOR_POSITION_CALIBRATION){
+            return;
+        }
         this.useSensorToCalibratePositiveYPosition(positionReceiver,sensorOnBotPosition,distanceSensor,errorAngle);
         positionReceiver.Y = -positionReceiver.Y;
     }

@@ -42,6 +42,11 @@ public class RobotPose2D extends RobotVector2D implements Serializable {
         super(Pos2D.X,Pos2D.Y,XYPlaneCalculations.normalizeDeg(Pos2D.m_RotationZ));
     }
 
+    public RobotPose2D(RobotPose2D Pose2D){
+        super(Pose2D);
+        this.m_RotationZ = Pose2D.m_RotationZ;
+    }
+
     public void setValues(double X, double Y, double RotationZ){
         this.X = X;
         this.Y = Y;

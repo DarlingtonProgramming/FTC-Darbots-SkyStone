@@ -43,7 +43,7 @@ public class ElysiumAutoCore extends ElysiumCore {
         positionTracker.setGyroProvider(this.getGyro());
         positionTracker.start();
 
-        this.chassis.setLocalizer(new RoadRunnerLocalizer((RobotAsyncPositionTracker) super.getChassis().getPositionTracker()));
+        //this.chassis.setLocalizer(new RoadRunnerLocalizer((RobotAsyncPositionTracker) this.oldMotionSystem.getPositionTracker()));
         this.setCurrentPosition(initialPose);
         this.m_Chassis = null;
         FrontSensor = new DarbotsOnRobotSensor2D<DarbotsDistanceSensor>(ElysiumSettings.LOCALIZATION_FRONTDISTSENSOR_POS,new DarbotsRevDistanceSensor(hardwareMap.get(DistanceSensor.class,"frontDistanceSensor")));
