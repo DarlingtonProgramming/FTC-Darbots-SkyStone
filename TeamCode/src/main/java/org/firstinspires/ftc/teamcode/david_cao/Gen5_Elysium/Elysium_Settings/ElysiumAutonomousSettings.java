@@ -58,6 +58,17 @@ public class ElysiumAutonomousSettings {
             -180
     );
 
+    public static RobotPose2D BLUE_AUTO_PARK_POSE = new RobotPose2D(
+            SkyStoneCoordinates.BLUE_BUILDING_ZONE_FIELD_EXTREME_POINT.X - (120.2 - ElysiumSettings.PHYSICAL_CENTER_TO_BACK),
+            SkyStoneCoordinates.BLUE_BUILDING_ZONE_FIELD_EXTREME_POINT.Y - ElysiumSettings.PHYSICAL_CENTER_TO_RIGHT_DOOR,
+            0
+    );
+    public static RobotPose2D RED_AUTO_PARK_POSE = new RobotPose2D(
+            SkyStoneCoordinates.RED_LOADING_ZONE_FIELD_EXTREME_POINT.X + (120.2 - (ElysiumSettings.CHASSIS_LENGTH / 2.0 + ElysiumSettings.CHASSIS_WHEEL_RADIUS)),
+            SkyStoneCoordinates.RED_LOADING_ZONE_FIELD_EXTREME_POINT.Y + ElysiumSettings.PHYSICAL_CENTER_TO_RIGHT_DOOR,
+            0
+    );
+
     public static double STACKER_SLIDE_SPEED = 1.0;
 
     public static double PURE_PURSUIT_ANGLE_SPEED = 0.15;
@@ -67,6 +78,6 @@ public class ElysiumAutonomousSettings {
     public static double DISTANCE_SENSOR_CALIBRATION_STARTX = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(AllianceType.BLUE,ParkPosition.NEXT_TO_WALL).X;
     public static double DISTANCE_SENSOR_CALIBRATION_ENDX = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(AllianceType.BLUE,ParkPosition.NEXT_TO_WALL).X;
 
-    public static double RED_BRIDGE_AWAY_DIST = 10;
-    public static double BLUE_BRIDGE_AWAY_DIST = 5;
+    public static double RED_BRIDGE_AWAY_DIST = -3.5;
+    public static double BLUE_BRIDGE_AWAY_DIST = -7.5;
 }

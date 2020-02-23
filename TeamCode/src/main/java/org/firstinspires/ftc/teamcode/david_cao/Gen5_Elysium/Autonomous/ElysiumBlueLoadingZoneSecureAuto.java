@@ -137,7 +137,10 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
         RobotPose2D currentPosition = this.getRobotCore().getCurrentPosition();
         double grabStoneStartSpeed = 0.1;
         RobotPoint2D stonePosition = allStonePositions.get(stoneNumber - 1);
-        stonePosition.Y -= 3 * (stoneNumber + 1);
+        stonePosition.Y -= 5 * (numRuns + 1);
+        if(sampledPosition.value() != 3 && numRuns == 1){
+            stonePosition.X += 5;
+        }
         if(currentPosition.X >= 0){
             //gotta pass the bridge first
             this.setLeftClawToRest();
@@ -356,20 +359,27 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
             RobotPoint2D leaveFoundationPoint = new RobotPoint2D(this.getRobotCore().getCurrentPosition());
             leaveFoundationPoint.X -= 20;
 
+            RobotPoint2D leaveFoundationStrafePoint = new RobotPoint2D(leaveFoundationPoint);
+
+
             RobotPoint2D firstPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST + 5;
+            firstPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST - 20;
+
+            leaveFoundationStrafePoint.Y = firstPoint.Y;
 
             RobotPoint2D secondPoint = SkyStoneCoordinates.getParkPosition(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y += 0;
+            secondPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST - 30;
+            secondPoint.X += 5;
 
             this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
 
             Trajectory trajectory = this.getRobotCore().chassis.trajectoryBuilder()
-                    .lineTo(getRoadRunnerPos(leaveFoundationPoint),new ConstantInterpolator(-180))
+                    .lineTo(getRoadRunnerPos(leaveFoundationPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .addMarker(()->{
-                        this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+                        this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.stackerSlide.getMinPos(),ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
                         return Unit.INSTANCE;
                     })
+                    .lineTo(getRoadRunnerPos(leaveFoundationStrafePoint), new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(secondPoint), new ConstantInterpolator(Math.toRadians(-180)))
                     .build();

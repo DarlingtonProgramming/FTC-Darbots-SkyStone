@@ -33,7 +33,7 @@ public class ElysiumStacker implements RobotNonBlockingDevice {
         stackerSlideDcMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RobotMotorWithEncoder stackerSlideMotor = new RobotMotorWithEncoder(stackerSlideDcMotor,ElysiumSettings.STACKER_SLIDE_TYPE);
         RobotMotorController stackerSlideMotorController = new RobotMotorController(stackerSlideMotor,true,2.0);
-        this.stackerSlide = new RobotServoUsingMotor(stackerSlideMotorController,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumSettings.STACKER_SLIDE_MIN_POS,STACKER_SLIDE_MAX_POS);
+        this.stackerSlide = new RobotServoUsingMotor(stackerSlideMotorController,0,ElysiumSettings.STACKER_SLIDE_MIN_POS,STACKER_SLIDE_MAX_POS);
         this.leftDoor = map.servo.get("stackerDoorLeftServo");
         SensorUtil.setServoPulseWidth(this.leftDoor,ElysiumSettings.STACKER_DOOR_SERVO_TYPE);
         this.rightDoor = map.servo.get("stackerDoorRightServo");
