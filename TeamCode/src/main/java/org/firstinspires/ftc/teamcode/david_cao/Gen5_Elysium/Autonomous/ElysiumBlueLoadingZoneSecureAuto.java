@@ -117,30 +117,38 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
         {
             //do as many stones as possible
             for(int i=0; i<2; i++) {
-                this.runToStoneAndPlaceOnFoundation(getStoneOrder[i],i);
+                if(!this.runToStoneAndPlaceOnFoundation(getStoneOrder[i],i)){
+                    this.getRobotCore().save();
+                    return;
+                }
             }
         }
         {
             //not much time left, left's grab the foundation and park
             if(!this.grabFoundationAndPark()){
+                this.getRobotCore().save();
                 return;
             }
         }
+        this.getRobotCore().save();
     }
 
     public boolean runToStoneAndPlaceOnFoundation(int stoneNumber, int numRuns){
         RobotPose2D currentPosition = this.getRobotCore().getCurrentPosition();
         double grabStoneStartSpeed = 0.1;
         RobotPoint2D stonePosition = allStonePositions.get(stoneNumber - 1);
-        stonePosition.Y -= 3 * (stoneNumber + 1);
+        stonePosition.Y -= 5 * (numRuns + 1);
+        if(sampledPosition.value() != 3 && numRuns == 1){
+            stonePosition.X += 5;
+        }
         if(currentPosition.X >= 0){
             //gotta pass the bridge first
             this.setLeftClawToRest();
 
             RobotPoint2D firstPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y += 0;
+            firstPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST;
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y += 0;
+            secondPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST;
 
             RobotPoint2D thirdPoint = new RobotPoint2D(stonePosition);
             thirdPoint.Y += 10;
@@ -196,13 +204,13 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
         {
             //finished grabbing stone, now we should head to the foundation.
             RobotPoint2D firstPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y += 0;
+            firstPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST;
 
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y += 0;
+            secondPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST;
 
             RobotPoint2D thirdPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            thirdPoint.Y += 0;
+            thirdPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST;
 
             RobotPoint2D fourthPoint = lastDropStonePos;
 
@@ -241,13 +249,13 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
             //we are not in the building zone, let's go to the building zone.
             this.setLeftClawToRest();
             RobotPoint2D firstPoint = ElysiumAutoBase.getLoadingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y += 0;
+            firstPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST;
 
             RobotPoint2D secondPoint = ElysiumAutoBase.getLoadingZoneNextToBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y += 0;
+            secondPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST;
 
             RobotPoint2D thirdPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            thirdPoint.Y += 0;
+            thirdPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST;
 
             Trajectory trajectory = this.m_Core.chassis.trajectoryBuilder()
                     .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
@@ -351,20 +359,27 @@ public class ElysiumBlueLoadingZoneSecureAuto extends ElysiumAutoBase {
             RobotPoint2D leaveFoundationPoint = new RobotPoint2D(this.getRobotCore().getCurrentPosition());
             leaveFoundationPoint.X -= 20;
 
+            RobotPoint2D leaveFoundationStrafePoint = new RobotPoint2D(leaveFoundationPoint);
+
+
             RobotPoint2D firstPoint = ElysiumAutoBase.getBuildingZoneFurtherFromBridgePoint(ALLIANCE_TYPE,PARK_POSITION);
-            firstPoint.Y += 5;
+            firstPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST - 20;
+
+            leaveFoundationStrafePoint.Y = firstPoint.Y;
 
             RobotPoint2D secondPoint = SkyStoneCoordinates.getParkPosition(ALLIANCE_TYPE,PARK_POSITION);
-            secondPoint.Y += 0;
+            secondPoint.Y += ElysiumAutonomousSettings.BLUE_BRIDGE_AWAY_DIST - 30;
+            secondPoint.X += 5;
 
             this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_ABOVE_FOUNDATION_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
 
             Trajectory trajectory = this.getRobotCore().chassis.trajectoryBuilder()
-                    .lineTo(getRoadRunnerPos(leaveFoundationPoint),new ConstantInterpolator(-180))
+                    .lineTo(getRoadRunnerPos(leaveFoundationPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .addMarker(()->{
-                        this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,ElysiumSettings.STACKER_SLIDE_MIN_POS,ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
+                        this.getRobotCore().stackerSubSystem.stackerSlide.replaceTask(new TargetPosTask(null,this.getRobotCore().stackerSubSystem.stackerSlide.getMinPos(),ElysiumAutonomousSettings.STACKER_SLIDE_SPEED));
                         return Unit.INSTANCE;
                     })
+                    .lineTo(getRoadRunnerPos(leaveFoundationStrafePoint), new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(firstPoint),new ConstantInterpolator(Math.toRadians(-180)))
                     .lineTo(getRoadRunnerPos(secondPoint), new ConstantInterpolator(Math.toRadians(-180)))
                     .build();

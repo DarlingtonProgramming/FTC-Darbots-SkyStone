@@ -115,7 +115,7 @@ public class ElysiumSettings {
 
     //========== Start of Stacker System Settings ==========
     public static double STACKER_SLIDE_MIN_POS = 0;
-    public static double STACKER_ABOVE_FOUNDATION_POS = 0.468;
+    public static double STACKER_ABOVE_FOUNDATION_POS = 0.600;
     public static double STACKER_STONE_DOWN_POS = 0;
     public static double STACKER_SLIDE_MAX_POS = 1.560;
     public static MotorType STACKER_SLIDE_TYPE = new GoBilda5202Series117RPMMotor();
@@ -157,7 +157,7 @@ public class ElysiumSettings {
     public static MotorType CAPSTONE_SLIDE_MOTOR_TYPE = new RevHDHex40Motor();
 
     public static double CAPSTONE_SERVO_IN_POS = 0.8;
-    public static double CAPSTONE_SERVO_OUT_POS = 0.32;
+    public static double CAPSTONE_SERVO_OUT_POS = 0.02;
     public static ServoType CAPSTONE_SERVO_TYPE = new HS485HB();
     //========== End of Capstone Delivery System Settings ==========
 }
