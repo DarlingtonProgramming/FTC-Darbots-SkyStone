@@ -12,7 +12,7 @@ To use this code, download / clone the entire project to your local computer.
 |Team Number|Current Status|Is playing|
 |-|-|-|
 |5100|Not playing this year|No|
-|4100|Georgia State Championship Feb 21 - Feb 22|Yes|
+|4100|Finalist Alliance 1st Pick in Georgia State Championship|No|
 
 ## Library Status
 
