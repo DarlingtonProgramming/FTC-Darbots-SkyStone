@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="HUB_OmniChassis", group="Wang")
+@TeleOp(name="HUB_aOmniChassis", group="Wang")
 public class OmiChassis extends LinearOpMode {
     private DcMotor lf,lb = null;
     private DcMotor rf,rb = null;
