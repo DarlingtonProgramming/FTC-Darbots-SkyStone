@@ -4,30 +4,34 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorWithEncoder;
-import org.darbots.darbotsftclib.libcore.templates.RobotCore;
+import org.darbots.darbotsftclib.libcore.motortypes.GoBilda5202Series117RPMMotor;
+
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
-import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
+
 
 @TeleOp(name="TeleOp-Slide", group="OpMode")
 public class SlideControl extends LinearOpMode {
-    private DcMotor LinearSlide = hardwareMap.get(DcMotor.class, "FL");
-    RobotMotorWithEncoder Slide = new RobotMotorWithEncoder(LinearSlide, null);
 
-    Slide.setDirectionReversed(true);
-    Slide.setCurrentMovingType(MovingType.toCount);
     final int max = 0;
     final int min = 0;
+    private DcMotor slideMotor = hardwareMap.get(DcMotor.class, "stackerSlideMotor");
+    private MotorType type = new GoBilda5202Series117RPMMotor();
+    Slide slide = new Slide(slideMotor, type);
+
 
     @Override
     public void runOpMode() {
 
+        slide.setMaxTick(max);
+        slide.setMinTick(min);
+
         waitForStart();
 
-        if (opModeIsActive()) {
-
-
+        while (opModeIsActive()) {
+            telemetry.addData("Tick: " , slideMotor.getCurrentPosition());
+            telemetry.update();
         }
     }
+
 
 }
