@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
-import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.ServoType;
 
@@ -42,6 +41,10 @@ public class TimeControlledServo implements RobotNonBlockingDevice {
         this.m_EstimatedTaskTime = 0;
         this.m_Speed = 0;
         this.m_TaskTime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+    }
+
+    public void adjustLastPosition(double lastPosition){
+        this.m_LastPosition = lastPosition;
     }
 
     public Servo getServo(){

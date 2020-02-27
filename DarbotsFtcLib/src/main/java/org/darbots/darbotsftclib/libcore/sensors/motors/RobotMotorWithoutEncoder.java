@@ -69,8 +69,6 @@ public class RobotMotorWithoutEncoder implements RobotMotor {
 
     public void setDcMotor(@NonNull DcMotor Motor) {
         this.m_Motor = Motor;
-        this.m_Motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.m_Motor.setPower(0);
     }
 
     @Override

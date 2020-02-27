@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 
 import org.darbots.darbotsftclib.libcore.sensors.servos.motor_powered_servos.RobotServoUsingMotor_WithLimitSwitch;
 import org.darbots.darbotsftclib.libcore.tasks.motor_tasks.RobotFixCountSpeedCtlTask;
-import org.darbots.darbotsftclib.libcore.tasks.motor_tasks.RobotFixCountTask;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.motor_powered_servos.RobotServoUsingMotorCallBack;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.motor_powered_servos.RobotServoUsingMotorTask;
 
@@ -73,20 +72,17 @@ public class TargetPosSpeedCtlTask extends RobotServoUsingMotorTask {
     @Override
     public void updateStatus(){
         super.updateStatus();
-        if(this.isBusy()){
-            if((this.m_TargetPos > this.getServoUsingMotor().getMaxPos() || this.m_TargetPos < this.getServoUsingMotor().getMinPos()) && this.getServoUsingMotor().isBorderControl()){
-                this.endTask(false);
-            }
-        }
-        if(this.getServoUsingMotor() instanceof RobotServoUsingMotor_WithLimitSwitch){
+        if(this.isBusy() && this.getServoUsingMotor() instanceof RobotServoUsingMotor_WithLimitSwitch) {
             RobotServoUsingMotor_WithLimitSwitch mServo = (RobotServoUsingMotor_WithLimitSwitch) this.getServoUsingMotor();
-            if(mServo.getMinSwitch() != null){
-                if(mServo.getMinSwitch().isPressed() && this.m_TargetPos <= this.getTaskStartPos()){
+            if (mServo.getMinSwitch() != null) {
+                if (mServo.getMinSwitch().isPressed() && this.m_TargetPos <= this.getTaskStartPos()) {
+                    this.getServoUsingMotor().adjustCurrentPosition(this.getServoUsingMotor().getMinPos());
                     this.endTask(false);
                 }
             }
-            if(mServo.getMaxSwitch() != null){
-                if(mServo.getMaxSwitch().isPressed() && this.m_TargetPos >= this.getTaskStartPos()){
+            if (mServo.getMaxSwitch() != null) {
+                if (mServo.getMaxSwitch().isPressed() && this.m_TargetPos >= this.getTaskStartPos()) {
+                    this.getServoUsingMotor().adjustCurrentPosition(this.getServoUsingMotor().getMaxPos());
                     this.endTask(false);
                 }
             }

@@ -6,8 +6,6 @@ import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.sensors.motors.RobotMotorController;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
-import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
-import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotorTask;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.motor_powered_servos.RobotServoUsingMotorPreCheck;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.motor_powered_servos.RobotServoUsingMotorTask;
 
@@ -145,9 +143,9 @@ public class RobotServoUsingMotor implements RobotNonBlockingDevice {
             if(this.m_TaskList.get(0).isBusy()){
                 this.m_TaskList.get(0).updateStatus();
             }
-        }
-        if(this.m_MotorController != null) {
-            this.m_MotorController.updateStatus();
+            if(this.m_MotorController != null) {
+                this.m_MotorController.updateStatus();
+            }
         }
     }
 

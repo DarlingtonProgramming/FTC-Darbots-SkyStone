@@ -4,11 +4,11 @@ import android.support.annotation.NonNull;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.darbots.darbotsftclib.libcore.integratedfunctions.logger.RobotLogger;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
 import org.darbots.darbotsftclib.libcore.runtime.GlobalUtil;
 import org.darbots.darbotsftclib.libcore.sensors.servos.motor_powered_servos.RobotServoUsingMotor;
 import org.darbots.darbotsftclib.libcore.templates.RobotNonBlockingDevice;
+import org.darbots.darbotsftclib.libcore.templates.log.LogLevel;
 
 public abstract class RobotServoUsingMotorTask implements RobotNonBlockingDevice {
     private boolean m_IsBusy = false;
@@ -54,8 +54,8 @@ public abstract class RobotServoUsingMotorTask implements RobotNonBlockingDevice
         if(this.isBusy()){
             return;
         }
-        GlobalUtil.addLog("RobotServoUsingMotorTask","BeforeTaskStatus",this.getServoUsingMotor().getStatusString(), RobotLogger.LogLevel.DEBUG);
-        GlobalUtil.addLog("RobotServoUsingMotorTask","TaskInfo", this.getTaskDetailString(), RobotLogger.LogLevel.DEBUG);
+        GlobalUtil.addLog("RobotServoUsingMotorTask","BeforeTaskStatus",this.getServoUsingMotor().getStatusString(), LogLevel.DEBUG);
+        GlobalUtil.addLog("RobotServoUsingMotorTask","TaskInfo", this.getTaskDetailString(), LogLevel.DEBUG);
         this.m_IsBusy = true;
         this.m_StartPos = this.getServoUsingMotor().getCurrentPosition();
         this.m_Time.reset();
@@ -65,11 +65,11 @@ public abstract class RobotServoUsingMotorTask implements RobotNonBlockingDevice
         if(!this.isBusy()){
             return;
         }
-        GlobalUtil.addLog("RobotServoUsingMotorTask","AfterTask","Task ends, " + (timeOut ? "timed out!" : "normally finished"), RobotLogger.LogLevel.DEBUG);
+        GlobalUtil.addLog("RobotServoUsingMotorTask","AfterTask","Task ends, " + (timeOut ? "timed out!" : "normally finished"), LogLevel.DEBUG);
         double timeConsumed = this.m_Time.seconds();
         this.m_IsBusy = false;
         this.__finishTask();
-        GlobalUtil.addLog("RobotServoUsingMotorTask","AfterTaskStatus",this.getServoUsingMotor().getStatusString(), RobotLogger.LogLevel.DEBUG);
+        GlobalUtil.addLog("RobotServoUsingMotorTask","AfterTaskStatus",this.getServoUsingMotor().getStatusString(), LogLevel.DEBUG);
         if(this.m_CallBack != null){
             this.m_CallBack.JobFinished(timeOut,this,this.m_StartPos,timeConsumed);
         }

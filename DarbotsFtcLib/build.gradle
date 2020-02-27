@@ -13,11 +13,17 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+
+    sourceSets.main {
+        jni.srcDirs = []
+        jniLibs.srcDir rootProject.file('libs')
+    }
 }
 
 repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
+    jcenter()
 }
 apply from: 'build.release.gradle'

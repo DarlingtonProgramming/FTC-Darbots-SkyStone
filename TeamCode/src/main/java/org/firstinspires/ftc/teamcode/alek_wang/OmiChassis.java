@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.alek_wang;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="HUB_aOmniChassis", group="Wang")
+@TeleOp(name="HUB_OmniChassis", group="Wang")
 public class OmiChassis extends LinearOpMode {
     private DcMotor lf,lb = null;
     private DcMotor rf,rb = null;
@@ -56,11 +57,11 @@ public class OmiChassis extends LinearOpMode {
             b = gamepad1.left_stick_x;
             c = gamepad1.left_trigger;
             d = gamepad1.right_trigger;
-            lfpower = Range.clip(a - b - c + d, -1.0, 1.0);
-            rfpower = Range.clip(a + b + c - d, -1.0, 1.0);
-            lbpower = Range.clip(a + b - c + d, -1.0, 1.0);
+            lfpower = Range.clip(a - b - c + d, -0.4, 0.4);
+            rfpower = Range.clip(a + b + c - d, -0.4, 0.4);
+            lbpower = Range.clip(a + b - c + d, -0.4, 0.4);
             ;
-            rbpower = Range.clip(a - b + c - d, -1.0, 1.0);
+            rbpower = Range.clip(a - b + c - d, -0.4, 0.4);
 
 
             // Send calculated power to wheels

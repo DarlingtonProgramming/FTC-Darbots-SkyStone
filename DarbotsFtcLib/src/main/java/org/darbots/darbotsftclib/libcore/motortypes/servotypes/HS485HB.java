@@ -10,14 +10,23 @@ public class HS485HB extends ServoType {
     }
 
     @Override
-    public int getMaxDeg() {
-        return 190;
-        //Actually 190.5
+    public double getMaxDeg() {
+        return 190.5;
     }
 
     @Override
-    public int getMinDeg() {
+    public double getMinDeg() {
         return 0;
+    }
+
+    @Override
+    public double getPulseLowerInMicroSeconds() {
+        return 553;
+    }
+
+    @Override
+    public double getPulseUpperInMicroSeconds() {
+        return 2425;
     }
 
     @Override

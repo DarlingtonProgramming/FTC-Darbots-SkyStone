@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.darbots.darbotsftclib.libcore.runtime.GlobalRegister;
-import org.darbots.darbotsftclib.libcore.templates.motor_related.MotorType;
 import org.darbots.darbotsftclib.libcore.templates.motor_related.RobotMotor;
 import org.darbots.darbotsftclib.libcore.templates.servo_related.ContinuousRotationServoType;
 

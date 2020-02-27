@@ -88,7 +88,7 @@ public class RobotFixCountSpeedCtlTask extends RobotFixedSpeedTask {
             if (this.m_Count + super.getStartCount() - super.getMotorController().getMotor().getCurrentCount() < 0) {
                 return -Math.abs(speed);
             } else {
-                return Math.abs(this.getSpeed());
+                return Math.abs(speed);
             }
         }else{
             if(this.m_Count < 0){

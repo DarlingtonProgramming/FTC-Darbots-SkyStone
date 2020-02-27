@@ -25,9 +25,12 @@ SOFTWARE.
 
 package org.darbots.darbotsftclib.libcore.templates.other_sensors;
 
+import android.graphics.Bitmap;
+
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 public interface RobotCamera {
     VuforiaLocalizer getVuforia();
     boolean isPreview();
+    Bitmap getFrame();
 }

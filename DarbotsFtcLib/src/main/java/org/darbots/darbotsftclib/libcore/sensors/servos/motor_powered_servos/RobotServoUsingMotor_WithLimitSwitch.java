@@ -27,14 +27,16 @@ public class RobotServoUsingMotor_WithLimitSwitch extends RobotServoUsingMotor {
     @Override
     public void updateStatus(){
         super.updateStatus();
-        if(this.m_MinSwitch != null){
-            if(this.m_MinSwitch.isPressed()){
-                this.adjustCurrentPosition(this.getMinPos());
+        if(this.isBusy()) {
+            if (this.m_MinSwitch != null) {
+                if (this.m_MinSwitch.isPressed()) {
+                    this.adjustCurrentPosition(this.getMinPos());
+                }
             }
-        }
-        if(this.m_MaxSwitch != null){
-            if(this.m_MaxSwitch.isPressed()){
-                this.adjustCurrentPosition(this.getMaxPos());
+            if (this.m_MaxSwitch != null) {
+                if (this.m_MaxSwitch.isPressed()) {
+                    this.adjustCurrentPosition(this.getMaxPos());
+                }
             }
         }
     }
