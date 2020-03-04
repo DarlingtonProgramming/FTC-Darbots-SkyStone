@@ -23,6 +23,6 @@ public class GoBilda5202Series1150RPMMotor implements MotorType {
 
     @Override
     public double getRevPerSec() {
-        return 19.167; //1150 rpm
+        return 19.167; //1150 rpm/60
     }
 }
