@@ -34,6 +34,8 @@ public class ChassisControl extends LinearOpMode{
         LB.setDirection(DcMotor.Direction.REVERSE);
         Chassis chassis = new Chassis(LF,RF,LB,RB);
         chassis.setType(CHASSIS_MOTOR_TYPE);
+        chassis.setWheelRadius(5.08); //4 INCH DIAMETER WHEELS
+        chassis.setTrackConstant(32.1);
 
         waitForStart();
 
