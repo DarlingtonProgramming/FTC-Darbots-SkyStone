@@ -10,9 +10,6 @@ public class Chassis {
     private DcMotor RF;
     private DcMotor LB;
     private DcMotor RB;
-    private double wheelRadius;
-    private double trackConstant;
-
 
 
     MotorType type;
@@ -33,12 +30,6 @@ public class Chassis {
         this.RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void setWheelRadius(double wheelRadius){
-        this.wheelRadius = wheelRadius;
-    }
-    public void setTrackConstant(double trackConstant){
-        this.trackConstant = trackConstant;
-    }
 
     public void setType(MotorType type) {
         this.type = type;
@@ -53,22 +44,6 @@ public class Chassis {
         LB.setPower(xPower-yPower-rotPower);
         RB.setPower(xPower+yPower+rotPower);
 
-    }
-
-    public void setAngularSpeed(double LFSpeed, double RFSpeed, double LBSpeed, double RBSpeed){
-        LF.setPower(LFSpeed / (type.getRevPerSec() * 2 * Math.PI));
-        RF.setPower(RFSpeed / (type.getRevPerSec() * 2 * Math.PI));
-        LB.setPower(LBSpeed / (type.getRevPerSec() * 2 * Math.PI));
-        RB.setPower(RBSpeed / (type.getRevPerSec() * 2 * Math.PI));
-    }
-
-    public void setChassisSpeed(double xSpeed, double ySpeed, double zSpeed){
-
-        double LFSpeed = -xSpeed / wheelRadius + ySpeed / wheelRadius + trackConstant / wheelRadius * zSpeed;
-        double RFSpeed = xSpeed / wheelRadius + ySpeed / wheelRadius + trackConstant / wheelRadius * zSpeed;
-        double LBSpeed = -xSpeed / wheelRadius - ySpeed / wheelRadius + trackConstant / wheelRadius * zSpeed;
-        double RBSpeed = xSpeed / wheelRadius - ySpeed / wheelRadius + trackConstant / wheelRadius * zSpeed;
-        setAngularSpeed(LFSpeed, RFSpeed, LBSpeed, RBSpeed);
     }
 
 }
